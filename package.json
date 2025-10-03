@@ -22,6 +22,8 @@
     "@nx/workspace": "21.6.3",
     "@playwright/test": "^1.36.0",
     "@schematics/angular": "~20.3.0",
+    "@stoplight/prism-cli": "^5.14.2",
+    "@stoplight/spectral-cli": "^6.15.0",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
@@ -37,12 +39,16 @@
     "jest-preset-angular": "~14.6.1",
     "jest-util": "^29.7.0",
     "nx": "21.6.3",
+    "openapi-diff": "^0.24.1",
+    "openapi-typescript": "^7.9.1",
+    "openapi2jsonschema": "^1.1.0",
     "prettier": "^2.6.2",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
     "typescript": "~5.9.2",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.40.0",
+    "yaml": "^2.8.1"
   },
   "packageManager": "yarn@4.10.3",
   "dependencies": {

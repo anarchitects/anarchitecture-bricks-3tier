@@ -1,0 +1,57 @@
+{
+  "name": "contracts",
+  "root": "contracts",
+  "projectType": "library",
+  "sourceRoot": "contracts",
+  "tags": ["scope:contracts"],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        { "fileset": "{projectRoot}/**/*.yaml" },
+        { "fileset": "{projectRoot}/**/*.yml" }
+      ],
+      "outputs": [],
+      "options": {
+        "command": "spectral lint contracts/openapi.yaml"
+      }
+    },
+    "gen-schemas": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["lint"],
+      "inputs": ["default", { "fileset": "{projectRoot}/openapi.yaml" }],
+      "outputs": ["contracts/schemas"],
+      "options": {
+        "command": "openapi2jsonschema contracts/openapi.yaml -o contracts/schemas"
+      }
+    },
+    "gen-ts-web": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["lint", "gen-schemas"],
+      "inputs": ["default", { "fileset": "{projectRoot}/openapi.yaml" }],
+      "outputs": ["libs/ts/web/data-access/src/generated/api.types.ts"],
+      "options": {
+        "command": "openapi-typescript contracts/openapi.yaml -o libs/ts/web/data-access/src/generated/api.types.ts"
+      }
+    },
+    "diff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node --project tools/contract-tests/tsconfig.json tools/contract-tests/diff.ts origin/main"
+      }
+    },
+    "mock": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn exec prism mock contracts/openapi.yaml -p 4010"
+      }
+    },
+    "verify": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node tools/contract-tests/run.ts"
+      }
+    }
+  }
+}

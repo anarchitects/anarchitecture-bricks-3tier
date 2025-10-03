@@ -1,0 +1,8 @@
+extends: ['spectral:oas', 'spectral:asyncapi']
+rules:
+  operation-description: off
+  operation-tags: warn
+  openapi-tags: off
+  oas3-unused-component: warn
+  no-$ref-siblings: error
+  operation-operationId-unique: error
