@@ -1,6 +1,3 @@
-# 📄 `CONTRIBUTING.md`
-
-````markdown
 # Contributing – Anarchitecture Bricks 3Tier
 
 Thank you for contributing! 🚀  
