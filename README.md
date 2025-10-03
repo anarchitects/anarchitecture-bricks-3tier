@@ -2,7 +2,8 @@
 
 > **Purpose:** A contract-driven set of reusable libraries, organized with a classic **3-tier pattern**.  
 > **No apps in this repo.** Only **libraries** under `libs/`.  
-> **Polyglot-ready**: supports TypeScript/Angular/NestJS, Ruby/Rails, and PHP/Laravel.
+> **Polyglot-ready**: supports TypeScript/Angular/NestJS, Ruby/Rails, and PHP/Laravel.  
+> **Domain-first naming**: libraries are published as `@anarchitects/<domain>-<tech>-<layer>`.
 
 ---
 
@@ -19,21 +20,31 @@
    - This repo contains **no apps**.
    - Consumers (frontends, backends, services) live in separate repositories and consume these libraries.
 
-3. **3-tier approach**
+3. **Domain-first modularity**
+
+   - Each domain (`contacts`, `bookings`, …) gets its own set of libraries.
+   - Package naming:
+     - `@anarchitects/<domain>-ts-frontend-data`
+     - `@anarchitects/<domain>-angular-data-access`
+     - `@anarchitects/<domain>-nest-services`
+     - `@anarchitects/<domain>-nest-infrastructure`
+   - Shared/generated types live in `@anarchitects/ts-contracts`.
+
+4. **3-tier approach**
 
    - **Frontend:** `ui` (dumb) → `feature` (smart) → `data-access` (facades + generated clients).
    - **Backend:** `controllers` → `services` → `infrastructure` (ORM, mail, adapters).
    - **Common:** shared DTOs, models, validators, events.
 
-4. **Polyglot**
+5. **Polyglot**
 
    - **TypeScript/Angular/NestJS**
    - **Ruby/Rails**
    - **PHP/Laravel**
    - All stacks follow the same contracts.
 
-5. **Migration path**
-   - Start with 3-tier libraries.
+6. **Migration path**
+   - Start with modular 3-tier libraries.
    - When complexity grows, migrate to or complement with a **DDD/Hexagonal** setup (`anarchitecture-bricks-ddd-hex`).
 
 ---
@@ -42,28 +53,29 @@
 
 ```
 contracts/
-  openapi.yaml        # sync API (source of truth)
-  asyncapi.yaml       # optional, async events
-  schemas/            # generated JSON Schemas
+  openapi.yaml
+  asyncapi.yaml
+  schemas/
+
 libs/
-  common/             # DTOs, models, validators
-  ts/                 # TypeScript libs
-    web/
-      ui/
-      feature/
-      data-access/    # generated clients here
-    api/
-      controllers/
-      services/
-      infrastructure/
-  angular/            # Angular-specific UI/feature/data-access
-  nest/               # NestJS-specific helpers/adapters
-  ruby/               # Ruby generic libs
-  rails/              # Rails-specific infra/services
-  php/                # PHP generic libs
-  laravel/            # Laravel-specific infra/services
-tools/
-  contract-tests/     # contract tests and schema validation
+  shared/
+    ts/
+      contracts/                      # @anarchitects/ts-contracts  (gegenereerde types voor ALLE domeinen)
+
+  contacts/
+    ts/
+      frontend-data/                  # @anarchitects/contacts-ts-frontend-data  (facades, gebruikt ts-contracts)
+    nest/
+        services/                     # @anarchitects/contacts-nest-services
+        infrastructure/               # @anarchitects/contacts-nest-infrastructure
+    angular/
+      data-access/                    # @anarchitects/contacts-angular-data-access
+
+  bookings/
+    ts/
+      frontend-data/                  # @anarchitects/bookings-ts-frontend-data
+    angular/
+      data-access/
 ```
 
 ---
@@ -75,35 +87,39 @@ tools/
 yarn install
 
 # lint contracts with Spectral
-yarn contracts:lint
+nx run contracts:lint
 
 # generate JSON Schemas
-yarn contracts:gen:schemas
+nx run contracts:gen-schemas
 
-# generate TypeScript client
-yarn contracts:gen:ts-web
+# generate TypeScript contracts (api.types.ts)
+nx run ts-contracts:gen-client
+
+# build a domain lib (example: contacts frontend data)
+nx run contacts-ts-frontend-data:build
 ```
 
-Output will be generated at:
-`libs/ts/web/data-access/src/generated/api.types.ts`
+Generated types end up in:
+`libs/ts/contracts/src/generated/api.types.ts`
+Domain-specific facades (e.g. contacts) re-export and use these types.
 
 ⸻
 
-## 🔧 Current Tasks (temporary via scripts)
+## 🔧 Current Tasks (via Nx)
 
-- contracts:lint → Lint contracts/openapi.yaml
-- contracts:gen:schemas → Generate JSON Schemas
-- contracts:gen:ts-web → Generate TypeScript client
-- test:contracts → Run minimal contract tests
+- contracts:lint → Lint openapi.yaml
+- contracts:gen-schemas → Generate JSON Schemas
+- ts-contracts:gen-client → Generate TypeScript API types
+- contacts-ts-frontend-data:build → Build publishable frontend data lib
 
-These scripts will later be replaced by Nx plugins (inferred tasks-first) from anarchitecture-nx-plugins.
+These targets will later be replaced or simplified using inferred Nx plugins from anarchitecture-nx-plugins.
 
 ⸻
 
 ## 🧩 Roadmap
 
 - ✅ Contracts-first structure
-- ✅ 3-tier libraries-only skeleton
+- ✅ 3-tier, domain-first libraries-only skeleton
 - ⏳ Nx plugins for contracts and OpenAPI generation
 - ⏳ Extended contract tests (Schemathesis, golden path validation)
 - ⏳ Rails & Laravel stub generation
