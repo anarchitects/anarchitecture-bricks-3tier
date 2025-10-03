@@ -21,18 +21,16 @@
       "executor": "nx:run-commands",
       "dependsOn": ["lint"],
       "inputs": ["default", { "fileset": "{projectRoot}/openapi.yaml" }],
-      "outputs": ["contracts/schemas"],
       "options": {
-        "command": "openapi2jsonschema contracts/openapi.yaml -o contracts/schemas"
+        "command": "rm -rf contracts/schemas && mkdir -p contracts/schemas && yarn exec openapi2jsonschema -i contracts/openapi.yaml -o contracts/schemas && node tools/contract-tests/normalize-schemas.mjs"
       }
     },
     "gen-ts-web": {
       "executor": "nx:run-commands",
       "dependsOn": ["lint", "gen-schemas"],
       "inputs": ["default", { "fileset": "{projectRoot}/openapi.yaml" }],
-      "outputs": ["libs/ts/web/data-access/src/generated/api.types.ts"],
       "options": {
-        "command": "openapi-typescript contracts/openapi.yaml -o libs/ts/web/data-access/src/generated/api.types.ts"
+        "command": "yarn exec openapi-typescript contracts/openapi.yaml -o libs/ts/web/data-access/src/generated/api.types.ts"
       }
     },
     "diff": {

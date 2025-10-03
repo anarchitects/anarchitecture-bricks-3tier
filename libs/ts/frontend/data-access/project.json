@@ -1,0 +1,52 @@
+{
+  "name": "ts-frontend-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ts/frontend/data-access/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["scope:ts-frontend", "type:data-access"],
+  "targets": {
+    "gen-client": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["contracts:lint", "contracts:gen-schemas"],
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/contracts/openapi.yaml"
+        }
+      ],
+      "options": {
+        "command": "yarn exec openapi-typescript contracts/openapi.yaml -o libs/ts/frontend/data-access/src/generated/api.types.ts"
+      }
+    },
+    "types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": ["gen-client"],
+      "options": {
+        "outputPath": "dist/libs/ts/frontend/data-access",
+        "tsConfig": "libs/ts/frontend/data-access/tsconfig.lib.json",
+        "main": "libs/ts/frontend/data-access/src/index.ts",
+        "skipTypeCheck": false
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "dependsOn": ["gen-client", "types"],
+      "options": {
+        "outputPath": "dist/libs/ts/frontend/data-access",
+        "configFile": "libs/ts/frontend/data-access/vite.config.ts"
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  }
+}

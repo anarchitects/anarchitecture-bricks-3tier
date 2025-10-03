@@ -56,6 +56,20 @@
       "options": {
         "targetName": "lint"
       }
+    },
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "devTargetName": "dev",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
     }
   ],
   "generators": {
@@ -64,6 +78,11 @@
       "linter": "eslint",
       "style": "css",
       "unitTestRunner": "jest"
+    }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "yarn dlx nx run-many -t build"
     }
   }
 }
