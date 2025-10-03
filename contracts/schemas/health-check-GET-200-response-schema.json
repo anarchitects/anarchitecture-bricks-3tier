@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok"
+      ]
+    }
+  },
+  "required": [
+    "status"
+  ],
+  "$schema": "http://json-schema.org/draft-04/schema#"
+}

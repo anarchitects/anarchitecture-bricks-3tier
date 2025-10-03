@@ -44,3 +44,10 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 
 .angular
+
+libs/**/src/generated
+!libs/**/src/generated/api.types.ts
+!libs/**/src/generated/.gitkeep
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
