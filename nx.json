@@ -78,6 +78,12 @@
       "linter": "eslint",
       "style": "css",
       "unitTestRunner": "jest"
+    },
+    "@nx/js:library": {
+      "linter": "eslint",
+      "unitTestRunner": "vitest",
+      "publishable": true,
+      "bundler": "vite"
     }
   },
   "release": {

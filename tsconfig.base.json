@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@anarchitects/contacts-ts-dtos": ["libs/contacts/ts/dtos/src/index.ts"],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
       ]
