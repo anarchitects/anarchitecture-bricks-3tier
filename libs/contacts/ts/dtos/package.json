@@ -1,0 +1,10 @@
+{
+  "name": "@anarchitects/contacts-ts-dtos",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.41"
+  }
+}
