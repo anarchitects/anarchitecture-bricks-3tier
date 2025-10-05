@@ -16,6 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@anarchitects/contacts-ts-dtos": ["libs/contacts/ts/dtos/src/index.ts"],
+      "@anarchitects/contacts-ts-models": [
+        "libs/contacts/ts/models/src/index.ts"
+      ],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
       ]
