@@ -1,0 +1,14 @@
+{
+  "name": "@anarchitects/contacts-nest-presentation",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@anarchitects/contacts-nest-application": "0.0.1",
+    "@nestjs/platform-fastify": "^11.1.6",
+    "@anarchitects/contacts-ts-dtos": "0.0.1"
+  }
+}

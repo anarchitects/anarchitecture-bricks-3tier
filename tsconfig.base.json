@@ -24,6 +24,9 @@
       "@anarchitects/contacts-nest-infra-persistence": [
         "libs/contacts/nest/infra/persistence/src/index.ts"
       ],
+      "@anarchitects/contacts-nest-presentation": [
+        "libs/contacts/nest/presentation/src/index.ts"
+      ],
       "@anarchitects/contacts-ts-dtos": ["libs/contacts/ts/dtos/src/index.ts"],
       "@anarchitects/contacts-ts-models": [
         "libs/contacts/ts/models/src/index.ts"
