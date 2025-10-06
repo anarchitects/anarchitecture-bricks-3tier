@@ -95,10 +95,11 @@
       "unitTestRunner": "jest",
       "publishable": true,
       "buildable": true,
-      "importPath": "@anarchitects/<domain>-<tech>-<layer>-<type>",
+      "importPath": "@anarchitects/<domain>-nest-<layer>-<type>",
       "strict": true,
-      "directory": "libs/<domain>/<tech>/<layer>/<type>",
-      "name": "<domain>-<tech>-<layer>-<type>"
+      "directory": "libs/<domain>/nest/<layer>/<type>",
+      "name": "<domain>-nest-<layer>-<type>",
+      "tags": "domain:<domain>, tech:nest, layer:<layer>, type:<type>"
     }
   },
   "release": {

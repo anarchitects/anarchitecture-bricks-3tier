@@ -80,6 +80,7 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/platform-fastify": "^11.1.6",
     "@nestjs/typeorm": "^11.0.0",
     "@sinclair/typebox": "^0.34.41",
     "handlebars": "^4.7.8",
