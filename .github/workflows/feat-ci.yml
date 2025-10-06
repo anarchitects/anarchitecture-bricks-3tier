@@ -1,20 +1,19 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
+    branches:
+      - feat/**
 
 permissions:
   actions: read
   contents: read
 
 jobs:
-  main:
+  features:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           filter: tree:0
           fetch-depth: 0
@@ -25,21 +24,21 @@ jobs:
       # Run this command as early as possible, before dependencies are installed
       # Learn more at https://nx.dev/ci/reference/nx-cloud-cli#npx-nxcloud-startcirun
       # Uncomment this line to enable task distribution
-      # - run: yarn dlx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
+      - run: yarn dlx nx start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
 
       # Cache node_modules
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: 'yarn'
 
-      - run: yarn install --immutable
-      - run: yarn playwright install --with-deps
+      - uses: nrwl/nx-set-shas@v4
 
+      - run: yarn install --immutable
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      # - run: yarn nx-cloud record -- echo Hello World
+      - run: yarn nx-cloud record -- yarn nx format
       # When you enable task distribution, run the e2e-ci task instead of e2e
-      - run: yarn nx run-many -t lint test build e2e
+      - run: yarn nx affected -t lint test build
       # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
       - run: yarn nx fix-ci
         if: always()
