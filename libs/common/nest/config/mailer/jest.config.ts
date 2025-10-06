@@ -6,5 +6,5 @@ export default {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../../../coverage/libs/comon/nest/config/mailer',
+  coverageDirectory: '../../../../../coverage/libs/common/nest/config/mailer',
 };
