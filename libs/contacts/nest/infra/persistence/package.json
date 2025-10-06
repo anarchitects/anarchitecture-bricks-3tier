@@ -1,0 +1,16 @@
+{
+  "name": "@anarchitects/contacts-nest-infra-persistence",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@anarchitects/contacts-ts-models": "0.0.1",
+    "typeorm": "^0.3.27",
+    "uuidv7": "^1.0.2",
+    "@anarchitects/contacts-nest-application": "0.0.1",
+    "@nestjs/typeorm": "^11.0.0"
+  }
+}
