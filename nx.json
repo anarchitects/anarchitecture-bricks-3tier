@@ -89,6 +89,13 @@
       "unitTestRunner": "vitest",
       "publishable": true,
       "bundler": "vite"
+    },
+    "@nx/nest:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "publishable": true,
+      "buildable": true,
+      "importPath": "@anarchitects/${projectName}"
     }
   },
   "release": {
