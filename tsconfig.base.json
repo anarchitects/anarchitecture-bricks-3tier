@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@anarchitects/common-nest-config-mailer": [
+        "libs/common/nest/config/mailer/src/index.ts"
+      ],
       "@anarchitects/contacts-nest-application": [
         "libs/contacts/nest/application/src/index.ts"
       ],

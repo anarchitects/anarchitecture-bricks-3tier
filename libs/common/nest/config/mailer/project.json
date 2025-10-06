@@ -1,0 +1,39 @@
+{
+  "name": "common-nest-config-mailer",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/nest/config/mailer/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:shared", "tech:nest", "layer:config", "type:mailer"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/common/nest/config/mailer",
+        "tsConfig": "libs/common/nest/config/mailer/tsconfig.lib.json",
+        "packageJson": "libs/common/nest/config/mailer/package.json",
+        "main": "libs/common/nest/config/mailer/src/index.ts",
+        "assets": ["libs/common/nest/config/mailer/*.md"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/common/nest/config/mailer/jest.config.ts"
+      }
+    }
+  }
+}
