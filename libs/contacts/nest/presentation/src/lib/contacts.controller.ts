@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, HttpStatus, Post } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { ContactsService } from '@anarchitects/contacts-nest-application';
 import {
@@ -15,7 +15,7 @@ export class ContactsController {
   @Post()
   @RouteSchema({
     body: ContactRequestSchema,
-    response: ContactResponseSchema,
+    response: { [HttpStatus.CREATED]: ContactResponseSchema },
   })
   async createContact(
     requestBody: ContactRequestDto
