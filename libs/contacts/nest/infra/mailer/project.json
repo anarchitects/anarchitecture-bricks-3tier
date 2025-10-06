@@ -1,0 +1,44 @@
+{
+  "name": "contacts-nest-infra-mailer",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/contacts/nest/infra/mailer/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": [
+    "domain:contacts",
+    "tech:nest",
+    "layer:infrastructure",
+    "type:mailer"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/contacts/nest/infra/mailer",
+        "tsConfig": "libs/contacts/nest/infra/mailer/tsconfig.lib.json",
+        "packageJson": "libs/contacts/nest/infra/mailer/package.json",
+        "main": "libs/contacts/nest/infra/mailer/src/index.ts",
+        "assets": ["libs/contacts/nest/infra/mailer/*.md"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/contacts/nest/infra/mailer/jest.config.ts"
+      }
+    }
+  }
+}

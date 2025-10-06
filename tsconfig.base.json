@@ -18,6 +18,9 @@
       "@anarchitects/contacts-nest-application": [
         "libs/contacts/nest/application/src/index.ts"
       ],
+      "@anarchitects/contacts-nest-infra-mailer": [
+        "libs/contacts/nest/infra/mailer/src/index.ts"
+      ],
       "@anarchitects/contacts-nest-infra-persistence": [
         "libs/contacts/nest/infra/persistence/src/index.ts"
       ],
