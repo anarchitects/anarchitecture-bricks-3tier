@@ -24,7 +24,7 @@ import { ContactsNestPresentationModule } from '@anarchitects/contacts-nest-pres
 import { ContactsNestApplicationModule } from '@anarchitects/contacts-nest-application';
 
 @Module({
-	imports: [ContactsNestApplicationModule, ContactsNestPresentationModule],
+  imports: [ContactsNestApplicationModule, ContactsNestPresentationModule],
 })
 export class ApiModule {}
 ```

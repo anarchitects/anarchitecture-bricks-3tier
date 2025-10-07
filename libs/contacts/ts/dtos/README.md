@@ -23,10 +23,10 @@ import { ContactRequestSchema, ContactRequestDto } from '@anarchitects/contacts-
 import { Value } from '@sinclair/typebox/value';
 
 function handle(payload: ContactRequestDto) {
-	if (!Value.Check(ContactRequestSchema, payload)) {
-		throw new Error('Invalid contact payload');
-	}
-	// proceed with validated data
+  if (!Value.Check(ContactRequestSchema, payload)) {
+    throw new Error('Invalid contact payload');
+  }
+  // proceed with validated data
 }
 ```
 

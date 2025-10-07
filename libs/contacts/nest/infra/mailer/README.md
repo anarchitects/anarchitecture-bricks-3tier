@@ -22,20 +22,17 @@ yarn add @anarchitects/contacts-nest-infra-mailer @nestjs-modules/mailer @nestjs
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import {
-	ContactsNestInfraMailerModule,
-	contactsMailerConfig,
-} from '@anarchitects/contacts-nest-infra-mailer';
+import { ContactsNestInfraMailerModule, contactsMailerConfig } from '@anarchitects/contacts-nest-infra-mailer';
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({ isGlobal: true }),
-		ConfigModule.forFeature(contactsMailerConfig),
-		MailerModule.forRootAsync({
-			useFactory: () => ({ transport: process.env.MAILER_TRANSPORT }),
-		}),
-		ContactsNestInfraMailerModule,
-	],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forFeature(contactsMailerConfig),
+    MailerModule.forRootAsync({
+      useFactory: () => ({ transport: process.env.MAILER_TRANSPORT }),
+    }),
+    ContactsNestInfraMailerModule,
+  ],
 })
 export class ContactsInfraModule {}
 ```
@@ -44,10 +41,10 @@ The adapter first notifies an administrator and then sends a confirmation email 
 
 ## Configuration
 
-| Variable | Description | Default |
-| --- | --- | --- |
-| `CONTACTS_MAILER_TEMPLATE_IN` | Template used for the admin notification. | `default` |
-| `CONTACTS_MAILER_TEMPLATE_OUT` | Template used for the user confirmation. | `html` |
+| Variable                       | Description                               | Default   |
+| ------------------------------ | ----------------------------------------- | --------- |
+| `CONTACTS_MAILER_TEMPLATE_IN`  | Template used for the admin notification. | `default` |
+| `CONTACTS_MAILER_TEMPLATE_OUT` | Template used for the user confirmation.  | `html`    |
 
 Combine these with the SMTP settings supplied by `@anarchitects/common-nest-config-mailer`.
 

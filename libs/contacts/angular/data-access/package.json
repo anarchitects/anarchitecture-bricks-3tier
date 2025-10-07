@@ -1,0 +1,13 @@
+{
+  "name": "@anarchitects/contacts-angular-data-access",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@anarchitects/contacts-ts-dtos": "0.0.1",
+    "vite": "^7.0.0",
+    "@analogjs/vite-plugin-angular": "~1.19.1",
+    "@nx/vite": "21.6.3"
+  },
+  "sideEffects": false
+}

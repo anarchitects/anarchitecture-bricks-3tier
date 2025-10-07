@@ -21,16 +21,10 @@ yarn add @anarchitects/contacts-nest-infra-persistence typeorm @nestjs/typeorm u
 ```ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-	ContactEntity,
-	ContactsNestInfraPersistenceModule,
-} from '@anarchitects/contacts-nest-infra-persistence';
+import { ContactEntity, ContactsNestInfraPersistenceModule } from '@anarchitects/contacts-nest-infra-persistence';
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([ContactEntity]),
-		ContactsNestInfraPersistenceModule,
-	],
+  imports: [TypeOrmModule.forFeature([ContactEntity]), ContactsNestInfraPersistenceModule],
 })
 export class ContactsPersistenceModule {}
 ```
