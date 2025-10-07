@@ -47,6 +47,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/angular:package": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "plugins": [
@@ -82,7 +87,22 @@
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "css",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "vitest"
+    },
+    "@nx/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "vitest",
+      "strict": true,
+      "style": "css",
+      "buildable": true,
+      "publishable": true,
+      "skipModule": true,
+      "standalone": false,
+      "prefix": "anarchitects",
+      "importPath": "@anarchitects/<domain>-angular-<layer>-<type>",
+      "directory": "libs/<domain>/angular/<layer>/<type>",
+      "name": "<domain>-angular-<layer>-<type>",
+      "tags": "domain:<domain>, tech:angular, layer:<layer>, type:<type>"
     },
     "@nx/js:library": {
       "linter": "eslint",

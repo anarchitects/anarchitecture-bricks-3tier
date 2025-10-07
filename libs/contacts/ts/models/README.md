@@ -22,7 +22,7 @@ yarn add @anarchitects/contacts-ts-models
 import type { Contact } from '@anarchitects/contacts-ts-models';
 
 function renderContact(contact: Contact) {
-	return `${contact.name} <${contact.email}> wrote: ${contact.message}`;
+  return `${contact.name} <${contact.email}> wrote: ${contact.message}`;
 }
 ```
 

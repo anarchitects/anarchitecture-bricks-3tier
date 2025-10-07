@@ -20,30 +20,25 @@ yarn add @anarchitects/contacts-nest-application
 
 ```ts
 import { Module } from '@nestjs/common';
-import {
-	ContactsNestApplicationModule,
-	CONTACTS_REPOSITORY,
-	CONTACTS_MAIL_SENDER,
-	ContactsService,
-} from '@anarchitects/contacts-nest-application';
+import { ContactsNestApplicationModule, CONTACTS_REPOSITORY, CONTACTS_MAIL_SENDER, ContactsService } from '@anarchitects/contacts-nest-application';
 
 @Module({
-	imports: [ContactsNestApplicationModule],
-	providers: [
-		{ provide: CONTACTS_REPOSITORY, useClass: InMemoryContactsRepository },
-		{ provide: CONTACTS_MAIL_SENDER, useClass: ConsoleMailer },
-	],
+  imports: [ContactsNestApplicationModule],
+  providers: [
+    { provide: CONTACTS_REPOSITORY, useClass: InMemoryContactsRepository },
+    { provide: CONTACTS_MAIL_SENDER, useClass: ConsoleMailer },
+  ],
 })
 export class ContactsModule {
-	constructor(private readonly contacts: ContactsService) {}
+  constructor(private readonly contacts: ContactsService) {}
 
-	create() {
-		return this.contacts.createContact({
-			name: 'Ada Lovelace',
-			email: 'ada@example.com',
-			message: 'Count me in!',
-		});
-	}
+  create() {
+    return this.contacts.createContact({
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      message: 'Count me in!',
+    });
+  }
 }
 ```
 
