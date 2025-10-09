@@ -1,0 +1,42 @@
+{
+  "name": "@anarchitects/contacts-nest",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    "./application": "./src/lib/application/index.js",
+    "./infrastructure": "./src/lib/infrastructure/index.js",
+    "./presentation": "./src/lib/presentation/index.js",
+    ".": "./src/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "application": [
+        "./src/lib/application/index.d.ts"
+      ],
+      "infrastructure": [
+        "./src/lib/infrastructure/index.d.ts"
+      ],
+      "presentation": [
+        "./src/lib/presentation/index.d.ts"
+      ],
+      "*": [
+        "./src/index.d.ts"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "tslib": "^2.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/platform-fastify": "^11.1.6",
+    "typeorm": "^0.3.27",
+    "uuidv7": "^1.0.2",
+    "@nestjs-modules/mailer": "^2.0.2"
+  },
+  "dependencies": {
+    "@anarchitects/contacts-ts": "0.0.1"
+  }
+}

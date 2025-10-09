@@ -4,11 +4,11 @@ Shared TypeScript surface for the Contacts bounded context. This package aggrega
 
 ## What’s inside?
 
-| Export | Path | Description |
-| --- | --- | --- |
-| Root | `@anarchitects/contacts-ts` | Re-exports everything from the package (`dtos` + `models`). |
-| DTOs | `@anarchitects/contacts-ts/dtos` | TypeBox schemas (`ContactRequestSchema`, `ContactResponseSchema`) and their TypeScript counterparts. |
-| Models | `@anarchitects/contacts-ts/models` | Domain-level `Contact` type shared across persistence and presentation layers. |
+| Export | Path                               | Description                                                                                          |
+| ------ | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Root   | `@anarchitects/contacts-ts`        | Re-exports everything from the package (`dtos` + `models`).                                          |
+| DTOs   | `@anarchitects/contacts-ts/dtos`   | TypeBox schemas (`ContactRequestSchema`, `ContactResponseSchema`) and their TypeScript counterparts. |
+| Models | `@anarchitects/contacts-ts/models` | Domain-level `Contact` type shared across persistence and presentation layers.                       |
 
 Each export stays aligned with the OpenAPI contract and is covered by Vitest specs to prevent drift.
 
@@ -26,25 +26,22 @@ The DTO layer depends on `@sinclair/typebox`; it is bundled as a runtime depende
 
 ```ts
 import { Contact } from '@anarchitects/contacts-ts/models';
-import {
-	ContactRequestDto,
-	ContactRequestSchema,
-} from '@anarchitects/contacts-ts/dtos';
+import { ContactRequestDto, ContactRequestSchema } from '@anarchitects/contacts-ts/dtos';
 import { Value } from '@sinclair/typebox/value';
 
 export function normaliseContact(payload: ContactRequestDto): Contact {
-	if (!Value.Check(ContactRequestSchema, payload)) {
-		throw new Error('Invalid payload');
-	}
+  if (!Value.Check(ContactRequestSchema, payload)) {
+    throw new Error('Invalid payload');
+  }
 
-	return {
-		id: crypto.randomUUID(),
-		message: payload.message,
-		name: payload.name,
-		email: payload.email,
-		createdAt: new Date(),
-		updatedAt: new Date(),
-	} satisfies Contact;
+  return {
+    id: crypto.randomUUID(),
+    message: payload.message,
+    name: payload.name,
+    email: payload.email,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } satisfies Contact;
 }
 ```
 
