@@ -15,7 +15,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@anarchitects/contacts-nest": ["libs/contacts/nest/src/index.ts"],
       "@anarchitects/contacts-ts": ["libs/contacts/ts/src/index.ts"],
+      "@anarchitects/contacts-ts/*": ["libs/contacts/ts/src/lib/*"],
+      "@anarchitects/contacts-ts/dtos": ["libs/contacts/ts/src/dtos/index.ts"],
+      "@anarchitects/contacts-ts/models": [
+        "libs/contacts/ts/src/models/index.ts"
+      ],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
       ]

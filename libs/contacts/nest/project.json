@@ -1,0 +1,39 @@
+{
+  "name": "contacts-nest",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/contacts/nest/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:contacts tech:nest"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/contacts/nest",
+        "tsConfig": "libs/contacts/nest/tsconfig.lib.json",
+        "packageJson": "libs/contacts/nest/package.json",
+        "main": "libs/contacts/nest/src/index.ts",
+        "assets": ["libs/contacts/nest/*.md"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/contacts/nest/jest.config.ts"
+      }
+    }
+  }
+}
