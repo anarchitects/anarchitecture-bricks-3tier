@@ -77,12 +77,82 @@
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "css",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "vitest"
+    },
+    "@nx/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "vitest",
+      "strict": true,
+      "style": "css",
+      "buildable": true,
+      "publishable": true,
+      "skipModule": true,
+      "standalone": false,
+      "prefix": "anarchitects",
+      "importPath": "@anarchitects/<domain>-angular-<layer>-<type>",
+      "directory": "libs/<domain>/angular/<layer>/<type>",
+      "name": "<domain>-angular-<layer>-<type>",
+      "tags": "domain:<domain>, tech:angular, layer:<layer>, type:<type>"
+    },
+    "@nx/js:library": {
+      "linter": "eslint",
+      "unitTestRunner": "vitest",
+      "publishable": true,
+      "bundler": "vite"
+    },
+    "@nx/nest:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "publishable": true,
+      "buildable": true,
+      "importPath": "@anarchitects/<domain>-nest-<layer>-<type>",
+      "strict": true,
+      "directory": "libs/<domain>/nest/<layer>/<type>",
+      "name": "<domain>-nest-<layer>-<type>",
+      "tags": "domain:<domain>, tech:nest, layer:<layer>, type:<type>"
+    },
+    "@nx/angular:component": {
+      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
+      "style": "css",
+      "changeDetection": "OnPush",
+      "displayBlock": true,
+      "selector": "anarchitects-<domain>-<component>-<name>"
     }
   },
   "release": {
     "version": {
-      "preVersionCommand": "yarn dlx nx run-many -t build"
+      "preVersionCommand": "yarn dlx nx run-many -t build",
+      "conventionalCommits": true
+    },
+    "projectsRelationship": "independent",
+    "changelog": {
+      "projectChangelogs": {
+        "file": false,
+        "createRelease": "github"
+      }
+    },
+    "conventionalCommits": {
+      "types": {
+        "init": {
+          "semverBump": "none",
+          "message": "init: initial commit"
+        },
+        "docs": {
+          "semverBump": "none"
+        },
+        "chore": {
+          "semverBump": "none"
+        },
+        "style": {
+          "semverBump": "none"
+        },
+        "refactor": {
+          "semverBump": "patch"
+        },
+        "ci": {
+          "semverBump": "none"
+        }
+      }
     }
   }
 }

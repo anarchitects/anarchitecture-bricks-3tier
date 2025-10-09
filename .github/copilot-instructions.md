@@ -1,87 +1,152 @@
-# Copilot Instructions – Anarchitecture Bricks 3Tier
+# 🧠 Copilot Instructions – Anarchitecture Bricks 3-Tier
 
-This repository is **libraries-only** and **contracts-first**.  
-Copilot must follow the conventions below when generating or modifying code.
+This repository provides contracts-first, libraries-only bricks, organized by domain and technology.
+Copilot must follow the conventions below when generating, moving, or updating code.
 
----
+## 🔩 Global Rules
 
-## Global Rules
+- Never create apps in this repo — only libs/ and contracts/.
+- Each domain has one package per tech stack:
+- @anarchitects/{domain}-ts
+- @anarchitects/{domain}-angular
+- @anarchitects/{domain}-nest
+- Each package uses subpath exports to separate layers (e.g. /application, /presentation, /infrastructure-\*, /config, /state).
+- Contracts drive everything — contracts/openapi.yaml is the source of truth.
+- Always use generated DTOs, schemas, and API clients — never hand-code HTTP or duplication.
+- Enforce the 3-tier pattern in every stack, plus optional config and state layers.
 
-- **Never create apps** in this repo.
-- Work only inside `libs/` and `contracts/`.
-- Treat `contracts/openapi.yaml` as the **source of truth** for API definitions.
-- Always generate API clients/stubs from the contract, never hand-code raw clients.
-- Respect **3-tier layering** in every stack.
+## 🧱 Layering by Tech
 
----
+### 🅰️ Angular (Frontend)
 
-## Layering
+| Layer        | Subpath      | Responsibility                                                                                      |
+| ------------ | ------------ | --------------------------------------------------------------------------------------------------- |
+| ui/          | /ui          | Presentational components (standalone, dumb). No logic or HTTP.                                     |
+| feature/     | /feature     | Smart orchestration and use-case logic. Defines ports for data access.                              |
+| data-access/ | /data-access | Implements feature ports using generated OpenAPI clients. Handles HTTP, error mapping, and facades. |
+| state/       | /state       | Domain Signal Store — manages reactive state (signal, computed). Consumed by feature and ui.        |
+| config/      | /config      | Provides InjectionTokens (API_BASE_URL, DEFAULT_PAGE_SIZE) and provide{Domain}Config() helpers.     |
+| util/        | /util        | Pure helper functions, formatters, mappers.                                                         |
 
-### Frontend libraries
+#### Dependency rule:
 
-- **ui/** → Presentational only (no business logic, no HTTP).
-- **feature/** → Smart orchestration, state, route resolvers.
-- **data-access/** → API facades, signal stores, generated OpenAPI clients.
-- **util/** → Pure helpers.
+ui ← feature ← state ← data-access ← config ← dtos/models
+Never reverse or skip layers.
 
-### Backend libraries
+⸻
 
-- **controllers/** → Framework-agnostic controller interfaces. No business logic.
-- **services/** → Business logic interfaces + light implementations. Depend only on common + infra ports.
-- **infrastructure/** → Adapters: DB, mail, external APIs. Must not depend on controllers.
-- **util/** → Pure helpers.
+### 🦄 NestJS (Backend)
 
-### Common
+| Layer             | Subpath                                                | Responsibility                                                                                                              |
+| ----------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| application/      | /application                                           | Use-case services and ports (abstract classes & tokens). No infrastructure dependencies.                                    |
+| presentation/     | /presentation                                          | Controllers, routing, and DTO mapping. Imports application, never infrastructure.                                           |
+| infrastructure-\* | /infrastructure-persistence, /infrastructure-mailer, … | Implements application ports (DB, mail, APIs). Must not depend on presentation.                                             |
+| config/           | /config                                                | Typed configuration layer. Exports registerAs() config and optional ConfigModule. No direct environment reads outside here. |
+| util/             | /util                                                  | Pure, framework-agnostic helpers.                                                                                           |
 
-- **dtos/** → DTOs (TypeScript + JSON schemas).
-- **models/** → Interfaces shared across stacks.
-- **validators/** → Validation schemas/tests.
-- **messaging/** → Event definitions.
+#### Dependency rule:
 
-### Polyglot extensions
+presentation → application ← infrastructure
+config is imported by infrastructure or the app composition root.
 
-- **angular/** → Angular-specific UI/feature/data-access components.
-- **nest/** → NestJS helpers (decorators, guards, pipes).
-- **rails/** → Service objects, ActiveRecord adapters (no routes).
-- **laravel/** → Service classes, Eloquent adapters, FormRequests.
+### 🧩 Shared TypeScript (Common)
 
----
+| Layer       | Subpath     | Responsibility                                                  |
+| ----------- | ----------- | --------------------------------------------------------------- |
+| dtos/       | /dtos       | Data Transfer Objects (TypeBox or Zod). Generated from OpenAPI. |
+| models/     | /models     | Domain entities and interfaces.                                 |
+| validators/ | /validators | Schema validators and transformation helpers.                   |
+| messaging/  | /messaging  | Domain events (use past tense).                                 |
+| util/       | /util       | Shared functional utilities.                                    |
 
-## Contracts & Codegen
+### 🧬 Polyglot Extensions
 
-- Generate TS clients into `libs/ts/web/data-access/src/generated/`.
-- Rails/Laravel stubs go into `libs/rails/.../generated/` or `libs/laravel/.../generated/`.
-- Contract tests live in `tools/contract-tests/`.
+| Tech         | Location              | Notes                                      |
+| ------------ | --------------------- | ------------------------------------------ |
+| Rails        | libs/{domain}/rails   | Service objects and ActiveRecord adapters. |
+| Laravel      | libs/{domain}/laravel | Service classes and Eloquent adapters.     |
+| Other stacks | libs/{domain}/{tech}  | Follow same 3-tier + config convention.    |
 
-Copilot should suggest updates to generated code only via codegen commands (not manual edits).
+### 📜 Contracts & Codegen
 
----
+- Treat contracts/openapi.yaml (and optional asyncapi.yaml) as authoritative.
+- Generate:
+- Schemas → contracts/schemas/
+- TypeScript clients → libs/{domain}/angular/src/data-access/generated/
+- Ruby/PHP stubs → libs/{domain}/{tech}/generated/
+- Contract tests live under tools/contract-tests/.
 
-## Naming
+Copilot **must not modify generated code manually** — only through codegen commands.
 
-- TS imports: `@anarchitects/{slice}`
-- Ruby gems: `anarchitects-{slice}`
-- PHP composer: `anarchitects/{slice}`
-- Events: use past tense (`BookingCreatedEvent`).
 
----
+### 🧭 Naming & Imports
 
-## Do
+- TypeScript: @anarchitects/{domain}-{tech}/{subpath}
+- Examples:
+- @anarchitects/contacts-angular/feature
+- @anarchitects/contacts-angular/config
+- @anarchitects/contacts-nest/application
+- @anarchitects/contacts-nest/infrastructure-persistence
+- Ruby gems: anarchitects-{domain}
+- PHP packages: anarchitects/{domain}
+- Events: use past tense (e.g. ContactCreatedEvent, BookingConfirmedEvent).
 
-- Enforce strict separation (ui ← feature ← data-access).
-- Use DTOs/interfaces from `libs/common`.
-- Expose ports in `services` and implement them in `infrastructure`.
-- Propose validators/tests when adding new DTOs.
-- Always respect Nx module boundaries.
+### ✅ Do
 
----
+- Follow dependency direction strictly (UI ← Feature ← State ← Data-access; Presentation → Application ← Infrastructure).
+- Use generated DTOs and shared models (common-ts-\*).
+- Define ports in Application/Feature layers, implement them in Infrastructure/Data-access.
+- Use typed configuration in /config, not hardcoded env reads.
+- Store domain state in /state using Angular signals, not global stores.
+- Respect Nx module boundaries and tags.
+- Suggest validators/tests when adding new DTOs.
+- Keep all libraries publishable and versioned per tech.
 
-## Don’t
+### 🚫 Don’t
 
-- Add any `apps/` directories or app bootstraps.
-- Hardcode HTTP/fetch calls in `feature` or `ui`.
-- Import `infrastructure` directly into `controllers`.
-- Duplicate contract definitions in code.
+- Create any apps/ or bootstrap files.
+- Mix frontend and backend code in one library.
+- Import infrastructure directly into presentation/controllers.
+- Hardcode API URLs or secrets.
+- Duplicate or override contract-generated DTOs.
+- Commit generated code without running the generator.
 - Mix Angular/Nest code into Rails or Laravel slices.
+- Add external state managers (no NgRx, Akita, etc.) — use signals.
 
----
+### ⚙️ Example Imports
+
+**Angular**
+```ts
+import { provideContactsConfig } from '@anarchitects/contacts-angular/config';
+import { ContactsFacade } from '@anarchitects/contacts-angular/feature';
+import { ContactsStore } from '@anarchitects/contacts-angular/state';
+import { provideContactsDataPort } from '@anarchitects/contacts-angular/data-access';
+```
+**NestJS**
+
+```ts
+import { ContactsApplicationModule } from '@anarchitects/contacts-nest/application';
+import { ContactsPresentationModule } from '@anarchitects/contacts-nest/presentation';
+import { ContactsPersistenceModule } from '@anarchitects/contacts-nest/infrastructure-persistence';
+import { ContactsConfigModule } from '@anarchitects/contacts-nest/config';
+
+```
+
+### 🧱 Summary of Layers
+
+| Layer            | Exists In | Purpose                               |
+|------------------|-----------|---------------------------------------|
+| ui               | Angular   | Presentation (components)             |
+| feature          | Angular   | Orchestration, facades, ports         |
+| state            | Angular   | Signal store (domain state)           |
+| data-access      | Angular   | HTTP adapters, OpenAPI clients        |
+| config           | Angular/Nest | Typed configuration               |
+| application      | Nest      | Use-cases, ports                      |
+| presentation     | Nest      | Controllers                           |
+| infrastructure-* | Nest      | Implement ports (DB, mail, etc.)      |
+| common           | TS        | DTOs, models, validators              |
+
+
+**Copilot’s primary goal:**
+Generate modular, contract-driven code consistent with the 3-tier structure, using typed config and reactive state patterns — never apps, always reusable bricks.

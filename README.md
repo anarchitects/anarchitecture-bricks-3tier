@@ -1,131 +1,179 @@
-# Anarchitecture Bricks – 3Tier (Libraries Only)
+# 🧱 Anarchitecture Bricks – 3-Tier (Libraries Only)
 
-> **Purpose:** A contract-driven set of reusable libraries, organized with a classic **3-tier pattern**.  
-> **No apps in this repo.** Only **libraries** under `libs/`.  
-> **Polyglot-ready**: supports TypeScript/Angular/NestJS, Ruby/Rails, and PHP/Laravel.  
-> **Domain-first naming**: libraries are published as `@anarchitects/<domain>-<tech>-<layer>`.
+> **Purpose:** Modular, **contracts-first**, reusable libraries for scalable software architectures.  
+> **No apps.** Only **publishable libraries** under `libs/`.  
+> **Polyglot-ready:** supports **TypeScript**, **Angular**, **NestJS**, **Rails**, and **Laravel**.  
+> **Domain-first design:** one package per domain per tech stack, organized into clear tiers.
 
----
-
-## 🌍 Principles
+## 🌍 Core Principles
 
 1. **Contracts-first**
-
-   - The **source of truth** is `contracts/openapi.yaml` (plus optional `asyncapi.yaml`).
-   - JSON Schemas live in `contracts/schemas/` (generated).
-   - All clients, DTOs, and validators are derived from these contracts.
+   - The **source of truth** is `contracts/openapi.yaml` (and optional `asyncapi.yaml`).
+   - JSON Schemas are generated under `contracts/schemas/`.
+   - All DTOs, validators, and clients are **derived from the contracts**, never hand-written.
 
 2. **Libraries-only**
-
-   - This repo contains **no apps**.
-   - Consumers (frontends, backends, services) live in separate repositories and consume these libraries.
+   - This repository contains **no apps or bootstraps**.
+   - Apps (frontend, backend, mobile, etc.) consume these packages via npm/gem/composer.
 
 3. **Domain-first modularity**
+   - Each **domain** (`contacts`, `bookings`, …) has one package per tech stack:
+     ```
+     @anarchitects/<domain>-ts
+     @anarchitects/<domain>-angular
+     @anarchitects/<domain>-nest
+     ```
+   - Each package uses **subpath exports** for its layers (e.g. `/application`, `/feature`, `/config`, …).
 
-   - Each domain (`contacts`, `bookings`, …) gets its own set of libraries.
-   - Package naming:
-     - `@anarchitects/<domain>-ts-frontend-data`
-     - `@anarchitects/<domain>-angular-data-access`
-     - `@anarchitects/<domain>-nest-services`
-     - `@anarchitects/<domain>-nest-infrastructure`
-   - Shared/generated types live in `@anarchitects/ts-contracts`.
+4. **3-Tier + Config/State pattern**
+   - A lightweight, conventional structure that keeps logic layered yet practical.
+   - Angular → `ui` → `feature` → `state` → `data-access` → `config`
+   - NestJS → `presentation` → `application` ← `infrastructure` (+ `config`)
+   - Common → shared `dtos`, `models`, `validators`, `messaging`.
 
-4. **3-tier approach**
-
-   - **Frontend:** `ui` (dumb) → `feature` (smart) → `data-access` (facades + generated clients).
-   - **Backend:** `controllers` → `services` → `infrastructure` (ORM, mail, adapters).
-   - **Common:** shared DTOs, models, validators, events.
-
-5. **Polyglot**
-
-   - **TypeScript/Angular/NestJS**
-   - **Ruby/Rails**
-   - **PHP/Laravel**
-   - All stacks follow the same contracts.
+5. **Polyglot architecture**
+   - **TypeScript/Angular/NestJS** are first-class.
+   - **Rails** and **Laravel** follow the same contracts for parity.
 
 6. **Migration path**
-   - Start with modular 3-tier libraries.
-   - When complexity grows, migrate to or complement with a **DDD/Hexagonal** setup (`anarchitecture-bricks-ddd-hex`).
+   - Start with modular 3-tier bricks.
+   - Gradually evolve toward a **DDD/Hexagonal** setup (`anarchitecture-bricks-ddd-hex`) when complexity grows.
 
 ---
 
 ## 📦 Repository Structure
-
 ```
 contracts/
-  openapi.yaml
-  asyncapi.yaml
-  schemas/
+  openapi.yaml                # API source of truth
+  asyncapi.yaml               # optional async events
+  schemas/                    # generated JSON Schemas
 
 libs/
-  shared/
+  common/
     ts/
-      contracts/                      # @anarchitects/ts-contracts  (gegenereerde types voor ALLE domeinen)
+      dtos/                   # @anarchitects/common-ts/dtos
+      models/                 # @anarchitects/common-ts/models
+      validators/
+      messaging/
 
   contacts/
-    ts/
-      frontend-data/                  # @anarchitects/contacts-ts-frontend-data  (facades, gebruikt ts-contracts)
-    nest/
-        services/                     # @anarchitects/contacts-nest-services
-        infrastructure/               # @anarchitects/contacts-nest-infrastructure
-    angular/
-      data-access/                    # @anarchitects/contacts-angular-data-access
+    ts/                       # @anarchitects/contacts-ts
+    ├─ dtos/
+    ├─ models/
+    └─ index.ts
 
-  bookings/
-    ts/
-      frontend-data/                  # @anarchitects/bookings-ts-frontend-data
-    angular/
-      data-access/
+  angular/                  # @anarchitects/contacts-angular
+    ├─ ui/                  # presentational components
+    ├─ feature/             # facades, ports
+    ├─ state/               # signal store
+    ├─ data-access/         # API adapters & generated clients
+    ├─ config/              # InjectionTokens & providers
+    └─ util/
+
+  nest/                     # @anarchitects/contacts-nest
+    ├─ presentation/        # controllers
+    ├─ application/         # use-cases, ports
+    ├─ infrastructure-persistence/
+    ├─ infrastructure-mailer/
+    ├─ config/              # typed registerAs config
+    └─ util/
 ```
-
----
 
 ## 🚀 Quickstart
 
 ```bash
-# install dependencies
+# Install dependencies
 yarn install
 
-# lint contracts with Spectral
-nx run contracts:lint
+# Validate and generate from contracts
+nx run contracts:lint          # Spectral lint
+nx run contracts:gen-schemas   # JSON Schemas
+nx run contracts:gen-ts        # Generate TS DTOs + clients
 
-# generate JSON Schemas
-nx run contracts:gen-schemas
-
-# generate TypeScript contracts (api.types.ts)
-nx run ts-contracts:gen-client
-
-# build a domain lib (example: contacts frontend data)
-nx run contacts-ts-frontend-data:build
+# Build a domain package (e.g. Contacts)
+nx run contacts-angular:build
+nx run contacts-nest:build
 ```
 
-Generated types end up in:
-`libs/ts/contracts/src/generated/api.types.ts`
-Domain-specific facades (e.g. contacts) re-export and use these types.
+## 🧭 Package Naming & Imports
+
+Each domain has one package per tech stack with subpath exports:
+
+| Tech              | Example Import                                      | Description                |
+|-------------------|-----------------------------------------------------|----------------------------|
+| Angular           | @anarchitects/contacts-angular/feature              | Feature/facade layer       |
+|                   | @anarchitects/contacts-angular/state                | Signal store               |
+|                   | @anarchitects/contacts-angular/config               | Tokens/providers           |
+| NestJS            | @anarchitects/contacts-nest/application             | Services & ports           |
+|                   | @anarchitects/contacts-nest/presentation            | Controllers                |
+|                   | @anarchitects/contacts-nest/infrastructure-persistence | TypeORM repo            |
+|                   | @anarchitects/contacts-nest/config                  | registerAs config          |
+| TypeScript Common | @anarchitects/contacts-ts/models                    | Shared models              |
+
+
+## 🧩 Layer Overview
+
+| Layer            | Stack          | Purpose                                  |
+|------------------|----------------|------------------------------------------|
+| ui               | Angular        | Presentation (dumb components)           |
+| feature          | Angular        | Orchestration, ports                     |
+| state            | Angular        | Reactive Signal Store                    |
+| data-access      | Angular        | API adapters, generated clients          |
+| config           | Angular / Nest | Typed configuration (InjectionTokens or registerAs) |
+| presentation     | Nest           | Controllers / routing                    |
+| application      | Nest           | Business logic, ports                    |
+| infrastructure-* | Nest           | Adapters (DB, mail, external APIs)       |
+| common           | TS             | DTOs, models, validators, events         |
+
+
+## 🧩 Dependency Direction
+```
+Angular:       ui ← feature ← state ← data-access ← config ← dtos/models
+NestJS:         presentation → application ← infrastructure
+Shared/Common:  used across both, never depends on framework code
+```
+
+
+## ⚙️ Tooling
+- Nx for build, lint, test, and publish orchestration.
+- TypeBox / Zod for DTOs and schemas.
+- Vitest / Jest for unit testing.
+- Spectral for contract linting.
+- OpenAPI Generator for client creation.
+- TypeORM / MailerModule for infra adapters.
+- Angular Signals for reactive state.
+
+## 🤖 Copilot & Agents
+
+This repo integrates GitHub Copilot Chat & Agents for consistent automation.
+- `.github/copilot-instructions.md` – authoritative coding conventions (layering, contracts-first, naming, codegen rules).
+- `AGENTS.md` – operational limits for automation (Nx tooling, no apps, safe commands).
+Coding conventions, layering rules, and naming standards.
 
 ⸻
 
-## 🔧 Current Tasks (via Nx)
+## 🔧 Nx Targets
 
-- contracts:lint → Lint openapi.yaml
-- contracts:gen-schemas → Generate JSON Schemas
-- ts-contracts:gen-client → Generate TypeScript API types
-- contacts-ts-frontend-data:build → Build publishable frontend data lib
+| Command                         | Description                       |
+|---------------------------------|-----------------------------------|
+| `nx run contracts:lint`         | Lint the OpenAPI contract         |
+| `nx run contracts:gen-schemas`  | Generate JSON Schemas             |
+| `nx run contracts:gen-ts`       | Generate TS clients & DTOs        |
+| `nx run <domain>-angular:build` | Build Angular package             |
+| `nx run <domain>-nest:build`    | Build Nest package                |
+| `nx affected -t build`          | Build all changed libraries       |
 
-These targets will later be replaced or simplified using inferred Nx plugins from anarchitecture-nx-plugins.
 
 ⸻
 
 ## 🧩 Roadmap
-
 - ✅ Contracts-first structure
-- ✅ 3-tier, domain-first libraries-only skeleton
-- ⏳ Nx plugins for contracts and OpenAPI generation
-- ⏳ Extended contract tests (Schemathesis, golden path validation)
+- ✅ Domain-first, subpath-exported libraries
+- ✅ Config & State layers for Nest/Angular
+- ⏳ Nx inferred-tasks plugins (anarchitecture-nx-plugins)
+- ⏳ Extended contract testing (Schemathesis)
 - ⏳ Rails & Laravel stub generation
-- ⏳ Publish as npm packages / gems / composer packages
-
-⸻
+- ⏳ Automated publishing to npm/gems/composer
 
 ## 📜 License
 
