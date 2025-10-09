@@ -1,0 +1,24 @@
+{
+  "name": "@anarchitects/contacts-ts",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    "./dtos": "./dtos/index.js",
+    "./models": "./models/index.js",
+    ".": "./index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./*.d.ts",
+        "./lib/dtos/index.d.ts",
+        "./lib/models/index.d.ts"
+      ]
+    }
+  },
+  "dependencies": {
+    "@sinclair/typebox": "0.34.41"
+  }
+}

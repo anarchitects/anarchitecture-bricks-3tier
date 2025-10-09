@@ -98,7 +98,12 @@
       "linter": "eslint",
       "unitTestRunner": "vitest",
       "publishable": true,
-      "bundler": "vite"
+      "bundler": "vite",
+      "importPath": "@anarchitects/<domain>-ts-<layer>-<type>",
+      "strict": true,
+      "directory": "libs/<domain>/ts/<layer>/<type>",
+      "name": "<domain>-ts-<layer>-<type>",
+      "tags": "domain:<domain>, tech:ts, layer:<layer>, type:<type>"
     },
     "@nx/nest:library": {
       "linter": "eslint",
