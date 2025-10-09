@@ -120,6 +120,13 @@
       "directory": "libs/<domain>/nest/<layer>/<type>",
       "name": "<domain>-nest-<layer>-<type>",
       "tags": "domain:<domain>, tech:nest, layer:<layer>, type:<type>"
+    },
+    "@nx/angular:component": {
+      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
+      "style": "css",
+      "changeDetection": "OnPush",
+      "displayBlock": true,
+      "selector": "anarchitects-<domain>-<component>-<name>"
     }
   },
   "release": {

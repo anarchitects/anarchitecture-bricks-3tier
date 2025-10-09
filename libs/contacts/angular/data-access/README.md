@@ -25,17 +25,17 @@ import { Component, inject } from '@angular/core';
 import { ContactsApi } from '@anarchitects/contacts-angular-data-access';
 
 @Component({
-	selector: 'contact-form',
-	template: `<!-- form template -->`,
+  selector: 'contact-form',
+  template: `<!-- form template -->`,
 })
 export class ContactFormComponent {
-	private readonly api = inject(ContactsApi);
+  private readonly api = inject(ContactsApi);
 
-	submit(formValue: { name: string; email: string; message: string }) {
-		this.api.createContact(formValue).subscribe(() => {
-			// handle success UI
-		});
-	}
+  submit(formValue: { name: string; email: string; message: string }) {
+    this.api.createContact(formValue).subscribe(() => {
+      // handle success UI
+    });
+  }
 }
 ```
 
