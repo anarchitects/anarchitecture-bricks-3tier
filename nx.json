@@ -47,6 +47,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/angular:package": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "plugins": [
@@ -122,8 +127,8 @@
       "tags": "domain:<domain>, tech:nest, layer:<layer>, type:<type>"
     },
     "@nx/angular:component": {
-      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
       "style": "css",
+      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
       "changeDetection": "OnPush",
       "displayBlock": true,
       "selector": "anarchitects-<domain>-<component>-<name>"

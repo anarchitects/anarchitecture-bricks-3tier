@@ -1,0 +1,17 @@
+{
+  "name": "@anarchitects/contacts-angular",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@anarchitects/contacts-ts": "0.0.1",
+    "@angular/forms": "~20.3.0",
+    "@ngrx/signals": "^20.0.1",
+    "@ngrx/operators": "^20.0.1",
+    "rxjs": "~7.8.0",
+    "vite": "^7.0.0",
+    "@analogjs/vite-plugin-angular": "~1.19.1",
+    "@nx/vite": "21.6.3"
+  },
+  "sideEffects": false
+}

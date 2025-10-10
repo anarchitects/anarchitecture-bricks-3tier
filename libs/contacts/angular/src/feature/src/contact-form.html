@@ -1,0 +1,10 @@
+<anarchitects-contacts-ui-form [contactForm]="form" (submit)="onSubmit()" />
+@if (success()) {
+<p class="success-message">Your message has been sent successfully!</p>
+} @else if (loading()) {
+<p class="loading-message">Sending your message...</p>
+} @else if (error()) {
+<p class="error-message">
+  There was an error sending your message. Please try again later.
+</p>
+}
