@@ -15,6 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@anarchitects/forms-ts": ["libs/forms/ts/src/index.ts"],
+      "@anarchitects/forms-ts/dtos": ["libs/forms/ts/src/dtos/index.ts"],
+      "@anarchitects/forms-ts/models": ["libs/forms/ts/src/models/index.ts"],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
       ]
