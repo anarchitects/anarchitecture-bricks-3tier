@@ -1,0 +1,39 @@
+{
+  "name": "forms-nest",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/forms/nest/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:forms", "tech:nest"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/forms/nest",
+        "tsConfig": "libs/forms/nest/tsconfig.lib.json",
+        "packageJson": "libs/forms/nest/package.json",
+        "main": "libs/forms/nest/src/index.ts",
+        "assets": ["libs/forms/nest/*.md"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/forms/nest/jest.config.ts"
+      }
+    }
+  }
+}

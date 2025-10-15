@@ -24,7 +24,9 @@ export interface FormConfig {
   security?: { honeypot?: string; captcha?: 'turnstile' | 'hcaptcha' | 'none' };
   delivery?: {
     adminEmail?: string;
-    autoReply?: { enabled: boolean; templateId: string };
+    subject?: string;
+    templateId?: string;
+    autoReply?: { enabled: boolean; templateId: string; subject: string };
     webhooks?: { url: string; secret?: string }[];
   };
 }
