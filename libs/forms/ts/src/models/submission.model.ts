@@ -1,4 +1,4 @@
-export type SubmissionRecord = {
+export type Submission = {
   id: string;
   formId: string;
   formVersion: number;

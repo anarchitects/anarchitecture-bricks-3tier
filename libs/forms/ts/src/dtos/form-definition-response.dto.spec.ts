@@ -1,14 +1,24 @@
 import { TypeSystem } from '@sinclair/typebox/system';
 import { Value } from '@sinclair/typebox/value';
 import { faker } from '@faker-js/faker';
-import { FormDefinitionResponseSchema, FormDefinitionResponseDTO } from './form-definition-response.dto';
+import {
+  FormDefinitionResponseSchema,
+  FormDefinitionResponseDTO,
+} from './form-definition-response.dto';
 
 TypeSystem.Format('email', (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
 TypeSystem.Format('uri', (value) => /^https?:\/\/.+/.test(value));
 
 const buildValidFormField = () => ({
   name: faker.lorem.word(),
-  kind: faker.helpers.arrayElement(['string', 'email', 'textarea', 'boolean', 'select', 'file'] as const),
+  kind: faker.helpers.arrayElement([
+    'string',
+    'email',
+    'textarea',
+    'boolean',
+    'select',
+    'file',
+  ] as const),
   required: faker.datatype.boolean(),
   minLength: faker.number.int({ min: 0, max: 100 }),
   maxLength: faker.number.int({ min: 101, max: 1000 }),
@@ -28,10 +38,17 @@ const buildValidFormField = () => ({
 const buildValidFormDefinitionResponse = (): FormDefinitionResponseDTO => ({
   id: faker.string.uuid(),
   version: faker.number.int({ min: 1, max: 100 }),
-  fields: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, buildValidFormField),
+  fields: Array.from(
+    { length: faker.number.int({ min: 1, max: 5 }) },
+    buildValidFormField
+  ),
   security: {
     honeypot: faker.lorem.word(),
-    captcha: faker.helpers.arrayElement(['turnstile', 'hcaptcha', 'none'] as const),
+    captcha: faker.helpers.arrayElement([
+      'turnstile',
+      'hcaptcha',
+      'none',
+    ] as const),
   },
   delivery: {
     adminEmail: faker.internet.email(),
@@ -60,7 +77,9 @@ describe('FormDefinitionResponseSchema', () => {
 
   it('validates a correct form definition response', () => {
     const validResponse = buildValidFormDefinitionResponse();
-    expect([...Value.Errors(FormDefinitionResponseSchema, validResponse)]).toStrictEqual([]);
+    expect([
+      ...Value.Errors(FormDefinitionResponseSchema, validResponse),
+    ]).toStrictEqual([]);
   });
 
   it('validates minimal form definition response', () => {
@@ -74,24 +93,30 @@ describe('FormDefinitionResponseSchema', () => {
         },
       ],
     };
-    expect([...Value.Errors(FormDefinitionResponseSchema, minimalResponse)]).toStrictEqual([]);
+    expect([
+      ...Value.Errors(FormDefinitionResponseSchema, minimalResponse),
+    ]).toStrictEqual([]);
   });
 
   it('enforces id as string type', () => {
     const validResponse = buildValidFormDefinitionResponse();
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        id: 123,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          id: 123,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        id: null,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          id: null,
+        }),
+      ].length
     ).toBeGreaterThan(0);
   });
 
@@ -99,24 +124,30 @@ describe('FormDefinitionResponseSchema', () => {
     const validResponse = buildValidFormDefinitionResponse();
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        version: 0,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          version: 0,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        version: -1,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          version: -1,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        version: 1.5,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          version: 1.5,
+        }),
+      ].length
     ).toBeGreaterThan(0);
   });
 
@@ -124,47 +155,72 @@ describe('FormDefinitionResponseSchema', () => {
     const validResponse = buildValidFormDefinitionResponse();
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        fields: 'not-an-array',
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          fields: 'not-an-array',
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        fields: [{
-          name: 'test',
-          kind: 'invalid-kind',
-        }],
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          fields: [
+            {
+              name: 'test',
+              kind: 'invalid-kind',
+            },
+          ],
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        fields: [{
-          kind: 'string',
-          // missing name
-        }],
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          fields: [
+            {
+              kind: 'string',
+              // missing name
+            },
+          ],
+        }),
+      ].length
     ).toBeGreaterThan(0);
   });
 
   it('validates field kind enum values', () => {
     const validResponse = buildValidFormDefinitionResponse();
-    const validKinds = ['string', 'email', 'textarea', 'boolean', 'select', 'file'];
+    const validKinds = [
+      'string',
+      'email',
+      'textarea',
+      'boolean',
+      'select',
+      'file',
+    ];
 
     for (const kind of validKinds) {
-      expect(
-        [...Value.Errors(FormDefinitionResponseSchema, {
+      expect([
+        ...Value.Errors(FormDefinitionResponseSchema, {
           ...validResponse,
-          fields: [{
-            name: 'test',
-            kind: kind as 'string' | 'email' | 'textarea' | 'boolean' | 'select' | 'file',
-          }],
-        })]
-      ).toStrictEqual([]);
+          fields: [
+            {
+              name: 'test',
+              kind: kind as
+                | 'string'
+                | 'email'
+                | 'textarea'
+                | 'boolean'
+                | 'select'
+                | 'file',
+            },
+          ],
+        }),
+      ]).toStrictEqual([]);
     }
   });
 
@@ -172,49 +228,55 @@ describe('FormDefinitionResponseSchema', () => {
     const validResponse = buildValidFormDefinitionResponse();
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        security: {
-          honeypot: 'website',
-          captcha: 'invalid-captcha',
-        },
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          security: {
+            honeypot: 'website',
+            captcha: 'invalid-captcha',
+          },
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
-    expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
+    expect([
+      ...Value.Errors(FormDefinitionResponseSchema, {
         ...validResponse,
         security: {
           captcha: 'turnstile',
         },
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
   });
 
   it('validates optional delivery configuration', () => {
     const validResponse = buildValidFormDefinitionResponse();
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        delivery: {
-          adminEmail: 'invalid-email',
-        },
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          delivery: {
+            adminEmail: 'invalid-email',
+          },
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, {
-        ...validResponse,
-        delivery: {
-          adminEmail: faker.internet.email(),
-          webhooks: [
-            {
-              url: 'invalid-url',
-            },
-          ],
-        },
-      })].length
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          delivery: {
+            adminEmail: faker.internet.email(),
+            webhooks: [
+              {
+                url: 'invalid-url',
+              },
+            ],
+          },
+        }),
+      ].length
     ).toBeGreaterThan(0);
   });
 
@@ -223,14 +285,20 @@ describe('FormDefinitionResponseSchema', () => {
 
     const missingId = { ...validResponse } as Record<string, unknown>;
     delete missingId['id'];
-    expect([...Value.Errors(FormDefinitionResponseSchema, missingId)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(FormDefinitionResponseSchema, missingId)].length
+    ).toBeGreaterThan(0);
 
     const missingVersion = { ...validResponse } as Record<string, unknown>;
     delete missingVersion['version'];
-    expect([...Value.Errors(FormDefinitionResponseSchema, missingVersion)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(FormDefinitionResponseSchema, missingVersion)].length
+    ).toBeGreaterThan(0);
 
     const missingFields = { ...validResponse } as Record<string, unknown>;
     delete missingFields['fields'];
-    expect([...Value.Errors(FormDefinitionResponseSchema, missingFields)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(FormDefinitionResponseSchema, missingFields)].length
+    ).toBeGreaterThan(0);
   });
 });

@@ -4,7 +4,7 @@ import {
   SubmissionsRepository,
 } from '../ports/submissions.repository.port';
 import { MAILER_PORT, MailerPort } from '../ports/mailer.port';
-import { SubmissionRecord } from '../types/submission-record.type';
+import { Submission } from '@anarchitects/forms-ts/models';
 import { FormsService } from './forms.service';
 
 @Injectable()
@@ -16,8 +16,15 @@ export class SubmissionsService {
     private readonly formsService: FormsService
   ) {}
 
-  async submit(formId: string, input: SubmissionRecord) {
-    const { config } = await this.formsService.getDefinition(formId);
+  async submit(input: Partial<Submission>) {
+    const { formId, formVersion = 1 } = input;
+    if (!formId) {
+      throw new Error('Form ID is required');
+    }
+    const { config } = await this.formsService.getDefinition(
+      formId,
+      formVersion
+    );
     const rec = await this.repo.createSubmission(input);
     // send email to site admin
     if (config.delivery?.adminEmail) {
@@ -30,7 +37,7 @@ export class SubmissionsService {
     }
     // send auto-reply to user if enabled
     if (config.delivery?.autoReply?.enabled) {
-      const recipientEmail = input.payload['email'];
+      const recipientEmail = input.payload?.['email'];
       if (typeof recipientEmail !== 'string') {
         throw new Error('Auto-reply requires a recipient email address.');
       }
@@ -41,6 +48,6 @@ export class SubmissionsService {
         input.payload
       );
     }
-    return rec.id;
+    return rec;
   }
 }

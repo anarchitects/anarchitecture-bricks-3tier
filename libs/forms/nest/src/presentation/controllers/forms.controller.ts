@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { FormsService } from '../application';
+import { FormsService } from '../../application';
 
 @Controller('forms')
 export class FormsController {

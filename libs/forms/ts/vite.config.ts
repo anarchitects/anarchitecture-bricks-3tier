@@ -56,10 +56,7 @@ export default defineConfig(() => ({
     coverage: {
       reportsDirectory: '../../../coverage/libs/forms/ts',
       provider: 'v8' as const,
-      exclude: [
-        ...coverageConfigDefaults.exclude,
-        '**/index.ts',
-      ],
+      exclude: [...coverageConfigDefaults.exclude, '**/index.ts'],
     },
   },
 }));

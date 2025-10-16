@@ -1,6 +1,9 @@
 import { Value } from '@sinclair/typebox/value';
 import { faker } from '@faker-js/faker';
-import { FormDefinitionRequestSchema, FormDefinitionRequestDTO } from './form-definition-request.dto';
+import {
+  FormDefinitionRequestSchema,
+  FormDefinitionRequestDTO,
+} from './form-definition-request.dto';
 
 const buildValidFormDefinitionRequest = (): FormDefinitionRequestDTO => ({
   formId: faker.string.uuid(),
@@ -17,78 +20,92 @@ describe('FormDefinitionRequestSchema', () => {
 
   it('validates a correct form definition request', () => {
     const validRequest = buildValidFormDefinitionRequest();
-    expect([...Value.Errors(FormDefinitionRequestSchema, validRequest)]).toStrictEqual([]);
+    expect([
+      ...Value.Errors(FormDefinitionRequestSchema, validRequest),
+    ]).toStrictEqual([]);
   });
 
   it('enforces formId as string type', () => {
     const validRequest = buildValidFormDefinitionRequest();
 
     expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
-        ...validRequest,
-        formId: 123,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionRequestSchema, {
+          ...validRequest,
+          formId: 123,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
-        ...validRequest,
-        formId: null,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionRequestSchema, {
+          ...validRequest,
+          formId: null,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
-    expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
+    expect([
+      ...Value.Errors(FormDefinitionRequestSchema, {
         ...validRequest,
         formId: '',
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
   });
 
   it('enforces formVersion as integer with minimum 1', () => {
     const validRequest = buildValidFormDefinitionRequest();
 
     expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
-        ...validRequest,
-        formVersion: 'not-a-number',
-      })].length
+      [
+        ...Value.Errors(FormDefinitionRequestSchema, {
+          ...validRequest,
+          formVersion: 'not-a-number',
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
-        ...validRequest,
-        formVersion: 0,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionRequestSchema, {
+          ...validRequest,
+          formVersion: 0,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
-        ...validRequest,
-        formVersion: -1,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionRequestSchema, {
+          ...validRequest,
+          formVersion: -1,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
-        ...validRequest,
-        formVersion: 1.5,
-      })].length
+      [
+        ...Value.Errors(FormDefinitionRequestSchema, {
+          ...validRequest,
+          formVersion: 1.5,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
-    expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
+    expect([
+      ...Value.Errors(FormDefinitionRequestSchema, {
         ...validRequest,
         formVersion: 1,
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
 
-    expect(
-      [...Value.Errors(FormDefinitionRequestSchema, {
+    expect([
+      ...Value.Errors(FormDefinitionRequestSchema, {
         ...validRequest,
         formVersion: 999,
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
   });
 
   it('rejects requests with missing required fields', () => {
@@ -96,18 +113,21 @@ describe('FormDefinitionRequestSchema', () => {
 
     const missingFormId = { ...validRequest } as Record<string, unknown>;
     delete missingFormId['formId'];
-    expect([...Value.Errors(FormDefinitionRequestSchema, missingFormId)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(FormDefinitionRequestSchema, missingFormId)].length
+    ).toBeGreaterThan(0);
 
     const missingFormVersion = { ...validRequest } as Record<string, unknown>;
     delete missingFormVersion['formVersion'];
-    expect([...Value.Errors(FormDefinitionRequestSchema, missingFormVersion)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(FormDefinitionRequestSchema, missingFormVersion)].length
+    ).toBeGreaterThan(0);
   });
-
-
 
   it('captures specific TypeBox metadata', () => {
     const formIdSchema = FormDefinitionRequestSchema.properties['formId'];
-    const formVersionSchema = FormDefinitionRequestSchema.properties['formVersion'];
+    const formVersionSchema =
+      FormDefinitionRequestSchema.properties['formVersion'];
 
     expect(formIdSchema['type']).toBe('string');
     expect(formVersionSchema['type']).toBe('integer');

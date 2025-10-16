@@ -1,13 +1,11 @@
-import { SubmissionRecord } from '../types/submission-record.type';
+import { Submission } from '@anarchitects/forms-ts/models';
 
 export abstract class SubmissionsRepository {
-  abstract createSubmission(
-    input: Omit<SubmissionRecord, 'id' | 'createdAt'>
-  ): Promise<SubmissionRecord>;
-  abstract getSubmissions(): Promise<SubmissionRecord[]>;
+  abstract createSubmission(input: Partial<Submission>): Promise<Submission>;
+  abstract getSubmissions(): Promise<Submission[]>;
   abstract getSubmission(
-    options?: Partial<SubmissionRecord>
-  ): Promise<SubmissionRecord | null>;
+    options?: Partial<Submission>
+  ): Promise<Submission | null>;
 }
 
 export const SUBMISSIONS_REPOSITORY = Symbol('SUBMISSIONS_REPOSITORY');

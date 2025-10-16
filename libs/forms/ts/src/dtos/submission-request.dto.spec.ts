@@ -1,7 +1,10 @@
 import { TypeSystem } from '@sinclair/typebox/system';
 import { Value } from '@sinclair/typebox/value';
 import { faker } from '@faker-js/faker';
-import { SubmissionRequestSchema, SubmissionRequestDTO } from './submission-request.dto';
+import {
+  SubmissionRequestSchema,
+  SubmissionRequestDTO,
+} from './submission-request.dto';
 
 TypeSystem.Format('email', (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
 
@@ -27,31 +30,39 @@ describe('SubmissionRequestSchema', () => {
 
   it('validates a correct submission request', () => {
     const validSubmission = buildValidSubmissionRequest();
-    expect([...Value.Errors(SubmissionRequestSchema, validSubmission)]).toStrictEqual([]);
+    expect([
+      ...Value.Errors(SubmissionRequestSchema, validSubmission),
+    ]).toStrictEqual([]);
   });
 
   it('enforces formId as string type', () => {
     const validSubmission = buildValidSubmissionRequest();
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formId: 123,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formId: 123,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formId: null,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formId: null,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formId: undefined,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formId: undefined,
+        }),
+      ].length
     ).toBeGreaterThan(0);
   });
 
@@ -59,74 +70,88 @@ describe('SubmissionRequestSchema', () => {
     const validSubmission = buildValidSubmissionRequest();
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formVersion: 'not-a-number',
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formVersion: 'not-a-number',
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formVersion: 0,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formVersion: 0,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formVersion: -1,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formVersion: -1,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        formVersion: 1.5,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          formVersion: 1.5,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
-    expect(
-      [...Value.Errors(SubmissionRequestSchema, {
+    expect([
+      ...Value.Errors(SubmissionRequestSchema, {
         ...validSubmission,
         formVersion: 1,
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
   });
 
   it('enforces payload as record type', () => {
     const validSubmission = buildValidSubmissionRequest();
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        payload: 'not-an-object',
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          payload: 'not-an-object',
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        payload: 123,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          payload: 123,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
     expect(
-      [...Value.Errors(SubmissionRequestSchema, {
-        ...validSubmission,
-        payload: null,
-      })].length
+      [
+        ...Value.Errors(SubmissionRequestSchema, {
+          ...validSubmission,
+          payload: null,
+        }),
+      ].length
     ).toBeGreaterThan(0);
 
-    expect(
-      [...Value.Errors(SubmissionRequestSchema, {
+    expect([
+      ...Value.Errors(SubmissionRequestSchema, {
         ...validSubmission,
         payload: {},
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
 
-    expect(
-      [...Value.Errors(SubmissionRequestSchema, {
+    expect([
+      ...Value.Errors(SubmissionRequestSchema, {
         ...validSubmission,
         payload: {
           anyKey: 'anyValue',
@@ -135,8 +160,8 @@ describe('SubmissionRequestSchema', () => {
           arrayKey: [1, 2, 3],
           objectKey: { nested: 'value' },
         },
-      })]
-    ).toStrictEqual([]);
+      }),
+    ]).toStrictEqual([]);
   });
 
   it('rejects submissions with missing required fields', () => {
@@ -144,18 +169,25 @@ describe('SubmissionRequestSchema', () => {
 
     const missingFormId = { ...validSubmission } as Record<string, unknown>;
     delete missingFormId['formId'];
-    expect([...Value.Errors(SubmissionRequestSchema, missingFormId)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(SubmissionRequestSchema, missingFormId)].length
+    ).toBeGreaterThan(0);
 
-    const missingFormVersion = { ...validSubmission } as Record<string, unknown>;
+    const missingFormVersion = { ...validSubmission } as Record<
+      string,
+      unknown
+    >;
     delete missingFormVersion['formVersion'];
-    expect([...Value.Errors(SubmissionRequestSchema, missingFormVersion)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(SubmissionRequestSchema, missingFormVersion)].length
+    ).toBeGreaterThan(0);
 
     const missingPayload = { ...validSubmission } as Record<string, unknown>;
     delete missingPayload['payload'];
-    expect([...Value.Errors(SubmissionRequestSchema, missingPayload)].length).toBeGreaterThan(0);
+    expect(
+      [...Value.Errors(SubmissionRequestSchema, missingPayload)].length
+    ).toBeGreaterThan(0);
   });
-
-
 
   it('captures specific TypeBox metadata', () => {
     const formIdSchema = SubmissionRequestSchema.properties['formId'];

@@ -20,48 +20,34 @@ npm install @anarchitects/forms-ts @sinclair/typebox
 ## Quick Start
 
 ```typescript
-import { FormConfig, schemaFromConfig } from '@anarchitects/forms-ts';
+import { FormConfig, contactForm } from '@anarchitects/forms-ts';
+import { schemaFromConfig } from '@anarchitects/forms-ts/builders';
 import { Value } from '@sinclair/typebox/value';
 
-// Define your form configuration
-const contactForm: FormConfig = {
-  id: 'contact_form',
-  version: 1,
-  fields: [
-    {
-      name: 'name',
-      kind: 'string',
-      required: true,
-      minLength: 2,
-      maxLength: 100,
-      ui: { label: 'Full Name' },
-    },
-    {
-      name: 'email',
-      kind: 'email',
-      required: true,
-      ui: { label: 'Email Address' },
-    },
-    {
-      name: 'message',
-      kind: 'textarea',
-      required: true,
-      minLength: 10,
-      ui: { label: 'Message', rows: 5 },
-    },
-  ],
-  security: { honeypot: 'website' },
-  delivery: { adminEmail: 'admin@example.com' },
-};
+// Use the predefined contact form configuration
+console.log(contactForm);
+// {
+//   id: 'contact_default',
+//   version: 1,
+//   fields: [
+//     { name: 'name', kind: 'string', required: true, minLength: 2, maxLength: 100, ui: { label: 'Name' } },
+//     { name: 'email', kind: 'email', required: true, ui: { label: 'Email' } },
+//     { name: 'message', kind: 'textarea', required: true, minLength: 10, maxLength: 3000, ui: { label: 'Message', rows: 6 } },
+//     { name: 'consent', kind: 'boolean', required: true, ui: { label: 'I agree' } }
+//   ],
+//   security: { honeypot: 'website', captcha: 'none' },
+//   delivery: { adminEmail: 'admin@site.tld', autoReply: { enabled: true, templateId: 'contact_autoreply' } }
+// }
 
-// Generate validation schema
+// Generate validation schema from form config
 const schema = schemaFromConfig(contactForm);
 
-// Validate form data
+// Validate form submission data
 const formData = {
   name: 'John Doe',
   email: 'john@example.com',
-  message: 'Hello world!',
+  message: 'Hello world! This is a test message.',
+  consent: true,
 };
 
 const isValid = Value.Check(schema, formData);
@@ -149,7 +135,31 @@ console.log(errors); // []
 }
 ```
 
-## Security Configuration
+### Using DTOs for API Integration
+
+```typescript
+import { FormDefinitionRequestDTO, SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+
+// Request a form definition
+const formRequest: FormDefinitionRequestDTO = {
+  formId: 'contact_default',
+  formVersion: 1,
+};
+
+// Submit form data
+const submission: SubmissionRequestDTO = {
+  formId: 'contact_default',
+  formVersion: 1,
+  payload: {
+    name: 'John Doe',
+    email: 'john@example.com',
+    message: 'Hello world!',
+    consent: true,
+  },
+};
+```
+
+### Security Configuration
 
 ```typescript
 const secureForm: FormConfig = {
@@ -161,16 +171,19 @@ const secureForm: FormConfig = {
 };
 ```
 
-## Delivery Configuration
+### Delivery Configuration
 
 ```typescript
 const formWithDelivery: FormConfig = {
   // ... other config
   delivery: {
     adminEmail: 'admin@example.com',
+    subject: 'New Contact Form Submission',
+    templateId: 'contact_template',
     autoReply: {
       enabled: true,
-      templateId: 'contact_confirmation',
+      subject: 'Thank you for contacting us',
+      templateId: 'contact_autoreply',
     },
     webhooks: [
       {
@@ -188,32 +201,46 @@ const formWithDelivery: FormConfig = {
 
 - `FormConfig` - Main form configuration interface
 - `FormField` - Individual field configuration
-- `FieldKind` - Union of supported field types
-- `SubmissionDTO` - Generated submission data type
+- `FieldKind` - Union of supported field types (`'string' | 'email' | 'textarea' | 'boolean' | 'select' | 'file'`)
+- `FormDefinitionRequestDTO` - Request DTO for fetching form definitions
+- `FormDefinitionResponseDTO` - Response DTO containing complete form configuration
+- `SubmissionRequestDTO` - Request DTO for form submissions
+- `SubmissionResponseDTO` - Response DTO for submission results
 
 ### Functions
 
-- `schemaFromConfig(config: FormConfig)` - Generate TypeBox schema from form config
+- `schemaFromConfig(config: FormConfig)` - Generate TypeBox schema from form configuration
+
+### Pre-defined Forms
+
+- `contactForm` - Ready-to-use contact form configuration with name, email, message, and consent fields
 
 ## Exports
 
 The library provides subpath exports for better tree-shaking:
 
-```typescript
-// Main exports (models)
-import { FormConfig, contactForm } from '@anarchitects/forms-ts';
+````typescript
+// Main exports (models and predefined forms)
+import { FormConfig, FormField, contactForm } from '@anarchitects/forms-ts';
 
 // Models only
-import { FormField, FieldKind } from '@anarchitects/forms-ts/models';
+import { FormField, FieldKind, FormConfig } from '@anarchitects/forms-ts/models';
 
 // DTOs only
-import { SubmissionDTO } from '@anarchitects/forms-ts/dtos';
-```
+import {
+  FormDefinitionRequestDTO,
+  FormDefinitionResponseDTO,
+  SubmissionRequestDTO,
+  SubmissionResponseDTO
+} from '@anarchitects/forms-ts/dtos';
 
-## Contributing
+// Builders only
+import { schemaFromConfig } from '@anarchitects/forms-ts/builders';
+```## Contributing
 
 This library is part of the [Anarchitecture Bricks](https://github.com/anarchitects/anarchitecture-bricks-3tier) monorepo. See the main repository for contribution guidelines.
 
 ## License
 
 MIT
+````
