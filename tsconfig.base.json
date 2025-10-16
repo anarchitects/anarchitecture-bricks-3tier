@@ -15,7 +15,17 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@anarchitects/common-nest-config-mailer": [
+        "libs/common/nest/config/mailer/src/index.ts"
+      ],
+      "@anarchitects/forms-nest": ["libs/forms/nest/src/index.ts"],
+      "@anarchitects/forms-nest/application": [
+        "libs/forms/nest/src/application/index.ts"
+      ],
       "@anarchitects/forms-ts": ["libs/forms/ts/src/index.ts"],
+      "@anarchitects/forms-ts/builders": [
+        "libs/forms/ts/src/builders/index.ts"
+      ],
       "@anarchitects/forms-ts/dtos": ["libs/forms/ts/src/dtos/index.ts"],
       "@anarchitects/forms-ts/models": ["libs/forms/ts/src/models/index.ts"],
       "@anarchitects/ts-frontend-data-access": [

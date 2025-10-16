@@ -1,16 +1,16 @@
-import { describe, it, expect } from 'vitest';
 import { Value } from '@sinclair/typebox/value';
 import { TypeSystem } from '@sinclair/typebox/system';
 import { schemaFromConfig } from '../builders';
 import { contactForm } from '../models';
+import { faker } from '@faker-js/faker';
 
 TypeSystem.Format('email', (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
 
 const buildValidSubmission = () => ({
-  name: 'Ada Lovelace',
-  email: 'ada@example.test',
-  message: 'Hello from the forms-ts suite.',
-  consent: true,
+  name: faker.person.fullName(),
+  email: faker.internet.email(),
+  message: faker.lorem.sentence(),
+  consent: faker.datatype.boolean(),
 });
 
 describe('schemaFromConfig(contactForm)', () => {
@@ -75,17 +75,17 @@ describe('schemaFromConfig(contactForm)', () => {
     ).toBeGreaterThan(0);
 
     const missingConsent = { ...validSubmission } as Record<string, unknown>;
-    delete missingConsent.consent;
+    delete missingConsent['consent'];
     expect([...Value.Errors(schema, missingConsent)].length).toBeGreaterThan(0);
   });
 
   it('captures specific TypeBox metadata', () => {
-    const emailSchema = schema.properties.email;
-    const consentSchema = schema.properties.consent;
+    const emailSchema = schema.properties['email'];
+    const consentSchema = schema.properties['consent'];
 
-    expect('format' in emailSchema ? emailSchema.format : undefined).toBe(
+    expect('format' in emailSchema ? emailSchema['format'] : undefined).toBe(
       'email'
     );
-    expect(consentSchema.type).toBe('boolean');
+    expect(consentSchema['type']).toBe('boolean');
   });
 });

@@ -6,6 +6,7 @@
   "exports": {
     "./dtos": "./dtos/index.js",
     "./models": "./models/index.js",
+    "./builders": "./builders/index.js",
     ".": "./index.js"
   },
   "types": "./index.d.ts",

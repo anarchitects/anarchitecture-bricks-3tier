@@ -31,6 +31,12 @@ export const contactForm: FormConfig = {
   security: { honeypot: 'website', captcha: 'none' },
   delivery: {
     adminEmail: 'admin@site.tld',
-    autoReply: { enabled: true, templateId: 'contact_autoreply' },
+    subject: 'New contact form submission',
+    templateId: 'contact',
+    autoReply: {
+      enabled: true,
+      templateId: 'contact_autoreply',
+      subject: 'Thank you for contacting us!',
+    },
   },
 };
