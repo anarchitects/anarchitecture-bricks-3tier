@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   input,
+  signal,
 } from '@angular/core';
 import { FormsStore } from '@anarchitects/forms-angular/state';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
@@ -19,11 +20,7 @@ import { FormConfig } from '@anarchitects/forms-ts/models';
 })
 export class AnarchitectsFeatureForm {
   private readonly store = inject(FormsStore);
-  formConfig: FormConfig = {
-    id: '',
-    version: 0,
-    fields: [],
-  };
+  formConfig = signal<FormConfig>({ id: '', version: 1, fields: [] });
   formId = input.required<string>();
   formVersion = input<number>();
 
@@ -37,7 +34,7 @@ export class AnarchitectsFeatureForm {
     effect(() => {
       const config = this.store.selectedFormConfig();
       if (config) {
-        this.formConfig = config;
+        this.formConfig.set(config);
       }
     });
   }

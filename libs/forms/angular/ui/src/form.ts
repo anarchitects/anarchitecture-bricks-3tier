@@ -25,21 +25,28 @@ export class AnarchitectsUiForm {
 
   constructor() {
     effect(() => {
-      for (const f of this.config().fields) {
-        const v = [];
-        if (f.required) {
-          v.push(Validators.required);
+      const config = this.config();
+      if (config) {
+        this.formGroup.reset();
+        this.formGroup.clearValidators();
+        this.formGroup.clearAsyncValidators();
+        this.formGroup.updateValueAndValidity();
+        for (const f of config.fields) {
+          const v = [];
+          if (f.required) {
+            v.push(Validators.required);
+          }
+          if (f.minLength) {
+            v.push(Validators.minLength(f.minLength));
+          }
+          if (f.maxLength) {
+            v.push(Validators.maxLength(f.maxLength));
+          }
+          if (f.kind === 'email') {
+            v.push(Validators.email);
+          }
+          this.formGroup.addControl(f.name, this.fb.control(null, v));
         }
-        if (f.minLength) {
-          v.push(Validators.minLength(f.minLength));
-        }
-        if (f.maxLength) {
-          v.push(Validators.maxLength(f.maxLength));
-        }
-        if (f.kind === 'email') {
-          v.push(Validators.email);
-        }
-        this.formGroup.addControl(f.name, this.fb.control(null, v));
       }
     });
   }
