@@ -43,14 +43,14 @@ describe('AnarchitectsFeatureForm', () => {
     });
   });
   it('should update formConfig when store changes', () => {
-    expect(component.formConfig.id).toBe('test-form');
+    expect(component.formConfig().id).toBe('test-form');
     mockFormsStore.selectedFormConfig.set({
       id: 'updated-form',
       version: 2,
       fields: [],
     });
     fixture.detectChanges();
-    expect(component.formConfig.id).toBe('updated-form');
+    expect(component.formConfig().id).toBe('updated-form');
   });
   it('should call submitForm on submitForm', async () => {
     const submissionDto = {
