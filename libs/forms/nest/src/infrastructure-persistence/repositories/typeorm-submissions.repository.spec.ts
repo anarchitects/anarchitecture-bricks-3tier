@@ -44,7 +44,7 @@ describe('SubmissionsRepository', () => {
   it('should be defined', () => {
     expect(provider).toBeDefined();
   });
-  describe('getSubmissions', () =>{
+  describe('getSubmissions', () => {
     it('should return an array of submissions', async () => {
       const result = await provider.getSubmissions();
       expect(result).toEqual([mockSubmission]);
