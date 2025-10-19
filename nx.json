@@ -47,6 +47,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "@nx/angular:package": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "plugins": [
@@ -82,11 +87,11 @@
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "css",
-      "unitTestRunner": "vitest"
+      "unitTestRunner": "jest"
     },
     "@nx/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "vitest",
+      "unitTestRunner": "jest",
       "strict": true,
       "style": "css",
       "buildable": true,
@@ -121,11 +126,14 @@
       "tags": "domain:<domain>, tech:nest"
     },
     "@nx/angular:component": {
-      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
       "style": "css",
+      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
       "changeDetection": "OnPush",
       "displayBlock": true,
       "selector": "anarchitects-<domain>-<component>-<name>"
+    },
+    "@nx/angular:library-secondary-entry-point": {
+      "skipModule": true
     }
   },
   "release": {

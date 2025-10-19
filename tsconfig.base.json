@@ -18,6 +18,20 @@
       "@anarchitects/common-nest-config-mailer": [
         "libs/common/nest/config/mailer/src/index.ts"
       ],
+      "@anarchitects/forms-angular": ["libs/forms/angular/src/index.ts"],
+      "@anarchitects/forms-angular/config": [
+        "libs/forms/angular/config/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/data-access": [
+        "libs/forms/angular/data-access/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/feature": [
+        "libs/forms/angular/feature/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/state": [
+        "libs/forms/angular/state/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/ui": ["libs/forms/angular/ui/src/index.ts"],
       "@anarchitects/forms-nest": ["libs/forms/nest/src/index.ts"],
       "@anarchitects/forms-nest/application": [
         "libs/forms/nest/src/application/index.ts"
