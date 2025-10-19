@@ -17,14 +17,12 @@ describe('AnarchitectsFeatureForm', () => {
     }),
     getFormDefinition: jest.fn(),
     submitForm: jest.fn(),
-  }
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AnarchitectsFeatureForm],
-      providers: [
-        { provide: FormsStore, useValue: mockFormsStore },
-      ],
+      providers: [{ provide: FormsStore, useValue: mockFormsStore }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnarchitectsFeatureForm);

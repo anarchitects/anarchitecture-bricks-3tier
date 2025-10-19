@@ -50,9 +50,9 @@ const mockFormConfig: FormConfig = {
       ui: {
         label: 'I agree to the terms and conditions',
       },
-    }
-  ]
-}
+    },
+  ],
+};
 
 export const Primary: Story = {
   args: {
