@@ -42,6 +42,9 @@
       ],
       "@anarchitects/forms-ts/dtos": ["libs/forms/ts/src/dtos/index.ts"],
       "@anarchitects/forms-ts/models": ["libs/forms/ts/src/models/index.ts"],
+      "@anarchitects/storybook-angular": [
+        "libs/storybook/angular/src/index.ts"
+      ],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
       ]
