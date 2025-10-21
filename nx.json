@@ -157,6 +157,7 @@
     }
   },
   "release": {
+    "projects": ["!libs/storybook/**", "!libs/ts/**", "!contracts/**"],
     "version": {
       "preVersionCommand": "yarn dlx nx run-many -t build",
       "conventionalCommits": true
