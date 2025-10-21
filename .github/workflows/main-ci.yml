@@ -36,6 +36,7 @@ jobs:
 
       - uses: nrwl/nx-set-shas@v4
 
+      - run: yarn install --immutable
       # When you enable task distribution, run the e2e-ci task instead of e2e
       - run: yarn nx affected -t test build e2e-ci
       # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
