@@ -1,6 +1,7 @@
 # @anarchitects/forms-ts
 
-Schema-first form configuration and validation library built with TypeBox. Define forms declaratively and generate runtime validation schemas automatically.
+Schema-first form configuration and validation library built with TypeBox. Define forms declaratively
+and generate runtime validation schemas automatically.
 
 ## Features
 
@@ -219,7 +220,7 @@ const formWithDelivery: FormConfig = {
 
 The library provides subpath exports for better tree-shaking:
 
-````typescript
+```typescript
 // Main exports (models and predefined forms)
 import { FormConfig, FormField, contactForm } from '@anarchitects/forms-ts';
 
@@ -236,11 +237,12 @@ import {
 
 // Builders only
 import { schemaFromConfig } from '@anarchitects/forms-ts/builders';
-```## Contributing
+```
+
+## Contributing
 
 This library is part of the [Anarchitecture Bricks](https://github.com/anarchitects/anarchitecture-bricks-3tier) monorepo. See the main repository for contribution guidelines.
 
 ## License
 
-MIT
-````
+Released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
