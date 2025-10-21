@@ -10,6 +10,9 @@
     ".": "./index.js"
   },
   "types": "./index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "@sinclair/typebox": "0.34.41"
   }

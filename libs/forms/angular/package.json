@@ -12,5 +12,8 @@
   "dependencies": {
     "@anarchitects/forms-ts": "0.0.1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": false
 }
