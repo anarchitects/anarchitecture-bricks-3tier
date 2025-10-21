@@ -1,20 +1,13 @@
-# common-nest-config-mailer
-
-This library was generated with [Nx](https://nx.dev).
-
-## Building
-
-Run `nx build common-nest-config-mailer` to build the library.
-
-## Running unit tests
-
 # @anarchitects/common-nest-config-mailer
 
-A NestJS configuration module for email services, providing type-safe configuration management for mailer infrastructure.
+A NestJS configuration module for email services, providing type-safe configuration management for
+mailer infrastructure.
 
 ## Overview
 
-This library provides standardized configuration for email/mailer services in NestJS applications. It offers type-safe configuration schemas, validation, and dependency injection tokens for email service providers.
+This library provides standardized configuration for email/mailer services in NestJS applications.
+It offers type-safe configuration schemas, validation, and dependency injection tokens for email
+service providers.
 
 ## Features
 
@@ -92,10 +85,6 @@ interface MailerConfig {
 }
 ```
 
-## Building
+## License
 
-Run `nx build common-nest-config-mailer` to build the library.
-
-## Running unit tests
-
-Run `nx test common-nest-config-mailer` to execute the unit tests via [Jest](https://jestjs.io).
+Released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
