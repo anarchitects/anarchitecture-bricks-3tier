@@ -20,7 +20,14 @@
         "tsConfig": "libs/forms/nest/tsconfig.lib.json",
         "packageJson": "libs/forms/nest/package.json",
         "main": "libs/forms/nest/src/index.ts",
-        "assets": ["libs/forms/nest/*.md"]
+        "assets": ["libs/forms/nest/*.md"],
+        "additionalEntryPoints": [
+          "libs/forms/nest/src/application/index.ts",
+          "libs/forms/nest/src/infrastructure-mailer/index.ts",
+          "libs/forms/nest/src/infrastructure-persistence/index.ts",
+          "libs/forms/nest/src/presentation/index.ts"
+        ],
+        "generateExportsField": true
       }
     },
     "nx-release-publish": {

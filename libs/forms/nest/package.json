@@ -4,13 +4,6 @@
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
-  "exports": {
-    ".": "./src/index.js",
-    "./application": "./src/application/index.js",
-    "./presentation": "./src/presentation/index.js",
-    "./infrastructure-persistence": "./src/infrastructure-persistence/index.js",
-    "./infrastructure-mailer": "./src/infrastructure-mailer/index.js"
-  },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/platform-fastify": "^11.1.6",
