@@ -1,0 +1,16 @@
+{
+  "name": "@anarchitects/forms-ts",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    "./dtos": "./dtos/index.js",
+    "./models": "./models/index.js",
+    "./builders": "./builders/index.js",
+    ".": "./index.js"
+  },
+  "types": "./index.d.ts",
+  "peerDependencies": {
+    "@sinclair/typebox": "0.34.41"
+  }
+}

@@ -15,6 +15,36 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@anarchitects/common-nest-config-mailer": [
+        "libs/common/nest/config/mailer/src/index.ts"
+      ],
+      "@anarchitects/forms-angular": ["libs/forms/angular/src/index.ts"],
+      "@anarchitects/forms-angular/config": [
+        "libs/forms/angular/config/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/data-access": [
+        "libs/forms/angular/data-access/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/feature": [
+        "libs/forms/angular/feature/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/state": [
+        "libs/forms/angular/state/src/index.ts"
+      ],
+      "@anarchitects/forms-angular/ui": ["libs/forms/angular/ui/src/index.ts"],
+      "@anarchitects/forms-nest": ["libs/forms/nest/src/index.ts"],
+      "@anarchitects/forms-nest/application": [
+        "libs/forms/nest/src/application/index.ts"
+      ],
+      "@anarchitects/forms-ts": ["libs/forms/ts/src/index.ts"],
+      "@anarchitects/forms-ts/builders": [
+        "libs/forms/ts/src/builders/index.ts"
+      ],
+      "@anarchitects/forms-ts/dtos": ["libs/forms/ts/src/dtos/index.ts"],
+      "@anarchitects/forms-ts/models": ["libs/forms/ts/src/models/index.ts"],
+      "@anarchitects/storybook-angular": [
+        "libs/storybook/angular/src/index.ts"
+      ],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
       ]

@@ -10,7 +10,10 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s",
-      "!{projectRoot}/test-setup.[jt]s"
+      "!{projectRoot}/test-setup.[jt]s",
+      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
+      "!{projectRoot}/.storybook/**/*",
+      "!{projectRoot}/tsconfig.storybook.json"
     ],
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
   },
@@ -42,6 +45,24 @@
           "codeCoverage": true
         }
       }
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/angular:package": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/angular:ng-packagr-lite": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "build-storybook": {
+      "cache": true
     }
   },
   "plugins": [
@@ -70,6 +91,15 @@
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook"
+      }
     }
   ],
   "generators": {
@@ -77,11 +107,11 @@
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "css",
-      "unitTestRunner": "vitest"
+      "unitTestRunner": "jest"
     },
     "@nx/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "vitest",
+      "unitTestRunner": "jest",
       "strict": true,
       "style": "css",
       "buildable": true,
@@ -89,34 +119,41 @@
       "skipModule": true,
       "standalone": false,
       "prefix": "anarchitects",
-      "importPath": "@anarchitects/<domain>-angular-<layer>-<type>",
-      "directory": "libs/<domain>/angular/<layer>/<type>",
-      "name": "<domain>-angular-<layer>-<type>",
-      "tags": "domain:<domain>, tech:angular, layer:<layer>, type:<type>"
+      "importPath": "@anarchitects/<domain>-angular",
+      "directory": "libs/<domain>/angular",
+      "name": "<domain>-angular",
+      "tags": "domain:<domain>, tech:angular"
     },
     "@nx/js:library": {
       "linter": "eslint",
       "unitTestRunner": "vitest",
       "publishable": true,
-      "bundler": "vite"
+      "bundler": "vite",
+      "directory": "libs/<domain>/ts",
+      "importPath": "@anarchitects/<domain>-ts",
+      "name": "<domain>-ts",
+      "tags": "domain:<domain>, tech:ts"
     },
     "@nx/nest:library": {
       "linter": "eslint",
       "unitTestRunner": "jest",
       "publishable": true,
       "buildable": true,
-      "importPath": "@anarchitects/<domain>-nest-<layer>-<type>",
+      "importPath": "@anarchitects/<domain>-nest",
       "strict": true,
-      "directory": "libs/<domain>/nest/<layer>/<type>",
-      "name": "<domain>-nest-<layer>-<type>",
-      "tags": "domain:<domain>, tech:nest, layer:<layer>, type:<type>"
+      "directory": "libs/<domain>/nest",
+      "name": "<domain>-nest",
+      "tags": "domain:<domain>, tech:nest"
     },
     "@nx/angular:component": {
-      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
       "style": "css",
+      "path": "libs/<domain>/angular/feature/src/lib/<component>/<name>",
       "changeDetection": "OnPush",
       "displayBlock": true,
       "selector": "anarchitects-<domain>-<component>-<name>"
+    },
+    "@nx/angular:library-secondary-entry-point": {
+      "skipModule": true
     }
   },
   "release": {

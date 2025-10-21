@@ -1,0 +1,43 @@
+@if (config()) {
+<form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
+  @for (f of config().fields; track f.name) {
+  <div class="form-group">
+    @if (f.ui?.label) {
+    <label for="{{ f.name }}">{{ f.ui!.label }}</label>
+    } @if (f.kind === 'string' || f.kind === 'email') {
+    <input
+      [attr.type]="f.kind === 'email' ? 'email' : 'text'"
+      [id]="f.name"
+      [formControlName]="f.name"
+      [placeholder]="f.ui?.placeholder"
+    />
+    } @else if (f.kind === 'textarea') {
+    <textarea
+      [id]="f.name"
+      [formControlName]="f.name"
+      [rows]="f.ui?.rows ?? 4"
+      [placeholder]="f.ui?.placeholder"
+    ></textarea>
+    } @else if (f.kind === 'boolean') {
+    <input type="checkbox" [id]="f.name" [formControlName]="f.name" /><span
+      >{{ f.ui?.label }}</span
+    >
+    } @else if (f.kind === 'select' && f.options) {
+    <select [id]="f.name" [formControlName]="f.name">
+      @for (option of f.options; track option.value) {
+      <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+    }
+  </div>
+  } @if (config().security?.honeypot) {
+  <input
+    type="text"
+    [name]="config().security!.honeypot"
+    style="display: none"
+    autocomplete="off"
+  />
+  }
+  <button type="submit" [disabled]="formGroup.invalid">Submit</button>
+</form>
+}
