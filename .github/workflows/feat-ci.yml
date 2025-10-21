@@ -38,7 +38,7 @@ jobs:
 
       - run: yarn install --immutable
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      - run: yarn nx-cloud record -- yarn nx format
+      - run: yarn nx-cloud record -- yarn nx format:check
       # When you enable task distribution, run the e2e-ci task instead of e2e
       - run: yarn nx affected -t lint test build
       # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
