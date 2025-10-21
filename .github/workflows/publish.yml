@@ -35,6 +35,9 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Build release artifacts
+        run: yarn nx run-many -t build --skip-nx-cache
+
       - name: Publish packages
         run: yarn nx release publish --yes
         env:
