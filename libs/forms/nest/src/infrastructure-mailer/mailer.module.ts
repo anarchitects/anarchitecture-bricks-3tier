@@ -16,4 +16,4 @@ import { NestMailerAdapter } from './adapters/mailer.adapter';
   ],
   exports: [MAILER_PORT],
 })
-export class FormMailerModule {}
+export class FormsMailerModule {}

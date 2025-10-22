@@ -15,4 +15,4 @@ import { TypeOrmSubmissionsRepository } from './repositories/typeorm-submissions
   ],
   exports: [SUBMISSIONS_REPOSITORY, TypeOrmModule],
 })
-export class PersistenceModule {}
+export class FormsPersistenceModule {}
