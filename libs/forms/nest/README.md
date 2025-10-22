@@ -9,9 +9,9 @@ definitions and accept submissions without re-implementing the contract logic.
 | Entry point                                           | Responsibility                                                                                                             |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.                 |
-| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /submissions/submit`, delegating to the application layer. |
-| `@anarchitects/forms-nest/infrastructure-persistence` | TypeORM-backed persistence module that fulfils the submissions repository port.                                            |
-| `@anarchitects/forms-nest/infrastructure-mailer`      | MailerModule adapter that fulfils the mailer port using `@nestjs-modules/mailer`.                                          |
+| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer. |
+| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsPersistenceModule` — TypeORM-backed adapter that fulfils the submissions repository port.                            |
+| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsMailerModule` — MailerModule adapter that fulfils the mailer port using `@nestjs-modules/mailer`.                     |
 
 You can combine these layers or swap infrastructure modules with custom implementations that respect
 the exported tokens.
@@ -20,6 +20,8 @@ the exported tokens.
 
 ```bash
 npm install @anarchitects/forms-nest @anarchitects/forms-ts @nestjs/typeorm typeorm @nestjs-modules/mailer
+# or
+yarn add @anarchitects/forms-nest @anarchitects/forms-ts @nestjs/typeorm typeorm @nestjs-modules/mailer
 ```
 
 `@anarchitects/forms-ts` provides the DTOs and models referenced by the Nest modules and should be
@@ -31,12 +33,17 @@ installed alongside the bricks.
 // forms.module.ts
 import { Module } from '@nestjs/common';
 import { FormsApplicationModule } from '@anarchitects/forms-nest/application';
-import { PresentationModule } from '@anarchitects/forms-nest/presentation';
-import { PersistenceModule } from '@anarchitects/forms-nest/infrastructure-persistence';
-import { FormMailerModule } from '@anarchitects/forms-nest/infrastructure-mailer';
+import { FormsPresentationModule } from '@anarchitects/forms-nest/presentation';
+import { FormsPersistenceModule } from '@anarchitects/forms-nest/infrastructure-persistence';
+import { FormsMailerModule } from '@anarchitects/forms-nest/infrastructure-mailer';
 
 @Module({
-  imports: [FormsApplicationModule, PersistenceModule, FormMailerModule, PresentationModule],
+  imports: [
+    FormsApplicationModule,
+    FormsPersistenceModule,
+    FormsMailerModule,
+    FormsPresentationModule,
+  ],
 })
 export class FormsModule {}
 ```

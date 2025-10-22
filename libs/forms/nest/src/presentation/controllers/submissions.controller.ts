@@ -6,7 +6,7 @@ import {
 } from '@anarchitects/forms-ts/dtos';
 import { SubmissionsService } from '../../application';
 
-@Controller('submissions')
+@Controller('forms')
 export class SubmissionsController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
