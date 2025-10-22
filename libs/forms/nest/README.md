@@ -6,12 +6,12 @@ definitions and accept submissions without re-implementing the contract logic.
 
 ## Layered entry points
 
-| Entry point                                           | Responsibility                                                                                                             |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.                 |
+| Entry point                                           | Responsibility                                                                                                       |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.           |
 | `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer. |
-| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsPersistenceModule` — TypeORM-backed adapter that fulfils the submissions repository port.                            |
-| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsMailerModule` — MailerModule adapter that fulfils the mailer port using `@nestjs-modules/mailer`.                     |
+| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsPersistenceModule` — TypeORM-backed adapter that fulfils the submissions repository port.                      |
+| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsMailerModule` — MailerModule adapter that fulfils the mailer port using `@nestjs-modules/mailer`.              |
 
 You can combine these layers or swap infrastructure modules with custom implementations that respect
 the exported tokens.
@@ -38,12 +38,7 @@ import { FormsPersistenceModule } from '@anarchitects/forms-nest/infrastructure-
 import { FormsMailerModule } from '@anarchitects/forms-nest/infrastructure-mailer';
 
 @Module({
-  imports: [
-    FormsApplicationModule,
-    FormsPersistenceModule,
-    FormsMailerModule,
-    FormsPresentationModule,
-  ],
+  imports: [FormsApplicationModule, FormsPersistenceModule, FormsMailerModule, FormsPresentationModule],
 })
 export class FormsModule {}
 ```
