@@ -2,12 +2,30 @@
   "name": "@anarchitects/forms-ts",
   "version": "0.0.1",
   "type": "module",
-  "main": "./index.js",
+  "main": "./index.cjs",
+  "module": "./index.js",
   "exports": {
-    "./dtos": "./dtos/index.js",
-    "./models": "./models/index.js",
-    "./builders": "./builders/index.js",
-    ".": "./index.js"
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./builders": {
+      "types": "./builders/index.d.ts",
+      "import": "./builders/index.js",
+      "require": "./builders/index.cjs"
+    },
+    "./dtos": {
+      "types": "./dtos/index.d.ts",
+      "import": "./dtos/index.js",
+      "require": "./dtos/index.cjs"
+    },
+    "./models": {
+      "types": "./models/index.d.ts",
+      "import": "./models/index.js",
+      "require": "./models/index.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "types": "./index.d.ts",
   "publishConfig": {
