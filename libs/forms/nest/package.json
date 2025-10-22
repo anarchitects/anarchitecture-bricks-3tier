@@ -18,5 +18,21 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "application": [
+        "src/application/index.d.ts"
+      ],
+      "infrastructure-mailer": [
+        "src/infrastructure-mailer/index.d.ts"
+      ],
+      "infrastructure-persistence": [
+        "src/infrastructure-persistence/index.d.ts"
+      ],
+      "presentation": [
+        "src/presentation/index.d.ts"
+      ]
+    }
   }
 }

@@ -39,7 +39,7 @@ export default defineConfig(() => ({
         'dtos/index': 'src/dtos/index.ts',
         'models/index': 'src/models/index.ts',
       },
-      formats: ['es' as const],
+      formats: ['es' as const, 'cjs' as const],
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
