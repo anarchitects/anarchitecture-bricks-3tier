@@ -157,7 +157,13 @@
     }
   },
   "release": {
-    "projects": ["!libs/storybook/**", "!libs/ts/**", "!contracts/**"],
+    "projects": [
+      "libs/**",
+      "!libs/storybook/**",
+      "!libs/ts/**",
+      "!contracts/**",
+      "!@anarchitecture-bricks-3tier/source"
+    ],
     "version": {
       "preVersionCommand": "yarn dlx nx run-many -t build",
       "conventionalCommits": true

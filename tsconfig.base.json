@@ -36,6 +36,15 @@
       "@anarchitects/forms-nest/application": [
         "libs/forms/nest/src/application/index.ts"
       ],
+      "@anarchitects/forms-nest/infrastructure-mailer": [
+        "libs/forms/nest/src/infrastructure-mailer/index.ts"
+      ],
+      "@anarchitects/forms-nest/infrastructure-persistence": [
+        "libs/forms/nest/src/infrastructure-persistence/index.ts"
+      ],
+      "@anarchitects/forms-nest/presentation": [
+        "libs/forms/nest/src/presentation/index.ts"
+      ],
       "@anarchitects/forms-ts": ["libs/forms/ts/src/index.ts"],
       "@anarchitects/forms-ts/builders": [
         "libs/forms/ts/src/builders/index.ts"
