@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { MAILER_PORT, MailerPort } from '../application';
+import { MailerAdapter } from './adapters/mailer.adapter';
 import { MailerModule, MailerService } from '@nestjs-modules/mailer';
-import { NestMailerAdapter } from './adapters/mailer.adapter';
+import { NestMailerAdapter } from './adapters/node-mailer.adapter';
 
 @Module({
   imports: [MailerModule],
   providers: [
     {
-      provide: MAILER_PORT,
-      useFactory: (mailer: MailerService): MailerPort => {
+      provide: MailerAdapter,
+      useFactory: (mailer: MailerService): MailerAdapter => {
         return new NestMailerAdapter(mailer);
       },
       inject: [MailerService],
     },
   ],
-  exports: [MAILER_PORT],
+  exports: [MailerAdapter],
 })
-export class FormsMailerModule {}
+export class FormsInfrastructureMailerModule {}

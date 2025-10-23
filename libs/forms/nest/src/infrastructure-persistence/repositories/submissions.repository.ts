@@ -7,5 +7,3 @@ export abstract class SubmissionsRepository {
     options?: Partial<Submission>
   ): Promise<Submission | null>;
 }
-
-export const SUBMISSIONS_REPOSITORY = Symbol('SUBMISSIONS_REPOSITORY');

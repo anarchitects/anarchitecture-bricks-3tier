@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NestMailerAdapter } from './mailer.adapter';
+import { NestMailerAdapter } from './node-mailer.adapter';
 import { MailerService } from '@nestjs-modules/mailer';
 
 describe('NestMailerAdapter', () => {

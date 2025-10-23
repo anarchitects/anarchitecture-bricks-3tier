@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { SubmissionsService } from './submissions.service';
 import { FormConfig, Submission } from '@anarchitects/forms-ts/models';
-import { SUBMISSIONS_REPOSITORY } from '../ports/submissions.repository.port';
-import { MAILER_PORT } from '../ports/mailer.port';
 import { FormsService } from './forms.service';
+import { SubmissionsRepository } from '../../infrastructure-persistence';
+import { MailerAdapter } from '../../infrastructure-mailer/adapters/mailer.adapter';
 
 describe('SubmissionsService', () => {
   let service: SubmissionsService;
@@ -53,10 +53,10 @@ describe('SubmissionsService', () => {
       providers: [
         SubmissionsService,
         {
-          provide: SUBMISSIONS_REPOSITORY,
+          provide: SubmissionsRepository,
           useValue: mockSubmissionsRepository,
         },
-        { provide: MAILER_PORT, useValue: mockMailerPort },
+        { provide: MailerAdapter, useValue: mockMailerPort },
         { provide: FormsService, useValue: mockFormsService },
       ],
     }).compile();
