@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FormsPresentationModule } from '@anarchitects/forms-nest/presentation';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -17,6 +18,11 @@ import { FormsPresentationModule } from '@anarchitects/forms-nest/presentation';
       database: 'anarchitects',
       autoLoadEntities: true,
       synchronize: true,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        jsonTransport: true,
+      },
     }),
     FormsPresentationModule,
   ],

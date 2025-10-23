@@ -7,7 +7,7 @@ __metadata:
 
 "@anarchitects/forms-nest@file:../../dist/libs/forms/nest::locator=forms-nest-app%40workspace%3A.":
   version: 0.1.2
-  resolution: "@anarchitects/forms-nest@file:../../dist/libs/forms/nest#../../dist/libs/forms/nest::hash=0ff810&locator=forms-nest-app%40workspace%3A."
+  resolution: "@anarchitects/forms-nest@file:../../dist/libs/forms/nest#../../dist/libs/forms/nest::hash=b1b966&locator=forms-nest-app%40workspace%3A."
   dependencies:
     "@anarchitects/forms-ts": "npm:0.0.2"
     tslib: "npm:^2.3.0"
@@ -18,7 +18,7 @@ __metadata:
     "@nestjs/typeorm": ^11.0.0
     typeorm: ^0.3.27
     uuidv7: ^1.0.2
-  checksum: 10c0/b4afbe4ca5b742d6c921123749753b85b00187d773834fc334686d3dde3628dd04dffcf5b4582a66b40de85e8e9cf9dbdd8c43bffb3270bc35ce8c59e34d0501
+  checksum: 10c0/2c7a905384e528e814aa3c9387867af993516cad114f33eff67984ce75a68730e00ac874d9056b23b86baccf636e7cb7788fdd426b890fdb6c522acd1349a245
   languageName: node
   linkType: hard
 
