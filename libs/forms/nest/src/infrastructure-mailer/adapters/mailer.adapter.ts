@@ -1,19 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
-import { MailerPort } from '../../application';
-
-@Injectable()
-export class NestMailerAdapter implements MailerPort {
-  constructor(private readonly mailer: MailerService) {}
-  async send(to: string, subject: string, html: string) {
-    return await this.mailer.sendMail({ to, subject, html });
-  }
-  async sendTemplate(
+export abstract class MailerAdapter {
+  abstract send(to: string, subject: string, html: string): Promise<void>;
+  abstract sendTemplate(
     to: string,
     subject: string,
     template: string,
     context?: Record<string, unknown>
-  ) {
-    return await this.mailer.sendMail({ to, subject, template, context });
-  }
+  ): Promise<void>;
 }
