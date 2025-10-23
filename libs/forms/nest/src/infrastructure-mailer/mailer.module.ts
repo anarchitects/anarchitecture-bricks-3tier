@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { MailerAdapter } from './adapters/mailer.adapter';
-import { MailerModule, MailerService } from '@nestjs-modules/mailer';
 import { NestMailerAdapter } from './adapters/node-mailer.adapter';
 
 @Module({
   imports: [MailerModule],
   providers: [
+    NestMailerAdapter,
     {
       provide: MailerAdapter,
-      useFactory: (mailer: MailerService): MailerAdapter => {
-        return new NestMailerAdapter(mailer);
-      },
-      inject: [MailerService],
+      useExisting: NestMailerAdapter,
     },
   ],
   exports: [MailerAdapter],

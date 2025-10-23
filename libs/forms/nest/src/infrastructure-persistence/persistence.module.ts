@@ -7,10 +7,10 @@ import { TypeOrmSubmissionsRepository } from './repositories/typeorm-submissions
 @Module({
   imports: [TypeOrmModule.forFeature([SubmissionEntity])],
   providers: [
+    TypeOrmSubmissionsRepository,
     {
       provide: SubmissionsRepository,
-      useFactory: (repo: TypeOrmSubmissionsRepository) => repo,
-      inject: [TypeOrmSubmissionsRepository],
+      useExisting: TypeOrmSubmissionsRepository,
     },
   ],
   exports: [SubmissionsRepository, TypeOrmModule],
