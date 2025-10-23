@@ -1,0 +1,2 @@
+# Exclude example applications from Nx project inference
+examples/forms-nest-app
