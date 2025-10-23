@@ -6,16 +6,14 @@ import { SubmissionsRepository } from './submissions.repository';
 import { SubmissionEntity } from '../entities/submission.entity';
 
 @Injectable()
-export class TypeOrmSubmissionsRepository extends SubmissionsRepository {
+export class TypeOrmSubmissionsRepository implements SubmissionsRepository {
   constructor(
     @InjectRepository(SubmissionEntity)
     private readonly repo: Repository<SubmissionEntity>
-  ) {
-    super();
-  }
+  ) {}
 
   async createSubmission(input: Partial<Submission>): Promise<Submission> {
-    const submission = await this.repo.create(input);
+    const submission = this.repo.create(input);
     return this.repo.save(submission);
   }
 
@@ -26,7 +24,7 @@ export class TypeOrmSubmissionsRepository extends SubmissionsRepository {
     const submission = await this.repo.findOne({ where: options });
     if (!submission) {
       throw new NotFoundException(
-        `Submission with options #${options} bot found`
+        `Submission with options #${options} not found`
       );
     }
     return submission;
