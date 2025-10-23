@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: forms_example_db
+    environment:
+      POSTGRES_USER: anarchitects
+      POSTGRES_PASSWORD: anarchitects
+      POSTGRES_DB: anarchitects
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U anarchitects -d anarchitects"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
