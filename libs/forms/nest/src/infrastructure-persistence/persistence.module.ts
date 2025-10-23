@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SubmissionEntity } from './entities/submission.entity';
-import { SUBMISSIONS_REPOSITORY } from '../application';
+import { SubmissionsRepository } from './repositories/submissions.repository';
 import { TypeOrmSubmissionsRepository } from './repositories/typeorm-submissions.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SubmissionEntity])],
   providers: [
     {
-      provide: SUBMISSIONS_REPOSITORY,
+      provide: SubmissionsRepository,
       useFactory: (repo: TypeOrmSubmissionsRepository) => repo,
       inject: [TypeOrmSubmissionsRepository],
     },
   ],
-  exports: [SUBMISSIONS_REPOSITORY, TypeOrmModule],
+  exports: [SubmissionsRepository, TypeOrmModule],
 })
-export class FormsPersistenceModule {}
+export class FormsInfrastructurePersistenceModule {}

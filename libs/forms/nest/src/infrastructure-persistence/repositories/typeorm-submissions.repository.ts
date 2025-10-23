@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Submission } from '@anarchitects/forms-ts/models';
-import { SubmissionsRepository } from '../../application';
+import { SubmissionsRepository } from './submissions.repository';
 import { SubmissionEntity } from '../entities/submission.entity';
 
 @Injectable()
