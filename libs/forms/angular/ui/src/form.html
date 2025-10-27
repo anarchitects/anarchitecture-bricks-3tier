@@ -20,7 +20,7 @@
     ></textarea>
     } @else if (f.kind === 'boolean') {
     <input type="checkbox" [id]="f.name" [formControlName]="f.name" /><span
-      >{{ f.ui?.label }}</span
+      >{{ f.ui?.placeholder }}</span
     >
     } @else if (f.kind === 'select' && f.options) {
     <select [id]="f.name" [formControlName]="f.name">
