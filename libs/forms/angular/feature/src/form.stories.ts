@@ -51,7 +51,8 @@ const mockFormConfig: FormConfig = {
       kind: 'boolean',
       required: true,
       ui: {
-        label: 'I agree to the terms and conditions',
+        label: 'Consent',
+        placeholder: 'I agree to the terms and conditions',
       },
     },
   ],
