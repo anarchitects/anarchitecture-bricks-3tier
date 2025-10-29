@@ -1,0 +1,49 @@
+{
+  "name": "@anarchitects/auth-ts",
+  "version": "0.0.1",
+  "description": "TypeBox DTO schemas and RBAC domain models for the Anarchitecture auth stack.",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/auth/ts"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/auth/ts",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  },
+  "keywords": [
+    "auth",
+    "dto",
+    "rbac",
+    "typebox",
+    "anarchitecture"
+  ],
+  "dependencies": {
+    "@sinclair/typebox": "0.34.41"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./dtos": {
+      "types": "./dtos/index.d.ts",
+      "import": "./dtos/index.js",
+      "require": "./dtos/index.cjs"
+    },
+    "./models": {
+      "types": "./models/index.d.ts",
+      "import": "./models/index.js",
+      "require": "./models/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

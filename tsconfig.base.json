@@ -56,7 +56,9 @@
       ],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
-      ]
+      ],
+      "@anarchitects/auth-ts": ["libs/auth/ts/src/index.ts"],
+      "@anarchitects/auth-ts/dtos": ["libs/auth/ts/src/dtos/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
