@@ -78,6 +78,7 @@
   },
   "packageManager": "yarn@4.10.3",
   "dependencies": {
+    "@anarchitects/nx-js": "^0.0.1",
     "@angular/common": "~20.3.0",
     "@angular/compiler": "~20.3.0",
     "@angular/core": "~20.3.0",
