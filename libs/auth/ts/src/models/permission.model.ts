@@ -7,6 +7,9 @@ export type Permission = {
   action: string;
   subject: string;
   conditions: Record<string, unknown> | null;
+  fields: string[] | null;
+  inverted: boolean;
+  reason: string | null;
   roles: Role[] | null;
   createdAt: Date;
   updatedAt: Date;
