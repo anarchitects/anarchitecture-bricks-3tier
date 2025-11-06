@@ -1,0 +1,41 @@
+{
+  "name": "@anarchitects/auth-nest",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/jwt": "^11.0.1",
+    "@anarchitects/auth-ts": "0.0.1",
+    "bcrypt": "^6.0.0",
+    "@nestjs/passport": "^11.0.5",
+    "passport-jwt": "^4.0.1",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs-modules/mailer": "^2.0.2",
+    "typeorm": "^0.3.27",
+    "uuidv7": "^1.0.2",
+    "@nestjs/typeorm": "^11.0.0",
+    "@nestjs/platform-fastify": "^11.1.6"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "application": [
+        "src/application/index.d.ts"
+      ],
+      "infrastructure-mailer": [
+        "src/infrastructure-mailer/index.d.ts"
+      ],
+      "infrastructure-persistence": [
+        "src/infrastructure-persistence/index.d.ts"
+      ],
+      "presentation": [
+        "src/presentation/index.d.ts"
+      ]
+    }
+  }
+}
