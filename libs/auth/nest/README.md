@@ -33,14 +33,14 @@ import { PersistenceModule } from '@anarchitects/auth-nest/infrastructure-persis
 import { PresentationModule } from '@anarchitects/auth-nest/presentation';
 
 @Module({
-	imports: [
-		JwtModule.register({
-			secret: process.env.JWT_SECRET,
-			signOptions: { expiresIn: '15m' },
-		}),
-		PersistenceModule.register({ persistence: 'typeorm' }),
-		PresentationModule,
-	],
+  imports: [
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '15m' },
+    }),
+    PersistenceModule.register({ persistence: 'typeorm' }),
+    PresentationModule,
+  ],
 })
 export class AuthApiModule {}
 ```
@@ -54,12 +54,12 @@ import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: JwtAuthService) {}
+  constructor(private readonly authService: JwtAuthService) {}
 
-	@Post('login')
-	login(@Body() dto: LoginRequestDTO) {
-		return this.authService.login(dto);
-	}
+  @Post('login')
+  login(@Body() dto: LoginRequestDTO) {
+    return this.authService.login(dto);
+  }
 }
 ```
 
@@ -68,10 +68,7 @@ export class AuthController {
 ```ts
 import { TypeormAuthUserRepository } from '@anarchitects/auth-nest/infrastructure-persistence';
 
-await authUserRepository.invalidateTokens([
-	hashedAccessToken,
-	hashedRefreshToken,
-], userId);
+await authUserRepository.invalidateTokens([hashedAccessToken, hashedRefreshToken], userId);
 ```
 
 ## Nx scripts

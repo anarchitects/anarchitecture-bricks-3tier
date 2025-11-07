@@ -23,7 +23,7 @@ describe('AbilityFactory', () => {
       subject: 'Comment',
       conditions: {},
       inverted: true,
-    }
+    },
   ];
 
   beforeEach(async () => {

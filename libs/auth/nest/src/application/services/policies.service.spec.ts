@@ -85,7 +85,9 @@ describe('PoliciesService', () => {
   describe('buildAbilityForUser', () => {
     it('should build ability for the user', async () => {
       const ability = await service.buildAbilityForUser(mockUser);
-      expect(mockAbilityFactory.buildAbility).toHaveBeenCalledWith(expectedPolicyRules);
+      expect(mockAbilityFactory.buildAbility).toHaveBeenCalledWith(
+        expectedPolicyRules
+      );
       expect(ability).toEqual({});
     });
   });
