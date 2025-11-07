@@ -25,7 +25,8 @@
           "libs/auth/nest/src/application/index.ts",
           "libs/auth/nest/src/infrastructure-mailer/index.ts",
           "libs/auth/nest/src/infrastructure-persistence/index.ts",
-          "libs/auth/nest/src/presentation/index.ts"
+          "libs/auth/nest/src/presentation/index.ts",
+          "libs/auth/nest/src/config/index.ts"
         ],
         "generateExportsField": true
       }

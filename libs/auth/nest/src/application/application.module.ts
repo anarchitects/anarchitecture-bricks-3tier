@@ -11,6 +11,7 @@ import { HashService } from './services/hash.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthConfig, InjectAuthConfig } from '../config';
 import { JwtStrategy } from './strategies/jwt/strategy';
+import { PoliciesService } from './services/policies.service';
 
 @Module({})
 export class ApplicationModule extends ConfigurableModuleClass {
@@ -26,6 +27,7 @@ export class ApplicationModule extends ConfigurableModuleClass {
     const imports = [];
     const providers = [];
     const exports = [];
+    providers.push(PoliciesService);
     switch (encryption.algorithm) {
       case 'bcrypt':
         providers.push(BcryptHashService, {

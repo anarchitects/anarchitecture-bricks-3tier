@@ -30,6 +30,15 @@ export class PermissionEntity implements Permission {
   @Column({ type: 'jsonb', nullable: true })
   conditions!: Record<string, unknown> | null;
 
+  @Column({ type: 'jsonb', nullable: true })
+  fields!: string[] | null;
+
+  @Column({ type: 'boolean', default: false })
+  inverted!: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  reason!: string | null;
+
   @ManyToMany('RoleEntity', 'permissions')
   roles!: Role[] | null;
 
