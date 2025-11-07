@@ -6,17 +6,22 @@ describe('LogoutRequestSchema', () => {
     ...Value.Errors(LogoutRequestSchema, payload),
   ];
 
-  it('accepts an empty payload because fields are optional', () => {
-    expect(validate({})).toHaveLength(0);
-  });
-
-  it('accepts payloads with either optional field', () => {
+  it('requires refreshToken and allows optional accessToken', () => {
     expect(validate({ refreshToken: 'refresh-token' })).toHaveLength(0);
-    expect(validate({ sessionId: 'session-123' })).toHaveLength(0);
+    expect(
+      validate({ refreshToken: 'refresh-token', accessToken: 'access-token' })
+    ).toHaveLength(0);
   });
 
-  it('rejects empty strings for optional fields when present', () => {
+  it('rejects payloads missing refreshToken', () => {
+    expect(validate({})).not.toHaveLength(0);
+    expect(validate({ accessToken: 'access-token' })).not.toHaveLength(0);
+  });
+
+  it('rejects empty strings for provided fields', () => {
     expect(validate({ refreshToken: '' })).not.toHaveLength(0);
-    expect(validate({ sessionId: '' })).not.toHaveLength(0);
+    expect(
+      validate({ refreshToken: 'refresh-token', accessToken: '' })
+    ).not.toHaveLength(0);
   });
 });
