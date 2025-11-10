@@ -72,6 +72,16 @@
       ],
       "@anarchitects/auth-nest/presentation": [
         "libs/auth/nest/src/presentation/index.ts"
+      ],
+      "@anarchitects/auth-angular": ["libs/auth/angular/src/index.ts"],
+      "@anarchitects/auth-angular/config": [
+        "libs/auth/angular/config/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/data-access": [
+        "libs/auth/angular/data-access/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/state": [
+        "libs/auth/angular/state/src/index.ts"
       ]
     }
   },

@@ -102,6 +102,7 @@
     "@ngrx/signals": "^20.0.1",
     "@sinclair/typebox": "^0.34.41",
     "bcrypt": "^6.0.0",
+    "jwt-decode": "^4.0.0",
     "nodemailer": "^7.0.9",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

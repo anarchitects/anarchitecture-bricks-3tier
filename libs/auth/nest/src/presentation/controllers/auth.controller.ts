@@ -27,7 +27,6 @@ import {
   VerifyEmailRequestSchema,
 } from '@anarchitects/auth-ts/dtos';
 import { RouteSchema } from '@nestjs/platform-fastify';
-import { Policies } from '../decorators/policies.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -44,7 +43,7 @@ export class AuthController {
     return this.authService.registerUser(dto);
   }
 
-  @Post('/activate')
+  @Patch('/activate')
   @RouteSchema({
     body: ActivateUserRequestSchema,
     response: {
