@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
 import { AuthService } from '../../application/services/auth.service';
+import { AuthController } from './auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -20,6 +20,16 @@ describe('AuthController', () => {
     refreshTokens: jest.fn().mockResolvedValue({
       accessToken: 'newToken',
       refreshToken: 'newRefresh',
+    }),
+    getLoggedInUserInfo: jest.fn().mockResolvedValue({
+      user: { id: 'user-id-123', email: 'test@example.com' },
+      rbac: [
+        {
+          subject: 'Article',
+          action: 'update',
+          conditions: { authorId: 'user-id-123' },
+        },
+      ],
     }),
   };
 
@@ -131,6 +141,25 @@ describe('AuthController', () => {
       expect(result).toEqual({
         accessToken: 'newToken',
         refreshToken: 'newRefresh',
+      });
+    });
+  });
+  describe('getLoggedInUserInfo', () => {
+    it('should call authService.getLoggedInUserInfo and return its result', async () => {
+      const userId = 'user-id-123';
+      const result = await controller.getLoggedInUserInfo({
+        user: { sub: userId },
+      });
+      expect(mockAuthService.getLoggedInUserInfo).toHaveBeenCalledWith(userId);
+      expect(result).toEqual({
+        user: { id: 'user-id-123', email: 'test@example.com' },
+        rbac: [
+          {
+            subject: 'Article',
+            action: 'update',
+            conditions: { authorId: 'user-id-123' },
+          },
+        ],
       });
     });
   });

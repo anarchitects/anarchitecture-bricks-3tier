@@ -1,5 +1,3 @@
-import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
-import { AuthService } from '../../application/services/auth.service';
 import {
   ActivateUserRequestDTO,
   ActivateUserRequestSchema,
@@ -26,7 +24,10 @@ import {
   VerifyEmailRequestDTO,
   VerifyEmailRequestSchema,
 } from '@anarchitects/auth-ts/dtos';
+import { PolicyRule, User } from '@anarchitects/auth-ts/models';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
+import { AuthService } from '../../application/services/auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -150,5 +151,27 @@ export class AuthController {
     @Body() dto: RefreshTokenRequestDTO
   ): Promise<LoginResponseDTO> {
     return this.authService.refreshTokens(userId, dto);
+  }
+
+  @Get('/me')
+  @RouteSchema({
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          user: { type: 'object' }, // Define user schema as needed
+          rbac: {
+            type: 'array',
+            items: { type: 'object' }, // Define PolicyRule schema as needed
+          },
+        },
+      },
+    },
+  })
+  async getLoggedInUserInfo(
+    @Req() req: { user: { sub: string } }
+  ): Promise<{ user: User; rbac: PolicyRule[] }> {
+    const userId = req.user.sub; // Assuming JWT payload contains 'sub' as userId
+    return this.authService.getLoggedInUserInfo(userId);
   }
 }
