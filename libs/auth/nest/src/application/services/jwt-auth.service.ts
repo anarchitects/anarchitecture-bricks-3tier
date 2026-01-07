@@ -1,22 +1,22 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Role, User } from '@anarchitects/auth-ts/models';
-import { AuthService } from './auth.service';
 import {
-  RegisterRequestDTO,
-  RegisterResponseDTO,
   ActivateUserRequestDTO,
+  ChangePasswordRequestDTO,
+  ForgotPasswordRequestDTO,
   LoginRequestDTO,
   LoginResponseDTO,
   LogoutRequestDTO,
-  ChangePasswordRequestDTO,
-  ForgotPasswordRequestDTO,
-  ResetPasswordRequestDTO,
-  VerifyEmailRequestDTO,
-  UpdateEmailRequestDTO,
   RefreshTokenRequestDTO,
+  RegisterRequestDTO,
+  RegisterResponseDTO,
+  ResetPasswordRequestDTO,
+  UpdateEmailRequestDTO,
+  VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
+import { PolicyRule, Role, User } from '@anarchitects/auth-ts/models';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
+import { AuthService } from './auth.service';
 import { HashService } from './hash.service';
 
 @Injectable()
@@ -237,6 +237,32 @@ export class JwtAuthService implements AuthService {
     }
 
     return this.generateTokens(user);
+  }
+
+  async getLoggedInUserInfo(
+    userId: string
+  ): Promise<{ user: User; rbac: PolicyRule[] }> {
+    const user = await this.authUserRepository.findOne({
+      where: { id: userId },
+      relations: ['roles', 'permissions'],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+    const rbac: PolicyRule[] = [];
+    user.roles?.forEach((role) => {
+      role.permissions?.forEach((permission) => {
+        rbac.push({
+          action: permission.action,
+          subject: permission.subject,
+          conditions: permission.conditions ?? undefined,
+          fields: permission.fields ?? undefined,
+          reason: permission.reason ?? undefined,
+          inverted: permission.inverted ?? false,
+        });
+      });
+    });
+    return { user, rbac };
   }
 
   private async generateTokens(user: User) {
