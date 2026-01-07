@@ -17,8 +17,7 @@ export const routes: Routes = [
     path: 'admin',
     canMatch: [policyGuard],
     data: { action: 'manage', subject: 'admin-section' },
-    loadComponent: () =>
-      import('./admin.component').then((m) => m.AdminComponent),
+    loadComponent: () => import('./admin.component').then((m) => m.AdminComponent),
   },
 ];
 ```
