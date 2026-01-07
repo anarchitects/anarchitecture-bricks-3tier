@@ -1,5 +1,3 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { injectApiResourcePath } from '@anarchitects/auth-angular/config';
 import {
   ActivateUserRequestDTO,
@@ -15,6 +13,9 @@ import {
   UpdateEmailRequestDTO,
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
+import { PolicyRule, User } from '@anarchitects/auth-ts/models';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -87,6 +88,12 @@ export class AuthApi {
     return this.http.post<LoginResponseDTO>(
       `${this.resourceUrl}/refresh-tokens/${userId}`,
       dto
+    );
+  }
+
+  getLoggedInUserInfo() {
+    return this.http.get<{ user: User; rbac: PolicyRule[] }>(
+      `${this.resourceUrl}/me`
     );
   }
 }

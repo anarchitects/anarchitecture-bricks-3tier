@@ -82,6 +82,12 @@
       ],
       "@anarchitects/auth-angular/state": [
         "libs/auth/angular/state/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/util": [
+        "libs/auth/angular/util/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/feature": [
+        "libs/auth/angular/feature/src/index.ts"
       ]
     }
   },

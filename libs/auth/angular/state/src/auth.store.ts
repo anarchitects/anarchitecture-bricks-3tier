@@ -1,4 +1,5 @@
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
+import { createAppAbility } from '@anarchitects/auth-angular/util';
 import {
   ActivateUserRequestDTO,
   ChangePasswordRequestDTO,
@@ -13,6 +14,7 @@ import {
 } from '@anarchitects/auth-ts/dtos';
 import { User } from '@anarchitects/auth-ts/models';
 import { computed, inject } from '@angular/core';
+import { PureAbility } from '@casl/ability';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
@@ -29,12 +31,13 @@ import {
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { jwtDecode } from 'jwt-decode';
-import { pipe, switchMap, tap } from 'rxjs';
+import { EMPTY, pipe, switchMap, tap } from 'rxjs';
 
 type AuthState = {
   loading: boolean;
   error: string | null;
   success: boolean;
+  ability?: PureAbility;
 };
 
 type AuthUser = Pick<User, 'id' | 'email'>;
@@ -43,6 +46,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   success: false,
+  ability: undefined,
 };
 
 export const AuthStore = signalStore(
@@ -102,18 +106,26 @@ export const AuthStore = signalStore(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
           store._authApi.login(dto).pipe(
+            switchMap(({ accessToken, refreshToken }) => {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('refreshToken', refreshToken);
+              const decoded = jwtDecode<{ sub?: string }>(accessToken);
+              if (!decoded.sub) {
+                patchState(store, { error: 'Invalid access token payload.' });
+                return EMPTY;
+              }
+              return store._authApi.getLoggedInUserInfo();
+            }),
             tapResponse({
-              next: ({ accessToken, refreshToken }) => {
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-                const decoded = jwtDecode(accessToken);
-                if (decoded.sub) {
-                  const user: AuthUser = {
-                    id: decoded.sub,
-                    email: '', // Email can be fetched later if needed
-                  };
-                  patchState(store, setAllEntities([user]));
-                }
+              next: ({ user, rbac }) => {
+                const authUser: AuthUser = {
+                  id: user.id,
+                  email: user.email,
+                };
+                patchState(store, setAllEntities([authUser]), {
+                  ability: createAppAbility(rbac),
+                  success: true,
+                });
               },
               error: (error: string) => {
                 patchState(store, { error });
@@ -254,18 +266,26 @@ export const AuthStore = signalStore(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap(({ userId, dto }) =>
           store._authApi.refreshTokens(userId, dto).pipe(
+            switchMap(({ accessToken, refreshToken }) => {
+              localStorage.setItem('accessToken', accessToken);
+              localStorage.setItem('refreshToken', refreshToken);
+              const decoded = jwtDecode<{ sub?: string }>(accessToken);
+              if (!decoded.sub) {
+                patchState(store, { error: 'Invalid access token payload.' });
+                return EMPTY;
+              }
+              return store._authApi.getLoggedInUserInfo();
+            }),
             tapResponse({
-              next: ({ accessToken, refreshToken }) => {
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-                const decoded = jwtDecode(accessToken);
-                if (decoded.sub) {
-                  const user: AuthUser = {
-                    id: decoded.sub,
-                    email: '', // Email can be fetched later if needed
-                  };
-                  patchState(store, setAllEntities([user]));
-                }
+              next: ({ user, rbac }) => {
+                const authUser: AuthUser = {
+                  id: user.id,
+                  email: user.email,
+                };
+                patchState(store, setAllEntities([authUser]), {
+                  ability: createAppAbility(rbac),
+                  success: true,
+                });
               },
               error: (error: string) => {
                 patchState(store, { error });

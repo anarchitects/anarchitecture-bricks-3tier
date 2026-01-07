@@ -8,7 +8,9 @@
     "@ngrx/signals": "^20.0.1",
     "@ngrx/operators": "^20.0.1",
     "rxjs": "~7.8.0",
-    "jwt-decode": "^4.0.0"
+    "jwt-decode": "^4.0.0",
+    "@casl/ability": "^6.7.3",
+    "@angular/router": "~20.3.0"
   },
   "sideEffects": false
 }

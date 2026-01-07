@@ -79,7 +79,7 @@
     "vitest": "^3.0.0",
     "yaml": "^2.8.1"
   },
-  "packageManager": "yarn@4.10.3",
+  "packageManager": "yarn@4.11.0",
   "dependencies": {
     "@angular/common": "~20.3.0",
     "@angular/compiler": "~20.3.0",

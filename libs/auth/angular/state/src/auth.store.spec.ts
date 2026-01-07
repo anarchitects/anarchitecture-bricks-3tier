@@ -31,6 +31,12 @@ const setup = () => {
         refreshToken: 'new-refresh-token',
       }).pipe(delay(100))
     ),
+    getLoggedInUserInfo: jest.fn(() =>
+      of({
+        user: { id: 'user-id', email: 'user@example.com' },
+        rbac: {},
+      })
+    ),
   };
   TestBed.configureTestingModule({
     providers: [{ provide: AuthApi, useValue: mockAuthApi }],
