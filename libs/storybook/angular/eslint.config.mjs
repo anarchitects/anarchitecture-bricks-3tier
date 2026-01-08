@@ -1,48 +1,44 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import nx from '@nx/eslint-plugin';
 import baseConfig from '../../../eslint.config.mjs';
 
-export default [
-  ...baseConfig,
-  {
-    files: ['**/*.json'],
-    rules: {
-      '@nx/dependency-checks': [
-        'error',
-        {
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
-        },
-      ],
-    },
-    languageOptions: {
-      parser: await import('jsonc-eslint-parser'),
-    },
+export default [...baseConfig, {
+  files: ['**/*.json'],
+  rules: {
+    '@nx/dependency-checks': [
+      'error',
+      {
+        ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
+      },
+    ],
   },
-  ...nx.configs['flat/angular'],
-  ...nx.configs['flat/angular-template'],
-  {
-    files: ['**/*.ts'],
-    rules: {
-      '@angular-eslint/directive-selector': [
-        'error',
-        {
-          type: 'attribute',
-          prefix: 'anarchitects',
-          style: 'camelCase',
-        },
-      ],
-      '@angular-eslint/component-selector': [
-        'error',
-        {
-          type: 'element',
-          prefix: 'anarchitects',
-          style: 'kebab-case',
-        },
-      ],
-    },
+  languageOptions: {
+    parser: await import('jsonc-eslint-parser'),
   },
-  {
-    files: ['**/*.html'],
-    // Override or add rules here
-    rules: {},
+}, ...nx.configs['flat/angular'], ...nx.configs['flat/angular-template'], {
+  files: ['**/*.ts'],
+  rules: {
+    '@angular-eslint/directive-selector': [
+      'error',
+      {
+        type: 'attribute',
+        prefix: 'anarchitects',
+        style: 'camelCase',
+      },
+    ],
+    '@angular-eslint/component-selector': [
+      'error',
+      {
+        type: 'element',
+        prefix: 'anarchitects',
+        style: 'kebab-case',
+      },
+    ],
   },
-];
+}, {
+  files: ['**/*.html'],
+  // Override or add rules here
+  rules: {},
+}, ...storybook.configs["flat/recommended"]];
