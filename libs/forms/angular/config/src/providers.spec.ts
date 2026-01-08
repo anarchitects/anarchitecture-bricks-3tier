@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideFormsConfig, provideFormsDefaults } from './providers';
-import { API_RESOURCE_PATH, FORMS_CONFIG } from './tokens';
-import { FormsConfig } from './tokens';
+import { API_RESOURCE_PATH, FormsConfig, FORMS_CONFIG } from './tokens';
 
 describe('FormsConfig Providers', () => {
   it('should provide default config when using provideFormsDefaults', () => {

@@ -56,6 +56,38 @@
       ],
       "@anarchitects/ts-frontend-data-access": [
         "libs/ts/frontend/data-access/src/index.ts"
+      ],
+      "@anarchitects/auth-ts": ["libs/auth/ts/src/index.ts"],
+      "@anarchitects/auth-ts/dtos": ["libs/auth/ts/src/dtos/index.ts"],
+      "@anarchitects/auth-ts/models": ["libs/auth/ts/src/models/index.ts"],
+      "@anarchitects/auth-nest": ["libs/auth/nest/src/index.ts"],
+      "@anarchitects/auth-nest/application": [
+        "libs/auth/nest/src/application/index.ts"
+      ],
+      "@anarchitects/auth-nest/infrastructure-mailer": [
+        "libs/auth/nest/src/infrastructure-mailer/index.ts"
+      ],
+      "@anarchitects/auth-nest/infrastructure-persistence": [
+        "libs/auth/nest/src/infrastructure-persistence/index.ts"
+      ],
+      "@anarchitects/auth-nest/presentation": [
+        "libs/auth/nest/src/presentation/index.ts"
+      ],
+      "@anarchitects/auth-angular": ["libs/auth/angular/src/index.ts"],
+      "@anarchitects/auth-angular/config": [
+        "libs/auth/angular/config/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/data-access": [
+        "libs/auth/angular/data-access/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/state": [
+        "libs/auth/angular/state/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/util": [
+        "libs/auth/angular/util/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/feature": [
+        "libs/auth/angular/feature/src/index.ts"
       ]
     }
   },
