@@ -1,0 +1,478 @@
+[12:27:25.839] [INFO] Storybook upgrade - v10.1.11
+[12:27:25.842] [INFO] Detecting projects...
+[12:27:25.842] [DEBUG] Finding Storybook projects...
+[12:27:26.530] [DEBUG] Found 1 Storybook projects
+[12:27:26.531] [INFO] Detecting projects: 1 projects
+[12:27:26.531] [DEBUG] Getting Storybook data...
+[12:27:26.532] [DEBUG] Getting Storybook info...
+[12:27:26.615] [DEBUG] Loading main config...
+[12:27:26.615] [DEBUG] Getting stories paths...
+[12:27:26.629] [DEBUG] Getting package manager...
+[12:27:27.032] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:27.032] [DEBUG] Getting Storybook version...
+[12:27:27.033] [DEBUG] /libs/storybook/angular/.storybook - Validating before version... 10.1.9
+[12:27:27.033] [DEBUG] /libs/storybook/angular/.storybook - Validating upgrade compatibility...
+[12:27:27.033] [DEBUG] /libs/storybook/angular/.storybook - Fetching NPM version information...
+[12:27:27.033] [DEBUG] Getting CLI versions from NPM for storybook...
+[12:27:27.033] [DEBUG] Executing command: yarn npm info storybook --fields version --json
+[12:27:27.035] [DEBUG] Getting CLI versions from NPM for storybook@next...
+[12:27:27.035] [DEBUG] Executing command: yarn npm info storybook@next --fields version --json
+[12:27:27.923] [DEBUG] /libs/storybook/angular/.storybook - Evaluating blockers...
+[12:27:27.931] [DEBUG] Getting installed version for @storybook/experimental-addon-test...
+[12:27:27.931] [DEBUG] Executing command: yarn info --name-only --recursive @storybook/experimental-addon-test
+[12:27:28.290] [INFO] 1 project detected
+[12:27:28.290] [DEBUG] Found 1 valid projects and 0 error projects
+[12:27:28.290] [INFO] Upgrading from 10.1.9 to 10.1.11
+[12:27:28.291] [DEBUG] Updating dependencies in /libs/storybook/angular/.storybook...
+[12:27:28.291] [INFO] /libs/storybook/angular/package.json
+/package.json
+/libs/forms/angular/package.json
+[12:27:28.291] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.291] [DEBUG] {
+  "upgradedDependencies": []
+}
+[12:27:28.291] [DEBUG] {
+  "upgradedDevDependencies": []
+}
+[12:27:28.291] [DEBUG] {
+  "upgradedPeerDependencies": []
+}
+[12:27:28.291] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.291] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.292] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.292] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.292] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.292] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:28.292] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:28.292] [DEBUG] {
+  "upgradedDependencies": []
+}
+[12:27:28.292] [DEBUG] {
+  "upgradedDevDependencies": [
+    "@storybook/addon-docs@^10.1.11",
+    "@storybook/angular@10.1.11",
+    "storybook@10.1.11"
+  ]
+}
+[12:27:28.292] [DEBUG] {
+  "upgradedPeerDependencies": []
+}
+[12:27:28.292] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:28.292] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:28.292] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:28.292] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:28.292] [DEBUG] Getting CLI versions from NPM for @storybook/addon-docs...
+[12:27:28.292] [DEBUG] Executing command: yarn npm info @storybook/addon-docs --fields version --json
+[12:27:29.250] [DEBUG] Getting CLI versions from NPM for @storybook/angular...
+[12:27:29.250] [DEBUG] Executing command: yarn npm info @storybook/angular --fields version --json
+[12:27:30.139] [DEBUG] Using cached version for storybook...
+[12:27:30.140] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.140] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.140] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.140] [DEBUG] {
+  "upgradedDependencies": []
+}
+[12:27:30.140] [DEBUG] {
+  "upgradedDevDependencies": []
+}
+[12:27:30.140] [DEBUG] {
+  "upgradedPeerDependencies": []
+}
+[12:27:30.140] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.140] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.140] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.140] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.140] [DEBUG] Getting package.json info for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.140] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.141] [INFO] Updated package versions in package.json files
+[12:27:30.141] [DEBUG] Starting automigration collection across 1 projects and 19 fixes...
+[12:27:30.141] [INFO] Checking automigrations for /libs/storybook/angular/.storybook...
+[12:27:30.141] [DEBUG] Processing project: /libs/storybook/angular/.storybook
+[12:27:30.141] [DEBUG] Checking fix eslintPlugin for project /libs/storybook/angular/.storybook...
+[12:27:30.141] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:30.141] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.141] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.141] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.142] [DEBUG] Checking fix addon-mdx-gfm-remove for project /libs/storybook/angular/.storybook...
+[12:27:30.142] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:30.142] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.142] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.142] [DEBUG] Checking fix addon-storysource-code-panel for project /libs/storybook/angular/.storybook...
+[12:27:30.142] [DEBUG] Checking fix upgrade-storybook-related-dependencies for project /libs/storybook/angular/.storybook...
+[12:27:30.142] [DEBUG] Checking for incompatible storybook packages...
+[12:27:30.142] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:30.142] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.142] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.143] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:30.143] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:30.143] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:30.143] [DEBUG] Getting installed version for @nx/storybook...
+[12:27:30.143] [DEBUG] Executing command: yarn info --name-only --recursive @nx/storybook
+[12:27:30.144] [DEBUG] Getting installed version for storybook-addon-mock...
+[12:27:30.144] [DEBUG] Executing command: yarn info --name-only --recursive storybook-addon-mock
+[12:27:30.495] [DEBUG] Getting CLI versions from NPM for storybook-addon-mock...
+[12:27:30.495] [DEBUG] Executing command: yarn npm info storybook-addon-mock --fields version --json
+[12:27:30.496] [DEBUG] Getting CLI versions from NPM for @nx/storybook...
+[12:27:30.496] [DEBUG] Executing command: yarn npm info @nx/storybook --fields version --json
+[12:27:31.505] [DEBUG] Checking fix initial-globals for project /libs/storybook/angular/.storybook...
+[12:27:31.518] [DEBUG] Checking fix addon-globals-api for project /libs/storybook/angular/.storybook...
+[12:27:31.520] [DEBUG] Checking fix addon-a11y-addon-test for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Checking fix consolidated-imports for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Checking fix addon-experimental-test for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Using cached installed version for @storybook/experimental-addon-test...
+[12:27:31.521] [DEBUG] Checking fix rnstorybook-config for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:31.521] [DEBUG] Checking fix migrate-addon-console for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:31.521] [DEBUG] Checking fix nextjs-to-nextjs-vite for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:31.521] [DEBUG] Checking fix remove-addon-interactions for project /libs/storybook/angular/.storybook...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:31.521] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:31.521] [DEBUG] Checking fix renderer-to-framework for project /libs/storybook/angular/.storybook...
+[12:27:31.522] [DEBUG] Checking fix remove-essential-addons for project /libs/storybook/angular/.storybook...
+[12:27:31.522] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:31.522] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:31.522] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:31.522] [DEBUG] Checking fix addon-a11y-parameters for project /libs/storybook/angular/.storybook...
+[12:27:31.522] [DEBUG] Checking fix remove-docs-autodocs for project /libs/storybook/angular/.storybook...
+[12:27:31.524] [DEBUG] Checking fix wrap-getAbsolutePath for project /libs/storybook/angular/.storybook...
+[12:27:31.525] [DEBUG] Checking fix fix-faux-esm-require for project /libs/storybook/angular/.storybook...
+[12:27:31.526] [INFO] 
+Automigrations detected:
+[12:27:31.526] [INFO] ✔ eslintPlugin
+[12:27:31.527] [INFO] ✔ wrap-getAbsolutePath
+[12:27:31.527] [INFO] 2 automigration(s) detected
+[12:27:31.528] [INFO] Running all detected automigrations:
+[12:27:31.528] [INFO]   - eslintPlugin (/libs/storybook/angular/.storybook)
+[12:27:31.528] [INFO]   - wrap-getAbsolutePath (/libs/storybook/angular/.storybook)
+[12:27:31.528] [DEBUG] Adding dependencies: eslint-plugin-storybook@10.1.11
+[12:27:31.528] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:31.528] [DEBUG] Getting CLI versions from NPM for eslint-plugin-storybook...
+[12:27:31.528] [DEBUG] Executing command: yarn npm info eslint-plugin-storybook --fields version --json
+[12:27:32.263] [DEBUG] Detected flat config at /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/eslint.config.mjs
+[12:27:32.274] [INFO] ✔ eslintPlugin
+[12:27:32.279] [INFO] ✔ wrap-getAbsolutePath
+[12:27:32.279] [INFO] Completed automigrations for /libs/storybook/angular/.storybook
+[12:27:32.279] [INFO] Installing dependencies...
+[12:27:32.279] [INFO] Installing dependencies...
+[12:27:32.279] [DEBUG] Executing command: yarn install
+[12:27:32.681] [INFO] Installing dependencies...: ➤ YN0000: · Yarn 4.11.0
+
+[12:27:32.681] [INFO] Installing dependencies...: ➤ YN0000: · Yarn 4.11.0
+[12:27:32.686] [INFO] Installing dependencies...: ➤ YN0000: ┌ Resolution step
+
+[12:27:32.686] [INFO] Installing dependencies...: ➤ YN0000: ┌ Resolution st
+[12:27:35.040] [INFO] Installing dependencies...: ➤ YN0085: │ + @storybook/addon-docs@npm:10.1.11, @storybook/angular@npm:10.1.11, eslint-plugin-storybook@npm:10.1.11, storybook@npm:10.1.11, and 14 more.
+
+[12:27:35.040] [INFO] Installing dependencies...: ➤ YN0085: │ + @storybook/
+[12:27:35.040] [INFO] Installing dependencies...: ➤ YN0085: │ - @storybook/addon-docs@npm:9.1.13, @storybook/angular@npm:10.1.9, @storybook/builder-webpack5@npm:10.1.9, @storybook/core-webpack@npm:10.1.9, and 5 more.
+
+[12:27:35.040] [INFO] Installing dependencies...: ➤ YN0085: │ - @storybook/
+[12:27:35.085] [INFO] Installing dependencies...: ➤ YN0000: └ Completed in 2s 399ms
+
+[12:27:35.085] [INFO] Installing dependencies...: ➤ YN0000: └ Completed in 
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0000: ┌ Post-resolution validation
+
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0000: ┌ Post-resoluti
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0060: │ @angular/core is listed by your project with version 21.0.7 (p358039), which doesn't satisfy what @ngrx/signals and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0060: │ @swc/core is listed by your project with version 1.5.29 (p576c8e), which doesn't satisfy what @swc-node/core (via @swc-node/register) and other dependencies request (^1.13.3).
+➤ YN0060: │ jsdom is listed by your project with version 22.1.0 (p34432e), which doesn't satisfy what jest-preset-angular and other dependencies request (>=26.0.0).
+➤ YN0060: │ storybook is listed by your project with version 10.1.11 (p3cde53), which doesn't satisfy what storybook-addon-mock and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0002: │ @anarchitecture-bricks-3tier/source@workspace:. doesn't provide @angular-devkit/architect (p9595c7), requested by @storybook/angular.
+➤ YN0002: │ @anarchitecture-bricks-3tier/source@workspace:. doesn't provide @typescript-eslint/parser (p7deeea), requested by @nx/eslint-plugin.
+➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0060: │ @angular/core
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0000: └ Completed
+
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0000: └ Completed
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0000: ┌ Fetch step
+
+[12:27:35.086] [INFO] Installing dependencies...: ➤ YN0000: ┌ Fetch step
+[12:27:36.100] [INFO] Installing dependencies...: ➤ YN0013: │ 17 packages were added to the project (+ 4.06 MiB).
+
+[12:27:36.100] [INFO] Installing dependencies...: ➤ YN0013: │ 17 packages w
+[12:27:36.100] [INFO] Installing dependencies...: ➤ YN0000: └ Completed in 1s 14ms
+
+[12:27:36.100] [INFO] Installing dependencies...: ➤ YN0000: └ Completed in 
+[12:27:36.164] [INFO] Installing dependencies...: ➤ YN0000: ┌ Link step
+
+[12:27:36.164] [INFO] Installing dependencies...: ➤ YN0000: ┌ Link step
+[12:27:36.848] [INFO] Installing dependencies...: ➤ YN0000: └ Completed in 0s 684ms
+
+[12:27:36.848] [INFO] Installing dependencies...: ➤ YN0000: └ Completed in 
+[12:27:37.133] [INFO] Installing dependencies...: ➤ YN0000: · Done with warnings in 4s 453ms
+
+[12:27:37.133] [INFO] Installing dependencies...: ➤ YN0000: · Done with war
+[12:27:37.163] [INFO] Dependencies installed
+[12:27:37.163] [INFO] Dependencies installed
+[12:27:37.163] [WARN] Since you are in a monorepo, we advise you to deduplicate your dependencies. We can do this for you but it might take some time.
+[12:27:37.163] [INFO] Deduplicating dependencies...
+[12:27:37.163] [INFO] Deduplicating dependencies...
+[12:27:37.163] [DEBUG] Executing command: yarn dedupe
+[12:27:37.558] [INFO] ➤ YN0000: ┌ Deduplication step
+[12:27:37.558] [INFO] ➤ YN0000: ┌ Deduplication step
+[12:27:37.652] [INFO] ➤ YN0000: │ @babel/helper-validator-identifier@npm:^7.27.1 can be deduped from @babel/helper-validator-identifier@npm:7.27.1 to @babel/helper-validator-identifier@npm:7.28.5
+[12:27:37.652] [INFO] ➤ YN0000: │ @babel/helper-validator-identifier@npm:^7.27.1 can be deduped from @babel/helper-validator-identifier@npm:7.27.1 to @babel/helper-validator-identifier@npm:7.28.5
+[12:27:37.653] [INFO] ➤ YN0000: │ @inquirer/type@npm:^3.0.8 can be deduped from @inquirer/type@npm:3.0.8 to @inquirer/type@npm:3.0.10
+➤ YN0000: │ @typescript-eslint/tsconfig-utils@npm:^8.45.0 can be deduped from @typescript-eslint/tsconfig-utils@npm:8.45.0 to @typescript-eslint/tsconfig-utils@npm:8.52.0
+[12:27:37.653] [INFO] ➤ YN0000: │ @inquirer/type@npm:^3.0.8 can be deduped from @inquirer/type@npm:3.0.8 to @inquirer/type@npm:3.0.10
+➤ YN0000: │ @typescript-eslint/tsconfig-utils@npm:^8.45.0 can be deduped from @typescript-eslint/tsconfig-utils@npm:8.45.0 to @typescript-eslint/tsconfig-utils@npm:8.52.0
+[12:27:37.653] [INFO] ➤ YN0000: │ @typescript-eslint/types@npm:^8.0.0 can be deduped from @typescript-eslint/types@npm:8.45.0 to @typescript-eslint/types@npm:8.52.0
+➤ YN0000: │ @typescript-eslint/types@npm:^8.45.0 can be deduped from @typescript-eslint/types@npm:8.45.0 to @typescript-eslint/types@npm:8.52.0
+➤ YN0000: │ baseline-browser-mapping@npm:^2.8.9 can be deduped from baseline-browser-mapping@npm:2.8.10 to baseline-browser-mapping@npm:2.9.12
+➤ YN0000: │ caniuse-lite@npm:^1.0.0 can be deduped from caniuse-lite@npm:1.0.30001747 to caniuse-lite@npm:1.0.30001763
+➤ YN0000: │ caniuse-lite@npm:^1.0.30001702 can be deduped from caniuse-lite@npm:1.0.30001747 to caniuse-lite@npm:1.0.30001763
+➤ YN0000: │ caniuse-lite@npm:^1.0.30001746 can be deduped from caniuse-lite@npm:1.0.30001747 to caniuse-lite@npm:1.0.30001763
+➤ YN0000: │ electron-to-chromium@npm:^1.5.227 can be deduped from electron-to-chromium@npm:1.5.229 to electron-to-chromium@npm:1.5.267
+[12:27:37.653] [INFO] ➤ YN0000: │ @typescript-eslint/types@npm:^8.0.0 can be deduped from @typescript-eslint/types@npm:8.45.0 to @typescript-eslint/types@npm:8.52.0
+➤ YN0000: │ @typescript-eslint/types@npm:^8.45.0 can be deduped from @typescript-eslint/types@npm:8.45.0 to @typescript-eslint/types@npm:8.52.0
+➤ YN0000: │ baseline-browser-mapping@npm:^2.8.9 can be deduped from baseline-browser-mapping@npm:2.8.10 to baseline-browser-mapping@npm:2.9.12
+➤ YN0000: │ caniuse-lite@npm:^1.0.0 can be deduped from caniuse-lite@npm:1.0.30001747 to caniuse-lite@npm:1.0.30001763
+➤ YN0000: │ caniuse-lite@npm:^1.0.30001702 can be deduped from caniuse-lite@npm:1.0.30001747 to caniuse-lite@npm:1.0.30001763
+➤ YN0000: │ caniuse-lite@npm:^1.0.30001746 can be deduped from caniuse-lite@npm:1.0.30001747 to caniuse-lite@npm:1.0.30001763
+➤ YN0000: │ electron-to-chromium@npm:^1.5.227 can be deduped from electron-to-chromium@npm:1.5.229 to electron-to-chromium@npm:1.5.267
+[12:27:37.654] [INFO] ➤ YN0000: │ loader-runner@npm:^4.2.0 can be deduped from loader-runner@npm:4.3.0 to loader-runner@npm:4.3.1
+➤ YN0000: │ lru-cache@npm:^11.1.0 can be deduped from lru-cache@npm:11.2.2 to lru-cache@npm:11.2.4
+➤ YN0000: │ node-releases@npm:^2.0.21 can be deduped from node-releases@npm:2.0.21 to node-releases@npm:2.0.27
+➤ YN0000: │ nwsapi@npm:^2.2.4 can be deduped from nwsapi@npm:2.2.22 to nwsapi@npm:2.2.23
+➤ YN0000: │ semver@npm:^7.0.0 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.1.1 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.3.4 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.3.5 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.5.3 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.5.4 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.6.0 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.6.2 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.6.3 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.7.2 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ ts-api-utils@npm:^2.1.0 can be deduped from ts-api-utils@npm:2.1.0 to ts-api-utils@npm:2.4.0
+[12:27:37.654] [INFO] ➤ YN0000: │ loader-runner@npm:^4.2.0 can be deduped from loader-runner@npm:4.3.0 to loader-runner@npm:4.3.1
+➤ YN0000: │ lru-cache@npm:^11.1.0 can be deduped from lru-cache@npm:11.2.2 to lru-cache@npm:11.2.4
+➤ YN0000: │ node-releases@npm:^2.0.21 can be deduped from node-releases@npm:2.0.21 to node-releases@npm:2.0.27
+➤ YN0000: │ nwsapi@npm:^2.2.4 can be deduped from nwsapi@npm:2.2.22 to nwsapi@npm:2.2.23
+➤ YN0000: │ semver@npm:^7.0.0 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.1.1 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.3.4 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.3.5 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.5.3 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.5.4 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.6.0 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.6.2 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.6.3 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ semver@npm:^7.7.2 can be deduped from semver@npm:7.7.2 to semver@npm:7.7.3
+➤ YN0000: │ ts-api-utils@npm:^2.1.0 can be deduped from ts-api-utils@npm:2.1.0 to ts-api-utils@npm:2.4.0
+[12:27:37.660] [INFO] ➤ YN0000: │ @babel/parser@npm:^7.1.0 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+[12:27:37.660] [INFO] ➤ YN0000: │ @babel/parser@npm:^7.1.0 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+[12:27:37.660] [INFO] ➤ YN0000: │ @babel/parser@npm:^7.20.7 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.23.9 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.27.2 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.28.3 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.28.4 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.6.0 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.9.6 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @emnapi/runtime@npm:^1.1.0 can be deduped from @emnapi/runtime@npm:1.5.0 to @emnapi/runtime@npm:1.8.1
+➤ YN0000: │ @emnapi/runtime@npm:^1.4.3 can be deduped from @emnapi/runtime@npm:1.5.0 to @emnapi/runtime@npm:1.8.1
+➤ YN0000: │ @emnapi/runtime@npm:^1.5.0 can be deduped from @emnapi/runtime@npm:1.5.0 to @emnapi/runtime@npm:1.8.1
+➤ YN0000: │ @eslint-community/eslint-utils@npm:^4.7.0 can be deduped from @eslint-community/eslint-utils@npm:4.9.0 to @eslint-community/eslint-utils@npm:4.9.1
+➤ YN0000: │ @eslint-community/eslint-utils@npm:^4.8.0 can be deduped from @eslint-community/eslint-utils@npm:4.9.0 to @eslint-community/eslint-utils@npm:4.9.1
+[12:27:37.660] [INFO] ➤ YN0000: │ @babel/parser@npm:^7.20.7 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.23.9 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.27.2 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.28.3 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.28.4 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.6.0 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @babel/parser@npm:^7.9.6 can be deduped from @babel/parser@npm:7.28.4 to @babel/parser@npm:7.28.5
+➤ YN0000: │ @emnapi/runtime@npm:^1.1.0 can be deduped from @emnapi/runtime@npm:1.5.0 to @emnapi/runtime@npm:1.8.1
+➤ YN0000: │ @emnapi/runtime@npm:^1.4.3 can be deduped from @emnapi/runtime@npm:1.5.0 to @emnapi/runtime@npm:1.8.1
+➤ YN0000: │ @emnapi/runtime@npm:^1.5.0 can be deduped from @emnapi/runtime@npm:1.5.0 to @emnapi/runtime@npm:1.8.1
+➤ YN0000: │ @eslint-community/eslint-utils@npm:^4.7.0 can be deduped from @eslint-community/eslint-utils@npm:4.9.0 to @eslint-community/eslint-utils@npm:4.9.1
+➤ YN0000: │ @eslint-community/eslint-utils@npm:^4.8.0 can be deduped from @eslint-community/eslint-utils@npm:4.9.0 to @eslint-community/eslint-utils@npm:4.9.1
+[12:27:37.661] [INFO] ➤ YN0000: │ magic-string@npm:^0.30.17 can be deduped from magic-string@npm:0.30.19 to magic-string@npm:0.30.21
+➤ YN0000: │ magic-string@npm:^0.30.5 can be deduped from magic-string@npm:0.30.19 to magic-string@npm:0.30.21
+➤ YN0000: │ magic-string@npm:~0.30.2 can be deduped from magic-string@npm:0.30.19 to magic-string@npm:0.30.21
+➤ YN0000: │ minimatch@npm:^10.0.3 can be deduped from minimatch@npm:10.0.3 to minimatch@npm:10.1.1
+[12:27:37.661] [INFO] ➤ YN0000: │ magic-string@npm:^0.30.17 can be deduped from magic-string@npm:0.30.19 to magic-string@npm:0.30.21
+➤ YN0000: │ magic-string@npm:^0.30.5 can be deduped from magic-string@npm:0.30.19 to magic-string@npm:0.30.21
+➤ YN0000: │ magic-string@npm:~0.30.2 can be deduped from magic-string@npm:0.30.19 to magic-string@npm:0.30.21
+➤ YN0000: │ minimatch@npm:^10.0.3 can be deduped from minimatch@npm:10.0.3 to minimatch@npm:10.1.1
+[12:27:37.665] [INFO] ➤ YN0000: │ @babel/types@npm:^7.0.0 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+[12:27:37.665] [INFO] ➤ YN0000: │ @babel/types@npm:^7.0.0 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+[12:27:37.665] [INFO] ➤ YN0000: │ @babel/types@npm:^7.20.7 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.24.7 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.27.1 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.27.3 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.28.2 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.28.4 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.4.4 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.6.1 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.9.6 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @emnapi/core@npm:^1.1.0 can be deduped from @emnapi/core@npm:1.5.0 to @emnapi/core@npm:1.8.1
+➤ YN0000: │ @emnapi/core@npm:^1.4.3 can be deduped from @emnapi/core@npm:1.5.0 to @emnapi/core@npm:1.8.1
+➤ YN0000: │ @emnapi/core@npm:^1.5.0 can be deduped from @emnapi/core@npm:1.5.0 to @emnapi/core@npm:1.8.1
+[12:27:37.665] [INFO] ➤ YN0000: │ @babel/types@npm:^7.20.7 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.24.7 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.27.1 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.27.3 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.28.2 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.28.4 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.4.4 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.6.1 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @babel/types@npm:^7.9.6 can be deduped from @babel/types@npm:7.28.4 to @babel/types@npm:7.28.5
+➤ YN0000: │ @emnapi/core@npm:^1.1.0 can be deduped from @emnapi/core@npm:1.5.0 to @emnapi/core@npm:1.8.1
+➤ YN0000: │ @emnapi/core@npm:^1.4.3 can be deduped from @emnapi/core@npm:1.5.0 to @emnapi/core@npm:1.8.1
+➤ YN0000: │ @emnapi/core@npm:^1.5.0 can be deduped from @emnapi/core@npm:1.5.0 to @emnapi/core@npm:1.8.1
+[12:27:37.666] [INFO] ➤ YN0000: │ enhanced-resolve@npm:^5.0.0 can be deduped from enhanced-resolve@npm:5.18.3 to enhanced-resolve@npm:5.18.4
+➤ YN0000: │ enhanced-resolve@npm:^5.17.3 can be deduped from enhanced-resolve@npm:5.18.3 to enhanced-resolve@npm:5.18.4
+➤ YN0000: │ enhanced-resolve@npm:^5.7.0 can be deduped from enhanced-resolve@npm:5.18.3 to enhanced-resolve@npm:5.18.4
+➤ YN0000: │ update-browserslist-db@npm:^1.1.3 can be deduped from update-browserslist-db@npm:1.1.3 to update-browserslist-db@npm:1.2.3
+[12:27:37.666] [INFO] ➤ YN0000: │ enhanced-resolve@npm:^5.0.0 can be deduped from enhanced-resolve@npm:5.18.3 to enhanced-resolve@npm:5.18.4
+➤ YN0000: │ enhanced-resolve@npm:^5.17.3 can be deduped from enhanced-resolve@npm:5.18.3 to enhanced-resolve@npm:5.18.4
+➤ YN0000: │ enhanced-resolve@npm:^5.7.0 can be deduped from enhanced-resolve@npm:5.18.3 to enhanced-resolve@npm:5.18.4
+➤ YN0000: │ update-browserslist-db@npm:^1.1.3 can be deduped from update-browserslist-db@npm:1.1.3 to update-browserslist-db@npm:1.2.3
+[12:27:37.670] [INFO] ➤ YN0000: │ @napi-rs/wasm-runtime@npm:^1.0.5 can be deduped from @napi-rs/wasm-runtime@npm:1.0.5 to @napi-rs/wasm-runtime@npm:1.1.1
+[12:27:37.670] [INFO] ➤ YN0000: │ @napi-rs/wasm-runtime@npm:^1.0.5 can be deduped from @napi-rs/wasm-runtime@npm:1.0.5 to @napi-rs/wasm-runtime@npm:1.1.1
+[12:27:37.670] [INFO] ➤ YN0000: │ axios@npm:^1.8.2 can be deduped from axios@npm:1.12.2 to axios@npm:1.13.1
+[12:27:37.670] [INFO] ➤ YN0000: │ axios@npm:^1.8.2 can be deduped from axios@npm:1.12.2 to axios@npm:1.13.1
+[12:27:37.670] [INFO] ➤ YN0000: │ resolve@npm:^1.1.7 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.15.1 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.17.0 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.19.0 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.22.10 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:~1.22.1 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:~1.22.2 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+[12:27:37.670] [INFO] ➤ YN0000: │ resolve@npm:^1.1.7 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.15.1 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.17.0 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.19.0 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:^1.22.10 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:~1.22.1 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+➤ YN0000: │ resolve@npm:~1.22.2 can be deduped from resolve@npm:1.22.10 to resolve@npm:1.22.11
+[12:27:37.672] [INFO] ➤ YN0000: │ @typescript-eslint/utils@npm:^8.0.0 can be deduped from @typescript-eslint/utils@npm:8.45.0 to @typescript-eslint/utils@npm:8.52.0
+➤ YN0000: │ @typescript-eslint/utils@npm:^8.40.0 can be deduped from @typescript-eslint/utils@npm:8.45.0 to @typescript-eslint/utils@npm:8.52.0
+[12:27:37.672] [INFO] ➤ YN0000: │ @typescript-eslint/utils@npm:^8.0.0 can be deduped from @typescript-eslint/utils@npm:8.45.0 to @typescript-eslint/utils@npm:8.52.0
+➤ YN0000: │ @typescript-eslint/utils@npm:^8.40.0 can be deduped from @typescript-eslint/utils@npm:8.45.0 to @typescript-eslint/utils@npm:8.52.0
+[12:27:37.674] [INFO] ➤ YN0000: │ browserslist@npm:^4.0.0 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.23.0 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+[12:27:37.674] [INFO] ➤ YN0000: │ browserslist@npm:^4.0.0 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.23.0 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+[12:27:37.674] [INFO] ➤ YN0000: │ browserslist@npm:^4.24.0 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.24.4 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.24.5 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.25.3 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.26.3 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ tar@npm:^7.4.3 can be deduped from tar@npm:7.5.1 to tar@npm:7.5.2
+➤ YN0000: │ terser-webpack-plugin@npm:^5.3.11 can be deduped from terser-webpack-plugin@npm:5.3.14 to terser-webpack-plugin@npm:5.3.16
+➤ YN0000: │ terser-webpack-plugin@npm:^5.3.3 can be deduped from terser-webpack-plugin@npm:5.3.14 to terser-webpack-plugin@npm:5.3.16
+[12:27:37.674] [INFO] ➤ YN0000: │ browserslist@npm:^4.24.0 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.24.4 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.24.5 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.25.3 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ browserslist@npm:^4.26.3 can be deduped from browserslist@npm:4.26.3 to browserslist@npm:4.28.1
+➤ YN0000: │ tar@npm:^7.4.3 can be deduped from tar@npm:7.5.1 to tar@npm:7.5.2
+➤ YN0000: │ terser-webpack-plugin@npm:^5.3.11 can be deduped from terser-webpack-plugin@npm:5.3.14 to terser-webpack-plugin@npm:5.3.16
+➤ YN0000: │ terser-webpack-plugin@npm:^5.3.3 can be deduped from terser-webpack-plugin@npm:5.3.14 to terser-webpack-plugin@npm:5.3.16
+[12:27:37.679] [INFO] ➤ YN0000: │ vite@npm:^7.0.0 can be deduped from vite@npm:7.1.9 to vite@npm:7.3.1
+[12:27:37.679] [INFO] ➤ YN0000: │ vite@npm:^7.0.0 can be deduped from vite@npm:7.1.9 to vite@npm:7.3.1
+[12:27:37.680] [INFO] ➤ YN0000: │ ts-jest@npm:^29.1.0 can be deduped from ts-jest@npm:29.4.4 to ts-jest@npm:29.4.6
+[12:27:37.680] [INFO] ➤ YN0000: │ ts-jest@npm:^29.1.0 can be deduped from ts-jest@npm:29.4.4 to ts-jest@npm:29.4.6
+[12:27:37.681] [INFO] ➤ YN0000: │ less@npm:^4.1.3 can be deduped from less@npm:4.4.1 to less@npm:4.4.2
+[12:27:37.681] [INFO] ➤ YN0000: │ less@npm:^4.1.3 can be deduped from less@npm:4.4.1 to less@npm:4.4.2
+[12:27:37.684] [INFO] ➤ YN0000: │ webpack@npm:5 can be deduped from webpack@npm:5.102.1 to webpack@npm:5.104.0
+➤ YN0000: │ webpack@npm:^5.101.3 can be deduped from webpack@npm:5.102.0 to webpack@npm:5.104.0
+[12:27:37.684] [INFO] ➤ YN0000: │ webpack@npm:5 can be deduped from webpack@npm:5.102.1 to webpack@npm:5.104.0
+➤ YN0000: │ webpack@npm:^5.101.3 can be deduped from webpack@npm:5.102.0 to webpack@npm:5.104.0
+[12:27:37.684] [INFO] ➤ YN0000: │ esbuild@npm:^0.25.0 can be deduped from esbuild@npm:0.25.10 to esbuild@npm:0.25.11
+[12:27:37.684] [INFO] ➤ YN0000: │ esbuild@npm:^0.25.0 can be deduped from esbuild@npm:0.25.10 to esbuild@npm:0.25.11
+[12:27:37.686] [INFO] ➤ YN0000: │ 86 packages can be deduped using the highest strategy
+[12:27:37.686] [INFO] ➤ YN0000: │ 86 packages can be deduped using the highest strategy
+[12:27:37.686] [INFO] ➤ YN0000: └ Completed
+[12:27:37.686] [INFO] ➤ YN0000: └ Completed
+[12:27:37.686] [INFO] ➤ YN0000: · Yarn 4.11.0
+[12:27:37.686] [INFO] ➤ YN0000: · Yarn 4.11.0
+[12:27:37.687] [INFO] ➤ YN0000: ┌ Resolution step
+[12:27:37.687] [INFO] ➤ YN0000: ┌ Resolution step
+[12:27:37.839] [INFO] ➤ YN0085: │ - @babel/helper-validator-identifier@npm:7.27.1, @babel/parser@npm:7.28.4, @babel/types@npm:7.28.4, @emnapi/core@npm:1.5.0, @emnapi/runtime@npm:1.5.0, and 51 more.
+[12:27:37.839] [INFO] ➤ YN0085: │ - @babel/helper-validator-identifier@npm:7.27.1, @babel/parser@npm:7.28.4, @babel/types@npm:7.28.4, @emnapi/core@npm:1.5.0, @emnapi/runtime@npm:1.5.0, and 51 more.
+[12:27:37.887] [INFO] ➤ YN0000: └ Completed
+[12:27:37.887] [INFO] ➤ YN0000: └ Completed
+[12:27:37.888] [INFO] ➤ YN0000: ┌ Post-resolution validation
+[12:27:37.888] [INFO] ➤ YN0000: ┌ Post-resolution validation
+[12:27:37.888] [INFO] ➤ YN0060: │ @angular/core is listed by your project with version 21.0.7 (p358039), which doesn't satisfy what @ngrx/signals and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0060: │ @swc/core is listed by your project with version 1.5.29 (p576c8e), which doesn't satisfy what @swc-node/core (via @swc-node/register) and other dependencies request (^1.13.3).
+➤ YN0060: │ jsdom is listed by your project with version 22.1.0 (p34432e), which doesn't satisfy what jest-preset-angular and other dependencies request (>=26.0.0).
+➤ YN0060: │ storybook is listed by your project with version 10.1.11 (p3cde53), which doesn't satisfy what storybook-addon-mock and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0002: │ @anarchitecture-bricks-3tier/source@workspace:. doesn't provide @angular-devkit/architect (p9595c7), requested by @storybook/angular.
+➤ YN0002: │ @anarchitecture-bricks-3tier/source@workspace:. doesn't provide @typescript-eslint/parser (p7deeea), requested by @nx/eslint-plugin.
+[12:27:37.888] [INFO] ➤ YN0060: │ @angular/core is listed by your project with version 21.0.7 (p358039), which doesn't satisfy what @ngrx/signals and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0060: │ @swc/core is listed by your project with version 1.5.29 (p576c8e), which doesn't satisfy what @swc-node/core (via @swc-node/register) and other dependencies request (^1.13.3).
+➤ YN0060: │ jsdom is listed by your project with version 22.1.0 (p34432e), which doesn't satisfy what jest-preset-angular and other dependencies request (>=26.0.0).
+➤ YN0060: │ storybook is listed by your project with version 10.1.11 (p3cde53), which doesn't satisfy what storybook-addon-mock and other dependencies request (but they have non-overlapping ranges!).
+➤ YN0002: │ @anarchitecture-bricks-3tier/source@workspace:. doesn't provide @angular-devkit/architect (p9595c7), requested by @storybook/angular.
+➤ YN0002: │ @anarchitecture-bricks-3tier/source@workspace:. doesn't provide @typescript-eslint/parser (p7deeea), requested by @nx/eslint-plugin.
+[12:27:37.889] [INFO] ➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+[12:27:37.889] [INFO] ➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.
+➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.
+➤ YN0000: └ Completed
+➤ YN0000: ┌ Fetch step
+[12:27:38.812] [INFO] ➤ YN0000: └ Completed in 0s 923ms
+[12:27:38.812] [INFO] ➤ YN0000: └ Completed in 0s 923ms
+[12:27:38.872] [INFO] ➤ YN0000: ┌ Link step
+[12:27:38.872] [INFO] ➤ YN0000: ┌ Link step
+[12:27:41.207] [INFO] ➤ YN0008: │ nx@npm:21.6.4 [f1992] must be rebuilt because its dependency tree changed
+[12:27:41.207] [INFO] ➤ YN0008: │ nx@npm:21.6.4 [f1992] must be rebuilt because its dependency tree changed
+[12:27:41.208] [INFO] ➤ YN0007: │ esbuild@npm:0.25.11 must be built because it never has been before or the last one failed
+[12:27:41.208] [INFO] ➤ YN0007: │ esbuild@npm:0.25.11 must be built because it never has been before or the last one failed
+[12:27:41.209] [INFO] ➤ YN0008: │ bcrypt@npm:6.0.0 must be rebuilt because its dependency tree changed
+[12:27:41.209] [INFO] ➤ YN0008: │ bcrypt@npm:6.0.0 must be rebuilt because its dependency tree changed
+[12:27:41.209] [INFO] ➤ YN0008: │ nx@npm:22.3.3 [04ca3] must be rebuilt because its dependency tree changed
+[12:27:41.209] [INFO] ➤ YN0008: │ nx@npm:22.3.3 [04ca3] must be rebuilt because its dependency tree changed
+[12:27:41.210] [INFO] ➤ YN0008: │ @parcel/watcher@npm:2.5.1 must be rebuilt because its dependency tree changed
+[12:27:41.210] [INFO] ➤ YN0008: │ @parcel/watcher@npm:2.5.1 must be rebuilt because its dependency tree changed
+[12:27:41.210] [INFO] ➤ YN0008: │ unrs-resolver@npm:1.11.1 must be rebuilt because its dependency tree changed
+[12:27:41.210] [INFO] ➤ YN0008: │ unrs-resolver@npm:1.11.1 must be rebuilt because its dependency tree changed
+[12:27:41.210] [INFO] ➤ YN0008: │ msgpackr-extract@npm:3.0.3 must be rebuilt because its dependency tree changed
+[12:27:41.210] [INFO] ➤ YN0008: │ msgpackr-extract@npm:3.0.3 must be rebuilt because its dependency tree changed
+[12:27:43.440] [INFO] ➤ YN0008: │ lmdb@npm:3.4.3 must be rebuilt because its dependency tree changed
+[12:27:43.440] [INFO] ➤ YN0008: │ lmdb@npm:3.4.3 must be rebuilt because its dependency tree changed
+[12:27:43.977] [INFO] ➤ YN0000: └ Completed in 5s 104ms
+[12:27:43.977] [INFO] ➤ YN0000: └ Completed in 5s 104ms
+[12:27:44.239] [INFO] ➤ YN0000: · Done with warnings in 6s 553ms
+[12:27:44.239] [INFO] ➤ YN0000: · Done with warnings in 6s 553ms
+[12:27:44.260] [INFO] Dependencies deduplicated
+[12:27:44.260] [INFO] Dependencies deduplicated
+[12:27:44.260] [INFO] Checking the health of your project(s)..
+[12:27:44.260] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/storybook/angular/package.json...
+[12:27:44.260] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/package.json...
+[12:27:44.260] [DEBUG] Using cached package.json for /Users/johanvrolix/Anarchitects/anarchitecture-bricks-3tier/libs/forms/angular/package.json...
+[12:27:44.261] [DEBUG] Executing command: yarn info --name-only --recursive @storybook/* storybook
+[12:27:44.604] [WARN] /libs/storybook/angular/.storybook: 1 issue found
+[12:27:44.605] [INFO] You are currently using Storybook 10.1.11 but you have packages which are incompatible with it:
+
+- storybook-addon-mock@6.0.1 which depends on ^9.0.12
+
+Please consider updating your packages or contacting the maintainers for compatibility details.
+
+For more details on compatibility guidance, see:
+https://github.com/storybookjs/storybook/issues/32836
+[12:27:44.606] [INFO] Storybook doctor is complete!
+[12:27:44.606] [INFO] You can always recheck the health of your project(s) by running:
+npx storybook doctor
+[12:27:44.607] [INFO] Your project(s) have been upgraded successfully, but some issues were found which need your attention, please check Storybook doctor logs above.
+[12:27:44.607] [INFO] If you want to learn more about the automigrations that executed in your project(s), please check the following links:
+• eslintPlugin: https://storybook.js.org/docs/9/configure/integration/eslint-plugin
+• wrap-getAbsolutePath: https://storybook.js.org/docs/faq#how-do-i-fix-module-resolution-in-special-environments
+[12:27:44.607] [INFO] For a full list of changes, please check our migration guide: https://storybook.js.org/docs/releases/migration-guide?ref=upgrade
+[12:27:46.021] [INFO] Storybook upgrade completed!

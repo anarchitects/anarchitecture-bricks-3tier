@@ -2,15 +2,15 @@
   "name": "@anarchitects/auth-angular",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/core": "^20.3.0",
+    "@angular/common": "21.0.7",
+    "@angular/core": "21.0.7",
     "@anarchitects/auth-ts": "0.0.1",
     "@ngrx/signals": "^20.0.1",
     "@ngrx/operators": "^20.0.1",
     "rxjs": "~7.8.0",
     "jwt-decode": "^4.0.0",
     "@casl/ability": "^6.7.3",
-    "@angular/router": "~20.3.0"
+    "@angular/router": "21.0.7"
   },
   "sideEffects": false
 }
