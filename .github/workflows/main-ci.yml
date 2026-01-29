@@ -27,7 +27,7 @@ jobs:
       # Run this command as early as possible, before dependencies are installed
       # Learn more at https://nx.dev/ci/reference/nx-cloud-cli#npx-nxcloud-startcirun
       # Uncomment this line to enable task distribution
-      - run: yarn dlx nx start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="e2e-ci"
+      # - run: yarn dlx nx start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="e2e-ci"
 
       # Cache node_modules
       - uses: actions/setup-node@v5
