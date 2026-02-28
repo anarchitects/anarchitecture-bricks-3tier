@@ -14,5 +14,8 @@
     "@casl/ability": "^6.7.3",
     "@angular/router": "21.1.6"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }
