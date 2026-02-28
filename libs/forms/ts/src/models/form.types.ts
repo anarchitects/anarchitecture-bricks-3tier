@@ -1,5 +1,6 @@
 export type FieldKind =
   | 'string'
+  | 'password'
   | 'email'
   | 'textarea'
   | 'boolean'

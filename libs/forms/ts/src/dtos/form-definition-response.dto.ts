@@ -4,6 +4,7 @@ const formField = Type.Object({
   name: Type.String(),
   kind: Type.Union([
     Type.Literal('string'),
+    Type.Literal('password'),
     Type.Literal('email'),
     Type.Literal('textarea'),
     Type.Literal('boolean'),
