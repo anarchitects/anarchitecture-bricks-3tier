@@ -4,9 +4,11 @@
   <div class="form-group">
     @if (f.ui?.label) {
     <label for="{{ f.name }}">{{ f.ui!.label }}</label>
-    } @if (f.kind === 'string' || f.kind === 'email') {
+    } @if (f.kind === 'string' || f.kind === 'email' || f.kind === 'password') {
     <input
-      [attr.type]="f.kind === 'email' ? 'email' : 'text'"
+      [attr.type]="
+        f.kind === 'email' ? 'email' : f.kind === 'password' ? 'password' : 'text'
+      "
       [id]="f.name"
       [formControlName]="f.name"
       [placeholder]="f.ui?.placeholder"

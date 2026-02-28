@@ -1,10 +1,20 @@
 # @anarchitects/auth-angular/feature
 
-Feature layer for the Angular auth brick. It currently ships route guards that bridge the state layer with CASL abilities so Angular routers can enforce policy metadata.
+Feature layer for the Angular auth brick. It ships route guards plus standalone form-based feature components that orchestrate auth actions via `AuthStore`.
 
 ## Exports
 
 - `policyGuard`: standalone `CanMatchFn` that denies routes unless the logged-in ability can perform the configured action on the configured subject.
+- `AnarchitectsFeatureRegister`
+- `AnarchitectsFeatureLogin`
+- `AnarchitectsFeatureActivateUser`
+- `AnarchitectsFeatureForgotPassword`
+- `AnarchitectsFeatureResetPassword`
+- `AnarchitectsFeatureVerifyEmail`
+- `AnarchitectsFeatureChangePassword`
+- `AnarchitectsFeatureUpdateEmail`
+- `AnarchitectsFeatureLogout`
+- `AnarchitectsFeatureRefreshTokens`
 
 ## Usage
 
@@ -23,3 +33,54 @@ export const routes: Routes = [
 ```
 
 The guard reads the `AuthStore` ability snapshot. Ensure the state layer is providing abilities by wiring the data-access and util modules in your application bootstrap.
+
+### Token-driven actions
+
+```ts
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureVerifyEmail } from '@anarchitects/auth-angular/feature';
+
+@Component({
+  selector: 'app-verify-email-page',
+  imports: [AnarchitectsFeatureVerifyEmail],
+  template: `<anarchitects-auth-feature-verify-email [token]="token" />`,
+})
+export class VerifyEmailPageComponent {
+  token = 'verification-token-from-route';
+}
+```
+
+### User-id actions
+
+```ts
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureChangePassword } from '@anarchitects/auth-angular/feature';
+
+@Component({
+  selector: 'app-change-password-page',
+  imports: [AnarchitectsFeatureChangePassword],
+  template: `<anarchitects-auth-feature-change-password [userId]="userId" />`,
+})
+export class ChangePasswordPageComponent {
+  userId = 'current-user-id';
+}
+```
+
+### Token refresh/logout
+
+```ts
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureRefreshTokens, AnarchitectsFeatureLogout } from '@anarchitects/auth-angular/feature';
+
+@Component({
+  selector: 'app-session-page',
+  imports: [AnarchitectsFeatureRefreshTokens, AnarchitectsFeatureLogout],
+  template: `
+    <anarchitects-auth-feature-refresh-tokens [userId]="userId" />
+    <anarchitects-auth-feature-logout />
+  `,
+})
+export class SessionPageComponent {
+  userId = 'current-user-id';
+}
+```

@@ -13,6 +13,7 @@ const buildValidFormField = () => ({
   name: faker.lorem.word(),
   kind: faker.helpers.arrayElement([
     'string',
+    'password',
     'email',
     'textarea',
     'boolean',
@@ -196,6 +197,7 @@ describe('FormDefinitionResponseSchema', () => {
     const validResponse = buildValidFormDefinitionResponse();
     const validKinds = [
       'string',
+      'password',
       'email',
       'textarea',
       'boolean',
@@ -212,6 +214,7 @@ describe('FormDefinitionResponseSchema', () => {
               name: 'test',
               kind: kind as
                 | 'string'
+                | 'password'
                 | 'email'
                 | 'textarea'
                 | 'boolean'
