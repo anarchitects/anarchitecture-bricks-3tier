@@ -5,6 +5,8 @@
     "@angular/common": "21.0.7",
     "@angular/core": "21.0.7",
     "@anarchitects/auth-ts": "0.0.1",
+    "@anarchitects/forms-angular": "0.0.5",
+    "@anarchitects/forms-ts": "0.0.4",
     "@ngrx/signals": "^20.0.1",
     "@ngrx/operators": "^20.0.1",
     "rxjs": "~7.8.0",
