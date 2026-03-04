@@ -42,7 +42,7 @@ export const FormsStore = signalStore(
   })),
   withComputed((store) => ({
     selectedFormConfig: computed(() =>
-      store.formConfigsEntities().find((fc) => fc.id === store.selectedId())
+      store.formConfigsEntities().find((fc) => fc.id === store.selectedId()),
     ),
   })),
   withMethods((store) => ({
@@ -62,14 +62,14 @@ export const FormsStore = signalStore(
                     selectedId: id,
                     submitted: false,
                     schemas: [...store.schemas(), schema],
-                  }
+                  },
                 ),
               error: (error: string) =>
                 patchState(store, { loading: false, error: error }),
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     submitForm: rxMethod<SubmissionRequestDTO>(
       pipe(
@@ -85,14 +85,14 @@ export const FormsStore = signalStore(
                     loading: false,
                     error: null,
                     submitted: true,
-                  }
+                  },
                 ),
               error: (error: string) =>
                 patchState(store, { loading: false, error: error }),
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
-  }))
+  })),
 );

@@ -9,23 +9,17 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "webpack-cli build",
-        "args": [
-          "--node-env=production"
-        ],
+        "args": ["--node-env=production"],
         "cwd": "examples/forms-nest-example"
       },
       "configurations": {
         "development": {
-          "args": [
-            "--node-env=development"
-          ]
+          "args": ["--node-env=development"]
         }
       }
     },
     "prune-lockfile": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "cache": true,
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
@@ -37,9 +31,7 @@
       }
     },
     "copy-workspace-modules": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "cache": true,
       "outputs": [
         "{workspaceRoot}/dist/examples/forms-nest-example/workspace_modules"
@@ -50,19 +42,14 @@
       }
     },
     "prune": {
-      "dependsOn": [
-        "prune-lockfile",
-        "copy-workspace-modules"
-      ],
+      "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
       "executor": "nx:noop"
     },
     "serve": {
       "continuous": true,
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "buildTarget": "forms-nest-example:build",
         "runBuildTargetDependencies": false
@@ -78,9 +65,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "examples/forms-nest-example/jest.config.cts",
         "passWithNoTests": true
@@ -88,9 +73,7 @@
     },
     "contract-test": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "api-specs:generate"
-      ],
+      "dependsOn": ["api-specs:generate"],
       "options": {
         "command": "yarn jest --config jest.contract.config.cts --runTestsByPath src/contract/forms.contract.spec.ts",
         "cwd": "examples/forms-nest-example"

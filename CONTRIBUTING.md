@@ -3,20 +3,24 @@
 ## Core Rules
 
 1. Implementation-first HTTP docs
+
 - Define API behavior in Nest controllers with pure `@RouteSchema` schema fields only (`body`, `params`, `querystring`, `headers`, `response`).
 - Do not set `operationId` or `tags` in controllers; maintain them in `tools/api-specs/route-metadata.ts`.
 - Generate OpenAPI via `nx run api-specs:generate`.
 - Never hand-edit `docs/openapi/openapi.json` or `docs/openapi/openapi.yaml`.
 
 2. Shared schemas in TypeScript libraries
+
 - Define DTOs and models under `libs/*/ts`.
 - Angular and Nest libraries consume these shared types.
 
 3. Library-first architecture
+
 - Keep reusable code in `libs/`.
 - Example applications are allowed only under `examples/`.
 
 4. Layer discipline
+
 - Angular: `ui <- feature <- state <- data-access <- config`
 - Nest: `presentation -> application <- infrastructure`
 

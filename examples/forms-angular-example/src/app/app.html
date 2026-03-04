@@ -9,25 +9,17 @@
   </header>
 
   @if (store.loading()) {
-    <p class="status">Loading form definition...</p>
-  }
-
-  @if (store.error(); as error) {
-    <p class="status error">{{ error }}</p>
-  }
-
-  @if (store.selectedFormConfig(); as config) {
-    <section class="card">
-      <anarchitects-forms-ui-form
-        [config]="config"
-        (submitted)="submit($event)"
-      />
-    </section>
-  }
-
-  @if (store.submitted()) {
-    <p class="status success">
-      Submission accepted by the backend.
-    </p>
+  <p class="status">Loading form definition...</p>
+  } @if (store.error(); as error) {
+  <p class="status error">{{ error }}</p>
+  } @if (store.selectedFormConfig(); as config) {
+  <section class="card">
+    <anarchitects-forms-ui-form
+      [config]="config"
+      (submitted)="submit($event)"
+    />
+  </section>
+  } @if (store.submitted()) {
+  <p class="status success">Submission accepted by the backend.</p>
   }
 </main>

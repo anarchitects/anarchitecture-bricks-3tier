@@ -10,7 +10,7 @@ export type FormsConfig = {
 export const FORMS_CONFIG = new InjectionToken<FormsConfig>('FORMS_CONFIG');
 export const API_BASE_URL = new InjectionToken<string>('FORMS_API_BASE_URL');
 export const API_RESOURCE_PATH = new InjectionToken<string>(
-  'FORMS_API_RESOURCE_PATH'
+  'FORMS_API_RESOURCE_PATH',
 );
 
 /** Library-level sensible defaults */
@@ -32,7 +32,5 @@ export function injectApiResourcePath(): string {
 }
 
 export function injectApiBaseUrl(): string {
-  return (
-    inject(API_BASE_URL, { optional: true }) ?? FORMS_DEFAULTS.apiBaseUrl
-  );
+  return inject(API_BASE_URL, { optional: true }) ?? FORMS_DEFAULTS.apiBaseUrl;
 }

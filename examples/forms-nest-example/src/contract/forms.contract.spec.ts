@@ -13,10 +13,11 @@ describe('forms-nest-example contract', () => {
   let app: NestFastifyApplication;
 
   beforeAll(async () => {
-    const openApiPath = join(__dirname, '../../../../docs/openapi/openapi.json');
-    const document = JSON.parse(
-      readFileSync(openApiPath, 'utf8')
+    const openApiPath = join(
+      __dirname,
+      '../../../../docs/openapi/openapi.json',
     );
+    const document = JSON.parse(readFileSync(openApiPath, 'utf8'));
     jestOpenAPI(document as any);
 
     const moduleRef = await Test.createTestingModule({
@@ -24,7 +25,7 @@ describe('forms-nest-example contract', () => {
     }).compile();
 
     app = moduleRef.createNestApplication<NestFastifyApplication>(
-      new FastifyAdapter({ logger: false })
+      new FastifyAdapter({ logger: false }),
     );
 
     await app.init();

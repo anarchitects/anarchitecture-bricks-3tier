@@ -78,18 +78,18 @@ nx run forms-angular-example:contract-test
 
 ## Key Nx Targets
 
-| Command | Description |
-|---|---|
-| `nx run api-specs:generate` | Generate OpenAPI JSON/YAML from Nest controllers |
-| `nx run api-specs:lint` | Lint generated OpenAPI |
-| `nx run api-specs:diff` | Compare generated OpenAPI against `origin/main` |
-| `nx run api-specs:mock` | Run Prism mock server from generated OpenAPI |
-| `nx run api-specs:verify` | Validate required endpoints + snapshot stability |
-| `nx run angular-docs:generate` | Generate and merge Compodoc docs |
-| `nx run storybook-angular:build-storybook` | Build Storybook with technical docs metadata |
-| `nx run forms-nest-example:contract-test` | Validate Nest runtime responses against OpenAPI |
+| Command                                      | Description                                           |
+| -------------------------------------------- | ----------------------------------------------------- |
+| `nx run api-specs:generate`                  | Generate OpenAPI JSON/YAML from Nest controllers      |
+| `nx run api-specs:lint`                      | Lint generated OpenAPI                                |
+| `nx run api-specs:diff`                      | Compare generated OpenAPI against `origin/main`       |
+| `nx run api-specs:mock`                      | Run Prism mock server from generated OpenAPI          |
+| `nx run api-specs:verify`                    | Validate required endpoints + snapshot stability      |
+| `nx run angular-docs:generate`               | Generate and merge Compodoc docs                      |
+| `nx run storybook-angular:build-storybook`   | Build Storybook with technical docs metadata          |
+| `nx run forms-nest-example:contract-test`    | Validate Nest runtime responses against OpenAPI       |
 | `nx run forms-angular-example:contract-test` | Validate Angular data-access calls against Prism mock |
-| `nx affected -t lint test build` | Standard affected checks |
+| `nx affected -t lint test build`             | Standard affected checks                              |
 
 ## Layering Rules
 

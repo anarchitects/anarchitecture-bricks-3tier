@@ -27,9 +27,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -46,9 +44,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -56,9 +52,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/change-password/{userId}": {
@@ -113,9 +107,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -123,9 +115,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/forgot-password": {
@@ -141,9 +131,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email"
-                ],
+                "required": ["email"],
                 "type": "object"
               }
             }
@@ -160,9 +148,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -170,9 +156,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/login": {
@@ -193,10 +177,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "credential",
-                  "password"
-                ],
+                "required": ["credential", "password"],
                 "type": "object"
               }
             }
@@ -218,10 +199,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "accessToken",
-                    "refreshToken"
-                  ],
+                  "required": ["accessToken", "refreshToken"],
                   "type": "object"
                 }
               }
@@ -229,9 +207,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/logout": {
@@ -251,9 +227,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "type": "object"
               }
             }
@@ -270,9 +244,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -280,9 +252,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/me": {
@@ -300,10 +270,7 @@
                     },
                     "user": {}
                   },
-                  "required": [
-                    "user",
-                    "rbac"
-                  ],
+                  "required": ["user", "rbac"],
                   "type": "object"
                 }
               }
@@ -311,9 +278,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/refresh-tokens/{userId}": {
@@ -339,9 +304,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "refreshToken"
-                ],
+                "required": ["refreshToken"],
                 "type": "object"
               }
             }
@@ -363,10 +326,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "accessToken",
-                    "refreshToken"
-                  ],
+                  "required": ["accessToken", "refreshToken"],
                   "type": "object"
                 }
               }
@@ -374,9 +334,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/register": {
@@ -405,11 +363,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email",
-                  "password",
-                  "confirmPassword"
-                ],
+                "required": ["email", "password", "confirmPassword"],
                 "type": "object"
               }
             }
@@ -426,9 +380,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -436,9 +388,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/reset-password": {
@@ -462,11 +412,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token",
-                  "password",
-                  "confirmPassword"
-                ],
+                "required": ["token", "password", "confirmPassword"],
                 "type": "object"
               }
             }
@@ -483,9 +429,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -493,9 +437,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/update-email/{userId}": {
@@ -525,9 +467,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "newEmail"
-                ],
+                "required": ["newEmail"],
                 "type": "object"
               }
             }
@@ -544,9 +484,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -554,9 +492,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/verify-email": {
@@ -572,9 +508,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -591,9 +525,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -601,9 +533,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/forms/{formId}": {
@@ -628,10 +558,7 @@
                     "config": {},
                     "schema": {}
                   },
-                  "required": [
-                    "config",
-                    "schema"
-                  ],
+                  "required": ["config", "schema"],
                   "type": "object"
                 }
               }
@@ -639,9 +566,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Forms"
-        ]
+        "tags": ["Forms"]
       }
     },
     "/forms/submit": {
@@ -664,11 +589,7 @@
                     "type": "object"
                   }
                 },
-                "required": [
-                  "formId",
-                  "formVersion",
-                  "payload"
-                ],
+                "required": ["formId", "formVersion", "payload"],
                 "type": "object"
               }
             }
@@ -719,9 +640,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Forms"
-        ]
+        "tags": ["Forms"]
       }
     }
   },

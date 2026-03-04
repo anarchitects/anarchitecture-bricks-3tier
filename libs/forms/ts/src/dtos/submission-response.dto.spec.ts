@@ -43,7 +43,7 @@ describe('SubmissionResponseSchema', () => {
 
   it('rejects responses with missing required fields', () => {
     expect(
-      [...Value.Errors(SubmissionResponseSchema, {})].length
+      [...Value.Errors(SubmissionResponseSchema, {})].length,
     ).toBeGreaterThan(0);
   });
 
@@ -54,7 +54,7 @@ describe('SubmissionResponseSchema', () => {
     };
 
     expect(
-      [...Value.Errors(SubmissionResponseSchema, invalid)].length
+      [...Value.Errors(SubmissionResponseSchema, invalid)].length,
     ).toBeGreaterThan(0);
   });
 

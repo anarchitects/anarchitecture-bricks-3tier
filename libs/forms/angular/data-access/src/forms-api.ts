@@ -19,14 +19,14 @@ export class FormsApi {
 
   getDefinition(formId: string) {
     return this.http.get<{ config: FormConfig; schema: unknown }>(
-      `${this.resourceUrl}/${formId}`
+      `${this.resourceUrl}/${formId}`,
     );
   }
 
   submitForm(dto: SubmissionRequestDTO) {
     return this.http.post<SubmissionResponseDTO>(
       `${this.resourceUrl}/submit`,
-      dto
+      dto,
     );
   }
 }

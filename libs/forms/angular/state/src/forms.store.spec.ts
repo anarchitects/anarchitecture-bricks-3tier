@@ -20,7 +20,7 @@ const mockFormConfig: FormConfig = {
 const setup = () => {
   const mockFormsApi = {
     getDefinition: jest.fn(() =>
-      of({ config: mockFormConfig, schema: {} }).pipe(delay(100))
+      of({ config: mockFormConfig, schema: {} }).pipe(delay(100)),
     ),
     submitForm: jest.fn(() =>
       of({
@@ -30,7 +30,7 @@ const setup = () => {
         payload: { name: 'John Doe' },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      }).pipe(delay(100))
+      }).pipe(delay(100)),
     ),
   };
 

@@ -11,21 +11,31 @@ type OpenApiDocument = {
 };
 
 const OPENAPI_PATH = join(process.cwd(), 'docs/openapi/openapi.json');
-const SNAPSHOT_PATH = join(process.cwd(), 'tools/api-specs/openapi.snapshot.json');
+const SNAPSHOT_PATH = join(
+  process.cwd(),
+  'tools/api-specs/openapi.snapshot.json',
+);
 
 function readOpenApi(): OpenApiDocument {
   return JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as OpenApiDocument;
 }
 
-function summarizePaths(document: OpenApiDocument): Record<string, Record<string, string>> {
+function summarizePaths(
+  document: OpenApiDocument,
+): Record<string, Record<string, string>> {
   const output: Record<string, Record<string, string>> = {};
   const paths = document.paths ?? {};
 
-  for (const [pathName, methods] of Object.entries(paths).sort((a, b) => a[0].localeCompare(b[0]))) {
+  for (const [pathName, methods] of Object.entries(paths).sort((a, b) =>
+    a[0].localeCompare(b[0]),
+  )) {
     output[pathName] = {};
 
-    for (const [method, operation] of Object.entries(methods).sort((a, b) => a[0].localeCompare(b[0]))) {
-      output[pathName][method] = operation.operationId ?? 'missing-operation-id';
+    for (const [method, operation] of Object.entries(methods).sort((a, b) =>
+      a[0].localeCompare(b[0]),
+    )) {
+      output[pathName][method] =
+        operation.operationId ?? 'missing-operation-id';
     }
   }
 

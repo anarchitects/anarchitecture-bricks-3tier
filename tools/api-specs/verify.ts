@@ -10,7 +10,10 @@ type SnapshotDocument = {
 };
 
 const OPENAPI_PATH = join(process.cwd(), 'docs/openapi/openapi.json');
-const SNAPSHOT_PATH = join(process.cwd(), 'tools/api-specs/openapi.snapshot.json');
+const SNAPSHOT_PATH = join(
+  process.cwd(),
+  'tools/api-specs/openapi.snapshot.json',
+);
 const WORKSPACE_ROOT = process.cwd();
 
 const REQUIRED_PATHS: Array<{ path: string; methods: string[] }> = [
@@ -29,15 +32,22 @@ function readSnapshot(): SnapshotDocument {
   return JSON.parse(readFileSync(SNAPSHOT_PATH, 'utf8')) as SnapshotDocument;
 }
 
-function summarizePaths(document: OpenApiDocument): Record<string, Record<string, string>> {
+function summarizePaths(
+  document: OpenApiDocument,
+): Record<string, Record<string, string>> {
   const output: Record<string, Record<string, string>> = {};
   const paths = document.paths ?? {};
 
-  for (const [pathName, methods] of Object.entries(paths).sort((a, b) => a[0].localeCompare(b[0]))) {
+  for (const [pathName, methods] of Object.entries(paths).sort((a, b) =>
+    a[0].localeCompare(b[0]),
+  )) {
     output[pathName] = {};
 
-    for (const [method, operation] of Object.entries(methods).sort((a, b) => a[0].localeCompare(b[0]))) {
-      output[pathName][method] = operation.operationId ?? 'missing-operation-id';
+    for (const [method, operation] of Object.entries(methods).sort((a, b) =>
+      a[0].localeCompare(b[0]),
+    )) {
+      output[pathName][method] =
+        operation.operationId ?? 'missing-operation-id';
     }
   }
 
@@ -58,7 +68,9 @@ function assertRequiredPaths(document: OpenApiDocument) {
 
     for (const method of required.methods) {
       if (!methods[method]) {
-        errors.push(`Missing required method: ${method.toUpperCase()} ${required.path}`);
+        errors.push(
+          `Missing required method: ${method.toUpperCase()} ${required.path}`,
+        );
       }
     }
   }
@@ -130,13 +142,13 @@ function assertControllerSchemaPurity(controllerFiles: string[]) {
 
     if (typeboxImportPattern.test(source)) {
       errors.push(
-        `Controller must not import @sinclair/typebox directly: ${relativePath}`
+        `Controller must not import @sinclair/typebox directly: ${relativePath}`,
       );
     }
 
     if (inlineTypeSchemaPattern.test(source)) {
       errors.push(
-        `Controller must not declare inline TypeBox schemas: ${relativePath}`
+        `Controller must not declare inline TypeBox schemas: ${relativePath}`,
       );
     }
 
@@ -144,13 +156,13 @@ function assertControllerSchemaPurity(controllerFiles: string[]) {
     for (const block of routeSchemaBlocks) {
       if (operationIdPattern.test(block)) {
         errors.push(
-          `Controller RouteSchema must not set operationId directly: ${relativePath}`
+          `Controller RouteSchema must not set operationId directly: ${relativePath}`,
         );
       }
 
       if (tagsPattern.test(block)) {
         errors.push(
-          `Controller RouteSchema must not set tags directly: ${relativePath}`
+          `Controller RouteSchema must not set tags directly: ${relativePath}`,
         );
       }
     }
@@ -171,7 +183,7 @@ function run() {
 
   if (JSON.stringify(snapshot.paths) !== JSON.stringify(currentSummary)) {
     errors.push(
-      'OpenAPI snapshot mismatch. Run `nx run api-specs:snapshot` after intentional API changes.'
+      'OpenAPI snapshot mismatch. Run `nx run api-specs:snapshot` after intentional API changes.',
     );
   }
 

@@ -36,7 +36,7 @@ describe('App', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain(
-      'Forms Angular Example'
+      'Forms Angular Example',
     );
   });
 });

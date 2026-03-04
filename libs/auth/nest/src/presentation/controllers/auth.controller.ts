@@ -53,7 +53,7 @@ export class AuthController {
     response: { 200: RegisterResponseSchema },
   })
   async registerUser(
-    @Body() dto: RegisterRequestDTO
+    @Body() dto: RegisterRequestDTO,
   ): Promise<RegisterResponseDTO> {
     return this.authService.registerUser(dto);
   }
@@ -64,7 +64,7 @@ export class AuthController {
     response: { 200: SuccessResponseSchema },
   })
   async activateUser(
-    @Body() dto: ActivateUserRequestDTO
+    @Body() dto: ActivateUserRequestDTO,
   ): Promise<SuccessResponseDTO> {
     return this.authService.activateUser(dto);
   }
@@ -97,7 +97,7 @@ export class AuthController {
   })
   async changePassword(
     @Param('userId') userId: string,
-    @Body() dto: ChangePasswordRequestDTO
+    @Body() dto: ChangePasswordRequestDTO,
   ): Promise<SuccessResponseDTO> {
     return this.authService.changePassword(userId, dto);
   }
@@ -109,7 +109,7 @@ export class AuthController {
     response: { 200: SuccessResponseSchema },
   })
   async forgotPassword(
-    @Body() dto: ForgotPasswordRequestDTO
+    @Body() dto: ForgotPasswordRequestDTO,
   ): Promise<SuccessResponseDTO> {
     return this.authService.forgotPassword(dto);
   }
@@ -121,7 +121,7 @@ export class AuthController {
     response: { 200: SuccessResponseSchema },
   })
   async resetPassword(
-    @Body() dto: ResetPasswordRequestDTO
+    @Body() dto: ResetPasswordRequestDTO,
   ): Promise<SuccessResponseDTO> {
     return this.authService.resetPassword(dto);
   }
@@ -133,7 +133,7 @@ export class AuthController {
     response: { 200: SuccessResponseSchema },
   })
   async verifyEmail(
-    @Body() dto: VerifyEmailRequestDTO
+    @Body() dto: VerifyEmailRequestDTO,
   ): Promise<SuccessResponseDTO> {
     return this.authService.verifyEmail(dto);
   }
@@ -146,7 +146,7 @@ export class AuthController {
   })
   async updateEmail(
     @Param('userId') userId: string,
-    @Body() dto: UpdateEmailRequestDTO
+    @Body() dto: UpdateEmailRequestDTO,
   ): Promise<SuccessResponseDTO> {
     return this.authService.updateEmail(userId, dto);
   }
@@ -160,7 +160,7 @@ export class AuthController {
   })
   async refreshTokens(
     @Param('userId') userId: string,
-    @Body() dto: RefreshTokenRequestDTO
+    @Body() dto: RefreshTokenRequestDTO,
   ): Promise<LoginResponseDTO> {
     return this.authService.refreshTokens(userId, dto);
   }
@@ -170,7 +170,7 @@ export class AuthController {
     response: { 200: LoggedInUserInfoResponseSchema },
   })
   async getLoggedInUserInfo(
-    @Req() req: { user: { sub: string } }
+    @Req() req: { user: { sub: string } },
   ): Promise<LoggedInUserInfoResponseDTO> {
     const userId = req.user.sub; // Assuming JWT payload contains 'sub' as userId
     return this.authService.getLoggedInUserInfo(userId);

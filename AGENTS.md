@@ -50,8 +50,10 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 7. Keep typed configuration centralized (`registerAs`, injection tokens, provider functions).
 8. Keep environment access out of domain logic.
 9. Keep dependency direction strict:
+
 - Angular: `ui <- feature <- state <- data-access <- config`
 - Nest: `presentation -> application <- infrastructure`
+
 10. Use subpath exports per layer.
 11. Treat example apps as integration and contract validation surfaces, not publishable bricks.
 

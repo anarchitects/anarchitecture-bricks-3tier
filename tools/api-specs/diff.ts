@@ -19,12 +19,12 @@ function loadSpecFromRef(ref: string): string | null {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
 
-    if (message.includes("exists on disk, but not in")) {
+    if (message.includes('exists on disk, but not in')) {
       return null;
     }
 
     throw new Error(
-      `Failed to load docs/openapi/openapi.yaml from ref "${ref}".\n${message}`
+      `Failed to load docs/openapi/openapi.yaml from ref "${ref}".\n${message}`,
     );
   }
 }
@@ -34,7 +34,7 @@ async function run() {
   const source = loadSpecFromRef(baseRef);
   if (!source) {
     console.log(
-      `Skipped OpenAPI diff: docs/openapi/openapi.yaml not found at ${baseRef}.`
+      `Skipped OpenAPI diff: docs/openapi/openapi.yaml not found at ${baseRef}.`,
     );
     return;
   }
@@ -66,14 +66,14 @@ async function run() {
             changedOperations === 1 ? '' : 's'
           })`
         : ''
-    }`
+    }`,
   );
 
   if (result.breakingDifferencesFound) {
     for (const difference of result.breakingDifferences) {
       const [destinationDetail] = difference.destinationSpecEntityDetails ?? [];
       console.log(
-        `- ${difference.action} @ ${destinationDetail?.location ?? 'unknown location'}`
+        `- ${difference.action} @ ${destinationDetail?.location ?? 'unknown location'}`,
       );
     }
     process.exitCode = 1;

@@ -6,19 +6,13 @@
       "request": "launch",
       "name": "Debug forms-nest-example with Nx",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": [
-        "nx",
-        "serve",
-        "forms-nest-example"
-      ],
+      "runtimeArgs": ["nx", "serve", "forms-nest-example"],
       "env": {
         "NODE_OPTIONS": "--inspect=9229"
       },
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
       "outFiles": [
         "${workspaceFolder}/examples/forms-nest-example/dist/**/*.(m|c|)js",

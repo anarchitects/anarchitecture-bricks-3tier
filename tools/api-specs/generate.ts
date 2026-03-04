@@ -7,7 +7,10 @@ import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { Module } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 import { stringify } from 'yaml';
 import {
   isManagedOpenApiPath,
@@ -153,7 +156,11 @@ async function run() {
       tags: [{ name: 'Auth' }, { name: 'Forms' }],
     },
     hideUntagged: false,
-    transform: ({ schema, url, route }: {
+    transform: ({
+      schema,
+      url,
+      route,
+    }: {
       schema: Record<string, unknown>;
       url: string;
       route: { method?: string | string[] };
@@ -165,7 +172,7 @@ async function run() {
       }
 
       const methods = normalizeMethods(route.method).filter(
-        (method) => method !== 'HEAD'
+        (method) => method !== 'HEAD',
       );
 
       if (methods.length === 0) {
@@ -201,7 +208,7 @@ async function run() {
   const app = await NestFactory.create<NestFastifyApplication>(
     ApiSpecsModule,
     adapter,
-    { logger: false }
+    { logger: false },
   );
 
   await app.init();
@@ -212,7 +219,7 @@ async function run() {
   if (missingOperationIdKeys.size > 0) {
     const missingList = [...missingOperationIdKeys].sort().join('\n- ');
     throw new Error(
-      `Missing operationId mappings for managed routes:\n- ${missingList}\n\nAdd entries to tools/api-specs/route-metadata.ts (OPERATION_ID_MAP).`
+      `Missing operationId mappings for managed routes:\n- ${missingList}\n\nAdd entries to tools/api-specs/route-metadata.ts (OPERATION_ID_MAP).`,
     );
   }
 
@@ -224,7 +231,9 @@ async function run() {
 
   await app.close();
 
-  console.log(`Generated OpenAPI artifacts:\n- ${JSON_OUTPUT}\n- ${YAML_OUTPUT}`);
+  console.log(
+    `Generated OpenAPI artifacts:\n- ${JSON_OUTPUT}\n- ${YAML_OUTPUT}`,
+  );
 }
 
 run().catch((error) => {

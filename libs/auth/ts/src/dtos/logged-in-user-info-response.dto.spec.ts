@@ -11,7 +11,7 @@ describe('LoggedInUserInfoResponseSchema', () => {
       validate({
         user: { id: 'user-id-123', email: 'test@example.com' },
         rbac: [{ action: 'read', subject: 'all' }],
-      })
+      }),
     ).toHaveLength(0);
   });
 
@@ -24,7 +24,7 @@ describe('LoggedInUserInfoResponseSchema', () => {
       validate({
         user: { id: 'user-id-123' },
         rbac: { action: 'read', subject: 'all' },
-      })
+      }),
     ).not.toHaveLength(0);
   });
 });

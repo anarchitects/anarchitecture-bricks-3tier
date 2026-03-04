@@ -37,7 +37,7 @@ describe('forms-angular-example contract (Prism)', () => {
           email: 'doc@example.com',
           message: 'From angular contract test',
         },
-      })
+      }),
     );
 
     expect(response).toHaveProperty('id');

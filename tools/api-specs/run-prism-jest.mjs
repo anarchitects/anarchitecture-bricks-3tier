@@ -5,16 +5,13 @@ const [jestConfigPath, testPath] = process.argv.slice(2);
 
 if (!jestConfigPath || !testPath) {
   console.error(
-    'Usage: node tools/api-specs/run-prism-jest.mjs <jestConfigPath> <testPath>'
+    'Usage: node tools/api-specs/run-prism-jest.mjs <jestConfigPath> <testPath>',
   );
   process.exit(1);
 }
 
 const resolvedJestConfigPath = resolve(process.cwd(), jestConfigPath);
-const resolvedTestPath = resolve(
-  dirname(resolvedJestConfigPath),
-  testPath
-);
+const resolvedTestPath = resolve(dirname(resolvedJestConfigPath), testPath);
 
 const prism = spawn(
   'yarn',
@@ -22,7 +19,7 @@ const prism = spawn(
   {
     cwd: process.cwd(),
     stdio: 'pipe',
-  }
+  },
 );
 
 let ready = false;
@@ -33,7 +30,10 @@ const forward = (chunk) => {
   startupBuffer += message;
   process.stdout.write(message);
 
-  if (message.includes('Prism is listening') || message.includes('http://127.0.0.1:4010')) {
+  if (
+    message.includes('Prism is listening') ||
+    message.includes('http://127.0.0.1:4010')
+  ) {
     ready = true;
   }
 };
@@ -44,7 +44,10 @@ prism.stderr.on('data', (chunk) => {
   startupBuffer += message;
   process.stderr.write(message);
 
-  if (message.includes('Prism is listening') || message.includes('http://127.0.0.1:4010')) {
+  if (
+    message.includes('Prism is listening') ||
+    message.includes('http://127.0.0.1:4010')
+  ) {
     ready = true;
   }
 });
@@ -67,7 +70,9 @@ const waitForReady = async () => {
     if (ready) return;
 
     try {
-      const response = await fetch('http://127.0.0.1:4010/forms/contact_default');
+      const response = await fetch(
+        'http://127.0.0.1:4010/forms/contact_default',
+      );
       if (response.status < 500) {
         ready = true;
         return;
@@ -80,7 +85,7 @@ const waitForReady = async () => {
   }
 
   throw new Error(
-    `Prism mock server did not start in time.\nCaptured output:\n${startupBuffer}`
+    `Prism mock server did not start in time.\nCaptured output:\n${startupBuffer}`,
   );
 };
 
@@ -108,7 +113,7 @@ const run = async () => {
     {
       cwd: process.cwd(),
       stdio: 'inherit',
-    }
+    },
   );
 
   jestProcess.on('exit', (code) => {

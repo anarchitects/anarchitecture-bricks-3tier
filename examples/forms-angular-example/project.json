@@ -8,9 +8,7 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/examples/forms-angular-example",
         "browser": "examples/forms-angular-example/src/main.ts",
@@ -21,9 +19,7 @@
             "input": "examples/forms-angular-example/public"
           }
         ],
-        "styles": [
-          "examples/forms-angular-example/src/styles.css"
-        ]
+        "styles": ["examples/forms-angular-example/src/styles.css"]
       },
       "configurations": {
         "production": {
@@ -67,9 +63,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "examples/forms-angular-example/jest.config.cts",
         "tsConfig": "examples/forms-angular-example/tsconfig.spec.json"
@@ -87,9 +81,7 @@
     },
     "contract-test": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "api-specs:generate"
-      ],
+      "dependsOn": ["api-specs:generate"],
       "options": {
         "command": "node tools/api-specs/run-prism-jest.mjs examples/forms-angular-example/jest.contract.config.cts src/contract/forms-api.contract.spec.ts"
       }
