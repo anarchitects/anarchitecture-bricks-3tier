@@ -1,0 +1,73 @@
+{
+  "name": "api-specs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "root": "tools/api-specs",
+  "sourceRoot": "tools/api-specs",
+  "projectType": "library",
+  "tags": ["scope:docs", "type:api-specs"],
+  "targets": {
+    "generate": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/libs/auth/nest/src/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/forms/nest/src/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/auth/ts/src/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/forms/ts/src/**/*"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/docs/openapi"],
+      "options": {
+        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json tools/api-specs/generate.ts"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate"],
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/docs/openapi/openapi.yaml"
+        }
+      ],
+      "options": {
+        "command": "spectral lint docs/openapi/openapi.yaml"
+      }
+    },
+    "diff": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate"],
+      "options": {
+        "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/diff.ts origin/main"
+      }
+    },
+    "mock": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate"],
+      "options": {
+        "command": "yarn exec prism mock docs/openapi/openapi.yaml -p 4010"
+      }
+    },
+    "snapshot": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate"],
+      "options": {
+        "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/snapshot.ts"
+      }
+    },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["generate"],
+      "options": {
+        "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/verify.ts"
+      }
+    }
+  }
+}

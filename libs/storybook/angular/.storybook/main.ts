@@ -4,7 +4,10 @@ import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {
   stories: ['../../../**/angular/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: [getAbsolutePath('storybook-addon-mock')],
+  addons: [
+    getAbsolutePath('@storybook/addon-docs'),
+    getAbsolutePath('storybook-addon-mock'),
+  ],
   framework: {
     name: getAbsolutePath('@storybook/angular'),
     options: {},

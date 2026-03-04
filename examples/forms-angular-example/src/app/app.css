@@ -1,0 +1,44 @@
+.layout {
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 2rem 1rem 4rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  margin: 0;
+  color: #4b5563;
+}
+
+h1 {
+  margin: 0;
+}
+
+.lede {
+  margin: 0;
+  color: #374151;
+}
+
+.card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+.status {
+  margin: 0;
+  font-weight: 600;
+}
+
+.status.error {
+  color: #b91c1c;
+}
+
+.status.success {
+  color: #047857;
+}

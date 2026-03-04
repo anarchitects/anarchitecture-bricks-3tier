@@ -1,7 +1,8 @@
-import { Static, Type } from '@sinclair/typebox';
+import {
+  SuccessResponseDTO,
+  SuccessResponseSchema,
+} from './success-response.dto';
 
-export const RegisterResponseSchema = Type.Object({
-  success: Type.Boolean(),
-});
+export const RegisterResponseSchema = SuccessResponseSchema;
 
-export type RegisterResponseDTO = Static<typeof RegisterResponseSchema>;
+export type RegisterResponseDTO = SuccessResponseDTO;

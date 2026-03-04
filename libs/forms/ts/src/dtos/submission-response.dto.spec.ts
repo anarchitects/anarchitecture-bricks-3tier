@@ -1,4 +1,5 @@
 import { Value } from '@sinclair/typebox/value';
+import { FormatRegistry } from '@sinclair/typebox';
 import { faker } from '@faker-js/faker';
 import {
   SubmissionResponseSchema,
@@ -6,12 +7,31 @@ import {
 } from './submission-response.dto';
 
 const buildValidSubmissionResponse = (): SubmissionResponseDTO => ({
-  success: faker.datatype.boolean(),
+  id: faker.string.uuid(),
+  formId: 'contact_default',
+  formVersion: 1,
+  payload: {
+    email: faker.internet.email(),
+    message: faker.lorem.sentence(),
+  },
+  createdAt: faker.date.recent().toISOString(),
+  updatedAt: faker.date.recent().toISOString(),
+});
+
+FormatRegistry.Set('date-time', (value: unknown): value is string => {
+  return typeof value === 'string' && !Number.isNaN(Date.parse(value));
 });
 
 describe('SubmissionResponseSchema', () => {
   it('declares the expected required fields', () => {
-    expect(SubmissionResponseSchema.required).toStrictEqual(['success']);
+    expect(SubmissionResponseSchema.required).toStrictEqual([
+      'id',
+      'formId',
+      'formVersion',
+      'payload',
+      'createdAt',
+      'updatedAt',
+    ]);
   });
 
   it('validates a correct submission response', () => {
@@ -21,59 +41,28 @@ describe('SubmissionResponseSchema', () => {
     ]).toStrictEqual([]);
   });
 
-  it('validates both success and failure responses', () => {
-    expect([
-      ...Value.Errors(SubmissionResponseSchema, { success: true }),
-    ]).toStrictEqual([]);
-
-    expect([
-      ...Value.Errors(SubmissionResponseSchema, { success: false }),
-    ]).toStrictEqual([]);
-  });
-
-  it('enforces success as boolean type', () => {
-    expect(
-      [
-        ...Value.Errors(SubmissionResponseSchema, {
-          success: 'true',
-        }),
-      ].length
-    ).toBeGreaterThan(0);
-
-    expect(
-      [
-        ...Value.Errors(SubmissionResponseSchema, {
-          success: 1,
-        }),
-      ].length
-    ).toBeGreaterThan(0);
-
-    expect(
-      [
-        ...Value.Errors(SubmissionResponseSchema, {
-          success: null,
-        }),
-      ].length
-    ).toBeGreaterThan(0);
-
-    expect(
-      [
-        ...Value.Errors(SubmissionResponseSchema, {
-          success: undefined,
-        }),
-      ].length
-    ).toBeGreaterThan(0);
-  });
-
   it('rejects responses with missing required fields', () => {
     expect(
       [...Value.Errors(SubmissionResponseSchema, {})].length
     ).toBeGreaterThan(0);
   });
 
-  it('captures specific TypeBox metadata', () => {
-    const successSchema = SubmissionResponseSchema.properties['success'];
+  it('enforces payload as record/object', () => {
+    const invalid = {
+      ...buildValidSubmissionResponse(),
+      payload: 'invalid',
+    };
 
-    expect(successSchema['type']).toBe('boolean');
+    expect(
+      [...Value.Errors(SubmissionResponseSchema, invalid)].length
+    ).toBeGreaterThan(0);
+  });
+
+  it('captures specific TypeBox metadata', () => {
+    const idSchema = SubmissionResponseSchema.properties['id'];
+    const createdAtSchema = SubmissionResponseSchema.properties['createdAt'];
+
+    expect(idSchema['type']).toBe('string');
+    expect(createdAtSchema['format']).toBe('date-time');
   });
 });

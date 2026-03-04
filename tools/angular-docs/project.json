@@ -1,0 +1,36 @@
+{
+  "name": "angular-docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "root": "tools/angular-docs",
+  "sourceRoot": "tools/angular-docs",
+  "projectType": "library",
+  "tags": ["scope:docs", "type:angular-docs"],
+  "targets": {
+    "generate": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{workspaceRoot}/dist/docs/compodoc",
+        "{workspaceRoot}/libs/storybook/angular/.storybook/compodoc.ts"
+      ],
+      "options": {
+        "command": "yarn nx run-many -t compodoc -p auth-angular forms-angular && yarn nx run angular-docs:merge-json"
+      }
+    },
+    "merge-json": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/dist/docs/compodoc/**/json/documentation.json"
+        }
+      ],
+      "outputs": [
+        "{workspaceRoot}/dist/docs/compodoc/merged",
+        "{workspaceRoot}/libs/storybook/angular/.storybook/compodoc.ts"
+      ],
+      "options": {
+        "command": "node tools/angular-docs/merge-compodoc-json.mjs"
+      }
+    }
+  }
+}

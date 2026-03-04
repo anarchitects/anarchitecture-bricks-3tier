@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "esModuleInterop": true,
-    "outDir": "../../dist/tools/contract-tests"
-  },
-  "include": ["./**/*.ts"]
-}

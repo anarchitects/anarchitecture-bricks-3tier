@@ -43,6 +43,13 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "compodoc": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/docs/compodoc/forms-angular"],
+      "options": {
+        "command": "rm -rf dist/docs/compodoc/forms-angular && yarn exec compodoc libs/forms/angular/src -p libs/forms/angular/tsconfig.lib.json -d dist/docs/compodoc/forms-angular/html --disableCoverage --disableGraph --silent && yarn exec compodoc libs/forms/angular/src -p libs/forms/angular/tsconfig.lib.json -d dist/docs/compodoc/forms-angular/json -e json --disableCoverage --disableGraph --silent"
+      }
     }
   }
 }

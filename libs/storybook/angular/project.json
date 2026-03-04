@@ -8,6 +8,12 @@
   "targets": {
     "storybook": {
       "executor": "@storybook/angular:start-storybook",
+      "dependsOn": [
+        {
+          "projects": "angular-docs",
+          "target": "generate"
+        }
+      ],
       "options": {
         "port": 4400,
         "configDir": "libs/storybook/angular/.storybook",
@@ -22,6 +28,12 @@
     },
     "build-storybook": {
       "executor": "@storybook/angular:build-storybook",
+      "dependsOn": [
+        {
+          "projects": "angular-docs",
+          "target": "generate"
+        }
+      ],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "dist/storybook/storybook-angular",
@@ -37,6 +49,12 @@
     },
     "test-storybook": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": "angular-docs",
+          "target": "generate"
+        }
+      ],
       "options": {
         "command": "test-storybook -c libs/storybook/angular/.storybook --url=http://localhost:4400"
       }

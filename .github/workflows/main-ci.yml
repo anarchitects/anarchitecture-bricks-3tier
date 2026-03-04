@@ -38,8 +38,19 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       - run: yarn install --immutable
+      - run: yarn nx run api-specs:lint
+      - run: yarn nx run angular-docs:generate
       # When you enable task distribution, run the e2e-ci task instead of e2e
-      - run: yarn nx affected -t test build e2e-ci
+      - run: yarn nx affected -t lint test build e2e-ci
+      - run: yarn nx run forms-nest-example:contract-test
+      - run: yarn nx run forms-angular-example:contract-test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docs-preview
+          path: |
+            docs/openapi
+            dist/docs/compodoc
       # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
       - run: yarn nx fix-ci
         if: always()

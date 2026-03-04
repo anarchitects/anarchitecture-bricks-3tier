@@ -1,6 +1,6 @@
 # @anarchitects/auth-angular
 
-Angular bricks for the Anarchitecture auth domain. The library is organized into standalone feature slices (config, data-access, feature, state, util, ui) that compose together to provide contract-driven authentication flows for Angular applications.
+Angular bricks for the Anarchitecture auth domain. The library is organized into standalone feature slices (config, data-access, feature, state, util, ui) that compose together to provide implementation-aligned authentication flows for Angular applications.
 
 ## Features
 
@@ -96,7 +96,7 @@ export const routes: Routes = [
 
 ## Development notes
 
-- DTO contracts live in `@anarchitects/auth-ts`; regenerate them when the API contract changes.
+- DTOs live in `@anarchitects/auth-ts`; regenerate OpenAPI docs when route schemas change (`nx run api-specs:generate`).
 - Data-access layer should always use the generated OpenAPI clients—no manual HTTP calls.
 - State layer uses Angular signals via `@ngrx/signals` for reactive updates and caches the CASL ability returned by the API.
 - Ability creation is centralised in `@anarchitects/auth-angular/util`; import `createAppAbility` instead of instantiating CASL directly.

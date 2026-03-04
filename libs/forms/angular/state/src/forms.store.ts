@@ -77,12 +77,16 @@ export const FormsStore = signalStore(
         switchMap((dto) =>
           store._formsApi.submitForm(dto).pipe(
             tapResponse({
-              next: ({ success }) =>
-                patchState(store, {
-                  loading: false,
-                  error: null,
-                  submitted: success,
-                }),
+              next: (submission) =>
+                patchState(
+                  store,
+                  setEntity(submission, { collection: 'submissions' }),
+                  {
+                    loading: false,
+                    error: null,
+                    submitted: true,
+                  }
+                ),
               error: (error: string) =>
                 patchState(store, { loading: false, error: error }),
             })

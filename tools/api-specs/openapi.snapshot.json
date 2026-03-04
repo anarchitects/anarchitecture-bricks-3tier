@@ -1,0 +1,46 @@
+{
+  "openapi": "3.1.0",
+  "title": "Anarchitecture Bricks API",
+  "version": "1.0.0",
+  "paths": {
+    "/auth/activate": {
+      "patch": "activateUser"
+    },
+    "/auth/change-password/{userId}": {
+      "patch": "changePassword"
+    },
+    "/auth/forgot-password": {
+      "post": "forgotPassword"
+    },
+    "/auth/login": {
+      "post": "login"
+    },
+    "/auth/logout": {
+      "post": "logout"
+    },
+    "/auth/me": {
+      "get": "getLoggedInUserInfo"
+    },
+    "/auth/refresh-tokens/{userId}": {
+      "post": "refreshTokens"
+    },
+    "/auth/register": {
+      "post": "registerUser"
+    },
+    "/auth/reset-password": {
+      "post": "resetPassword"
+    },
+    "/auth/update-email/{userId}": {
+      "patch": "updateEmail"
+    },
+    "/auth/verify-email": {
+      "post": "verifyEmail"
+    },
+    "/forms/{formId}": {
+      "get": "getFormDefinition"
+    },
+    "/forms/submit": {
+      "post": "submitForm"
+    }
+  }
+}

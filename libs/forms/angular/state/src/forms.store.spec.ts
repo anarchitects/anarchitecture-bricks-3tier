@@ -22,7 +22,16 @@ const setup = () => {
     getDefinition: jest.fn(() =>
       of({ config: mockFormConfig, schema: {} }).pipe(delay(100))
     ),
-    submitForm: jest.fn(() => of({ success: true }).pipe(delay(100))),
+    submitForm: jest.fn(() =>
+      of({
+        id: 'submission-1',
+        formId: 'contact',
+        formVersion: 1,
+        payload: { name: 'John Doe' },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }).pipe(delay(100))
+    ),
   };
 
   TestBed.configureTestingModule({
@@ -66,6 +75,7 @@ describe('Forms', () => {
       expect(store.loading()).toBe(false);
       expect(store.error()).toBeNull();
       expect(store.submitted()).toBe(true);
+      expect(store.submissionsEntities().length).toBe(1);
     }));
   });
 });
