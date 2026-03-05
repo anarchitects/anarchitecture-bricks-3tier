@@ -34,6 +34,10 @@ libs/
   ts/frontend/data-access/
 
 examples/
+  auth-angular-example/
+  auth-angular-example-e2e/
+  auth-nest-example/
+  auth-nest-example-e2e/
   forms-angular-example/
   forms-angular-example-e2e/
   forms-nest-example/
@@ -68,10 +72,14 @@ nx run angular-docs:generate
 nx run storybook-angular:storybook
 
 # Example apps
+nx run auth-nest-example:serve
+nx run auth-angular-example:serve
 nx run forms-nest-example:serve
 nx run forms-angular-example:serve
 
 # Contract checks
+nx run auth-nest-example:contract-test
+nx run auth-angular-example:contract-test
 nx run forms-nest-example:contract-test
 nx run forms-angular-example:contract-test
 ```
@@ -87,14 +95,16 @@ nx run forms-angular-example:contract-test
 | `nx run api-specs:verify`                    | Validate required endpoints + snapshot stability      |
 | `nx run angular-docs:generate`               | Generate and merge Compodoc docs                      |
 | `nx run storybook-angular:build-storybook`   | Build Storybook with technical docs metadata          |
+| `nx run auth-nest-example:contract-test`     | Validate auth Nest runtime responses against OpenAPI  |
+| `nx run auth-angular-example:contract-test`  | Validate auth Angular data-access against Prism mock  |
 | `nx run forms-nest-example:contract-test`    | Validate Nest runtime responses against OpenAPI       |
 | `nx run forms-angular-example:contract-test` | Validate Angular data-access calls against Prism mock |
 | `nx affected -t lint test build`             | Standard affected checks                              |
 
 ## Layering Rules
 
-- Angular: `ui <- feature <- state <- data-access <- config`
-- Nest: `presentation -> application <- infrastructure`
+- Angular: `ui <- feature -> state -> data-access` | `config`, `util`: available to all layers
+- Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 - Shared TS: framework-agnostic DTOs/models/builders/utilities
 
 ## Documentation Tooling

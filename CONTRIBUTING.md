@@ -21,8 +21,8 @@
 
 4. Layer discipline
 
-- Angular: `ui <- feature <- state <- data-access <- config`
-- Nest: `presentation -> application <- infrastructure`
+- Angular: `ui <- feature -> state -> data-access` | `config`, `util`: available to all layers
+- Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 
 ## Local Workflow
 
@@ -44,6 +44,8 @@ nx affected -t lint test build
 # Docs and showcases
 nx run angular-docs:generate
 nx run storybook-angular:storybook
+nx run auth-nest-example:contract-test
+nx run auth-angular-example:contract-test
 nx run forms-nest-example:contract-test
 nx run forms-angular-example:contract-test
 ```

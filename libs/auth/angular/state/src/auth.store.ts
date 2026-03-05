@@ -148,7 +148,7 @@ export const AuthStore = signalStore(
                 patchState(store, { success });
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
-                patchState(store, removeAllEntities());
+                patchState(store, removeAllEntities(), { ability: undefined });
               },
               error: (error: string) => {
                 patchState(store, { error });
