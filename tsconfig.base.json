@@ -51,9 +51,7 @@
       ],
       "@anarchitects/forms-ts/dtos": ["libs/forms/ts/src/dtos/index.ts"],
       "@anarchitects/forms-ts/models": ["libs/forms/ts/src/models/index.ts"],
-      "@anarchitects/forms-ts/mappers": [
-        "libs/forms/ts/src/mappers/index.ts"
-      ],
+      "@anarchitects/forms-ts/mappers": ["libs/forms/ts/src/mappers/index.ts"],
       "@anarchitects/storybook-angular": [
         "libs/storybook/angular/src/index.ts"
       ],
