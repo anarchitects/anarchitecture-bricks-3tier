@@ -1,96 +1,64 @@
-# Contributing – Anarchitecture Bricks 3Tier
+# Contributing - Anarchitecture Bricks 3-Tier
 
-Thank you for contributing! 🚀  
-This repository contains **only libraries** and follows a **contracts-first** approach.
+## Core Rules
 
----
+1. Implementation-first HTTP docs
 
-## 📐 Core Rules
+- Define API behavior in Nest controllers with pure `@RouteSchema` schema fields only (`body`, `params`, `querystring`, `headers`, `response`).
+- Do not set `operationId` or `tags` in controllers; maintain them in `tools/api-specs/route-metadata.ts`.
+- Generate OpenAPI via `nx run api-specs:generate`.
+- Never hand-edit `docs/openapi/openapi.json` or `docs/openapi/openapi.yaml`.
 
-1. **Contracts-first**
+2. Shared schemas in TypeScript libraries
 
-   - All changes start in `contracts/openapi.yaml` (and optionally `asyncapi.yaml`).
-   - Run `yarn contracts:lint` to validate the spec.
-   - Regenerate schemas and clients with `yarn contracts:gen:*`.
+- Define DTOs and models under `libs/*/ts`.
+- Angular and Nest libraries consume these shared types.
 
-2. **No apps**
+3. Library-first architecture
 
-   - This repo only contains **libraries**.
-   - No Angular apps, no NestJS apps, no Rails or Laravel apps.
-   - Consumers live in separate repos.
+- Keep reusable code in `libs/`.
+- Example applications are allowed only under `examples/`.
 
-3. **3-tier pattern**
+4. Layer discipline
 
-   - **Frontend libraries:**
-     - `ui` = dumb/presentational
-     - `feature` = smart orchestration
-     - `data-access` = facades + generated clients
-   - **Backend libraries:**
-     - `controllers` = controller interfaces
-     - `services` = business logic
-     - `infrastructure` = adapters (DB, mail, external APIs)
-   - **Common:** DTOs, models, validators, events.
+- Angular: `ui <- feature <- state <- data-access <- config`
+- Nest: `presentation -> application <- infrastructure`
 
-4. **Polyglot discipline**
-   - Contracts apply across all stacks.
-   - TS, Rails, and Laravel implementations must comply with the same contracts.
-   - If a stack is not yet implemented → create stubs.
-
----
-
-## 🛠 Workflow
+## Local Workflow
 
 ```bash
-# install dependencies
 yarn install
 
-# lint contract
-yarn contracts:lint
+# API docs pipeline
+nx run api-specs:generate
+nx run api-specs:lint
+nx run api-specs:verify
 
-# generate schemas & clients
-yarn contracts:gen:schemas
-yarn contracts:gen:ts-web
+# If you add/change a route, update:
+# tools/api-specs/route-metadata.ts (OPERATION_ID_MAP)
+# and run nx run api-specs:snapshot for intentional contract changes
 
-# run contract tests
-yarn test:contracts
+# Library quality checks
+nx affected -t lint test build
+
+# Docs and showcases
+nx run angular-docs:generate
+nx run storybook-angular:storybook
+nx run forms-nest-example:contract-test
+nx run forms-angular-example:contract-test
 ```
-````
 
-⸻
+## Pull Requests
 
-## ✅ Commits & Pull Requests
+- Use Conventional Commits (`feat`, `fix`, `refactor`, `chore`, `docs`, etc.).
+- Document API-impacting changes with generated OpenAPI diff output.
+- Include contract-test updates when endpoints or response schemas change.
 
-- Use Conventional Commits:
-  - feat(scope): ..., fix(scope): ..., chore(scope): ...
-- Scope = library or slice (e.g., ts-web-data-access, rails-infrastructure, laravel-services).
-- PR description should explain:
-- What changed
-- Why it was needed
-- Whether contracts were impacted (breaking / non-breaking)
+## Testing Expectations
 
-⸻
-
-## 🧪 Testing
-
-- Unit tests per library
-- Contract tests (tools/contract-tests/) validate payloads against JSON Schemas
-- No E2E tests here – those happen in consumer apps.
-
-⸻
-
-## 🔧 Nx and Plugins
-
-For now we use yarn scripts for contracts and codegen.
-Later these will be replaced by Nx plugins (@anarchitects/nx-contracts, @anarchitects/nx-openapi) using inferred tasks-first.
-→ You won’t need to write project.json files manually.
-
-⸻
-
-## 💡 Tips
-
-- Keep common clean and minimal.
-- Respect boundaries (ui must not import feature, controllers must not import infrastructure directly).
-- Export only reusable and framework-agnostic code.
-- Always keep libraries app-agnostic.
-
-**Happy contributing! 🙌**
+- Unit tests in each library.
+- OpenAPI verification and lint checks (`api-specs:*`).
+- Contract tests:
+  - Nest runtime responses validated against generated OpenAPI.
+  - Angular data-access validated against Prism mock built from generated OpenAPI.
+- E2E checks run from Nx example applications.

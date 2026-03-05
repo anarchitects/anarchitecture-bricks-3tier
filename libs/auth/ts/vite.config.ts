@@ -37,6 +37,7 @@ export default defineConfig(() => ({
         index: 'src/index.ts',
         'dtos/index': 'src/dtos/index.ts',
         'models/index': 'src/models/index.ts',
+        'mappers/index': 'src/mappers/index.ts',
       },
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.

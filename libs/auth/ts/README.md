@@ -2,8 +2,8 @@
 
 TypeScript DTOs and domain models for the Anarchitecture authentication stack. The package bundles:
 
-- Contract-driven request/response schemas generated with [TypeBox](https://github.com/sinclairzx81/typebox)
-- Type-safe DTO aliases that line up with the OpenAPI contract (`contracts/openapi.yaml`)
+- Implementation-driven request/response schemas authored with [TypeBox](https://github.com/sinclairzx81/typebox)
+- Type-safe DTO aliases consumed by Angular and Nest libraries and reflected in generated OpenAPI docs
 - Domain models (`User`, `Role`, `Permission`) for composing dynamic RBAC logic across services
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
@@ -75,7 +75,7 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 
 ## Contributing
 
-Auth DTOs derive from `contracts/openapi.yaml`. Update the contract first, regenerate DTOs, then extend this package so every stack (Angular, Nest, shared TS) stays in sync.
+Auth DTOs are maintained in this package and consumed by Nest presentation routes. Update these schemas first, then regenerate OpenAPI via `nx run api-specs:generate` so every stack stays in sync.
 
 ## License
 

@@ -40,7 +40,6 @@ describe('FormsController', () => {
   describe('getFormDefinition', () => {
     it('should return form definition from the service', async () => {
       const formId = 'contact_default';
-      const version = 1;
       const result = await controller.getFormDefinition(formId);
       expect(result).toBe(mockFormConfig);
       expect(mockFormService.getDefinition).toHaveBeenCalledWith(formId);

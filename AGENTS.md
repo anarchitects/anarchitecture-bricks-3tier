@@ -13,106 +13,63 @@
 
 <!-- nx configuration end-->
 
-# 🤖 Agents Instructions – Anarchitecture Bricks 3-Tier
+# Agents Instructions - Anarchitecture Bricks 3-Tier
 
-## 🧱 Your Role
+## Role
 
-You act as a development assistant and automation agent.
-Your purpose is to help maintain, extend, and refactor the bricks repository while enforcing its architectural conventions.
+You are an engineering assistant for an Nx monorepo containing reusable libraries and example applications.
 
-You understand and respect the conventions described in copilot-instructions.md.
+## Allowed Work
 
-## 🧩 Your Capabilities
+- Create, refactor, or remove Nx libraries under `libs/`.
+- Create and maintain Nx-managed example applications under `examples/`.
+- Update docs (`README.md`, `CONTRIBUTING.md`, and library READMEs).
+- Add and maintain TypeBox/Zod DTOs, models, validators, and builders.
+- Maintain Nx targets for build/lint/test/docs/publish.
+- Maintain OpenAPI generation from implementation under `tools/api-specs` and `docs/openapi`.
+- Maintain Compodoc/Storybook docs integration.
+- Add tests (unit, contract, e2e) and improve validation quality.
 
-You may:
+## Forbidden Work
 
-- Create, refactor, or remove Nx libraries within libs/.
-- Generate NestJS, Angular, TypeScript, Rails, or Laravel libraries that comply with the 3-tier + config/state structure.
-- Create or update:
-- README.md, CONTRIBUTING.md, or library-specific docs.
-- TypeBox/Zod DTOs, models, validators.
-- Nx project.json targets for lint, build, test, publish.
-- Suggest and run safe Nx commands (e.g. nx generate, nx run, nx affected).
-- Run contract linting and schema generation under contracts/.
-- Propose code fixes, refactors, or consistency updates across libraries.
-- Add tests, stories, or validators for DTOs and services.
+- Do not create or modify any directory under `apps/`.
+- Do not manually edit generated OpenAPI artifacts in `docs/openapi/`.
+- Do not introduce external dependencies without purpose.
+- Do not mix frontend and backend concerns in a single library layer.
+- Do not break Nx module boundaries/import rules.
+- Do not push directly to `main`.
 
-## 🚫 You Must Never
+## Architectural Principles
 
-- Create or modify any directory under apps/.
-- Manually edit generated code in generated/ folders.
-- Introduce external dependencies without purpose or discussion.
-- Mix frontend (Angular) and backend (NestJS) code in one library.
-- Break Nx module boundaries or import rules.
-- Commit or push directly to main — always open a PR.
+1. Shared schemas and domain models live in `libs/*/ts`.
+2. API documentation is derived from Nest controllers and `@RouteSchema`.
+3. Nest controllers must keep `@RouteSchema` pure Fastify schema fields only (`body`, `params`, `querystring`, `headers`, `response`).
+4. OpenAPI metadata (`operationId`, `tags`) is assigned centrally in `tools/api-specs/route-metadata.ts` during spec generation.
+5. Nest controllers must not define inline TypeBox route schemas; route schemas must be imported from domain TS DTO libraries (`libs/<domain>/ts/src/dtos`).
+6. Storybook is the default UI docs experience; Compodoc enriches technical API docs.
+7. Keep typed configuration centralized (`registerAs`, injection tokens, provider functions).
+8. Keep environment access out of domain logic.
+9. Keep dependency direction strict:
 
-## ⚙️ Tooling Context
+- Angular: `ui <- feature <- state <- data-access <- config`
+- Nest: `presentation -> application <- infrastructure`
 
-- Framework: Nx monorepo
-- Languages: TypeScript (primary), optional Ruby/PHP layers
-- Backend: NestJS
-- Frontend: Angular (standalone, signals)
-- Codegen: OpenAPI → DTOs, Schemas, Clients
-- Testing: Vitest, Jest, Nest TestingModule
+10. Use subpath exports per layer.
+11. Treat example apps as integration and contract validation surfaces, not publishable bricks.
 
-⸻
+## Preferred Commands
 
-## 🧩 Execution Modes
+- `nx run <project>:lint`
+- `nx run <project>:test`
+- `nx run <project>:build`
+- `nx run api-specs:generate|lint|verify|diff|mock`
+- `nx run angular-docs:generate`
+- `nx run forms-nest-example:contract-test`
+- `nx run forms-angular-example:contract-test`
 
-- For code generation or scaffolding, prefer Nx generators:
-- @nx/angular:library
-- @nx/nest:library
-- @nx/js:library
-- For lint/test/build, use Nx targets:
-- nx run <project>:lint
-- nx run <project>:build
-- nx run <project>:test
+## Expected Output Quality
 
-When editing TypeScript configs or library manifests, preserve existing tags, implicit dependencies, and build outputs.
-
-## 🧭 Behavior Rules
-
-1. Enforce contracts-first principle: never invent APIs; derive from contracts/openapi.yaml.
-2. Follow 3-tier layering with additional config and state layers where applicable.
-3. Use tokens + ports for all cross-layer dependencies.
-4. Use typed configuration (registerAs for Nest, InjectionTokens for Angular).
-5. Never inline environment variables in code.
-6. Keep imports clean:
-
-- Angular: ui ← feature ← state ← data-access ← config
-- Nest: presentation → application ← infrastructure
-
-7. Suggest tests or validators when introducing DTOs or models.
-8. Use subpath exports for each layer inside the same package.
-
-## 🧩 Example Tasks You May Perform
-
-| Task                             | Action                                                                                 |
-| -------------------------------- | -------------------------------------------------------------------------------------- |
-| Add a new domain (e.g. bookings) | Generate `libs/bookings/{ts,angular,nest}/` with proper structure                      |
-| Add a new DTO                    | Create file in `libs/{domain}/ts/src/dtos/` with TypeBox schema and JSON schema export |
-| Extend API client                | Update contract, regenerate schemas and client                                         |
-| Fix boundary violations          | Adjust imports and tags in `nx.json` or `project.json`                                 |
-| Update dependencies              | Run safe upgrade for Nx or TypeScript packages                                         |
-
-## ✅ Expected Output
-
-All code and documentation you generate must:
-
-- Conform to the rules in copilot-instructions.md
-- Pass nx lint, nx build, and nx test
-- Avoid duplication or divergence from contract definitions
-- Be production-ready and publishable as independent npm packages
-
-## Summary:
-
-You are an autonomous assistant for maintaining modular, contracts-first, polyglot bricks.
-Respect architecture boundaries, generate code through Nx, and never build apps — only reusable libraries.
-
-## 🔗 Related Files
-
-- [copilot-instructions.md – coding conventions & structure](.github/copilot-instructions.md) ]
-- [CONTRIBUTING.md – contribution workflow](CONTRIBUTING.md)
-- [README.md – high-level overview](README.md)
-
-# 🏁 End of Instructions
+- Production-ready code and docs.
+- Deterministic, reproducible targets.
+- Passing lint/build/test for affected scope.
+- Consistent architecture boundaries and naming.

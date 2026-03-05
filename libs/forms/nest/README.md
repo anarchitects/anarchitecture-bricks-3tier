@@ -1,8 +1,8 @@
 # @anarchitects/forms-nest
 
-NestJS bricks that expose the Forms platform contracts through layered modules. The library ships
+NestJS bricks that expose the Forms platform implementation through layered modules. The library ships
 application services, HTTP controllers, and infrastructure adapters so a NestJS host can fetch form
-definitions and accept submissions without re-implementing the contract logic.
+definitions and accept submissions without re-implementing domain logic.
 
 ## Layered entry points
 
@@ -46,8 +46,8 @@ export class FormsModule {}
 Then register the module in your application bootstrap (together with your database and mailer
 configuration). The presentation controllers expose:
 
-- `GET /forms/:formId` – resolves contract-driven form definitions and JSON schema.
-- `POST /submissions/submit` – validates the request body against `SubmissionRequestSchema`, stores
+- `GET /forms/:formId` – resolves form definitions and JSON schema payloads.
+- `POST /forms/submit` – validates the request body against `SubmissionRequestSchema`, stores
   the payload, and triggers mail notifications through the mailer port.
 
 ## Customising infrastructure
@@ -58,7 +58,7 @@ configuration). The presentation controllers expose:
   preferred email service. The included `FormMailerModule` wraps `@nestjs-modules/mailer` but any
   adapter that implements `MailerPort` will work.
 - **Extend application services:** The exported `FormsService` and `SubmissionsService` can be
-  injected elsewhere to compose additional workflows, while keeping contract compliance.
+  injected elsewhere to compose additional workflows, while keeping API behavior consistent.
 
 ## License
 

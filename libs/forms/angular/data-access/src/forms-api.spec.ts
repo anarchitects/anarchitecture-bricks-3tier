@@ -48,7 +48,14 @@ describe('FormsApi', () => {
         formVersion: 1,
         payload: { field1: 'value1' },
       };
-      const mockResponse = { success: true, message: 'Form submitted' };
+      const mockResponse = {
+        id: 'submission-1',
+        formId: 'form1',
+        formVersion: 1,
+        payload: { field1: 'value1' },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
       service.submitForm(mockRequest).subscribe((response) => {
         expect(response).toEqual(mockResponse);

@@ -105,6 +105,17 @@
       "options": {
         "testTargetName": "test"
       }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps",
+        "serveStaticTargetName": "serve-static"
+      }
     }
   ],
   "generators": {
@@ -166,7 +177,6 @@
       "libs/**",
       "!libs/storybook/**",
       "!libs/ts/**",
-      "!contracts/**",
       "!@anarchitecture-bricks-3tier/source"
     ],
     "version": {
@@ -203,5 +213,6 @@
         }
       }
     }
-  }
+  },
+  "bust": 1
 }

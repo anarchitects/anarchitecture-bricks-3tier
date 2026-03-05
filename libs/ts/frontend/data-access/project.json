@@ -14,15 +14,15 @@
   "targets": {
     "gen-client": {
       "executor": "nx:run-commands",
-      "dependsOn": ["contracts:lint", "contracts:gen-schemas"],
+      "dependsOn": ["api-specs:generate"],
       "inputs": [
         "default",
         {
-          "fileset": "{workspaceRoot}/contracts/openapi.yaml"
+          "fileset": "{workspaceRoot}/docs/openapi/openapi.yaml"
         }
       ],
       "options": {
-        "command": "yarn exec openapi-typescript contracts/openapi.yaml -o libs/ts/frontend/data-access/src/generated/api.types.ts"
+        "command": "yarn exec openapi-typescript docs/openapi/openapi.yaml -o libs/ts/frontend/data-access/src/lib/generated/api.types.ts"
       }
     },
     "types": {

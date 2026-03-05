@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/forms-ts",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "type": "module",
   "main": "./index.cjs",
   "module": "./index.js",
@@ -24,6 +24,11 @@
       "types": "./models/index.d.ts",
       "import": "./models/index.js",
       "require": "./models/index.cjs"
+    },
+    "./mappers": {
+      "types": "./mappers/index.d.ts",
+      "import": "./mappers/index.js",
+      "require": "./mappers/index.cjs"
     },
     "./package.json": "./package.json"
   },

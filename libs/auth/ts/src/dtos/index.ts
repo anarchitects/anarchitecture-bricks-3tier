@@ -9,5 +9,8 @@ export * from './refresh-token-response.dto';
 export * from './register-request.dto';
 export * from './register-response.dto';
 export * from './reset-password-request.dto';
+export * from './success-response.dto';
 export * from './update-email-request.dto';
+export * from './user-id-params.dto';
 export * from './verify-email-request.dto';
+export * from './logged-in-user-info-response.dto';
