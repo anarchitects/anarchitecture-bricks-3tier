@@ -38,6 +38,7 @@ export default defineConfig(() => ({
         'builders/index': 'src/builders/index.ts',
         'dtos/index': 'src/dtos/index.ts',
         'models/index': 'src/models/index.ts',
+        'mappers/index': 'src/mappers/index.ts',
       },
       formats: ['es' as const, 'cjs' as const],
     },

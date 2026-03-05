@@ -25,6 +25,11 @@
       "import": "./models/index.js",
       "require": "./models/index.cjs"
     },
+    "./mappers": {
+      "types": "./mappers/index.d.ts",
+      "import": "./mappers/index.js",
+      "require": "./mappers/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "types": "./index.d.ts",

@@ -1,4 +1,9 @@
+import { FormsApi } from '@anarchitects/forms-angular/data-access';
+import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { fromSubmissionResponseDTO } from '@anarchitects/forms-ts/mappers';
+import { FormConfig, Submission } from '@anarchitects/forms-ts/models';
 import { computed, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
   signalStore,
@@ -9,12 +14,8 @@ import {
   withState,
 } from '@ngrx/signals';
 import { setEntity, withEntities } from '@ngrx/signals/entities';
-import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { FormConfig, Submission } from '@anarchitects/forms-ts/models';
-import { FormsApi } from '@anarchitects/forms-angular/data-access';
 import { pipe, switchMap, tap } from 'rxjs';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 
 type FormState = {
   loading: boolean;
@@ -80,7 +81,9 @@ export const FormsStore = signalStore(
               next: (submission) =>
                 patchState(
                   store,
-                  setEntity(submission, { collection: 'submissions' }),
+                  setEntity(fromSubmissionResponseDTO(submission), {
+                    collection: 'submissions',
+                  }),
                   {
                     loading: false,
                     error: null,
