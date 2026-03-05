@@ -240,6 +240,7 @@ __metadata:
     "@nx/jest": "npm:22.5.3"
     "@nx/js": "npm:22.5.3"
     "@nx/nest": "npm:22.5.3"
+    "@nx/node": "npm:22.5.3"
     "@nx/playwright": "npm:22.5.3"
     "@nx/storybook": "npm:22.5.3"
     "@nx/vite": "npm:22.5.3"

@@ -51,8 +51,8 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 8. Keep environment access out of domain logic.
 9. Keep dependency direction strict:
 
-- Angular: `ui <- feature <- state <- data-access <- config`
-- Nest: `presentation -> application <- infrastructure`
+- Angular: `ui <- feature -> state -> data-access` | `config`, `util`: available to all layers
+- Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 
 10. Use subpath exports per layer.
 11. Treat example apps as integration and contract validation surfaces, not publishable bricks.

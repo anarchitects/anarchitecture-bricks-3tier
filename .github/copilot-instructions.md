@@ -24,7 +24,7 @@ This repository is implementation-first, library-focused, and Nx-driven.
 
 Dependency direction:
 
-`ui <- feature <- state <- data-access <- config`
+`ui <- feature -> state -> data-access` | `config`, `util`: available to all layers
 
 ### Nest
 
