@@ -55,12 +55,11 @@ export const FormsStore = signalStore(
         return undefined;
       }
 
-      return store['formConfigsEntities']()
-        .find(
-          (formConfig) =>
-            formConfig.id === selectedId &&
-            formConfig.version === selectedVersion,
-        );
+      return store['formConfigsEntities']().find(
+        (formConfig) =>
+          formConfig.id === selectedId &&
+          formConfig.version === selectedVersion,
+      );
     }),
   })),
   withMethods((store) => ({

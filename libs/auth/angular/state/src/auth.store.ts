@@ -76,10 +76,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     activateUser: rxMethod<ActivateUserRequestDTO>(
       pipe(
@@ -96,10 +96,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     login: rxMethod<LoginRequestDTO>(
       pipe(
@@ -133,22 +133,24 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     logout: rxMethod<LogoutRequestDTO>(
       pipe(
-        tap(() => patchState(store, { loading: true, error: null })),
+        tap(() => {
+          patchState(store, { loading: true, error: null, success: false });
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          patchState(store, removeAllEntities(), { ability: undefined });
+        }),
         switchMap((dto) =>
           store._authApi.logout(dto).pipe(
             tapResponse({
               next: ({ success }) => {
                 patchState(store, { success });
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                patchState(store, removeAllEntities(), { ability: undefined });
               },
               error: (error: string) => {
                 patchState(store, { error });
@@ -156,10 +158,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     changePassword: rxMethod<{ userId: string; dto: ChangePasswordRequestDTO }>(
       pipe(
@@ -176,10 +178,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     forgotPassword: rxMethod<ForgotPasswordRequestDTO>(
       pipe(
@@ -196,10 +198,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     resetPassword: rxMethod<{ dto: ResetPasswordRequestDTO }>(
       pipe(
@@ -216,10 +218,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     verifyEmail: rxMethod<VerifyEmailRequestDTO>(
       pipe(
@@ -236,10 +238,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     updateEmail: rxMethod<{ userId: string; dto: UpdateEmailRequestDTO }>(
       pipe(
@@ -256,10 +258,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
     refreshTokens: rxMethod<{ userId: string; dto: RefreshTokenRequestDTO }>(
       pipe(
@@ -293,10 +295,10 @@ export const AuthStore = signalStore(
               finalize: () => {
                 patchState(store, { loading: false });
               },
-            })
-          )
-        )
-      )
+            }),
+          ),
+        ),
+      ),
     ),
-  }))
+  })),
 );
