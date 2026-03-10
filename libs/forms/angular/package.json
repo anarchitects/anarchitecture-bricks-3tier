@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/forms-angular",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "peerDependencies": {
     "@angular/common": "21.1.6",
     "@angular/core": "21.1.6",
@@ -10,7 +10,7 @@
     "@angular/forms": "21.1.6"
   },
   "dependencies": {
-    "@anarchitects/forms-ts": "0.0.6"
+    "@anarchitects/forms-ts": "0.0.7"
   },
   "publishConfig": {
     "access": "public"
