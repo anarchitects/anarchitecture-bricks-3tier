@@ -27,16 +27,39 @@ describe('FormsApi', () => {
     expect(service).toBeTruthy();
   });
   describe('getDefinition', () => {
-    it('should fetch form definition', () => {
+    it('should fetch form definition with explicit formVersion query', () => {
       const mockResponse = {
-        config: { id: 'form1', name: 'Test Form' },
+        config: { id: 'form1', version: 2, fields: [] },
         schema: {},
       };
+      service.getDefinition('form1', 2).subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = controller.expectOne(
+        (request) =>
+          request.url === '/api/forms/form1' &&
+          request.params.get('formVersion') === '2',
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+    });
+
+    it('should fetch form definition without query params when formVersion is omitted', () => {
+      const mockResponse = {
+        config: { id: 'form1', version: 1, fields: [] },
+        schema: {},
+      };
+
       service.getDefinition('form1').subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = controller.expectOne('/api/forms/form1');
+      const req = controller.expectOne(
+        (request) =>
+          request.url === '/api/forms/form1' &&
+          request.params.keys().length === 0,
+      );
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
     });

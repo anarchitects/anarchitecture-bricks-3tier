@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   injectApiBaseUrl,
   injectApiResourcePath,
@@ -17,9 +17,15 @@ export class FormsApi {
   private readonly http = inject(HttpClient);
   private readonly resourceUrl = `${injectApiBaseUrl().replace(/\/$/, '')}/${injectApiResourcePath()}`;
 
-  getDefinition(formId: string) {
+  getDefinition(formId: string, formVersion?: number) {
+    const params =
+      formVersion !== undefined
+        ? new HttpParams().set('formVersion', String(formVersion))
+        : undefined;
+
     return this.http.get<{ config: FormConfig; schema: unknown }>(
       `${this.resourceUrl}/${formId}`,
+      { params },
     );
   }
 

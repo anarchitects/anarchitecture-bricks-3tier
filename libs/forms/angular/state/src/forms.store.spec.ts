@@ -19,8 +19,15 @@ const mockFormConfig: FormConfig = {
 
 const setup = () => {
   const mockFormsApi = {
-    getDefinition: jest.fn(() =>
-      of({ config: mockFormConfig, schema: {} }).pipe(delay(100)),
+    getDefinition: jest.fn((id: string, version?: number) =>
+      of({
+        config: {
+          ...mockFormConfig,
+          id,
+          version: version ?? 1,
+        },
+        schema: {},
+      }).pipe(delay(100)),
     ),
     submitForm: jest.fn(() =>
       of({
@@ -45,7 +52,7 @@ describe('Forms', () => {
   it('should create an instance', () => {
     expect(setup()).toBeTruthy();
   });
-  describe('getFormDefition', () => {
+  describe('getFormDefinition', () => {
     it('should load form definition and update state', fakeAsync(() => {
       const store = setup();
       store.getFormDefinition({ id: 'contact', version: 1 });
@@ -55,8 +62,38 @@ describe('Forms', () => {
       expect(store.loading()).toBe(false);
       expect(store.error()).toBeNull();
       expect(store.selectedId()).toBe('contact');
+      expect(store.selectedVersion()).toBe(1);
       expect(store.formConfigsEntities().length).toBe(1);
-      expect(store.formConfigsEntities()[0]).toEqual(mockFormConfig);
+      expect(store.formConfigsEntities()[0]).toEqual({
+        ...mockFormConfig,
+        id: 'contact',
+        version: 1,
+      });
+      expect(store.selectedFormConfig()).toEqual({
+        ...mockFormConfig,
+        id: 'contact',
+        version: 1,
+      });
+    }));
+
+    it('should keep multiple versions of the same form id', fakeAsync(() => {
+      const store = setup();
+
+      store.getFormDefinition({ id: 'contact', version: 1 });
+      tick(100);
+
+      store.getFormDefinition({ id: 'contact', version: 2 });
+      tick(100);
+
+      expect(store.formConfigsEntities()).toEqual(
+        expect.arrayContaining([
+          { ...mockFormConfig, id: 'contact', version: 1 },
+          { ...mockFormConfig, id: 'contact', version: 2 },
+        ]),
+      );
+      expect(store.formConfigsEntities()).toHaveLength(2);
+      expect(store.selectedVersion()).toBe(2);
+      expect(store.selectedFormConfig()?.version).toBe(2);
     }));
   });
 
