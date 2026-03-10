@@ -550,7 +550,9 @@ export interface operations {
     };
     getFormDefinition: {
         parameters: {
-            query?: never;
+            query?: {
+                formVersion?: number;
+            };
             header?: never;
             path: {
                 formId: string;

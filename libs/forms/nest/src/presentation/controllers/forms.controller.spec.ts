@@ -16,11 +16,18 @@ describe('FormsController', () => {
     ],
   };
 
+  const mockFormDefinitionEnvelope = {
+    config: mockFormConfig,
+    schema: { type: 'object' },
+  };
+
   const mockFormService = {
-    getDefinition: jest.fn().mockResolvedValue(mockFormConfig),
+    getDefinition: jest.fn().mockResolvedValue(mockFormDefinitionEnvelope),
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FormsController],
       providers: [
@@ -38,11 +45,19 @@ describe('FormsController', () => {
     expect(controller).toBeDefined();
   });
   describe('getFormDefinition', () => {
-    it('should return form definition from the service', async () => {
+    it('should return form definition from the service with explicit version', async () => {
       const formId = 'contact_default';
-      const result = await controller.getFormDefinition(formId);
-      expect(result).toBe(mockFormConfig);
-      expect(mockFormService.getDefinition).toHaveBeenCalledWith(formId);
+      const result = await controller.getFormDefinition(formId, {
+        formVersion: 2,
+      });
+      expect(result).toBe(mockFormDefinitionEnvelope);
+      expect(mockFormService.getDefinition).toHaveBeenCalledWith(formId, 2);
+    });
+
+    it('should default to version 1 when query is empty', async () => {
+      const formId = 'contact_default';
+      await controller.getFormDefinition(formId, {});
+      expect(mockFormService.getDefinition).toHaveBeenCalledWith(formId, 1);
     });
   });
 });

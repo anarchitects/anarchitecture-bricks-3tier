@@ -392,6 +392,12 @@ paths:
     get:
       operationId: getFormDefinition
       parameters:
+        - in: query
+          name: formVersion
+          required: false
+          schema:
+            minimum: 1
+            type: integer
         - in: path
           name: formId
           required: true

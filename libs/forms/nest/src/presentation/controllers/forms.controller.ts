@@ -1,8 +1,10 @@
 import {
   FormDefinitionEnvelopeResponseSchema,
+  FormDefinitionQueryDTO,
+  FormDefinitionQuerySchema,
   FormIdParamsSchema,
 } from '@anarchitects/forms-ts/dtos';
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { FormsService } from '../../application/services/forms.service';
 
@@ -13,11 +15,15 @@ export class FormsController {
   @Get(':formId')
   @RouteSchema({
     params: FormIdParamsSchema,
+    querystring: FormDefinitionQuerySchema,
     response: {
       200: FormDefinitionEnvelopeResponseSchema,
     },
   })
-  getFormDefinition(@Param('formId') formId: string) {
-    return this.formsService.getDefinition(formId);
+  getFormDefinition(
+    @Param('formId') formId: string,
+    @Query() query: FormDefinitionQueryDTO,
+  ) {
+    return this.formsService.getDefinition(formId, query?.formVersion ?? 1);
   }
 }

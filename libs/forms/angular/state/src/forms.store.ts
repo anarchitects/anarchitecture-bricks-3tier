@@ -21,6 +21,7 @@ type FormState = {
   loading: boolean;
   error: string | null;
   selectedId: string | null;
+  selectedVersion: number | null;
   submitted: boolean;
   schemas: unknown[];
 };
@@ -29,9 +30,13 @@ const initialState: FormState = {
   loading: false,
   error: null,
   selectedId: null,
+  selectedVersion: null,
   submitted: false,
   schemas: [],
 };
+
+const selectFormConfigId = (config: FormConfig) =>
+  `${config.id}:${config.version}`;
 
 export const FormsStore = signalStore(
   { providedIn: 'root' },
@@ -42,25 +47,41 @@ export const FormsStore = signalStore(
     _formsApi: inject(FormsApi),
   })),
   withComputed((store) => ({
-    selectedFormConfig: computed(() =>
-      store.formConfigsEntities().find((fc) => fc.id === store.selectedId()),
-    ),
+    selectedFormConfig: computed(() => {
+      const selectedId = store.selectedId();
+      const selectedVersion = store.selectedVersion();
+
+      if (selectedId === null || selectedVersion === null) {
+        return undefined;
+      }
+
+      return store['formConfigsEntities']()
+        .find(
+          (formConfig) =>
+            formConfig.id === selectedId &&
+            formConfig.version === selectedVersion,
+        );
+    }),
   })),
   withMethods((store) => ({
     getFormDefinition: rxMethod<{ id: string; version: number }>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap(({ id, version }) =>
-          store._formsApi.getDefinition(id).pipe(
+          store['_formsApi'].getDefinition(id, version).pipe(
             tapResponse({
               next: ({ config, schema }) =>
                 patchState(
                   store,
-                  setEntity(config, { collection: 'formConfigs' }),
+                  setEntity(config, {
+                    collection: 'formConfigs',
+                    selectId: selectFormConfigId,
+                  }),
                   {
                     loading: false,
                     error: null,
                     selectedId: id,
+                    selectedVersion: version,
                     submitted: false,
                     schemas: [...store.schemas(), schema],
                   },
@@ -76,7 +97,7 @@ export const FormsStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
-          store._formsApi.submitForm(dto).pipe(
+          store['_formsApi'].submitForm(dto).pipe(
             tapResponse({
               next: (submission) =>
                 patchState(

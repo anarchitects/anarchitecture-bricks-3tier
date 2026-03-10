@@ -13,7 +13,7 @@ import { FORMS_SCHEMA } from '../schema';
 
 @Entity({ schema: FORMS_SCHEMA, name: 'form_submissions' })
 export class SubmissionEntity implements Submission {
-  @Index(['formId', 'formVersion'], { unique: true })
+  @Index(['formId', 'formVersion'])
   @PrimaryColumn('uuid')
   id!: string;
 
