@@ -180,7 +180,7 @@
       "!@anarchitecture-bricks-3tier/source"
     ],
     "version": {
-      "preVersionCommand": "yarn dlx nx run-many -t build",
+      "preVersionCommand": "yarn nx run-many -t build",
       "conventionalCommits": true
     },
     "projectsRelationship": "independent",

@@ -1,23 +1,23 @@
 import { Inject, Module } from '@nestjs/common';
-import { AuthService } from './services/auth.service';
-import { JwtAuthService } from './services/jwt-auth.service';
-import { BcryptHashService } from './services/bcrypt-hash.service';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthConfig, InjectAuthConfig } from '../config';
 import {
   AUTH_APPLICATION_MODULE_OPTIONS,
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from './application.module-definition';
+import { AuthService } from './services/auth.service';
+import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
-import { JwtModule } from '@nestjs/jwt';
-import { AuthConfig, InjectAuthConfig } from '../config';
-import { JwtStrategy } from './strategies/jwt/strategy';
+import { JwtAuthService } from './services/jwt-auth.service';
 import { PoliciesService } from './services/policies.service';
+import { JwtStrategy } from './strategies/jwt/strategy';
 
 @Module({})
-export class ApplicationModule extends ConfigurableModuleClass {
+export class AuthApplicationModule extends ConfigurableModuleClass {
   constructor(
     @Inject(AUTH_APPLICATION_MODULE_OPTIONS) private options: string | symbol,
-    @InjectAuthConfig() private authConfig: AuthConfig
+    @InjectAuthConfig() private authConfig: AuthConfig,
   ) {
     super();
   }
@@ -41,7 +41,7 @@ export class ApplicationModule extends ConfigurableModuleClass {
         throw new Error('Argon2HashService not implemented yet');
       default:
         throw new Error(
-          `Unsupported encryption algorithm: ${encryption.algorithm}`
+          `Unsupported encryption algorithm: ${encryption.algorithm}`,
         );
     }
     if (authStrategies.includes('jwt')) {
@@ -55,7 +55,7 @@ export class ApplicationModule extends ConfigurableModuleClass {
               issuer: authConfig.jwtIssuer,
             },
           }),
-        })
+        }),
       );
       providers.push(JwtAuthService, JwtStrategy, {
         provide: AuthService,

@@ -4,4 +4,4 @@ import { AuthController } from './controllers/auth.controller';
 @Module({
   controllers: [AuthController],
 })
-export class PresentationModule {}
+export class AuthPresentationModule {}
