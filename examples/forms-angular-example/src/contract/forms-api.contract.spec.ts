@@ -4,6 +4,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { FormsApi } from '@anarchitects/forms-angular/data-access';
 import { provideFormsConfig } from '@anarchitects/forms-angular/config';
 
+const prismBaseUrl =
+  process.env['PRISM_BASE_URL'] ?? 'http://127.0.0.1:4010';
+
 describe('forms-angular-example contract (Prism)', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -11,7 +14,7 @@ describe('forms-angular-example contract (Prism)', () => {
         FormsApi,
         provideHttpClient(),
         ...provideFormsConfig({
-          apiBaseUrl: 'http://127.0.0.1:4010',
+          apiBaseUrl: prismBaseUrl,
           apiResourcePath: 'forms',
         }),
       ],

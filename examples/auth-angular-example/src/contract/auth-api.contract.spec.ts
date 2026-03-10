@@ -8,11 +8,12 @@ import {
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
 import { provideAuthConfig } from '@anarchitects/auth-angular/config';
 
+const prismBaseUrl =
+  process.env['PRISM_BASE_URL'] ?? 'http://127.0.0.1:4010';
+
 const prismBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
   const path = req.url.startsWith('/api') ? req.url.slice('/api'.length) : req.url;
-  const url = path.startsWith('http')
-    ? path
-    : `http://127.0.0.1:4010${path}`;
+  const url = path.startsWith('http') ? path : `${prismBaseUrl}${path}`;
   return next(req.clone({ url }));
 };
 
