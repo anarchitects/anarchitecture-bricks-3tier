@@ -37,6 +37,9 @@
       ],
       "presentation": [
         "src/presentation/index.d.ts"
+      ],
+      "config": [
+        "src/config/index.d.ts"
       ]
     }
   }

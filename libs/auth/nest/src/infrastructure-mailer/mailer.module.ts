@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { NodeMailerAdapter } from './adapters/node-mailer.adapter';
 import { MailerAdapter } from './adapters/mailer.adapter';
+import { NodeMailerAdapter } from './adapters/node-mailer.adapter';
 
 @Module({
   providers: [
@@ -12,4 +12,4 @@ import { MailerAdapter } from './adapters/mailer.adapter';
   ],
   exports: [MailerAdapter],
 })
-export class MailerModule {}
+export class AuthMailerModule {}

@@ -1,21 +1,21 @@
 import { DynamicModule, Inject, Module } from '@nestjs/common';
-import { AuthUserRepository } from './repositories/auth-user.repository';
-import { TypeormAuthUserRepository } from './repositories/typeorm-auth-user.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { InvalidatedTokenEntity } from './entities/invalidated-token.entity';
+import { PermissionEntity } from './entities/permission.entity';
+import { RoleEntity } from './entities/role.entity';
+import { UserEntity } from './entities/user.entity';
 import {
   AUTH_PERSISTENCE_MODULE_OPTIONS,
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from './persistence.module-definition';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
-import { RoleEntity } from './entities/role.entity';
-import { PermissionEntity } from './entities/permission.entity';
-import { InvalidatedTokenEntity } from './entities/invalidated-token.entity';
+import { AuthUserRepository } from './repositories/auth-user.repository';
+import { TypeormAuthUserRepository } from './repositories/typeorm-auth-user.repository';
 
 @Module({})
-export class PersistenceModule extends ConfigurableModuleClass {
+export class AuthPersistenceModule extends ConfigurableModuleClass {
   constructor(
-    @Inject(AUTH_PERSISTENCE_MODULE_OPTIONS) private options: string | symbol
+    @Inject(AUTH_PERSISTENCE_MODULE_OPTIONS) private options: string | symbol,
   ) {
     super();
   }
