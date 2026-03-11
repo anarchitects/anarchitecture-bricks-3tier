@@ -2,7 +2,9 @@ import { Test } from '@nestjs/testing';
 import {
   CommonMailerModule,
   MailerPort,
+  NodeMailerAdapter as SharedNodeMailerAdapter,
 } from '@anarchitects/common-nest-mailer';
+import { NodeMailerAdapter } from './adapters/node-mailer.adapter';
 import { AuthMailerModule } from './mailer.module';
 import * as infrastructureMailerExports from './index';
 
@@ -25,9 +27,14 @@ describe('AuthMailerModule', () => {
     expect(adapter).toBeDefined();
   });
 
+  it('should expose domain NodeMailerAdapter as shared implementation alias', () => {
+    expect(NodeMailerAdapter).toBe(SharedNodeMailerAdapter);
+  });
+
   it('should not export the removed domain-local MailerAdapter token', () => {
     expect(
-      'MailerAdapter' in (infrastructureMailerExports as Record<string, unknown>)
+      'MailerAdapter' in
+        (infrastructureMailerExports as Record<string, unknown>),
     ).toBe(false);
   });
 });

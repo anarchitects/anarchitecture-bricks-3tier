@@ -6,13 +6,13 @@ definitions and accept submissions without re-implementing domain logic.
 
 ## Entry points
 
-| Entry point                                           | Responsibility                                                                                                       |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` facade for full-stack composition with minimal host-module imports                        |
-| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.           |
-| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer. |
-| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.       |
-| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule` — Mailer adapter that fulfils the mailer port using `@nestjs-modules/mailer`.      |
+| Entry point                                           | Responsibility                                                                                                         |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` facade for full-stack composition with minimal host-module imports                          |
+| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.             |
+| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer.   |
+| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.         |
+| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule`, `NestMailerAdapter` — domain wrapper over shared common node mailer implementation. |
 
 You can combine these layers or swap infrastructure modules with custom implementations that respect
 the exported tokens.
@@ -99,17 +99,17 @@ Use layered composition when you need to swap or selectively compose infrastruct
 
 ## Mailer Migration Note
 
-- `FormsInfrastructureMailerModule` is adapter-only and no longer configures transport.
+- `FormsInfrastructureMailerModule` is adapter-only and wraps shared `CommonNodeMailerModule` behavior.
 - Configure transport once at app root with `CommonMailerModule`.
 - `FormsModule.forRoot({ features: { mailer: false } })` uses the shared no-op adapter from `@anarchitects/common-nest-mailer`.
-- The shared mailer DI contract is now `MailerPort` from `@anarchitects/common-nest-mailer`.
+- The shared mailer DI contract is `MailerPort` and shared concrete adapter is `NodeMailerAdapter` from `@anarchitects/common-nest-mailer`.
 
 ## Customising infrastructure
 
 - **Replace persistence:** Bind your own implementation to `SUBMISSIONS_REPOSITORY` if you do not
   use TypeORM. Your adapter should extend or fulfil the `SubmissionsRepository` abstract class.
 - **Swap mailer provider:** Provide a custom implementation for `MailerPort` to integrate with your
-  preferred email service. The included `FormsInfrastructureMailerModule` wraps `@nestjs-modules/mailer`, but any
+  preferred email service. The included `FormsInfrastructureMailerModule` wraps shared `CommonNodeMailerModule` (which uses `@nestjs-modules/mailer`), but any
   adapter that implements `MailerPort` will work.
 - **Extend application services:** The exported `FormsService` and `SubmissionsService` can be
   injected elsewhere to compose additional workflows, while keeping API behavior consistent.

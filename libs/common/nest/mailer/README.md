@@ -9,7 +9,9 @@ Shared typed mailer configuration and root mail transport setup for NestJS apps.
 - `InjectMailerConfig()`: decorator helper for injecting config values
 - `CommonMailerModule.forRootFromConfig()`: config-driven root mail transport setup
 - `CommonMailerModule.forRootAsync(...)`: pass-through setup for custom transports
+- `CommonNodeMailerModule`: shared provider module binding `MailerPort -> NodeMailerAdapter`
 - `MailerPort`: shared mailer port token/contract for domain adapters
+- `NodeMailerAdapter`: shared concrete adapter using Nest `MailerService`
 - `NoopMailerAdapter`: shared no-op implementation
 - `CommonMailerNoopModule`: provider module binding `MailerPort -> NoopMailerAdapter`
 
@@ -32,6 +34,9 @@ Configure mail transport once at app root, then let domain mailer modules consum
 
 Domain mailer infrastructure modules are adapter-only and should not call
 `MailerModule.forRootAsync(...)` themselves.
+
+`CommonNodeMailerModule` is the shared concrete adapter module and can be used directly or via
+domain wrapper modules (`AuthMailerModule`, `FormsInfrastructureMailerModule`).
 
 ```ts
 import { Module } from '@nestjs/common';

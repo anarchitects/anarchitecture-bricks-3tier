@@ -55,11 +55,11 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 - Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 
 10. Use subpath exports per layer.
-11. Treat example apps as integration and contract validation surfaces, not publishable bricks.
-12. For Nest publishable libraries, provide a root "easy mode" facade module for full-stack consumption while preserving layer-specific secondary entry points.
-13. Prefer documenting and using root facade modules (`@anarchitects/<domain>-nest`) in quick starts; use secondary entry points for advanced composition/overrides.
-14. Configure shared infrastructure transports once at app root (for example mail transport via `CommonMailerModule`) and keep domain infrastructure modules adapter-only.
-15. When domain infrastructure is optional, expose facade-level feature flags (for example `features.mailer`) and provide safe no-op behavior for disabled features.
+    qq11. Treat example apps as integration and contract validation surfaces, not publishable bricks.
+11. For Nest publishable libraries, provide a root "easy mode" facade module for full-stack consumption while preserving layer-specific secondary entry points.
+12. Prefer documenting and using root facade modules (`@anarchitects/<domain>-nest`) in quick starts; use secondary entry points for advanced composition/overrides.
+13. Configure shared infrastructure transports once at app root (for example mail transport via `CommonMailerModule`) and keep domain infrastructure modules adapter-only wrappers over shared implementations (for example `CommonNodeMailerModule`).
+14. When domain infrastructure is optional, expose facade-level feature flags (for example `features.mailer`) and provide safe no-op behavior for disabled features.
 
 ## Preferred Commands
 

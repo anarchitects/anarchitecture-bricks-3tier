@@ -7,7 +7,7 @@ NestJS services, controllers, and infrastructure for the Anarchitecture authenti
 - **Application layer** – `JwtAuthService`, `BcryptHashService`, JWT Passport strategy, CASL-based `PoliciesService` and `AbilityFactory` encapsulating business rules for tokens, passwords, and fine-grained access control.
 - **Presentation layer** – `AuthController` exposing REST handlers for the full auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization.
 - **Infrastructure persistence** – `PersistenceModule` with TypeORM entities and repositories (users, roles, permissions, invalidated tokens). Configurable adapters to swap implementations while preserving the application contract.
-- **Infrastructure mailer** – `MailerModule` with a `NodeMailerAdapter` wrapping `@nestjs-modules/mailer` for email delivery.
+- **Infrastructure mailer** – `AuthMailerModule` wrapper over shared `CommonNodeMailerModule`; `NodeMailerAdapter` is re-exported for compatibility.
 - **Config** – Typed `authConfig` namespace using `@nestjs/config` with an `InjectAuthConfig()` helper decorator.
 
 ## Installation
@@ -166,9 +166,12 @@ Use layered composition when you need to replace or selectively compose infrastr
 
 ## Mailer Migration Note
 
-`AuthMailerModule` is now adapter-only. It no longer configures transport with `MailerModule.forRootAsync(...)`.
+`AuthMailerModule` is now adapter-only. It wraps the shared `CommonNodeMailerModule` from
+`@anarchitects/common-nest-mailer` and no longer configures transport with
+`MailerModule.forRootAsync(...)`.
 Configure transport once at app root with `CommonMailerModule` when `features.mailer` is enabled.
-The shared mailer DI contract (`MailerPort`) now lives in `@anarchitects/common-nest-mailer`.
+The shared mailer DI contract (`MailerPort`) and concrete `NodeMailerAdapter` now live in
+`@anarchitects/common-nest-mailer`.
 
 ### Injecting services
 
