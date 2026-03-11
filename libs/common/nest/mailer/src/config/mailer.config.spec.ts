@@ -18,10 +18,13 @@ const MAILER_ENV_KEYS = [
 type MailerEnvKey = (typeof MAILER_ENV_KEYS)[number];
 
 const originalEnv: Record<MailerEnvKey, string | undefined> =
-  MAILER_ENV_KEYS.reduce((acc, key) => {
-    acc[key] = process.env[key];
-    return acc;
-  }, {} as Record<MailerEnvKey, string | undefined>);
+  MAILER_ENV_KEYS.reduce(
+    (acc, key) => {
+      acc[key] = process.env[key];
+      return acc;
+    },
+    {} as Record<MailerEnvKey, string | undefined>,
+  );
 
 describe('mailerConfig', () => {
   beforeEach(() => {

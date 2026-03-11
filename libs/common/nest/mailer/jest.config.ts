@@ -1,10 +1,10 @@
 export default {
-  displayName: 'common-nest-config-mailer',
-  preset: '../../../../../jest.preset.js',
+  displayName: 'common-nest-mailer',
+  preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../../../coverage/libs/common/nest/config/mailer',
+  coverageDirectory: '../../../../coverage/libs/common/nest/mailer',
 };

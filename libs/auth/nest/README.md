@@ -7,15 +7,15 @@ NestJS services, controllers, and infrastructure for the Anarchitecture authenti
 - **Application layer** – `JwtAuthService`, `BcryptHashService`, JWT Passport strategy, CASL-based `PoliciesService` and `AbilityFactory` encapsulating business rules for tokens, passwords, and fine-grained access control.
 - **Presentation layer** – `AuthController` exposing REST handlers for the full auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization.
 - **Infrastructure persistence** – `PersistenceModule` with TypeORM entities and repositories (users, roles, permissions, invalidated tokens). Configurable adapters to swap implementations while preserving the application contract.
-- **Infrastructure mailer** – `MailerModule` with a `NodeMailerAdapter` wrapping `@nestjs-modules/mailer` for email delivery.
+- **Infrastructure mailer** – `AuthMailerModule` wrapper over shared `CommonNodeMailerModule`; `NodeMailerAdapter` is re-exported for compatibility.
 - **Config** – Typed `authConfig` namespace using `@nestjs/config` with an `InjectAuthConfig()` helper decorator.
 
 ## Installation
 
 ```bash
-npm install @anarchitects/auth-nest
+npm install @anarchitects/auth-nest @anarchitects/common-nest-mailer
 # or
-yarn add @anarchitects/auth-nest
+yarn add @anarchitects/auth-nest @anarchitects/common-nest-mailer
 ```
 
 Peer requirements:
@@ -25,14 +25,15 @@ Peer requirements:
 - `@casl/ability` for RBAC policy evaluation
 - `@nestjs-modules/mailer` (when using the mailer module)
 
-## Subpath exports
+## Exports
 
 | Import path                                          | Contents                                                                                                                                         |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, plus re-exports of layered entry points for convenience                                                               |
 | `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `JwtAuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, `JwtStrategy` |
 | `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `@Policies()` decorator                                                             |
 | `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`, migration                                                            |
-| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `MailerAdapter`, `NodeMailerAdapter`                                                                                         |
+| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                          |
 | `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                            |
 
 ## Configuration
@@ -79,11 +80,60 @@ export class AppModule {}
 
 ## Usage
 
-### Importing modules
+### Easy mode (single facade import)
 
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import { AuthModule } from '@anarchitects/auth-nest';
+import { authConfig } from '@anarchitects/auth-nest/config';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [authConfig, mailerConfig],
+    }),
+    CommonMailerModule.forRootFromConfig(),
+    AuthModule.forRoot({
+      application: {
+        authStrategies: ['jwt'],
+        encryption: {
+          algorithm: 'bcrypt',
+          key: process.env.AUTH_ENCRYPTION_KEY!,
+        },
+      },
+      persistence: {
+        persistence: 'typeorm',
+      },
+      features: {
+        mailer: true,
+      },
+    }),
+  ],
+})
+export class AuthApiModule {}
+```
+
+`AuthModule.forRoot(...)` is the preferred integration path when you want a full auth stack with minimal host-module wiring.
+
+Disable domain mailer wiring when not needed:
+
+```ts
+AuthModule.forRoot({
+  application: { ... },
+  persistence: { persistence: 'typeorm' },
+  features: { mailer: false },
+});
+```
+
+### Layered composition (advanced)
+
+```ts
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
 import { AuthPersistenceModule } from '@anarchitects/auth-nest/infrastructure-persistence';
@@ -92,21 +142,36 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ load: [authConfig] }),
-    AuthApplicationModule.register({
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [authConfig, mailerConfig],
+    }),
+    CommonMailerModule.forRootFromConfig(),
+    AuthApplicationModule.forRoot({
       authStrategies: ['jwt'],
       encryption: {
         algorithm: 'bcrypt',
         key: process.env.AUTH_ENCRYPTION_KEY!,
       },
     }),
-    AuthPersistenceModule.register({ persistence: 'typeorm' }),
+    AuthPersistenceModule.forRoot({ persistence: 'typeorm' }),
     AuthPresentationModule,
     AuthMailerModule,
   ],
 })
 export class AuthApiModule {}
 ```
+
+Use layered composition when you need to replace or selectively compose infrastructure/application concerns.
+
+## Mailer Migration Note
+
+`AuthMailerModule` is now adapter-only. It wraps the shared `CommonNodeMailerModule` from
+`@anarchitects/common-nest-mailer` and no longer configures transport with
+`MailerModule.forRootAsync(...)`.
+Configure transport once at app root with `CommonMailerModule` when `features.mailer` is enabled.
+The shared mailer DI contract (`MailerPort`) and concrete `NodeMailerAdapter` now live in
+`@anarchitects/common-nest-mailer`.
 
 ### Injecting services
 
@@ -131,10 +196,7 @@ export class AuthController {
 ```ts
 import { TypeormAuthUserRepository } from '@anarchitects/auth-nest/infrastructure-persistence';
 
-await authUserRepository.invalidateTokens(
-  [hashedAccessToken, hashedRefreshToken],
-  userId,
-);
+await authUserRepository.invalidateTokens([hashedAccessToken, hashedRefreshToken], userId);
 ```
 
 ### Route-level authorization with policies

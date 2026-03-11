@@ -1,15 +1,9 @@
-import { Module } from '@nestjs/common';
-import { MailerAdapter } from './adapters/mailer.adapter';
-import { NodeMailerAdapter } from './adapters/node-mailer.adapter';
+import { Global, Module } from '@nestjs/common';
+import { CommonNodeMailerModule } from '@anarchitects/common-nest-mailer';
 
+@Global()
 @Module({
-  providers: [
-    NodeMailerAdapter,
-    {
-      provide: MailerAdapter,
-      useExisting: NodeMailerAdapter,
-    },
-  ],
-  exports: [MailerAdapter],
+  imports: [CommonNodeMailerModule],
+  exports: [CommonNodeMailerModule],
 })
 export class AuthMailerModule {}

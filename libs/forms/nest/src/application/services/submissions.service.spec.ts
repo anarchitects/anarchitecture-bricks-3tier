@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { SubmissionsService } from './submissions.service';
 import { FormConfig, Submission } from '@anarchitects/forms-ts/models';
+import { MailerPort } from '@anarchitects/common-nest-mailer';
 import { FormsService } from './forms.service';
 import { SubmissionsRepository } from '../../infrastructure-persistence';
-import { MailerAdapter } from '../../infrastructure-mailer/adapters/mailer.adapter';
 
 describe('SubmissionsService', () => {
   let service: SubmissionsService;
@@ -56,7 +56,7 @@ describe('SubmissionsService', () => {
           provide: SubmissionsRepository,
           useValue: mockSubmissionsRepository,
         },
-        { provide: MailerAdapter, useValue: mockMailerPort },
+        { provide: MailerPort, useValue: mockMailerPort },
         { provide: FormsService, useValue: mockFormsService },
       ],
     }).compile();
@@ -80,11 +80,11 @@ describe('SubmissionsService', () => {
       const result = await service.submit(submissionData);
       expect(result).toBe(mockSubmission);
       expect(mockSubmissionsRepository.createSubmission).toHaveBeenCalledWith(
-        submissionData
+        submissionData,
       );
       expect(mockFormsService.getDefinition).toHaveBeenCalledWith(
         'contact_default',
-        1
+        1,
       );
       expect(mockMailerPort.sendTemplate).toHaveBeenCalled();
     });

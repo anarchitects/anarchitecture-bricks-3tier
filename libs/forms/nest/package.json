@@ -1,20 +1,20 @@
 {
   "name": "@anarchitects/forms-nest",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/platform-fastify": "^11.1.6",
-    "@nestjs-modules/mailer": "^2.0.2",
     "typeorm": "^0.3.27",
     "uuidv7": "^1.0.2",
     "@nestjs/typeorm": "^11.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "@anarchitects/forms-ts": "0.0.8"
+    "@anarchitects/forms-ts": "0.0.9",
+    "@anarchitects/common-nest-mailer": "0.0.10"
   },
   "publishConfig": {
     "access": "public"

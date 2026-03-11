@@ -1,11 +1,12 @@
-import { Inject, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthConfig, InjectAuthConfig } from '../config';
+import { authConfig, AuthConfig } from '../config';
 import {
-  AUTH_APPLICATION_MODULE_OPTIONS,
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from './application.module-definition';
+import { AbilityFactory } from './factories/ability.factory';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
@@ -15,19 +16,12 @@ import { JwtStrategy } from './strategies/jwt/strategy';
 
 @Module({})
 export class AuthApplicationModule extends ConfigurableModuleClass {
-  constructor(
-    @Inject(AUTH_APPLICATION_MODULE_OPTIONS) private options: string | symbol,
-    @InjectAuthConfig() private authConfig: AuthConfig,
-  ) {
-    super();
-  }
-
   static forRoot(options: typeof OPTIONS_TYPE) {
     const { authStrategies, encryption } = options;
-    const imports = [];
+    const imports = [ConfigModule.forFeature(authConfig)];
     const providers = [];
     const exports = [];
-    providers.push(PoliciesService);
+    providers.push(AbilityFactory, PoliciesService);
     switch (encryption.algorithm) {
       case 'bcrypt':
         providers.push(BcryptHashService, {
@@ -47,6 +41,8 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
     if (authStrategies.includes('jwt')) {
       imports.push(
         JwtModule.registerAsync({
+          imports: [ConfigModule.forFeature(authConfig)],
+          inject: [authConfig.KEY],
           useFactory: (authConfig: AuthConfig) => ({
             secret: authConfig.jwtSecret,
             signOptions: {
