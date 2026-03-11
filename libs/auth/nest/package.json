@@ -19,7 +19,8 @@
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/platform-fastify": "^11.1.6",
     "@casl/ability": "^6.7.3",
-    "@nestjs/core": "^11.0.0"
+    "@nestjs/core": "^11.0.0",
+    "@anarchitects/common-nest-mailer": "0.0.8"
   },
   "publishConfig": {
     "access": "public"

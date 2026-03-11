@@ -15,8 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@anarchitects/common-nest-config-mailer": [
-        "libs/common/nest/config/mailer/src/index.ts"
+      "@anarchitects/common-nest-mailer": [
+        "libs/common/nest/mailer/src/index.ts"
       ],
       "@anarchitects/forms-angular": ["libs/forms/angular/src/index.ts"],
       "@anarchitects/forms-angular/config": [

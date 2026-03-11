@@ -33,10 +33,20 @@ Dependency direction:
 - `infrastructure-*`: adapters (persistence, mailer, external APIs)
 - `config/`: typed runtime configuration
 - `util/`: pure helper code
+- package root (`@anarchitects/<domain>-nest`): facade module for full-stack, minimal-import consumption
 
 Dependency direction:
 
 `presentation -> application <- infrastructure`
+
+### Nest Consumption Pattern
+
+- Prefer root facade module imports in quick starts and examples when the full stack is intended.
+- Keep secondary entry points (`/application`, `/presentation`, `/infrastructure-*`, `/config`) available for advanced/partial composition.
+- Do not remove existing layered entry points when introducing facade modules.
+- Keep presentation modules backward-compatible unless a breaking change is explicitly planned.
+- Configure shared transports once at app root (for example mail via `CommonMailerModule`), not inside domain infrastructure modules.
+- Keep domain infrastructure modules adapter-only and use facade feature flags (for example `features.mailer`) for optional domain capabilities.
 
 ### Shared TS
 

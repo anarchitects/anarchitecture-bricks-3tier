@@ -1,17 +1,16 @@
-import { Module } from '@nestjs/common';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { MailerAdapter } from './adapters/mailer.adapter';
+import { Global, Module } from '@nestjs/common';
+import { MailerPort } from '@anarchitects/common-nest-mailer';
 import { NestMailerAdapter } from './adapters/node-mailer.adapter';
 
+@Global()
 @Module({
-  imports: [MailerModule],
   providers: [
     NestMailerAdapter,
     {
-      provide: MailerAdapter,
+      provide: MailerPort,
       useExisting: NestMailerAdapter,
     },
   ],
-  exports: [MailerAdapter],
+  exports: [MailerPort],
 })
 export class FormsInfrastructureMailerModule {}

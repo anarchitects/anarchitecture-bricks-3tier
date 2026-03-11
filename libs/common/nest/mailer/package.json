@@ -1,5 +1,5 @@
 {
-  "name": "@anarchitects/common-nest-config-mailer",
+  "name": "@anarchitects/common-nest-mailer",
   "version": "0.0.8",
   "type": "commonjs",
   "main": "./src/index.js",
@@ -7,7 +7,8 @@
   "dependencies": {
     "tslib": "^2.3.0",
     "@nestjs/common": "^11.0.0",
-    "@nestjs/config": "^4.0.2"
+    "@nestjs/config": "^4.0.2",
+    "@nestjs-modules/mailer": "^2.0.2"
   },
   "publishConfig": {
     "access": "public"

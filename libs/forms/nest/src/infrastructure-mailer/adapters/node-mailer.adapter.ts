@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { MailerAdapter } from './mailer.adapter';
+import { MailerPort } from '@anarchitects/common-nest-mailer';
 
 @Injectable()
-export class NestMailerAdapter implements MailerAdapter {
+export class NestMailerAdapter implements MailerPort {
   constructor(private readonly mailer: MailerService) {}
   async send(to: string, subject: string, html: string) {
     return await this.mailer.sendMail({ to, subject, html });
@@ -12,7 +12,7 @@ export class NestMailerAdapter implements MailerAdapter {
     to: string,
     subject: string,
     template: string,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ) {
     return await this.mailer.sendMail({ to, subject, template, context });
   }

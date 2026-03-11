@@ -107,6 +107,14 @@ nx run forms-angular-example:contract-test
 - Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 - Shared TS: framework-agnostic DTOs/models/builders/utilities
 
+## Library Consumption Conventions
+
+- Nest library quick starts should prefer root facade imports (for example `@anarchitects/auth-nest` and `@anarchitects/forms-nest`) for full-stack, minimal-import setup.
+- Layer-specific secondary entry points (`/application`, `/presentation`, `/infrastructure-*`, `/config`) remain required and supported for advanced composition and overrides.
+- Facade modules must not replace layered architecture internally; they compose layers for ergonomic consumption.
+- Mail transport setup should be centralized once at app root via `@anarchitects/common-nest-mailer` (`CommonMailerModule.forRootFromConfig()` or `forRootAsync(...)`).
+- Domain facade modules should expose feature flags (for example `features.mailer`) so infrastructure adapters can be enabled/disabled per domain without changing root mail transport setup.
+
 ## Documentation Tooling
 
 - Storybook remains the default UI documentation and interaction surface.
