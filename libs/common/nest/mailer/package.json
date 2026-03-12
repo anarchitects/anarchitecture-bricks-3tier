@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/common-nest-mailer",
-  "version": "0.0.10",
+  "version": "1.0.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",

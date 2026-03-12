@@ -4,3 +4,4 @@ export * from './repositories/form-configs.repository';
 export * from './entities/submission.entity';
 export * from './entities/form-config.entity';
 export * from './migrations/1720300000000-create-forms-tables';
+export type { FormsInfrastructurePersistenceModuleOptions } from '../config';

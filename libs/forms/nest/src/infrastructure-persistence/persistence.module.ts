@@ -7,17 +7,30 @@ import { TypeOrmSubmissionsRepository } from './repositories/typeorm-submissions
 import { FormConfigsRepository } from './repositories/form-configs.repository';
 import { TypeOrmFormConfigsRepository } from './repositories/typeorm-form-configs.repository';
 import {
+  DEFAULT_FORMS_PERSISTENCE,
+  formsConfig,
+  mapFormsConfigToPersistenceModuleOptions,
+} from '../config';
+import type { FormsInfrastructurePersistenceModuleOptions } from '../config';
+import { ConfigModule } from '@nestjs/config';
+import {
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from './persistence.module-definition';
 
 @Module({})
 export class FormsInfrastructurePersistenceModule extends ConfigurableModuleClass {
-  static forRoot(options: typeof OPTIONS_TYPE): DynamicModule {
-    switch (options.persistence) {
+  static forRoot(
+    options?: FormsInfrastructurePersistenceModuleOptions,
+  ): DynamicModule {
+    const resolvedOptions: typeof OPTIONS_TYPE = {
+      persistence: options?.persistence ?? DEFAULT_FORMS_PERSISTENCE,
+    };
+
+    switch (resolvedOptions.persistence) {
       case 'typeorm':
         return {
-          ...super.forRoot(options),
+          ...super.forRoot(resolvedOptions),
           imports: [
             TypeOrmModule.forFeature([SubmissionEntity, FormConfigEntity]),
           ],
@@ -40,7 +53,28 @@ export class FormsInfrastructurePersistenceModule extends ConfigurableModuleClas
           ],
         };
       default:
-        throw new Error(`Unsupported persistence type: ${options.persistence}`);
+        throw new Error(
+          `Unsupported persistence type: ${resolvedOptions.persistence}`,
+        );
     }
+  }
+
+  static forRootFromConfig(
+    overrides: Partial<FormsInfrastructurePersistenceModuleOptions> = {},
+  ): DynamicModule {
+    const configOptions =
+      mapFormsConfigToPersistenceModuleOptions(formsConfig());
+    const moduleDefinition = this.forRoot({
+      ...configOptions,
+      ...overrides,
+    });
+
+    return {
+      ...moduleDefinition,
+      imports: [
+        ConfigModule.forFeature(formsConfig),
+        ...(moduleDefinition.imports ?? []),
+      ],
+    };
   }
 }

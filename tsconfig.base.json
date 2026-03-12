@@ -36,6 +36,9 @@
       "@anarchitects/forms-nest/application": [
         "libs/forms/nest/src/application/index.ts"
       ],
+      "@anarchitects/forms-nest/config": [
+        "libs/forms/nest/src/config/index.ts"
+      ],
       "@anarchitects/forms-nest/infrastructure-mailer": [
         "libs/forms/nest/src/infrastructure-mailer/index.ts"
       ],

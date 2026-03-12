@@ -55,11 +55,31 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 - Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 
 10. Use subpath exports per layer.
-    qq11. Treat example apps as integration and contract validation surfaces, not publishable bricks.
-11. For Nest publishable libraries, provide a root "easy mode" facade module for full-stack consumption while preserving layer-specific secondary entry points.
-12. Prefer documenting and using root facade modules (`@anarchitects/<domain>-nest`) in quick starts; use secondary entry points for advanced composition/overrides.
-13. Configure shared infrastructure transports once at app root (for example mail transport via `CommonMailerModule`) and keep domain infrastructure modules adapter-only wrappers over shared implementations (for example `CommonNodeMailerModule`).
-14. When domain infrastructure is optional, expose facade-level feature flags (for example `features.mailer`) and provide safe no-op behavior for disabled features.
+11. Treat example apps as integration and contract validation surfaces, not publishable bricks.
+12. For Nest publishable libraries, provide a root "easy mode" facade module for full-stack consumption while preserving layer-specific secondary entry points.
+13. Prefer documenting and using root facade modules (`@anarchitects/<domain>-nest`) in quick starts; use secondary entry points for advanced composition/overrides.
+14. Configure shared infrastructure transports once at app root (for example mail transport via `CommonMailerModule`) and keep domain infrastructure modules adapter-only wrappers over shared implementations (for example `CommonNodeMailerModule`).
+15. When domain infrastructure is optional, expose facade-level feature flags (for example `features.mailer`) and provide safe no-op behavior for disabled features.
+
+## Library API Paradigm (Maximum Flexibility + Ease of Use)
+
+- Apply this paradigm to all publishable libraries, not only a single domain.
+- Provide an easy mode and an advanced mode simultaneously:
+  - Easy mode: a root facade module/entry point for minimal host wiring.
+  - Advanced mode: secondary entry points with composable modules/services for targeted overrides.
+- For configurable Nest modules, prefer dual initialization APIs:
+  - `forRoot(options)`: explicit, deterministic, and environment-agnostic.
+  - `forRootFromConfig(overrides?)`: environment/config-driven via `registerAs` in the config entry point.
+- Keep configuration centralized in the `config` secondary entry point:
+  - own `registerAs` namespace and typed config export.
+  - expose config-to-options mappers used by module composition.
+- Use consistent precedence when resolving options:
+  - explicit overrides > config-derived values > hardcoded defaults.
+- Keep infrastructure wrappers thin and adapter-focused; shared infrastructure transports should be configured once at app root.
+- Ensure docs and tests cover both consumption paths:
+  - quick start via facade/easy mode.
+  - advanced composition via secondary entry points.
+  - deterministic behavior checks for both `forRoot` and `forRootFromConfig`.
 
 ## Preferred Commands
 
