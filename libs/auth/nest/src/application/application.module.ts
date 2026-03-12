@@ -1,7 +1,12 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { authConfig, AuthConfig } from '../config';
+import {
+  authConfig,
+  AuthConfig,
+  mapAuthConfigToApplicationModuleOptions,
+  resolveAuthApplicationModuleOptions,
+} from '../config';
 import {
   ConfigurableModuleClass,
   OPTIONS_TYPE,
@@ -13,12 +18,19 @@ import { HashService } from './services/hash.service';
 import { JwtAuthService } from './services/jwt-auth.service';
 import { PoliciesService } from './services/policies.service';
 import { JwtStrategy } from './strategies/jwt/strategy';
+import { AuthPersistenceModule } from '../infrastructure-persistence';
+import type { AuthApplicationModuleOptions } from '../config';
 
 @Module({})
 export class AuthApplicationModule extends ConfigurableModuleClass {
-  static forRoot(options: typeof OPTIONS_TYPE) {
-    const { authStrategies, encryption } = options;
-    const imports = [ConfigModule.forFeature(authConfig)];
+  static forRoot(options: AuthApplicationModuleOptions = {}): DynamicModule {
+    const resolvedOptions: typeof OPTIONS_TYPE =
+      resolveAuthApplicationModuleOptions(options);
+    const { authStrategies, encryption, persistence } = resolvedOptions;
+    const imports = [
+      ConfigModule.forFeature(authConfig),
+      AuthPersistenceModule.forRoot(persistence),
+    ];
     const providers = [];
     const exports = [];
     providers.push(AbilityFactory, PoliciesService);
@@ -60,10 +72,36 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
       exports.push(AuthService);
     }
     return {
-      ...super.forRoot(options),
+      ...super.forRoot(resolvedOptions),
       imports,
       providers,
       exports,
+    };
+  }
+
+  static forRootFromConfig(
+    overrides: AuthApplicationModuleOptions = {},
+  ): DynamicModule {
+    const configOptions = mapAuthConfigToApplicationModuleOptions(authConfig());
+    const moduleDefinition = this.forRoot({
+      ...configOptions,
+      ...overrides,
+      encryption: {
+        ...configOptions.encryption,
+        ...overrides.encryption,
+      },
+      persistence: {
+        ...configOptions.persistence,
+        ...overrides.persistence,
+      },
+    });
+
+    return {
+      ...moduleDefinition,
+      imports: [
+        ConfigModule.forFeature(authConfig),
+        ...(moduleDefinition.imports ?? []),
+      ],
     };
   }
 }

@@ -49,15 +49,19 @@ describe('Auth/Forms centralized mailer composition', () => {
         CommonMailerModule.forRootFromConfig(),
         TypeOrmTestingModule,
         AuthModule.forRoot({
-          application: {
-            authStrategies: ['jwt'],
-            encryption: {
-              algorithm: 'bcrypt',
-              key: 'test-key',
+          presentation: {
+            application: {
+              authStrategies: ['jwt'],
+              encryption: {
+                algorithm: 'bcrypt',
+                key: 'test-key',
+              },
+              persistence: {
+                persistence: 'typeorm',
+              },
             },
           },
-          persistence: { persistence: 'typeorm' },
-          features: { mailer: true },
+          mailer: { features: { enabled: true } },
         }),
         FormsModule.forRoot({
           mailer: { features: { enabled: true } },
