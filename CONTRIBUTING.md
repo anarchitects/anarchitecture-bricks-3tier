@@ -24,6 +24,19 @@
 - Angular: `ui <- feature -> state -> data-access` | `config`, `util`: available to all layers
 - Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 
+5. Library API paradigm: maximum flexibility + ease of use
+
+- Apply this pattern across publishable libraries, not only one domain.
+- Always support both:
+  - Easy mode: root facade entry point for minimal host-module setup.
+  - Advanced mode: secondary entry points for selective composition and overrides.
+- For configurable Nest modules, use dual initialization APIs:
+  - `forRoot(options)` for explicit deterministic setup.
+  - `forRootFromConfig(overrides?)` for ENV/config-driven setup.
+- Keep module configuration in a `config` entry point via `registerAs`, typed config exports, and config-to-options mapper helpers.
+- Resolve options consistently as: explicit overrides > config values > defaults.
+- Keep shared infrastructure transports configured once at app root and keep domain infrastructure modules adapter-only wrappers.
+
 ## Local Workflow
 
 ```bash

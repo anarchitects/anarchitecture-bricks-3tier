@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "tslib": "^2.3.0",
+    "@nestjs/config": "^4.0.2",
     "@anarchitects/forms-ts": "0.0.9",
     "@anarchitects/common-nest-mailer": "0.0.10"
   },
@@ -23,6 +24,9 @@
     "*": {
       "application": [
         "src/application/index.d.ts"
+      ],
+      "config": [
+        "src/config/index.d.ts"
       ],
       "infrastructure-mailer": [
         "src/infrastructure-mailer/index.d.ts"

@@ -8,11 +8,12 @@ definitions and accept submissions without re-implementing domain logic.
 
 | Entry point                                           | Responsibility                                                                                                         |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` facade for full-stack composition with minimal host-module imports                          |
+| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` and `FormsModule.forRootFromConfig(...)` facade for full-stack composition                  |
 | `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.             |
 | `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer.   |
 | `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.         |
 | `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule`, `NestMailerAdapter` — domain wrapper over shared common node mailer implementation. |
+| `@anarchitects/forms-nest/config`                     | `formsConfig`, `FormsConfig`, `InjectFormsConfig()`, and public module option types for root + secondary modules.      |
 
 You can combine these layers or swap infrastructure modules with custom implementations that respect
 the exported tokens.
@@ -35,16 +36,17 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { FormsModule } from '@anarchitects/forms-nest';
+import { formsConfig } from '@anarchitects/forms-nest/config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [mailerConfig],
+      load: [mailerConfig, formsConfig],
     }),
     CommonMailerModule.forRootFromConfig(),
     FormsModule.forRoot({
-      features: { mailer: true },
+      mailer: { features: { enabled: true } },
     }),
   ],
 })
@@ -53,11 +55,14 @@ export class AppFormsModule {}
 
 `FormsModule.forRoot(...)` is the preferred integration path when you want the complete forms stack with minimal host-module wiring.
 
+Prefer `FormsModule.forRootFromConfig()` when you want behavior driven purely by
+`FORMS_*` environment variables loaded via `formsConfig`.
+
 Disable mailer integration per domain:
 
 ```typescript
 FormsModule.forRoot({
-  features: { mailer: false },
+  mailer: { features: { enabled: false } },
 });
 ```
 
@@ -83,13 +88,21 @@ import { FormsInfrastructureMailerModule } from '@anarchitects/forms-nest/infras
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [mailerConfig],
+      load: [mailerConfig, formsConfig],
     }),
     CommonMailerModule.forRootFromConfig(),
-    FormsApplicationModule,
+    FormsApplicationModule.forRoot({
+      persistence: { persistence: 'typeorm' },
+    }),
     FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' }),
-    FormsInfrastructureMailerModule,
-    FormsPresentationModule,
+    FormsInfrastructureMailerModule.forRoot({
+      features: { enabled: true },
+    }),
+    FormsPresentationModule.forRoot({
+      application: {
+        persistence: { persistence: 'typeorm' },
+      },
+    }),
   ],
 })
 export class AppFormsModule {}
@@ -101,7 +114,7 @@ Use layered composition when you need to swap or selectively compose infrastruct
 
 - `FormsInfrastructureMailerModule` is adapter-only and wraps shared `CommonNodeMailerModule` behavior.
 - Configure transport once at app root with `CommonMailerModule`.
-- `FormsModule.forRoot({ features: { mailer: false } })` uses the shared no-op adapter from `@anarchitects/common-nest-mailer`.
+- `FormsModule.forRoot({ mailer: { features: { enabled: false } } })` uses the shared no-op adapter from `@anarchitects/common-nest-mailer`.
 - The shared mailer DI contract is `MailerPort` and shared concrete adapter is `NodeMailerAdapter` from `@anarchitects/common-nest-mailer`.
 
 ## Customising infrastructure

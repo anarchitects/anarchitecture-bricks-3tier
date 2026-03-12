@@ -112,6 +112,10 @@ nx run forms-angular-example:contract-test
 - Nest library quick starts should prefer root facade imports (for example `@anarchitects/auth-nest` and `@anarchitects/forms-nest`) for full-stack, minimal-import setup.
 - Layer-specific secondary entry points (`/application`, `/presentation`, `/infrastructure-*`, `/config`) remain required and supported for advanced composition and overrides.
 - Facade modules must not replace layered architecture internally; they compose layers for ergonomic consumption.
+- For configurable Nest modules, prefer dual setup APIs to balance flexibility and ease of use:
+  - `forRoot(options)` for explicit deterministic configuration.
+  - `forRootFromConfig(overrides?)` for config/ENV-driven configuration (backed by `registerAs` in the config entry point).
+- Keep precedence consistent when both inputs exist: explicit overrides > config-derived values > hardcoded defaults.
 - Mail transport setup should be centralized once at app root via `@anarchitects/common-nest-mailer` (`CommonMailerModule.forRootFromConfig()` or `forRootAsync(...)`), while domain infrastructure-mailer entry points remain thin wrappers over shared modules such as `CommonNodeMailerModule`.
 - Domain facade modules should expose feature flags (for example `features.mailer`) so infrastructure adapters can be enabled/disabled per domain without changing root mail transport setup.
 

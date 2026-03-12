@@ -43,12 +43,33 @@ const mailerServiceStub = {
 })
 class InfrastructureTestingModule {}
 
+const ORIGINAL_FORMS_ENV = {
+  persistence: process.env['FORMS_PERSISTENCE'],
+  mailerEnabled: process.env['FORMS_MAILER_ENABLED'],
+};
+
 describe('FormsModule', () => {
-  it('should compile with the real mailer adapter when feature flag is enabled', async () => {
+  afterEach(() => {
+    if (ORIGINAL_FORMS_ENV.persistence === undefined) {
+      delete process.env['FORMS_PERSISTENCE'];
+    } else {
+      process.env['FORMS_PERSISTENCE'] = ORIGINAL_FORMS_ENV.persistence;
+    }
+
+    if (ORIGINAL_FORMS_ENV.mailerEnabled === undefined) {
+      delete process.env['FORMS_MAILER_ENABLED'];
+    } else {
+      process.env['FORMS_MAILER_ENABLED'] = ORIGINAL_FORMS_ENV.mailerEnabled;
+    }
+  });
+
+  it('should compile with the real mailer adapter when mailer is enabled', async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [
         InfrastructureTestingModule,
-        FormsModule.forRoot({ features: { mailer: true } }),
+        FormsModule.forRoot({
+          mailer: { features: { enabled: true } },
+        }),
       ],
     }).compile();
 
@@ -63,11 +84,13 @@ describe('FormsModule', () => {
     expect(mailerAdapter).toBeInstanceOf(NestMailerAdapter);
   });
 
-  it('should compile with a no-op mailer adapter when feature flag is disabled', async () => {
+  it('should compile with a no-op mailer adapter when mailer is disabled', async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [
         InfrastructureTestingModule,
-        FormsModule.forRoot({ features: { mailer: false } }),
+        FormsModule.forRoot({
+          mailer: { features: { enabled: false } },
+        }),
       ],
     }).compile();
 
@@ -94,5 +117,41 @@ describe('FormsModule', () => {
 
     expect(formsController).toBeDefined();
     expect(submissionsController).toBeDefined();
+  });
+
+  it('should forward nested persistence overrides through presentation and application modules', () => {
+    expect(() =>
+      FormsModule.forRoot({
+        presentation: {
+          application: {
+            persistence: {
+              persistence: 'unsupported',
+            },
+          },
+        },
+      }),
+    ).toThrow('Unsupported persistence type: unsupported');
+  });
+
+  it('should keep forRoot explicit and ignore env defaults', async () => {
+    process.env['FORMS_MAILER_ENABLED'] = 'false';
+
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [InfrastructureTestingModule, FormsModule.forRoot()],
+    }).compile();
+
+    const mailerAdapter = moduleRef.get(MailerPort, { strict: false });
+    expect(mailerAdapter).toBeInstanceOf(NestMailerAdapter);
+  });
+
+  it('should resolve env defaults through forRootFromConfig', async () => {
+    process.env['FORMS_MAILER_ENABLED'] = 'false';
+
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [InfrastructureTestingModule, FormsModule.forRootFromConfig()],
+    }).compile();
+
+    const mailerAdapter = moduleRef.get(MailerPort, { strict: false });
+    expect(mailerAdapter).toBeInstanceOf(NoopMailerAdapter);
   });
 });

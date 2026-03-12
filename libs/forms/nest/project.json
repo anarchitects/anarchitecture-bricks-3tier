@@ -23,6 +23,7 @@
         "assets": ["libs/forms/nest/*.md"],
         "additionalEntryPoints": [
           "libs/forms/nest/src/application/index.ts",
+          "libs/forms/nest/src/config/index.ts",
           "libs/forms/nest/src/infrastructure-mailer/index.ts",
           "libs/forms/nest/src/infrastructure-persistence/index.ts",
           "libs/forms/nest/src/presentation/index.ts"

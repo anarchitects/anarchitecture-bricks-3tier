@@ -1,11 +1,12 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
+import type { FormsInfrastructurePersistenceModuleOptions } from '../config';
 
 export const {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN: FORMS_PERSISTENCE_MODULE_OPTIONS,
   OPTIONS_TYPE,
   ASYNC_OPTIONS_TYPE,
-} = new ConfigurableModuleBuilder<{ persistence: string }>()
+} = new ConfigurableModuleBuilder<FormsInfrastructurePersistenceModuleOptions>()
   .setClassMethodName('forRoot')
   .setExtras<{ isGlobal?: boolean }>(
     { isGlobal: true },

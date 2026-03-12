@@ -60,7 +60,7 @@ describe('Auth/Forms centralized mailer composition', () => {
           features: { mailer: true },
         }),
         FormsModule.forRoot({
-          features: { mailer: true },
+          mailer: { features: { enabled: true } },
         }),
       ],
     }).compile();
