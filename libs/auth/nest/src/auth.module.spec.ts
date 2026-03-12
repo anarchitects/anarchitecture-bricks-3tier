@@ -2,7 +2,12 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
-import { CommonMailerModule } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  MailerPort,
+  NoopMailerAdapter,
+} from '@anarchitects/common-nest-mailer';
+import { NodeMailerAdapter } from './infrastructure-mailer/adapters/node-mailer.adapter';
 import { AuthService } from './application';
 import { AuthModule } from './auth.module';
 import { AuthController } from './presentation';
@@ -24,6 +29,11 @@ const dataSourceStub = {
   getMongoRepository: jest.fn().mockReturnValue(repositoryStub),
 };
 
+const ORIGINAL_AUTH_ENV = {
+  mailerEnabled: process.env['AUTH_MAILER_ENABLED'],
+  persistence: process.env['AUTH_PERSISTENCE'],
+};
+
 @Global()
 @Module({
   providers: [{ provide: getDataSourceToken(), useValue: dataSourceStub }],
@@ -31,56 +41,161 @@ const dataSourceStub = {
 })
 class TypeOrmTestingModule {}
 
+const authModuleOptions = {
+  presentation: {
+    application: {
+      authStrategies: ['jwt'],
+      encryption: {
+        algorithm: 'bcrypt' as const,
+        key: 'test-key',
+      },
+      persistence: {
+        persistence: 'typeorm',
+      },
+    },
+  },
+};
+
 describe('AuthModule', () => {
-  const createModule = async (mailerEnabled: boolean): Promise<TestingModule> =>
-    Test.createTestingModule({
+  afterEach(() => {
+    if (ORIGINAL_AUTH_ENV.mailerEnabled === undefined) {
+      delete process.env['AUTH_MAILER_ENABLED'];
+    } else {
+      process.env['AUTH_MAILER_ENABLED'] = ORIGINAL_AUTH_ENV.mailerEnabled;
+    }
+
+    if (ORIGINAL_AUTH_ENV.persistence === undefined) {
+      delete process.env['AUTH_PERSISTENCE'];
+    } else {
+      process.env['AUTH_PERSISTENCE'] = ORIGINAL_AUTH_ENV.persistence;
+    }
+  });
+
+  it('should compile and resolve auth tokens when mailer is enabled via forRoot', async () => {
+    const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmTestingModule,
-        ...(mailerEnabled
-          ? [
-              CommonMailerModule.forRootAsync({
-                useFactory: () => ({
-                  transport: { jsonTransport: true },
-                  defaults: { from: 'noreply@example.com' },
-                  template: { dir: 'templates' },
-                }),
-              }),
-            ]
-          : []),
+        CommonMailerModule.forRootAsync({
+          useFactory: () => ({
+            transport: { jsonTransport: true },
+            defaults: { from: 'noreply@example.com' },
+            template: { dir: 'templates' },
+          }),
+        }),
         AuthModule.forRoot({
-          application: {
-            authStrategies: ['jwt'],
-            encryption: {
-              algorithm: 'bcrypt',
-              key: 'test-key',
+          ...authModuleOptions,
+          mailer: {
+            features: {
+              enabled: true,
             },
-          },
-          persistence: {
-            persistence: 'typeorm',
-          },
-          features: {
-            mailer: mailerEnabled,
           },
         }),
       ],
     }).compile();
 
-  it('should compile and resolve controller/service tokens when mailer is enabled', async () => {
-    const moduleRef = await createModule(true);
-    const controller = moduleRef.get(AuthController, { strict: false });
-    const authService = moduleRef.get(AuthService, { strict: false });
-
-    expect(controller).toBeDefined();
-    expect(authService).toBeDefined();
+    expect(moduleRef.get(AuthController, { strict: false })).toBeDefined();
+    expect(moduleRef.get(AuthService, { strict: false })).toBeDefined();
+    expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
+      NodeMailerAdapter,
+    );
   });
 
-  it('should compile and resolve controller/service tokens when mailer is disabled', async () => {
-    const moduleRef = await createModule(false);
-    const controller = moduleRef.get(AuthController, { strict: false });
-    const authService = moduleRef.get(AuthService, { strict: false });
+  it('should compile and resolve auth tokens when mailer is disabled via forRoot', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        AuthModule.forRoot({
+          ...authModuleOptions,
+          mailer: {
+            features: {
+              enabled: false,
+            },
+          },
+        }),
+      ],
+    }).compile();
 
-    expect(controller).toBeDefined();
-    expect(authService).toBeDefined();
+    expect(moduleRef.get(AuthController, { strict: false })).toBeDefined();
+    expect(moduleRef.get(AuthService, { strict: false })).toBeDefined();
+    expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
+      NoopMailerAdapter,
+    );
+  });
+
+  it('should keep forRoot explicit and ignore AUTH_MAILER_ENABLED', async () => {
+    process.env['AUTH_MAILER_ENABLED'] = 'false';
+
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        CommonMailerModule.forRootAsync({
+          useFactory: () => ({
+            transport: { jsonTransport: true },
+            defaults: { from: 'noreply@example.com' },
+            template: { dir: 'templates' },
+          }),
+        }),
+        AuthModule.forRoot(authModuleOptions),
+      ],
+    }).compile();
+
+    expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
+      NodeMailerAdapter,
+    );
+  });
+
+  it('should resolve AUTH_MAILER_ENABLED through forRootFromConfig', async () => {
+    process.env['AUTH_MAILER_ENABLED'] = 'false';
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        AuthModule.forRootFromConfig({
+          presentation: authModuleOptions.presentation,
+        }),
+      ],
+    }).compile();
+
+    expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
+      NoopMailerAdapter,
+    );
+  });
+
+  it('should let forRootFromConfig overrides win over AUTH_MAILER_ENABLED', async () => {
+    process.env['AUTH_MAILER_ENABLED'] = 'false';
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        CommonMailerModule.forRootAsync({
+          useFactory: () => ({
+            transport: { jsonTransport: true },
+            defaults: { from: 'noreply@example.com' },
+            template: { dir: 'templates' },
+          }),
+        }),
+        AuthModule.forRootFromConfig({
+          presentation: authModuleOptions.presentation,
+          mailer: { features: { enabled: true } },
+        }),
+      ],
+    }).compile();
+
+    expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
+      NodeMailerAdapter,
+    );
+  });
+
+  it('should resolve AUTH_PERSISTENCE through forRootFromConfig', () => {
+    process.env['AUTH_PERSISTENCE'] = 'unsupported';
+
+    expect(() => AuthModule.forRootFromConfig()).toThrow(
+      'Unsupported persistence type: unsupported',
+    );
   });
 });

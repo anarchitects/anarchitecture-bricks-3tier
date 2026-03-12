@@ -69,6 +69,7 @@
       "@anarchitects/auth-nest/application": [
         "libs/auth/nest/src/application/index.ts"
       ],
+      "@anarchitects/auth-nest/config": ["libs/auth/nest/src/config/index.ts"],
       "@anarchitects/auth-nest/infrastructure-mailer": [
         "libs/auth/nest/src/infrastructure-mailer/index.ts"
       ],

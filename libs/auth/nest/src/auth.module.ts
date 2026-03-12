@@ -1,52 +1,63 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthApplicationModule } from './application';
-import { authConfig } from './config';
 import { AuthMailerModule } from './infrastructure-mailer';
-import { AuthPersistenceModule } from './infrastructure-persistence';
 import { AuthPresentationModule } from './presentation';
+import { authConfig, mapAuthConfigToAuthModuleOptions } from './config';
+import type { AuthModuleOptions } from './config';
 
-export type AuthModuleFeatures = {
-  mailer?: boolean;
-};
-
-export type AuthModuleOptions = {
-  application: Parameters<typeof AuthApplicationModule.forRoot>[0];
-  persistence: Parameters<typeof AuthPersistenceModule.forRoot>[0];
-  features?: AuthModuleFeatures;
-};
+export type { AuthModuleFeatures, AuthModuleOptions } from './config';
 
 @Module({})
 export class AuthModule {
-  static forRoot(options: AuthModuleOptions): DynamicModule {
-    const mailerEnabled = options.features?.mailer ?? true;
-    const applicationModule = AuthApplicationModule.forRoot(
-      options.application,
+  static forRoot(options: AuthModuleOptions = {}): DynamicModule {
+    const presentationModule = AuthPresentationModule.forRoot(
+      options.presentation,
     );
-    const persistenceModule = AuthPersistenceModule.forRoot(
-      options.persistence,
-    );
-    const imports = [
-      ConfigModule.forFeature(authConfig),
-      applicationModule,
-      persistenceModule,
-      AuthPresentationModule,
-    ];
-    const exports = [
-      applicationModule,
-      persistenceModule,
-      AuthPresentationModule,
-    ];
-
-    if (mailerEnabled) {
-      imports.push(AuthMailerModule);
-      exports.push(AuthMailerModule);
-    }
-
+    const mailerModule = AuthMailerModule.forRoot(options.mailer);
     return {
       module: AuthModule,
-      imports,
-      exports,
+      imports: [presentationModule, mailerModule],
+      exports: [presentationModule, mailerModule],
+    };
+  }
+
+  static forRootFromConfig(overrides: AuthModuleOptions = {}): DynamicModule {
+    const configOptions = mapAuthConfigToAuthModuleOptions(authConfig());
+    const moduleDefinition = this.forRoot({
+      ...configOptions,
+      ...overrides,
+      presentation: {
+        ...configOptions.presentation,
+        ...overrides.presentation,
+        application: {
+          ...configOptions.presentation?.application,
+          ...overrides.presentation?.application,
+          encryption: {
+            ...configOptions.presentation?.application?.encryption,
+            ...overrides.presentation?.application?.encryption,
+          },
+          persistence: {
+            ...configOptions.presentation?.application?.persistence,
+            ...overrides.presentation?.application?.persistence,
+          },
+        },
+      },
+      mailer: {
+        ...configOptions.mailer,
+        ...overrides.mailer,
+        features: {
+          ...configOptions.mailer?.features,
+          ...overrides.mailer?.features,
+        },
+      },
+    });
+
+    return {
+      ...moduleDefinition,
+      imports: [
+        ConfigModule.forFeature(authConfig),
+        ...(moduleDefinition.imports ?? []),
+      ],
     };
   }
 }

@@ -29,7 +29,7 @@ Peer requirements:
 
 | Import path                                          | Contents                                                                                                                                         |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, plus re-exports of layered entry points for convenience                                                               |
+| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                          |
 | `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `JwtAuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, `JwtStrategy` |
 | `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `@Policies()` decorator                                                             |
 | `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`, migration                                                            |
@@ -48,6 +48,9 @@ The library reads configuration through `@nestjs/config` using a namespaced `aut
 | `AUTH_JWT_ISSUER`           | Expected `iss` claim in the JWT.                                                     | `your_issuer`            |
 | `AUTH_ENCRYPTION_ALGORITHM` | Password hashing algorithm (`bcrypt`).                                               | `bcrypt`                 |
 | `AUTH_ENCRYPTION_KEY`       | Symmetric key for additional encryption needs. **Must** be overridden in production. | `default_encryption_key` |
+| `AUTH_PERSISTENCE`          | Persistence adapter key used by `forRootFromConfig(...)`.                            | `typeorm`                |
+| `AUTH_MAILER_ENABLED`       | Enables/disables domain mailer wiring in `forRootFromConfig(...)`.                   | `true`                   |
+| `AUTH_STRATEGIES`           | Comma-separated auth strategies for config-driven module composition.                | `jwt`                    |
 
 > **Security note:** The defaults for `AUTH_JWT_SECRET` and `AUTH_ENCRYPTION_KEY` are intentionally insecure placeholders. Always provide strong, unique values in any deployed environment.
 
@@ -97,18 +100,22 @@ import { authConfig } from '@anarchitects/auth-nest/config';
     }),
     CommonMailerModule.forRootFromConfig(),
     AuthModule.forRoot({
-      application: {
-        authStrategies: ['jwt'],
-        encryption: {
-          algorithm: 'bcrypt',
-          key: process.env.AUTH_ENCRYPTION_KEY!,
+      presentation: {
+        application: {
+          authStrategies: ['jwt'],
+          encryption: {
+            algorithm: 'bcrypt',
+            key: process.env.AUTH_ENCRYPTION_KEY!,
+          },
+          persistence: {
+            persistence: 'typeorm',
+          },
         },
       },
-      persistence: {
-        persistence: 'typeorm',
-      },
-      features: {
-        mailer: true,
+      mailer: {
+        features: {
+          enabled: true,
+        },
       },
     }),
   ],
@@ -118,13 +125,15 @@ export class AuthApiModule {}
 
 `AuthModule.forRoot(...)` is the preferred integration path when you want a full auth stack with minimal host-module wiring.
 
+Use `AuthModule.forRootFromConfig()` when you want module composition fully driven by `AUTH_*`
+variables exposed via `authConfig`.
+
 Disable domain mailer wiring when not needed:
 
 ```ts
 AuthModule.forRoot({
-  application: { ... },
-  persistence: { persistence: 'typeorm' },
-  features: { mailer: false },
+  presentation: { application: { ... } },
+  mailer: { features: { enabled: false } },
 });
 ```
 
@@ -136,7 +145,6 @@ import { ConfigModule } from '@nestjs/config';
 import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
-import { AuthPersistenceModule } from '@anarchitects/auth-nest/infrastructure-persistence';
 import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
 import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer';
 
@@ -153,10 +161,21 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
         algorithm: 'bcrypt',
         key: process.env.AUTH_ENCRYPTION_KEY!,
       },
+      persistence: { persistence: 'typeorm' },
     }),
-    AuthPersistenceModule.forRoot({ persistence: 'typeorm' }),
-    AuthPresentationModule,
-    AuthMailerModule,
+    AuthPresentationModule.forRoot({
+      application: {
+        authStrategies: ['jwt'],
+        encryption: {
+          algorithm: 'bcrypt',
+          key: process.env.AUTH_ENCRYPTION_KEY!,
+        },
+        persistence: { persistence: 'typeorm' },
+      },
+    }),
+    AuthMailerModule.forRoot({
+      features: { enabled: true },
+    }),
   ],
 })
 export class AuthApiModule {}
@@ -169,7 +188,8 @@ Use layered composition when you need to replace or selectively compose infrastr
 `AuthMailerModule` is now adapter-only. It wraps the shared `CommonNodeMailerModule` from
 `@anarchitects/common-nest-mailer` and no longer configures transport with
 `MailerModule.forRootAsync(...)`.
-Configure transport once at app root with `CommonMailerModule` when `features.mailer` is enabled.
+Configure transport once at app root with `CommonMailerModule` when `mailer.features.enabled` is `true`.
+Disable per-domain wiring with `mailer.features.enabled: false`.
 The shared mailer DI contract (`MailerPort`) and concrete `NodeMailerAdapter` now live in
 `@anarchitects/common-nest-mailer`.
 
