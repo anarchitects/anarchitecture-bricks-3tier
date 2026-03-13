@@ -1,12 +1,12 @@
 {
   "name": "@anarchitects/auth-angular",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "peerDependencies": {
     "@angular/common": "21.1.6",
     "@angular/core": "21.1.6",
-    "@anarchitects/auth-ts": "1.0.1",
-    "@anarchitects/forms-angular": "1.0.1",
-    "@anarchitects/forms-ts": "1.0.1",
+    "@anarchitects/auth-ts": "2.0.0",
+    "@anarchitects/forms-angular": "2.0.0",
+    "@anarchitects/forms-ts": "2.0.0",
     "@ngrx/signals": "^20.0.1",
     "@ngrx/operators": "^20.0.1",
     "rxjs": "~7.8.0",
