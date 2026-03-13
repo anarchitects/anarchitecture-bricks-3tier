@@ -116,8 +116,8 @@ nx run forms-angular-example:contract-test
   - `forRoot(options)` for explicit deterministic configuration.
   - `forRootFromConfig(overrides?)` for config/ENV-driven configuration (backed by `registerAs` in the config entry point).
 - Keep precedence consistent when both inputs exist: explicit overrides > config-derived values > hardcoded defaults.
-- Mail transport setup should be centralized once at app root via `@anarchitects/common-nest-mailer` (`CommonMailerModule.forRootFromConfig()` or `forRootAsync(...)`), while domain infrastructure-mailer entry points remain thin wrappers over shared modules such as `CommonNodeMailerModule`.
-- Domain facade modules should expose feature flags (for example `features.mailer`) so infrastructure adapters can be enabled/disabled per domain without changing root mail transport setup.
+- Mail transport setup should be centralized once at app root via `@anarchitects/common-nest-mailer` (`CommonMailerModule.forRootFromConfig()` or `forRootAsync(...)`), while domain infrastructure-mailer entry points remain thin wrappers over shared provider wiring via `CommonMailerModule.forRoot(...)`.
+- Domain facade modules should expose mailer provider controls (for example `mailer.provider`) so infrastructure adapters can be composed per domain without changing root mail transport setup.
 
 ## Documentation Tooling
 

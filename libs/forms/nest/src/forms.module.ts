@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { FormsInfrastructureMailerModule } from './infrastructure-mailer';
 import { FormsPresentationModule } from './presentation';
 import {
-  DEFAULT_FORMS_MAILER_ENABLED,
+  DEFAULT_FORMS_MAILER_PROVIDER,
   DEFAULT_FORMS_PERSISTENCE,
   formsConfig,
   mapFormsConfigToFormsModuleOptions,
@@ -38,10 +38,10 @@ export class FormsModule {
         DEFAULT_FORMS_PERSISTENCE,
     };
     const resolvedMailer = {
-      enabled:
-        overrides.mailer?.features?.enabled ??
-        configOptions.mailer?.features?.enabled ??
-        DEFAULT_FORMS_MAILER_ENABLED,
+      provider:
+        overrides.mailer?.provider ??
+        configOptions.mailer?.provider ??
+        DEFAULT_FORMS_MAILER_PROVIDER,
     };
 
     const moduleDefinition = this.forRoot({
@@ -57,7 +57,7 @@ export class FormsModule {
       mailer: {
         ...configOptions.mailer,
         ...overrides.mailer,
-        features: resolvedMailer,
+        ...resolvedMailer,
       },
     });
 

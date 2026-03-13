@@ -10,7 +10,7 @@ import type { FormsConfig } from './forms.config';
 describe('forms module option mappers', () => {
   const config: FormsConfig = {
     persistence: 'typeorm',
-    mailerEnabled: false,
+    mailerProvider: 'noop',
   };
 
   it('maps persistence options from forms config', () => {
@@ -21,7 +21,7 @@ describe('forms module option mappers', () => {
 
   it('maps mailer options from forms config', () => {
     expect(mapFormsConfigToMailerModuleOptions(config)).toEqual({
-      features: { enabled: false },
+      provider: 'noop',
     });
   });
 
@@ -47,7 +47,7 @@ describe('forms module option mappers', () => {
         },
       },
       mailer: {
-        features: { enabled: false },
+        provider: 'noop',
       },
     });
   });

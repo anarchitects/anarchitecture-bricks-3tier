@@ -9,16 +9,16 @@ import { NestMailerAdapter } from './adapters/node-mailer.adapter';
 import { FormsInfrastructureMailerModule } from './mailer.module';
 import * as infrastructureMailerExports from './index';
 
-const ORIGINAL_FORMS_MAILER_ENABLED = process.env['FORMS_MAILER_ENABLED'];
+const ORIGINAL_FORMS_MAILER_PROVIDER = process.env['FORMS_MAILER_PROVIDER'];
 
 describe('FormsInfrastructureMailerModule', () => {
   afterEach(() => {
-    if (ORIGINAL_FORMS_MAILER_ENABLED === undefined) {
-      delete process.env['FORMS_MAILER_ENABLED'];
+    if (ORIGINAL_FORMS_MAILER_PROVIDER === undefined) {
+      delete process.env['FORMS_MAILER_PROVIDER'];
       return;
     }
 
-    process.env['FORMS_MAILER_ENABLED'] = ORIGINAL_FORMS_MAILER_ENABLED;
+    process.env['FORMS_MAILER_PROVIDER'] = ORIGINAL_FORMS_MAILER_PROVIDER;
   });
 
   it('should compile and expose MailerPort', async () => {
@@ -31,7 +31,7 @@ describe('FormsInfrastructureMailerModule', () => {
             template: { dir: 'templates' },
           }),
         }),
-        FormsInfrastructureMailerModule,
+        FormsInfrastructureMailerModule.forRoot(),
       ],
     }).compile();
 
@@ -43,7 +43,7 @@ describe('FormsInfrastructureMailerModule', () => {
     expect(NestMailerAdapter).toBe(SharedNodeMailerAdapter);
   });
 
-  it('should expose the shared node adapter when enabled via forRoot options', async () => {
+  it('should expose the shared node adapter when provider is node via forRoot options', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         CommonMailerModule.forRootAsync({
@@ -54,7 +54,7 @@ describe('FormsInfrastructureMailerModule', () => {
           }),
         }),
         FormsInfrastructureMailerModule.forRoot({
-          features: { enabled: true },
+          provider: 'node',
         }),
       ],
     }).compile();
@@ -63,11 +63,11 @@ describe('FormsInfrastructureMailerModule', () => {
     expect(adapter).toBeDefined();
   });
 
-  it('should expose shared no-op adapter when disabled via forRoot options', async () => {
+  it('should expose shared no-op adapter when provider is noop via forRoot options', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         FormsInfrastructureMailerModule.forRoot({
-          features: { enabled: false },
+          provider: 'noop',
         }),
       ],
     }).compile();
@@ -77,7 +77,7 @@ describe('FormsInfrastructureMailerModule', () => {
   });
 
   it('should keep forRoot explicit and ignore env defaults', async () => {
-    process.env['FORMS_MAILER_ENABLED'] = 'false';
+    process.env['FORMS_MAILER_PROVIDER'] = 'noop';
     const moduleRef = await Test.createTestingModule({
       imports: [
         CommonMailerModule.forRootAsync({
@@ -97,7 +97,7 @@ describe('FormsInfrastructureMailerModule', () => {
   });
 
   it('should resolve env defaults through forRootFromConfig', async () => {
-    process.env['FORMS_MAILER_ENABLED'] = 'false';
+    process.env['FORMS_MAILER_PROVIDER'] = 'noop';
     const moduleRef = await Test.createTestingModule({
       imports: [FormsInfrastructureMailerModule.forRootFromConfig()],
     }).compile();

@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
 import { ConfigType, registerAs } from '@nestjs/config';
+import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
 
 const AUTH_CONFIG_KEY = 'auth';
 export const DEFAULT_AUTH_JWT_SECRET = 'default_jwt_secret';
@@ -9,16 +10,22 @@ export const DEFAULT_AUTH_JWT_ISSUER = 'your_issuer';
 export const DEFAULT_AUTH_ENCRYPTION_ALGORITHM = 'bcrypt';
 export const DEFAULT_AUTH_ENCRYPTION_KEY = 'default_encryption_key';
 export const DEFAULT_AUTH_PERSISTENCE = 'typeorm';
-export const DEFAULT_AUTH_MAILER_ENABLED = true;
+export const DEFAULT_AUTH_MAILER_PROVIDER = 'node';
 export const DEFAULT_AUTH_STRATEGIES = ['jwt'] as const;
 
-const parseMailerEnabled = (): boolean => {
-  const value = process.env['AUTH_MAILER_ENABLED'];
+const parseMailerProvider = (): CommonMailerProvider => {
+  const value = process.env['AUTH_MAILER_PROVIDER'];
   if (value === undefined) {
-    return DEFAULT_AUTH_MAILER_ENABLED;
+    return DEFAULT_AUTH_MAILER_PROVIDER;
   }
 
-  return value !== 'false';
+  switch (value) {
+    case 'node':
+    case 'noop':
+      return value;
+    default:
+      throw new Error(`Unsupported mailer provider: ${value}`);
+  }
 };
 
 const parseAuthStrategies = (): string[] => {
@@ -47,7 +54,7 @@ export const authConfig = registerAs(AUTH_CONFIG_KEY, () => ({
   encryptionKey:
     process.env['AUTH_ENCRYPTION_KEY'] ?? DEFAULT_AUTH_ENCRYPTION_KEY,
   persistence: process.env['AUTH_PERSISTENCE'] ?? DEFAULT_AUTH_PERSISTENCE,
-  mailerEnabled: parseMailerEnabled(),
+  mailerProvider: parseMailerProvider(),
   authStrategies: parseAuthStrategies(),
 }));
 

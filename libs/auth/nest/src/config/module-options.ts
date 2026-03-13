@@ -1,10 +1,11 @@
 import {
   DEFAULT_AUTH_ENCRYPTION_ALGORITHM,
   DEFAULT_AUTH_ENCRYPTION_KEY,
-  DEFAULT_AUTH_MAILER_ENABLED,
+  DEFAULT_AUTH_MAILER_PROVIDER,
   DEFAULT_AUTH_PERSISTENCE,
   DEFAULT_AUTH_STRATEGIES,
 } from './auth.config';
+import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
 import type { AuthConfig } from './auth.config';
 
 export type AuthPersistenceModuleOptions = {
@@ -15,18 +16,12 @@ export type ResolvedAuthPersistenceModuleOptions = {
   persistence: string;
 };
 
-export type AuthMailerModuleFeatures = {
-  enabled?: boolean;
-};
-
 export type AuthMailerModuleOptions = {
-  features?: AuthMailerModuleFeatures;
+  provider?: CommonMailerProvider;
 };
 
 export type ResolvedAuthMailerModuleOptions = {
-  features: {
-    enabled: boolean;
-  };
+  provider: CommonMailerProvider;
 };
 
 export type AuthApplicationModuleOptions = {
@@ -55,7 +50,9 @@ export type ResolvedAuthPresentationModuleOptions = {
   application: ResolvedAuthApplicationModuleOptions;
 };
 
-export type AuthModuleFeatures = AuthMailerModuleFeatures;
+export type AuthModuleFeatures = {
+  provider?: CommonMailerProvider;
+};
 
 export type AuthModuleOptions = {
   presentation?: AuthPresentationModuleOptions;
@@ -76,9 +73,7 @@ export const resolveAuthPersistenceModuleOptions = (
 export const resolveAuthMailerModuleOptions = (
   options: AuthMailerModuleOptions = {},
 ): ResolvedAuthMailerModuleOptions => ({
-  features: {
-    enabled: options.features?.enabled ?? DEFAULT_AUTH_MAILER_ENABLED,
-  },
+  provider: options.provider ?? DEFAULT_AUTH_MAILER_PROVIDER,
 });
 
 export const resolveAuthApplicationModuleOptions = (
@@ -116,9 +111,7 @@ export const mapAuthConfigToPersistenceModuleOptions = (
 export const mapAuthConfigToMailerModuleOptions = (
   config: AuthConfig,
 ): AuthMailerModuleOptions => ({
-  features: {
-    enabled: config.mailerEnabled ?? DEFAULT_AUTH_MAILER_ENABLED,
-  },
+  provider: config.mailerProvider ?? DEFAULT_AUTH_MAILER_PROVIDER,
 });
 
 export const mapAuthConfigToApplicationModuleOptions = (

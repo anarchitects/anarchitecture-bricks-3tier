@@ -7,7 +7,7 @@ NestJS services, controllers, and infrastructure for the Anarchitecture authenti
 - **Application layer** – `JwtAuthService`, `BcryptHashService`, JWT Passport strategy, CASL-based `PoliciesService` and `AbilityFactory` encapsulating business rules for tokens, passwords, and fine-grained access control.
 - **Presentation layer** – `AuthController` exposing REST handlers for the full auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization.
 - **Infrastructure persistence** – `PersistenceModule` with TypeORM entities and repositories (users, roles, permissions, invalidated tokens). Configurable adapters to swap implementations while preserving the application contract.
-- **Infrastructure mailer** – `AuthMailerModule` wrapper over shared `CommonNodeMailerModule`; `NodeMailerAdapter` is re-exported for compatibility.
+- **Infrastructure mailer** – `AuthMailerModule` wrapper over shared `CommonMailerModule.forRoot(...)` provider wiring; `NodeMailerAdapter` is re-exported for compatibility.
 - **Config** – Typed `authConfig` namespace using `@nestjs/config` with an `InjectAuthConfig()` helper decorator.
 
 ## Installation
@@ -49,7 +49,7 @@ The library reads configuration through `@nestjs/config` using a namespaced `aut
 | `AUTH_ENCRYPTION_ALGORITHM` | Password hashing algorithm (`bcrypt`).                                               | `bcrypt`                 |
 | `AUTH_ENCRYPTION_KEY`       | Symmetric key for additional encryption needs. **Must** be overridden in production. | `default_encryption_key` |
 | `AUTH_PERSISTENCE`          | Persistence adapter key used by `forRootFromConfig(...)`.                            | `typeorm`                |
-| `AUTH_MAILER_ENABLED`       | Enables/disables domain mailer wiring in `forRootFromConfig(...)`.                   | `true`                   |
+| `AUTH_MAILER_PROVIDER`      | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).              | `node`                   |
 | `AUTH_STRATEGIES`           | Comma-separated auth strategies for config-driven module composition.                | `jwt`                    |
 
 > **Security note:** The defaults for `AUTH_JWT_SECRET` and `AUTH_ENCRYPTION_KEY` are intentionally insecure placeholders. Always provide strong, unique values in any deployed environment.
@@ -113,9 +113,7 @@ import { authConfig } from '@anarchitects/auth-nest/config';
         },
       },
       mailer: {
-        features: {
-          enabled: true,
-        },
+        provider: 'node',
       },
     }),
   ],
@@ -133,7 +131,7 @@ Disable domain mailer wiring when not needed:
 ```ts
 AuthModule.forRoot({
   presentation: { application: { ... } },
-  mailer: { features: { enabled: false } },
+  mailer: { provider: 'noop' },
 });
 ```
 
@@ -174,7 +172,7 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
       },
     }),
     AuthMailerModule.forRoot({
-      features: { enabled: true },
+      provider: 'node',
     }),
   ],
 })
@@ -185,11 +183,11 @@ Use layered composition when you need to replace or selectively compose infrastr
 
 ## Mailer Migration Note
 
-`AuthMailerModule` is now adapter-only. It wraps the shared `CommonNodeMailerModule` from
-`@anarchitects/common-nest-mailer` and no longer configures transport with
+`AuthMailerModule` is now adapter-only. It wraps shared `CommonMailerModule.forRoot(...)`
+provider wiring from `@anarchitects/common-nest-mailer` and no longer configures transport with
 `MailerModule.forRootAsync(...)`.
-Configure transport once at app root with `CommonMailerModule` when `mailer.features.enabled` is `true`.
-Disable per-domain wiring with `mailer.features.enabled: false`.
+Configure transport once at app root with `CommonMailerModule`.
+Set `mailer.provider: 'noop'` to disable active delivery behavior per domain.
 The shared mailer DI contract (`MailerPort`) and concrete `NodeMailerAdapter` now live in
 `@anarchitects/common-nest-mailer`.
 

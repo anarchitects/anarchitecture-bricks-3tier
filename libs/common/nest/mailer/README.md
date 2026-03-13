@@ -1,23 +1,26 @@
 # @anarchitects/common-nest-mailer
 
-Shared typed mailer configuration and root mail transport setup for NestJS apps.
+Shared typed mailer configuration, transport setup, and provider wiring for NestJS apps.
 
 ## What It Exports
 
 - `mailerConfig`: `registerAs(...)` config namespace for `@nestjs/config`
 - `MailerConfig`: inferred config type (`ConfigType<typeof mailerConfig>`)
 - `InjectMailerConfig()`: decorator helper for injecting config values
+- `CommonMailerProvider`: provider mode union (`'node' | 'noop'`)
+- `CommonMailerModuleOptions`: provider wiring options (`provider?: CommonMailerProvider`)
+- `CommonMailerModule.forRoot(options?)`: provider wiring (`MailerPort -> NodeMailerAdapter|NoopMailerAdapter`)
+- `CommonMailerModule.forProviderFromConfig(overrides?)`: config-driven provider wiring from `MAILER_PROVIDER`
 - `CommonMailerModule.forRootFromConfig()`: config-driven root mail transport setup
 - `CommonMailerModule.forRootAsync(...)`: pass-through setup for custom transports
-- `CommonNodeMailerModule`: shared provider module binding `MailerPort -> NodeMailerAdapter`
 - `MailerPort`: shared mailer port token/contract for domain adapters
 - `NodeMailerAdapter`: shared concrete adapter using Nest `MailerService`
 - `NoopMailerAdapter`: shared no-op implementation
-- `CommonMailerNoopModule`: provider module binding `MailerPort -> NoopMailerAdapter`
 
 ## Environment Variables
 
 ```env
+MAILER_PROVIDER=node
 MAILER_HOST=smtp.example.com
 MAILER_PORT=587
 MAILER_SECURE=false
@@ -32,12 +35,6 @@ MAILER_TEMPLATE_DIR=templates
 
 Configure mail transport once at app root, then let domain mailer modules consume `MailerService`.
 
-Domain mailer infrastructure modules are adapter-only and should not call
-`MailerModule.forRootAsync(...)` themselves.
-
-`CommonNodeMailerModule` is the shared concrete adapter module and can be used directly or via
-domain wrapper modules (`AuthMailerModule`, `FormsInfrastructureMailerModule`).
-
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -50,7 +47,20 @@ import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mail
       load: [mailerConfig],
     }),
     CommonMailerModule.forRootFromConfig(),
+    CommonMailerModule.forProviderFromConfig(),
   ],
+})
+export class AppModule {}
+```
+
+## Explicit Provider Wiring
+
+```ts
+import { Module } from '@nestjs/common';
+import { CommonMailerModule } from '@anarchitects/common-nest-mailer';
+
+@Module({
+  imports: [CommonMailerModule.forRoot({ provider: 'noop' })],
 })
 export class AppModule {}
 ```

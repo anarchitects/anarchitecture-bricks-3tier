@@ -1,7 +1,8 @@
 import {
-  DEFAULT_FORMS_MAILER_ENABLED,
+  DEFAULT_FORMS_MAILER_PROVIDER,
   DEFAULT_FORMS_PERSISTENCE,
 } from './forms.config';
+import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
 import type { FormsConfig } from './forms.config';
 
 export type FormsInfrastructurePersistenceModuleOptions = {
@@ -16,15 +17,13 @@ export type FormsPresentationModuleOptions = {
   application?: FormsApplicationModuleOptions;
 };
 
-export type FormsInfrastructureMailerModuleFeatures = {
-  enabled?: boolean;
-};
-
 export type FormsInfrastructureMailerModuleOptions = {
-  features?: FormsInfrastructureMailerModuleFeatures;
+  provider?: CommonMailerProvider;
 };
 
-export type FormsModuleFeatures = FormsInfrastructureMailerModuleFeatures;
+export type FormsModuleFeatures = {
+  provider?: CommonMailerProvider;
+};
 
 export type FormsModuleOptions = {
   presentation?: FormsPresentationModuleOptions;
@@ -40,9 +39,7 @@ export const mapFormsConfigToPersistenceModuleOptions = (
 export const mapFormsConfigToMailerModuleOptions = (
   config: FormsConfig,
 ): FormsInfrastructureMailerModuleOptions => ({
-  features: {
-    enabled: config.mailerEnabled ?? DEFAULT_FORMS_MAILER_ENABLED,
-  },
+  provider: config.mailerProvider ?? DEFAULT_FORMS_MAILER_PROVIDER,
 });
 
 export const mapFormsConfigToApplicationModuleOptions = (
