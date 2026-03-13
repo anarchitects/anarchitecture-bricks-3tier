@@ -1,9 +1,6 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  CommonMailerNoopModule,
-  CommonNodeMailerModule,
-} from '@anarchitects/common-nest-mailer';
+import { CommonMailerModule } from '@anarchitects/common-nest-mailer';
 import {
   authConfig,
   mapAuthConfigToMailerModuleOptions,
@@ -12,22 +9,18 @@ import {
 import type { AuthMailerModuleOptions } from '../config';
 
 @Global()
-@Module({
-  imports: [CommonNodeMailerModule],
-  exports: [CommonNodeMailerModule],
-})
+@Module({})
 export class AuthMailerModule {
   static forRoot(options: AuthMailerModuleOptions = {}): DynamicModule {
     const resolvedOptions = resolveAuthMailerModuleOptions(options);
-
-    if (!resolvedOptions.features.enabled) {
-      return {
-        module: CommonMailerNoopModule,
-      };
-    }
+    const commonMailerModule = CommonMailerModule.forRoot({
+      provider: resolvedOptions.provider,
+    });
 
     return {
       module: AuthMailerModule,
+      imports: [commonMailerModule],
+      exports: [commonMailerModule],
     };
   }
 
@@ -36,10 +29,8 @@ export class AuthMailerModule {
   ): DynamicModule {
     const configOptions = mapAuthConfigToMailerModuleOptions(authConfig());
     const moduleDefinition = this.forRoot({
-      features: {
-        ...configOptions.features,
-        ...overrides.features,
-      },
+      ...configOptions,
+      ...overrides,
     });
 
     return {

@@ -6,14 +6,14 @@ definitions and accept submissions without re-implementing domain logic.
 
 ## Entry points
 
-| Entry point                                           | Responsibility                                                                                                         |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` and `FormsModule.forRootFromConfig(...)` facade for full-stack composition                  |
-| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.             |
-| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer.   |
-| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.         |
-| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule`, `NestMailerAdapter` — domain wrapper over shared common node mailer implementation. |
-| `@anarchitects/forms-nest/config`                     | `formsConfig`, `FormsConfig`, `InjectFormsConfig()`, and public module option types for root + secondary modules.      |
+| Entry point                                           | Responsibility                                                                                                       |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` and `FormsModule.forRootFromConfig(...)` facade for full-stack composition                |
+| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.           |
+| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer. |
+| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.       |
+| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule`, `NestMailerAdapter` — domain wrapper over shared common mailer provider wiring.   |
+| `@anarchitects/forms-nest/config`                     | `formsConfig`, `FormsConfig`, `InjectFormsConfig()`, and public module option types for root + secondary modules.    |
 
 You can combine these layers or swap infrastructure modules with custom implementations that respect
 the exported tokens.
@@ -46,7 +46,7 @@ import { formsConfig } from '@anarchitects/forms-nest/config';
     }),
     CommonMailerModule.forRootFromConfig(),
     FormsModule.forRoot({
-      mailer: { features: { enabled: true } },
+      mailer: { provider: 'node' },
     }),
   ],
 })
@@ -62,7 +62,7 @@ Disable mailer integration per domain:
 
 ```typescript
 FormsModule.forRoot({
-  mailer: { features: { enabled: false } },
+  mailer: { provider: 'noop' },
 });
 ```
 
@@ -96,7 +96,7 @@ import { FormsInfrastructureMailerModule } from '@anarchitects/forms-nest/infras
     }),
     FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' }),
     FormsInfrastructureMailerModule.forRoot({
-      features: { enabled: true },
+      provider: 'node',
     }),
     FormsPresentationModule.forRoot({
       application: {
@@ -112,9 +112,9 @@ Use layered composition when you need to swap or selectively compose infrastruct
 
 ## Mailer Migration Note
 
-- `FormsInfrastructureMailerModule` is adapter-only and wraps shared `CommonNodeMailerModule` behavior.
+- `FormsInfrastructureMailerModule` is adapter-only and wraps shared `CommonMailerModule.forRoot(...)` behavior.
 - Configure transport once at app root with `CommonMailerModule`.
-- `FormsModule.forRoot({ mailer: { features: { enabled: false } } })` uses the shared no-op adapter from `@anarchitects/common-nest-mailer`.
+- `FormsModule.forRoot({ mailer: { provider: 'noop' } })` uses the shared no-op adapter from `@anarchitects/common-nest-mailer`.
 - The shared mailer DI contract is `MailerPort` and shared concrete adapter is `NodeMailerAdapter` from `@anarchitects/common-nest-mailer`.
 
 ## Customising infrastructure
@@ -122,7 +122,7 @@ Use layered composition when you need to swap or selectively compose infrastruct
 - **Replace persistence:** Bind your own implementation to `SUBMISSIONS_REPOSITORY` if you do not
   use TypeORM. Your adapter should extend or fulfil the `SubmissionsRepository` abstract class.
 - **Swap mailer provider:** Provide a custom implementation for `MailerPort` to integrate with your
-  preferred email service. The included `FormsInfrastructureMailerModule` wraps shared `CommonNodeMailerModule` (which uses `@nestjs-modules/mailer`), but any
+  preferred email service. The included `FormsInfrastructureMailerModule` wraps shared `CommonMailerModule` provider wiring (which uses `@nestjs-modules/mailer`), but any
   adapter that implements `MailerPort` will work.
 - **Extend application services:** The exported `FormsService` and `SubmissionsService` can be
   injected elsewhere to compose additional workflows, while keeping API behavior consistent.

@@ -9,16 +9,16 @@ import { NodeMailerAdapter } from './adapters/node-mailer.adapter';
 import { AuthMailerModule } from './mailer.module';
 import * as infrastructureMailerExports from './index';
 
-const ORIGINAL_AUTH_MAILER_ENABLED = process.env['AUTH_MAILER_ENABLED'];
+const ORIGINAL_AUTH_MAILER_PROVIDER = process.env['AUTH_MAILER_PROVIDER'];
 
 describe('AuthMailerModule', () => {
   afterEach(() => {
-    if (ORIGINAL_AUTH_MAILER_ENABLED === undefined) {
-      delete process.env['AUTH_MAILER_ENABLED'];
+    if (ORIGINAL_AUTH_MAILER_PROVIDER === undefined) {
+      delete process.env['AUTH_MAILER_PROVIDER'];
       return;
     }
 
-    process.env['AUTH_MAILER_ENABLED'] = ORIGINAL_AUTH_MAILER_ENABLED;
+    process.env['AUTH_MAILER_PROVIDER'] = ORIGINAL_AUTH_MAILER_PROVIDER;
   });
 
   it('should compile and expose MailerPort', async () => {
@@ -31,7 +31,7 @@ describe('AuthMailerModule', () => {
             template: { dir: 'templates' },
           }),
         }),
-        AuthMailerModule,
+        AuthMailerModule.forRoot(),
       ],
     }).compile();
 
@@ -43,11 +43,11 @@ describe('AuthMailerModule', () => {
     expect(NodeMailerAdapter).toBe(SharedNodeMailerAdapter);
   });
 
-  it('should expose shared no-op adapter when disabled via forRoot options', async () => {
+  it('should expose shared no-op adapter when provider is noop via forRoot options', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         AuthMailerModule.forRoot({
-          features: { enabled: false },
+          provider: 'noop',
         }),
       ],
     }).compile();
@@ -57,8 +57,8 @@ describe('AuthMailerModule', () => {
     );
   });
 
-  it('should keep forRoot explicit and ignore AUTH_MAILER_ENABLED', async () => {
-    process.env['AUTH_MAILER_ENABLED'] = 'false';
+  it('should keep forRoot explicit and ignore AUTH_MAILER_PROVIDER', async () => {
+    process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -76,8 +76,8 @@ describe('AuthMailerModule', () => {
     expect(moduleRef.get(MailerPort, { strict: false })).toBeDefined();
   });
 
-  it('should resolve AUTH_MAILER_ENABLED through forRootFromConfig', async () => {
-    process.env['AUTH_MAILER_ENABLED'] = 'false';
+  it('should resolve AUTH_MAILER_PROVIDER through forRootFromConfig', async () => {
+    process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AuthMailerModule.forRootFromConfig()],

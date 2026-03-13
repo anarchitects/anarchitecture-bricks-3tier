@@ -61,10 +61,10 @@ describe('Auth/Forms centralized mailer composition', () => {
               },
             },
           },
-          mailer: { features: { enabled: true } },
+          mailer: { provider: 'node' },
         }),
         FormsModule.forRoot({
-          mailer: { features: { enabled: true } },
+          mailer: { provider: 'node' },
         }),
       ],
     }).compile();

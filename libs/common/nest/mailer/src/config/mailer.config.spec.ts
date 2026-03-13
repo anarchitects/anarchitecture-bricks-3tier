@@ -1,10 +1,12 @@
 import {
+  DEFAULT_MAILER_PROVIDER,
   InjectMailerConfig,
   MAILER_CONFIG_KEY,
   mailerConfig,
 } from './mailer.config';
 
 const MAILER_ENV_KEYS = [
+  'MAILER_PROVIDER',
   'MAILER_HOST',
   'MAILER_PORT',
   'MAILER_SECURE',
@@ -48,6 +50,7 @@ describe('mailerConfig', () => {
     const config = mailerConfig();
 
     expect(config).toEqual({
+      provider: DEFAULT_MAILER_PROVIDER,
       host: 'smtp.example.com',
       port: 587,
       secure: false,
@@ -60,6 +63,7 @@ describe('mailerConfig', () => {
   });
 
   it('uses provided environment variables when available', () => {
+    process.env['MAILER_PROVIDER'] = 'noop';
     process.env['MAILER_HOST'] = 'smtp.mailtrap.io';
     process.env['MAILER_PORT'] = '2525';
     process.env['MAILER_SECURE'] = 'true';
@@ -72,6 +76,7 @@ describe('mailerConfig', () => {
     const config = mailerConfig();
 
     expect(config).toEqual({
+      provider: 'noop',
       host: 'smtp.mailtrap.io',
       port: 2525,
       secure: true,
@@ -81,6 +86,14 @@ describe('mailerConfig', () => {
       ignoreTLS: true,
       templateDir: 'custom-templates',
     });
+  });
+
+  it('throws when MAILER_PROVIDER is unsupported', () => {
+    process.env['MAILER_PROVIDER'] = 'invalid';
+
+    expect(() => mailerConfig()).toThrow(
+      'Unsupported mailer provider: invalid',
+    );
   });
 
   it('exposes the expected configuration key', () => {

@@ -45,7 +45,7 @@ class InfrastructureTestingModule {}
 
 const ORIGINAL_FORMS_ENV = {
   persistence: process.env['FORMS_PERSISTENCE'],
-  mailerEnabled: process.env['FORMS_MAILER_ENABLED'],
+  mailerProvider: process.env['FORMS_MAILER_PROVIDER'],
 };
 
 describe('FormsModule', () => {
@@ -56,10 +56,10 @@ describe('FormsModule', () => {
       process.env['FORMS_PERSISTENCE'] = ORIGINAL_FORMS_ENV.persistence;
     }
 
-    if (ORIGINAL_FORMS_ENV.mailerEnabled === undefined) {
-      delete process.env['FORMS_MAILER_ENABLED'];
+    if (ORIGINAL_FORMS_ENV.mailerProvider === undefined) {
+      delete process.env['FORMS_MAILER_PROVIDER'];
     } else {
-      process.env['FORMS_MAILER_ENABLED'] = ORIGINAL_FORMS_ENV.mailerEnabled;
+      process.env['FORMS_MAILER_PROVIDER'] = ORIGINAL_FORMS_ENV.mailerProvider;
     }
   });
 
@@ -68,7 +68,7 @@ describe('FormsModule', () => {
       imports: [
         InfrastructureTestingModule,
         FormsModule.forRoot({
-          mailer: { features: { enabled: true } },
+          mailer: { provider: 'node' },
         }),
       ],
     }).compile();
@@ -89,7 +89,7 @@ describe('FormsModule', () => {
       imports: [
         InfrastructureTestingModule,
         FormsModule.forRoot({
-          mailer: { features: { enabled: false } },
+          mailer: { provider: 'noop' },
         }),
       ],
     }).compile();
@@ -134,7 +134,7 @@ describe('FormsModule', () => {
   });
 
   it('should keep forRoot explicit and ignore env defaults', async () => {
-    process.env['FORMS_MAILER_ENABLED'] = 'false';
+    process.env['FORMS_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [InfrastructureTestingModule, FormsModule.forRoot()],
@@ -145,7 +145,7 @@ describe('FormsModule', () => {
   });
 
   it('should resolve env defaults through forRootFromConfig', async () => {
-    process.env['FORMS_MAILER_ENABLED'] = 'false';
+    process.env['FORMS_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [InfrastructureTestingModule, FormsModule.forRootFromConfig()],

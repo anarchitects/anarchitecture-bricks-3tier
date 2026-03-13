@@ -1,35 +1,23 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import {
-  CommonMailerNoopModule,
-  CommonNodeMailerModule,
-} from '@anarchitects/common-nest-mailer';
+import { CommonMailerModule } from '@anarchitects/common-nest-mailer';
 import { ConfigModule } from '@nestjs/config';
-import {
-  DEFAULT_FORMS_MAILER_ENABLED,
-  formsConfig,
-  mapFormsConfigToMailerModuleOptions,
-} from '../config';
+import { formsConfig, mapFormsConfigToMailerModuleOptions } from '../config';
 import type { FormsInfrastructureMailerModuleOptions } from '../config';
 
 @Global()
-@Module({
-  imports: [CommonNodeMailerModule],
-  exports: [CommonNodeMailerModule],
-})
+@Module({})
 export class FormsInfrastructureMailerModule {
   static forRoot(
     options: FormsInfrastructureMailerModuleOptions = {},
   ): DynamicModule {
-    const enabled = options.features?.enabled ?? DEFAULT_FORMS_MAILER_ENABLED;
-
-    if (!enabled) {
-      return {
-        module: CommonMailerNoopModule,
-      };
-    }
+    const commonMailerModule = CommonMailerModule.forRoot({
+      provider: options.provider,
+    });
 
     return {
       module: FormsInfrastructureMailerModule,
+      imports: [commonMailerModule],
+      exports: [commonMailerModule],
     };
   }
 
@@ -38,10 +26,8 @@ export class FormsInfrastructureMailerModule {
   ): DynamicModule {
     const configOptions = mapFormsConfigToMailerModuleOptions(formsConfig());
     const moduleDefinition = this.forRoot({
-      features: {
-        ...configOptions.features,
-        ...overrides.features,
-      },
+      ...configOptions,
+      ...overrides,
     });
 
     return {

@@ -45,10 +45,6 @@ export class AuthModule {
       mailer: {
         ...configOptions.mailer,
         ...overrides.mailer,
-        features: {
-          ...configOptions.mailer?.features,
-          ...overrides.mailer?.features,
-        },
       },
     });
 

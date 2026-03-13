@@ -8,7 +8,7 @@ const AUTH_ENV_KEYS = [
   'AUTH_ENCRYPTION_ALGORITHM',
   'AUTH_ENCRYPTION_KEY',
   'AUTH_PERSISTENCE',
-  'AUTH_MAILER_ENABLED',
+  'AUTH_MAILER_PROVIDER',
   'AUTH_STRATEGIES',
 ] as const;
 
@@ -50,7 +50,7 @@ describe('authConfig', () => {
       encryptionAlgorithm: 'bcrypt',
       encryptionKey: 'default_encryption_key',
       persistence: 'typeorm',
-      mailerEnabled: true,
+      mailerProvider: 'node',
       authStrategies: ['jwt'],
     });
   });
@@ -63,7 +63,7 @@ describe('authConfig', () => {
     process.env['AUTH_ENCRYPTION_ALGORITHM'] = 'bcrypt';
     process.env['AUTH_ENCRYPTION_KEY'] = 'enc-key';
     process.env['AUTH_PERSISTENCE'] = 'typeorm';
-    process.env['AUTH_MAILER_ENABLED'] = 'false';
+    process.env['AUTH_MAILER_PROVIDER'] = 'noop';
     process.env['AUTH_STRATEGIES'] = 'jwt, custom';
 
     expect(authConfig()).toEqual({
@@ -74,9 +74,15 @@ describe('authConfig', () => {
       encryptionAlgorithm: 'bcrypt',
       encryptionKey: 'enc-key',
       persistence: 'typeorm',
-      mailerEnabled: false,
+      mailerProvider: 'noop',
       authStrategies: ['jwt', 'custom'],
     });
+  });
+
+  it('throws when AUTH_MAILER_PROVIDER is unsupported', () => {
+    process.env['AUTH_MAILER_PROVIDER'] = 'invalid';
+
+    expect(() => authConfig()).toThrow('Unsupported mailer provider: invalid');
   });
 
   it('falls back to default strategies when AUTH_STRATEGIES is empty', () => {

@@ -1,6 +1,6 @@
 import { InjectFormsConfig, formsConfig } from './forms.config';
 
-const FORMS_ENV_KEYS = ['FORMS_PERSISTENCE', 'FORMS_MAILER_ENABLED'] as const;
+const FORMS_ENV_KEYS = ['FORMS_PERSISTENCE', 'FORMS_MAILER_PROVIDER'] as const;
 type FormsEnvKey = (typeof FORMS_ENV_KEYS)[number];
 
 const originalEnv: Record<FormsEnvKey, string | undefined> =
@@ -35,20 +35,26 @@ describe('formsConfig', () => {
 
     expect(config).toEqual({
       persistence: 'typeorm',
-      mailerEnabled: true,
+      mailerProvider: 'node',
     });
   });
 
   it('uses provided environment variables when available', () => {
     process.env['FORMS_PERSISTENCE'] = 'custom-store';
-    process.env['FORMS_MAILER_ENABLED'] = 'false';
+    process.env['FORMS_MAILER_PROVIDER'] = 'noop';
 
     const config = formsConfig();
 
     expect(config).toEqual({
       persistence: 'custom-store',
-      mailerEnabled: false,
+      mailerProvider: 'noop',
     });
+  });
+
+  it('throws when FORMS_MAILER_PROVIDER is unsupported', () => {
+    process.env['FORMS_MAILER_PROVIDER'] = 'invalid';
+
+    expect(() => formsConfig()).toThrow('Unsupported mailer provider: invalid');
   });
 
   it('exposes the expected configuration key', () => {

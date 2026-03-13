@@ -18,7 +18,7 @@ describe('auth module option mappers', () => {
     encryptionAlgorithm: 'bcrypt',
     encryptionKey: 'key',
     persistence: 'typeorm',
-    mailerEnabled: false,
+    mailerProvider: 'noop',
     authStrategies: ['jwt'],
   };
 
@@ -30,7 +30,7 @@ describe('auth module option mappers', () => {
 
   it('maps mailer options from auth config', () => {
     expect(mapAuthConfigToMailerModuleOptions(config)).toEqual({
-      features: { enabled: false },
+      provider: 'noop',
     });
   });
 
@@ -71,7 +71,7 @@ describe('auth module option mappers', () => {
         },
       },
       mailer: {
-        features: { enabled: false },
+        provider: 'noop',
       },
     });
   });
@@ -102,9 +102,7 @@ describe('auth module option resolvers', () => {
         },
       },
       mailer: {
-        features: {
-          enabled: true,
-        },
+        provider: 'node',
       },
     });
   });

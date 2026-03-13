@@ -30,7 +30,7 @@ const dataSourceStub = {
 };
 
 const ORIGINAL_AUTH_ENV = {
-  mailerEnabled: process.env['AUTH_MAILER_ENABLED'],
+  mailerProvider: process.env['AUTH_MAILER_PROVIDER'],
   persistence: process.env['AUTH_PERSISTENCE'],
 };
 
@@ -58,10 +58,10 @@ const authModuleOptions = {
 
 describe('AuthModule', () => {
   afterEach(() => {
-    if (ORIGINAL_AUTH_ENV.mailerEnabled === undefined) {
-      delete process.env['AUTH_MAILER_ENABLED'];
+    if (ORIGINAL_AUTH_ENV.mailerProvider === undefined) {
+      delete process.env['AUTH_MAILER_PROVIDER'];
     } else {
-      process.env['AUTH_MAILER_ENABLED'] = ORIGINAL_AUTH_ENV.mailerEnabled;
+      process.env['AUTH_MAILER_PROVIDER'] = ORIGINAL_AUTH_ENV.mailerProvider;
     }
 
     if (ORIGINAL_AUTH_ENV.persistence === undefined) {
@@ -86,9 +86,7 @@ describe('AuthModule', () => {
         AuthModule.forRoot({
           ...authModuleOptions,
           mailer: {
-            features: {
-              enabled: true,
-            },
+            provider: 'node',
           },
         }),
       ],
@@ -109,9 +107,7 @@ describe('AuthModule', () => {
         AuthModule.forRoot({
           ...authModuleOptions,
           mailer: {
-            features: {
-              enabled: false,
-            },
+            provider: 'noop',
           },
         }),
       ],
@@ -124,8 +120,8 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should keep forRoot explicit and ignore AUTH_MAILER_ENABLED', async () => {
-    process.env['AUTH_MAILER_ENABLED'] = 'false';
+  it('should keep forRoot explicit and ignore AUTH_MAILER_PROVIDER', async () => {
+    process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [
@@ -147,8 +143,8 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should resolve AUTH_MAILER_ENABLED through forRootFromConfig', async () => {
-    process.env['AUTH_MAILER_ENABLED'] = 'false';
+  it('should resolve AUTH_MAILER_PROVIDER through forRootFromConfig', async () => {
+    process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -165,8 +161,8 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should let forRootFromConfig overrides win over AUTH_MAILER_ENABLED', async () => {
-    process.env['AUTH_MAILER_ENABLED'] = 'false';
+  it('should let forRootFromConfig overrides win over AUTH_MAILER_PROVIDER', async () => {
+    process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -181,7 +177,7 @@ describe('AuthModule', () => {
         }),
         AuthModule.forRootFromConfig({
           presentation: authModuleOptions.presentation,
-          mailer: { features: { enabled: true } },
+          mailer: { provider: 'node' },
         }),
       ],
     }).compile();
