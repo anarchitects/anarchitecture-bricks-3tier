@@ -16,8 +16,7 @@ on:
           - common
 
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 concurrency:
   group: release-manual
@@ -33,9 +32,17 @@ jobs:
           echo "This workflow must run from main. Current ref: ${{ github.ref }}"
           exit 1
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.ANARCHITECTS_BOT_APP_ID }}
+          private-key: ${{ secrets.ANARCHITECTS_BOT_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
           filter: tree:0
 
@@ -55,8 +62,13 @@ jobs:
       - name: Validate domain tags
         run: node tools/release/validate-domain-tags.mjs
 
+      - name: Configure git author for release commits
+        run: |
+          git config user.name "anarchitects-bot[bot]"
+          git config user.email "anarchitects-bot[bot]@users.noreply.github.com"
+
       - name: Run release for selected domain group
         run: yarn nx release --groups=${{ inputs.domain }} --yes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
