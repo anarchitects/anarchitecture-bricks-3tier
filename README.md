@@ -101,6 +101,16 @@ nx run forms-angular-example:contract-test
 | `nx run forms-angular-example:contract-test` | Validate Angular data-access calls against Prism mock |
 | `nx affected -t lint test build`             | Standard affected checks                              |
 
+## Release By Domain
+
+Run releases via the **Release (Manual)** GitHub workflow:
+
+- Workflow input `domain` must be one of: `forms`, `auth`, `common`.
+- The workflow runs full `nx release --groups=<domain>` including publish.
+- Use **Publish Packages (Recovery)** only to retry publish if a release run fails after versioning/tagging.
+
+Avoid routine local `yarn nx release`; use the workflow for auditable, controlled domain releases.
+
 ## Layering Rules
 
 - Angular: `ui <- feature -> state -> data-access` | `config`, `util`: available to all layers

@@ -70,6 +70,19 @@ Dependency direction:
 - Generate Angular technical docs with `nx run angular-docs:generate`.
 - Storybook is the default UI documentation front end and consumes Compodoc metadata.
 
+## Release Workflow
+
+- Do not rely on local `nx release` for normal releases.
+- Run full releases from GitHub Actions via `.github/workflows/release.yml` (`workflow_dispatch`) with an explicit domain group input.
+- Release command model is domain-scoped: `nx release --groups=<domain> --yes`.
+- Use `.github/workflows/publish.yml` only as manual recovery to retry publishing when needed.
+
+## New Domain Rule
+
+- If a new domain is created under `libs/<domain>`, you must add a matching release group in `nx.json` within the same workstream.
+- You must also update `tools/release/validate-domain-tags.mjs` with the folder-to-tag mapping for that domain.
+- Keep `README.md` and `CONTRIBUTING.md` release instructions current when domain groups change.
+
 ## Do
 
 - Keep module boundaries clean and tag-aware.

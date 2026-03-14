@@ -69,6 +69,18 @@ nx run forms-angular-example:contract-test
 - Document API-impacting changes with generated OpenAPI diff output.
 - Include contract-test updates when endpoints or response schemas change.
 
+## Release Workflow (Domain Groups)
+
+- Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
+- Select exactly one domain group input: `forms`, `auth`, or `common`.
+- The workflow runs full `nx release --groups=<domain>` (version, changelog, git/tag, GitHub release, publish).
+- Do not run local `nx release` before merging PRs.
+- Use **Publish Packages (Recovery)** only if publishing needs to be retried after a failed release run.
+- Keep domain tags aligned with folder structure; CI validates:
+  - `libs/forms/**` -> `domain:forms`
+  - `libs/auth/**` -> `domain:auth`
+  - `libs/common/**` -> `domain:shared`
+
 ## Testing Expectations
 
 - Unit tests in each library.
