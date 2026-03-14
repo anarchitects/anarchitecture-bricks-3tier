@@ -173,17 +173,29 @@
     }
   },
   "release": {
-    "projects": [
-      "libs/**",
-      "!libs/storybook/**",
-      "!libs/ts/**",
-      "!@anarchitecture-bricks-3tier/source"
-    ],
+    "groups": {
+      "forms": {
+        "projectsRelationship": "independent",
+        "projects": ["directory:libs/forms/**"]
+      },
+      "auth": {
+        "projectsRelationship": "independent",
+        "projects": ["directory:libs/auth/**"]
+      },
+      "common": {
+        "projectsRelationship": "independent",
+        "projects": ["directory:libs/common/**"]
+      }
+    },
     "version": {
       "preVersionCommand": "yarn nx run-many -t build",
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "updateDependents": "never"
     },
     "projectsRelationship": "independent",
+    "releaseTag": {
+      "pattern": "{projectName}@{version}"
+    },
     "changelog": {
       "projectChangelogs": {
         "file": false,

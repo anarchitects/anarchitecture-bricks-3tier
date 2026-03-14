@@ -97,3 +97,18 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 - Deterministic, reproducible targets.
 - Passing lint/build/test for affected scope.
 - Consistent architecture boundaries and naming.
+
+## Release Workflow Rules
+
+- Release ownership is CI-based via GitHub Actions, not local developer machines.
+- Trigger releases using `.github/workflows/release.yml` (`Release (Manual)`), selecting exactly one domain group (`forms`, `auth`, or `common`).
+- The release workflow runs full `nx release --groups=<domain> --yes` (versioning, changelog/release notes, git commit/tag/push, GitHub release, publish).
+- Use `.github/workflows/publish.yml` (`Publish Packages (Recovery)`) only for manual publish retries after a failed release run.
+- Do not run routine local `nx release` before merging PRs.
+
+## New Domain Onboarding Rule
+
+- Whenever a new domain is introduced under `libs/<domain>`, update `nx.json` release groups to add that domain group before or in the same change.
+- Ensure the new group uses the established release model (domain-scoped and explicit targeting).
+- Update `tools/release/validate-domain-tags.mjs` so folder-to-domain-tag validation includes the new domain mapping.
+- Keep release docs (`README.md`, `CONTRIBUTING.md`) aligned with any new release group additions.
