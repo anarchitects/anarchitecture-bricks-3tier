@@ -10,6 +10,7 @@ describe('AnarchitectsFeatureForm', () => {
   let ref: ComponentRef<AnarchitectsFeatureForm>;
 
   const mockFormsStore = {
+    submitted: signal(false),
     selectedFormConfig: signal<FormConfig>({
       id: 'test-form',
       version: 1,

@@ -1,3 +1,7 @@
+import { FormsStore } from '@anarchitects/forms-angular/state';
+import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
+import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,10 +10,6 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { FormsStore } from '@anarchitects/forms-angular/state';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 
 @Component({
   selector: 'anarchitects-forms-feature-form',
@@ -20,6 +20,7 @@ import { FormConfig } from '@anarchitects/forms-ts/models';
 })
 export class AnarchitectsFeatureForm {
   private readonly store = inject(FormsStore);
+  readonly submitted = this.store.submitted;
   formConfig = signal<FormConfig>({ id: '', version: 1, fields: [] });
   formId = input.required<string>();
   formVersion = input<number>();

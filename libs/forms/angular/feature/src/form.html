@@ -1,4 +1,8 @@
+@if (submitted()) {
+<p class="submitted">Form submitted successfully!</p>
+} @else {
 <anarchitects-forms-ui-form
   [config]="formConfig()"
   (submitted)="submitForm($event)"
 />
+}
