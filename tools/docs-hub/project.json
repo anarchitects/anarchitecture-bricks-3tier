@@ -1,0 +1,41 @@
+{
+  "name": "docs-hub",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "root": "tools/docs-hub",
+  "sourceRoot": "tools/docs-hub",
+  "projectType": "library",
+  "tags": ["scope:docs", "type:docs-hub"],
+  "targets": {
+    "sync-packages": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/libs/**/package.json"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/**/README.md"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/dist/docs-hub/data"],
+      "options": {
+        "command": "node tools/docs-hub/sync-packages.mjs"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["sync-packages"],
+      "outputs": ["{workspaceRoot}/dist/docs-hub"],
+      "options": {
+        "command": "node tools/docs-hub/build.mjs"
+      }
+    },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/docs-hub/verify.mjs"
+      }
+    }
+  }
+}

@@ -115,6 +115,9 @@ nx run forms-angular-example:contract-test
 | `nx run api-specs:verify`                    | Validate required endpoints + snapshot stability      |
 | `nx run angular-docs:generate`               | Generate and merge Compodoc docs                      |
 | `nx run storybook-angular:build-storybook`   | Build Storybook with technical docs metadata          |
+| `nx run docs-hub:build`                      | Build static docs hub pages                           |
+| `nx run docs-hub:verify`                     | Validate docs hub outputs and required links          |
+| `nx run release-tools:validate-non-bumping-commits` | Enforce non-bumping commit types for docs-surface PRs |
 | `nx run auth-nest-example:contract-test`     | Validate auth Nest runtime responses against OpenAPI  |
 | `nx run auth-angular-example:contract-test`  | Validate auth Angular data-access against Prism mock  |
 | `nx run forms-nest-example:contract-test`    | Validate Nest runtime responses against OpenAPI       |
@@ -155,6 +158,15 @@ If local dry-runs are needed, run `nx run release-tools:check-release-tag-ancest
 - Storybook remains the default UI documentation and interaction surface.
 - Compodoc provides Angular technical API metadata and pages.
 - OpenAPI provides HTTP contract documentation derived from implementation.
+- Docs hub static site is generated via `nx run docs-hub:build` and published by `.github/workflows/docs-pages.yml`.
+- Production docs URL: `https://bricks-3tier.anarchitects.dev` (Storybook under `/storybook`, OpenAPI under `/openapi`).
+
+## Docs PR Commit Policy
+
+- Docs-surface pull requests must use non-bumping commit types only: `docs`, `chore`, `ci`, `style`.
+- Do not use `!` or `BREAKING CHANGE` markers in docs-surface commits.
+- CI enforces this via `nx run release-tools:validate-non-bumping-commits`.
+- For squash merges of docs-surface PRs, use a non-bumping squash subject (`docs:`, `chore:`, `ci:`, or `style:`).
 
 ## License
 

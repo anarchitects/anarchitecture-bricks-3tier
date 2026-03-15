@@ -29,6 +29,12 @@
       "options": {
         "command": "node tools/release/check-release-tag-ancestry.mjs"
       }
+    },
+    "validate-non-bumping-commits": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/validate-non-bumping-commits.mjs"
+      }
     }
   }
 }

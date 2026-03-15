@@ -1,0 +1,76 @@
+name: Docs Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/**
+      - tools/api-specs/**
+      - tools/angular-docs/**
+      - tools/docs-hub/**
+      - libs/storybook/angular/**
+      - libs/**/README.md
+      - README.md
+      - CONTRIBUTING.md
+      - .github/workflows/docs-pages.yml
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: docs-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          filter: tree:0
+
+      - run: corepack enable
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --immutable
+      - run: yarn nx run api-specs:generate
+      - run: yarn nx run angular-docs:generate
+      - run: yarn nx run storybook-angular:build-storybook
+      - run: yarn nx run docs-hub:build
+      - run: yarn nx run docs-hub:verify
+
+      - name: Assemble pages artifact
+        run: |
+          rm -rf dist/pages
+          mkdir -p dist/pages
+          cp -R dist/docs-hub/. dist/pages/
+          mkdir -p dist/pages/storybook
+          cp -R dist/storybook/storybook-angular/. dist/pages/storybook/
+          mkdir -p dist/pages/openapi
+          cp -R docs/openapi/. dist/pages/openapi/
+          touch dist/pages/.nojekyll
+          echo "bricks-3tier.anarchitects.dev" > dist/pages/CNAME
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/pages
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
