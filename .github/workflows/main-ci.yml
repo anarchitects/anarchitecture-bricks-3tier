@@ -40,6 +40,8 @@ jobs:
       - run: yarn install --immutable
       - run: node tools/release/validate-domain-tags.mjs
       - run: yarn nx run release-tools:validate-non-bumping-commits
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       - run: yarn nx-cloud record -- yarn nx run api-specs:lint
       - run: yarn nx-cloud record -- yarn nx run angular-docs:generate
       # When you enable task distribution, run the e2e-ci task instead of e2e

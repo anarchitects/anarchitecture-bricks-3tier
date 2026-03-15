@@ -26,21 +26,65 @@ function runGit(args) {
   return result.stdout.trim();
 }
 
-function resolveBaseRef() {
-  const baseRef = process.env.GITHUB_BASE_REF || 'main';
-  const candidates = [`origin/${baseRef}`, 'origin/main'];
+function resolveCommit(value) {
+  if (!value || typeof value !== 'string') {
+    return null;
+  }
 
-  for (const candidate of candidates) {
-    const result = spawnSync('git', ['rev-parse', '--verify', '--quiet', candidate], {
-      cwd: workspaceRoot,
-      encoding: 'utf8',
-    });
-    if (result.status === 0) {
-      return candidate;
+  const result = spawnSync('git', ['rev-parse', '--verify', '--quiet', `${value}^{commit}`], {
+    cwd: workspaceRoot,
+    encoding: 'utf8',
+  });
+
+  if (result.status !== 0) {
+    return null;
+  }
+
+  return result.stdout.trim();
+}
+
+function resolveBaseCommit() {
+  const directCandidates = [
+    process.env.NX_BASE,
+    process.env.GITHUB_BASE_SHA,
+    process.env.BASE_SHA,
+  ];
+
+  for (const candidate of directCandidates) {
+    const resolved = resolveCommit(candidate);
+    if (resolved) {
+      return resolved;
     }
   }
 
-  throw new Error('Unable to resolve base ref (expected origin/<base> or origin/main).');
+  const baseRef = process.env.GITHUB_BASE_REF || process.env.BASE_REF || 'main';
+  const refCandidates = [
+    `origin/${baseRef}`,
+    `refs/remotes/origin/${baseRef}`,
+    baseRef,
+    'origin/main',
+    'refs/remotes/origin/main',
+    'main',
+  ];
+
+  for (const candidate of refCandidates) {
+    const resolved = resolveCommit(candidate);
+    if (resolved) {
+      return resolved;
+    }
+  }
+
+  const fallback = resolveCommit('HEAD~1');
+  if (fallback) {
+    console.warn(
+      'Unable to resolve explicit base ref/sha; falling back to HEAD~1 for non-bumping commit validation.',
+    );
+    return fallback;
+  }
+
+  throw new Error(
+    'Unable to resolve base commit (tried NX_BASE, GITHUB_BASE_SHA, base refs, and HEAD~1).',
+  );
 }
 
 function changedDocsSurface(files) {
@@ -74,8 +118,9 @@ function extractType(subject) {
   };
 }
 
-const baseRef = resolveBaseRef();
-const changedFilesRaw = runGit(['diff', '--name-only', `${baseRef}...HEAD`]);
+const baseCommit = resolveBaseCommit();
+const range = `${baseCommit}...HEAD`;
+const changedFilesRaw = runGit(['diff', '--name-only', range]);
 const changedFiles = changedFilesRaw
   .split('\n')
   .map((value) => value.trim())
@@ -94,7 +139,7 @@ if (!changedDocsSurface(changedFiles)) {
 const rawLog = runGit([
   'log',
   '--format=%H%x1f%s%x1f%b%x1e',
-  `${baseRef}...HEAD`,
+  range,
 ]);
 const commits = parseCommitBlocks(rawLog);
 
