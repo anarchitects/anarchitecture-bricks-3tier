@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/forms-angular",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "peerDependencies": {
     "@anarchitects/common-angular-ui-composition": "^0.0.1",
     "@anarchitects/common-angular-ui-layouts": "^0.0.1",
