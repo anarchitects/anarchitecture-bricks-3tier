@@ -1,5 +1,11 @@
-import { FormsStore } from '@anarchitects/forms-angular/state';
-import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
+import {
+  FormsStore,
+  provideFormsState,
+} from '@anarchitects/forms-angular/state';
+import {
+  AnarchitectsFormsUiSubmitted,
+  AnarchitectsUiForm,
+} from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
@@ -13,7 +19,8 @@ import {
 
 @Component({
   selector: 'anarchitects-forms-feature-form',
-  imports: [AnarchitectsUiForm],
+  imports: [AnarchitectsUiForm, AnarchitectsFormsUiSubmitted],
+  providers: [provideFormsState()],
   templateUrl: './form.html',
   styleUrl: './form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

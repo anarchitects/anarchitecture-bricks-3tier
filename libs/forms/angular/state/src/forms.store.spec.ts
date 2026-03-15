@@ -3,6 +3,7 @@ import { delay, of } from 'rxjs';
 import { FormsStore } from './forms.store';
 import { FormConfig } from '@anarchitects/forms-ts/models';
 import { FormsApi } from '@anarchitects/forms-angular/data-access';
+import { provideFormsState } from './forms-state.provider';
 
 const mockFormConfig: FormConfig = {
   id: 'contact',
@@ -42,7 +43,10 @@ const setup = () => {
   };
 
   TestBed.configureTestingModule({
-    providers: [{ provide: FormsApi, useValue: mockFormsApi }],
+    providers: [
+      provideFormsState(),
+      { provide: FormsApi, useValue: mockFormsApi },
+    ],
   });
 
   return TestBed.inject(FormsStore);
