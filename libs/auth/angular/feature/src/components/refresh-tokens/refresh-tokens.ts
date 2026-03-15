@@ -1,40 +1,28 @@
 import { AuthStore } from '@anarchitects/auth-angular/state';
+import { AnarchitectsAuthUiRefreshTokensForm } from '@anarchitects/auth-angular/ui';
 import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos';
-import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
-  signal,
 } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
+import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 
 @Component({
   selector: 'anarchitects-auth-feature-refresh-tokens',
-  imports: [AnarchitectsUiForm],
+  imports: [AnarchitectsAuthUiRefreshTokensForm],
   templateUrl: './refresh-tokens.html',
   styleUrl: './refresh-tokens.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnarchitectsFeatureRefreshTokens {
   private readonly authStore = inject(AuthStore);
+
   readonly userId = input<string>();
-  readonly formConfig = signal<FormConfig>({
-    id: 'refresh-tokens',
-    version: 1,
-    fields: [
-      {
-        name: 'refreshToken',
-        kind: 'string',
-        required: false,
-        minLength: 1,
-        ui: { label: 'Refresh Token' },
-      },
-    ],
-  });
+  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
   private resolveUserId(): string | undefined {
     const fromInput = this.userId();
@@ -60,23 +48,13 @@ export class AnarchitectsFeatureRefreshTokens {
     }
   }
 
-  async submitForm(input: SubmissionRequestDTO) {
+  async submitForm(input: RefreshTokenRequestDTO): Promise<void> {
     const userId = this.resolveUserId();
 
-    if (!userId) {
+    if (!userId || !input.refreshToken) {
       return;
     }
 
-    const refreshToken =
-      (input.payload['refreshToken'] as string | undefined) ||
-      localStorage.getItem('refreshToken') ||
-      undefined;
-
-    if (!refreshToken) {
-      return;
-    }
-
-    const dto: RefreshTokenRequestDTO = { refreshToken };
-    await this.authStore.refreshTokens({ userId, dto });
+    await this.authStore.refreshTokens({ userId, dto: input });
   }
 }

@@ -1,13 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ComponentRef } from '@angular/core';
 import { AuthStore } from '@anarchitects/auth-angular/state';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { VerifyEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsFeatureVerifyEmail } from './verify-email';
 
 describe('AnarchitectsFeatureVerifyEmail', () => {
   let component: AnarchitectsFeatureVerifyEmail;
   let fixture: ComponentFixture<AnarchitectsFeatureVerifyEmail>;
-  let ref: ComponentRef<AnarchitectsFeatureVerifyEmail>;
   const mockAuthStore = {
     verifyEmail: jest.fn().mockResolvedValue(undefined),
   };
@@ -20,7 +18,6 @@ describe('AnarchitectsFeatureVerifyEmail', () => {
 
     fixture = TestBed.createComponent(AnarchitectsFeatureVerifyEmail);
     component = fixture.componentInstance;
-    ref = fixture.componentRef;
     await fixture.whenStable();
   });
 
@@ -28,60 +25,16 @@ describe('AnarchitectsFeatureVerifyEmail', () => {
     jest.clearAllMocks();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should delegate verify-email action to AuthStore', async () => {
+    const input: VerifyEmailRequestDTO = { token: 'verify-token' };
+
+    await component.submitForm(input);
+
+    expect(mockAuthStore.verifyEmail).toHaveBeenCalledWith(input);
   });
 
-  it('should require token when token input is not provided', () => {
-    expect(component.formConfig().fields[0]?.required).toBe(true);
-  });
-
-  it('should not require token when token input is provided', () => {
-    ref.setInput('token', 'prefilled-token');
-    fixture.detectChanges();
-
-    expect(component.formConfig().fields[0]?.required).toBe(false);
-  });
-
-  it('should map payload token and call AuthStore.verifyEmail', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'verify-email',
-      formVersion: 1,
-      payload: { token: 'manual-token' },
-    };
-
-    await component.submitForm(submission);
-
-    expect(mockAuthStore.verifyEmail).toHaveBeenCalledWith({
-      token: 'manual-token',
-    });
-  });
-
-  it('should fallback to token input when payload token is missing', async () => {
-    ref.setInput('token', 'prefilled-token');
-    fixture.detectChanges();
-
-    const submission: SubmissionRequestDTO = {
-      formId: 'verify-email',
-      formVersion: 1,
-      payload: {},
-    };
-
-    await component.submitForm(submission);
-
-    expect(mockAuthStore.verifyEmail).toHaveBeenCalledWith({
-      token: 'prefilled-token',
-    });
-  });
-
-  it('should skip submit when token cannot be resolved', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'verify-email',
-      formVersion: 1,
-      payload: {},
-    };
-
-    await component.submitForm(submission);
+  it('should skip submit when token is empty', async () => {
+    await component.submitForm({ token: '' });
 
     expect(mockAuthStore.verifyEmail).not.toHaveBeenCalled();
   });

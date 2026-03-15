@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthStore } from '@anarchitects/auth-angular/state';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { ForgotPasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsFeatureForgotPassword } from './forgot-password';
 
 describe('AnarchitectsFeatureForgotPassword', () => {
@@ -25,36 +25,11 @@ describe('AnarchitectsFeatureForgotPassword', () => {
     jest.clearAllMocks();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should delegate forgot-password action to AuthStore', async () => {
+    const input: ForgotPasswordRequestDTO = { email: 'user@example.com' };
 
-  it('should expose forgot-password form config', () => {
-    expect(component.formConfig()).toEqual({
-      id: 'forgot-password',
-      version: 1,
-      fields: [
-        {
-          name: 'email',
-          kind: 'email',
-          required: true,
-          ui: { label: 'Email' },
-        },
-      ],
-    });
-  });
+    await component.submitForm(input);
 
-  it('should map payload and call AuthStore.forgotPassword', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'forgot-password',
-      formVersion: 1,
-      payload: { email: 'user@example.com' },
-    };
-
-    await component.submitForm(submission);
-
-    expect(mockAuthStore.forgotPassword).toHaveBeenCalledWith({
-      email: 'user@example.com',
-    });
+    expect(mockAuthStore.forgotPassword).toHaveBeenCalledWith(input);
   });
 });

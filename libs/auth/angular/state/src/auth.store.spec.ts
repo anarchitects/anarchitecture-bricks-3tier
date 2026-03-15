@@ -2,6 +2,7 @@ import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { delay, of } from 'rxjs';
 import { AuthApi } from '../../data-access/src';
 import { AuthStore } from './auth.store';
+import { provideAuthState } from './auth-state.provider';
 
 jest.mock('jwt-decode', () => ({
   jwtDecode: jest.fn(() => ({
@@ -16,8 +17,8 @@ const setup = () => {
     activateUser: jest.fn(() => of({ success: true }).pipe(delay(100))),
     login: jest.fn(() =>
       of({ accessToken: 'access-token', refreshToken: 'refresh-token' }).pipe(
-        delay(100)
-      )
+        delay(100),
+      ),
     ),
     logout: jest.fn(() => of({ success: true }).pipe(delay(100))),
     changePassword: jest.fn(() => of({ success: true }).pipe(delay(100))),
@@ -29,17 +30,20 @@ const setup = () => {
       of({
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
-      }).pipe(delay(100))
+      }).pipe(delay(100)),
     ),
     getLoggedInUserInfo: jest.fn(() =>
       of({
         user: { id: 'user-id', email: 'user@example.com' },
         rbac: {},
-      })
+      }),
     ),
   };
   TestBed.configureTestingModule({
-    providers: [{ provide: AuthApi, useValue: mockAuthApi }],
+    providers: [
+      { provide: AuthApi, useValue: mockAuthApi },
+      provideAuthState(),
+    ],
   });
 
   return TestBed.inject(AuthStore);

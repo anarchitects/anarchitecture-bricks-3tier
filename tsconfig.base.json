@@ -95,6 +95,7 @@
       "@anarchitects/auth-angular/feature": [
         "libs/auth/angular/feature/src/index.ts"
       ],
+      "@anarchitects/auth-angular/ui": ["libs/auth/angular/ui/src/index.ts"],
       "@anarchitects/common-angular-design": [
         "libs/common/angular/design/src/index.ts"
       ],

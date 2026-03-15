@@ -1,46 +1,28 @@
 import { AuthStore } from '@anarchitects/auth-angular/state';
+import { AnarchitectsAuthUiUpdateEmailForm } from '@anarchitects/auth-angular/ui';
 import { UpdateEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
-import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   input,
-  signal,
 } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
+import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 
 @Component({
   selector: 'anarchitects-auth-feature-update-email',
-  imports: [AnarchitectsUiForm],
+  imports: [AnarchitectsAuthUiUpdateEmailForm],
   templateUrl: './update-email.html',
   styleUrl: './update-email.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnarchitectsFeatureUpdateEmail {
   private readonly authStore = inject(AuthStore);
+
   readonly userId = input<string>();
-  readonly formConfig = signal<FormConfig>({
-    id: 'update-email',
-    version: 1,
-    fields: [
-      {
-        name: 'newEmail',
-        kind: 'email',
-        required: true,
-        ui: { label: 'New Email' },
-      },
-      {
-        name: 'password',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Password' },
-      },
-    ],
-  });
+  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
   private resolveUserId(): string | undefined {
     const fromInput = this.userId();
@@ -66,18 +48,13 @@ export class AnarchitectsFeatureUpdateEmail {
     }
   }
 
-  async submitForm(input: SubmissionRequestDTO) {
+  async submitForm(input: UpdateEmailRequestDTO): Promise<void> {
     const userId = this.resolveUserId();
 
     if (!userId) {
       return;
     }
 
-    const dto: UpdateEmailRequestDTO = {
-      newEmail: input.payload['newEmail'] as string,
-      password: input.payload['password'] as string,
-    };
-
-    await this.authStore.updateEmail({ userId, dto });
+    await this.authStore.updateEmail({ userId, dto: input });
   }
 }

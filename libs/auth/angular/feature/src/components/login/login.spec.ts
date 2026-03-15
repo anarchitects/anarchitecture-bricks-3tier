@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthStore } from '@anarchitects/auth-angular/state';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsFeatureLogin } from './login';
 
 describe('AnarchitectsFeatureLogin', () => {
@@ -29,45 +29,14 @@ describe('AnarchitectsFeatureLogin', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should expose login form config with expected fields', () => {
-    expect(component.formConfig()).toEqual({
-      id: 'login',
-      version: 1,
-      fields: [
-        {
-          name: 'credential',
-          kind: 'string',
-          required: true,
-          minLength: 2,
-          maxLength: 100,
-          ui: { label: 'Email or Username' },
-        },
-        {
-          name: 'password',
-          kind: 'password',
-          required: true,
-          minLength: 6,
-          ui: { label: 'Password' },
-        },
-      ],
-    });
-  });
-
-  it('should map payload and call AuthStore.login', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'login',
-      formVersion: 1,
-      payload: {
-        credential: 'user@example.com',
-        password: 'secret123',
-      },
-    };
-
-    await component.submitForm(submission);
-
-    expect(mockAuthStore.login).toHaveBeenCalledWith({
+  it('should delegate login to AuthStore', async () => {
+    const input: LoginRequestDTO = {
       credential: 'user@example.com',
       password: 'secret123',
-    });
+    };
+
+    await component.submitForm(input);
+
+    expect(mockAuthStore.login).toHaveBeenCalledWith(input);
   });
 });

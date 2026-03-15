@@ -1,4 +1,8 @@
-<anarchitects-forms-ui-form
-  [config]="formConfig()"
+<anarchitects-auth-ui-register-form
+  [layout]="layout()"
+  [layoutOptions]="layoutOptions()"
   (submitted)="submitForm($event)"
-/>
+>
+  <ng-content select="ng-template[anxTemplate]"></ng-content>
+  <ng-content select="[anxSlot]"></ng-content>
+</anarchitects-auth-ui-register-form>

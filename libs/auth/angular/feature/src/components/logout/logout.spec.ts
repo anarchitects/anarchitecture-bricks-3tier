@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthStore } from '@anarchitects/auth-angular/state';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { LogoutRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsFeatureLogout } from './logout';
 
 describe('AnarchitectsFeatureLogout', () => {
@@ -22,81 +22,22 @@ describe('AnarchitectsFeatureLogout', () => {
   });
 
   afterEach(() => {
-    localStorage.clear();
     jest.clearAllMocks();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should expose logout form config', () => {
-    expect(component.formConfig()).toEqual({
-      id: 'logout',
-      version: 1,
-      fields: [
-        {
-          name: 'refreshToken',
-          kind: 'string',
-          required: false,
-          minLength: 1,
-          ui: { label: 'Refresh Token' },
-        },
-        {
-          name: 'accessToken',
-          kind: 'string',
-          required: false,
-          minLength: 1,
-          ui: { label: 'Access Token (optional)' },
-        },
-      ],
-    });
-  });
-
-  it('should map payload and call AuthStore.logout', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'logout',
-      formVersion: 1,
-      payload: {
-        refreshToken: 'refresh-token',
-        accessToken: 'access-token',
-      },
-    };
-
-    await component.submitForm(submission);
-
-    expect(mockAuthStore.logout).toHaveBeenCalledWith({
+  it('should call AuthStore.logout when refresh token exists', async () => {
+    const input: LogoutRequestDTO = {
       refreshToken: 'refresh-token',
       accessToken: 'access-token',
-    });
-  });
-
-  it('should fallback to localStorage tokens', async () => {
-    localStorage.setItem('refreshToken', 'stored-refresh-token');
-    localStorage.setItem('accessToken', 'stored-access-token');
-
-    const submission: SubmissionRequestDTO = {
-      formId: 'logout',
-      formVersion: 1,
-      payload: {},
     };
 
-    await component.submitForm(submission);
+    await component.submitForm(input);
 
-    expect(mockAuthStore.logout).toHaveBeenCalledWith({
-      refreshToken: 'stored-refresh-token',
-      accessToken: 'stored-access-token',
-    });
+    expect(mockAuthStore.logout).toHaveBeenCalledWith(input);
   });
 
-  it('should skip submit when refresh token cannot be resolved', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'logout',
-      formVersion: 1,
-      payload: {},
-    };
-
-    await component.submitForm(submission);
+  it('should skip submit when refresh token is missing', async () => {
+    await component.submitForm({ refreshToken: '' });
 
     expect(mockAuthStore.logout).not.toHaveBeenCalled();
   });

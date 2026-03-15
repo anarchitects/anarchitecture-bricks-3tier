@@ -1,6 +1,6 @@
 # @anarchitects/auth-angular/util
 
-Utility layer for the Angular auth brick. Re-exported via `@anarchitects/auth-angular/util`, it centralises CASL ability helpers that are consumed by the feature and state slices.
+Utility layer for Angular auth. Re-exported via `@anarchitects/auth-angular/util`, it centralises CASL ability helpers that are consumed by the feature and state slices.
 
 ## Exports
 

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthStore } from '@anarchitects/auth-angular/state';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { RegisterRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsFeatureRegister } from './register';
 
 describe('AnarchitectsFeatureRegister', () => {
@@ -25,39 +25,16 @@ describe('AnarchitectsFeatureRegister', () => {
     jest.clearAllMocks();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should keep password fields configured as password kind', () => {
-    const fields = component.formConfig().fields;
-    expect(fields.find((field) => field.name === 'password')?.kind).toBe(
-      'password'
-    );
-    expect(fields.find((field) => field.name === 'confirmPassword')?.kind).toBe(
-      'password'
-    );
-  });
-
-  it('should map payload and call AuthStore.registerUser', async () => {
-    const submission: SubmissionRequestDTO = {
-      formId: 'register',
-      formVersion: 1,
-      payload: {
-        userName: 'testuser',
-        email: 'test@example.com',
-        password: 'secret123',
-        confirmPassword: 'secret123',
-      },
-    };
-
-    await component.submitForm(submission);
-
-    expect(mockAuthStore.registerUser).toHaveBeenCalledWith({
-      userName: 'testuser',
-      email: 'test@example.com',
+  it('should delegate registration to AuthStore', async () => {
+    const input: RegisterRequestDTO = {
+      userName: 'Jane',
+      email: 'jane@example.com',
       password: 'secret123',
       confirmPassword: 'secret123',
-    });
+    };
+
+    await component.submitForm(input);
+
+    expect(mockAuthStore.registerUser).toHaveBeenCalledWith(input);
   });
 });
