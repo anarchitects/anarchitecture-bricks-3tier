@@ -7,13 +7,14 @@ Signal-based state management for the auth domain. Import from `@anarchitects/au
 - `AuthStore`: an Angular `signalStore` that exposes:
   - computed selectors (`isLoggedIn`, `loggedInUser`)
   - async methods for each auth use case (`login`, `logout`, `registerUser`, etc.)
+- `provideAuthState`: provider helper for explicit store registration (app/route scope)
 - The store depends on `AuthApi` from the data-access layer and respects the configuration providers.
 
 ## Usage
 
 ```ts
 import { Component, inject } from '@angular/core';
-import { AuthStore } from '@anarchitects/auth-angular/state';
+import { AuthStore, provideAuthState } from '@anarchitects/auth-angular/state';
 
 @Component({
   selector: 'auth-login-button',
@@ -31,4 +32,4 @@ export class AuthLoginButtonComponent {
 }
 ```
 
-Compose the store inside smart/feature components or facades; keep UI components dumb by binding to the store's signals.
+Register `provideAuthState()` in your application or route providers so the auth store scope is explicit and shared where needed. Keep UI components dumb by binding to the store's signals.

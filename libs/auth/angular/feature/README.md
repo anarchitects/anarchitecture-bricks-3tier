@@ -1,6 +1,6 @@
 # @anarchitects/auth-angular/feature
 
-Feature layer for the Angular auth brick. It ships route guards plus standalone form-based feature components that orchestrate auth actions via `AuthStore`.
+Feature-level orchestration for Angular auth. It ships route guards plus standalone feature components that orchestrate auth actions via `AuthStore` and delegate rendering to `@anarchitects/auth-angular/ui`.
 
 ## Exports
 
@@ -32,7 +32,7 @@ export const routes: Routes = [
 ];
 ```
 
-The guard reads the `AuthStore` ability snapshot. Ensure the state layer is providing abilities by wiring the data-access and util modules in your application bootstrap.
+The guard reads the `AuthStore` ability snapshot. Ensure the state layer is explicitly provided in your app/route providers by wiring `provideAuthState()` from `@anarchitects/auth-angular/state`.
 
 ### Token-driven actions
 

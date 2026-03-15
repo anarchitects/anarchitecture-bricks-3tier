@@ -1,15 +1,15 @@
 # @anarchitects/auth-angular
 
-Angular bricks for the Anarchitecture auth domain. The library is organized into standalone feature slices (config, data-access, feature, state, util, ui) that compose together to provide implementation-aligned authentication flows for Angular applications.
+Angular domain libraries for the Anarchitecture auth domain. The package is organized into standalone slices (config, data-access, feature, state, util, ui) that compose implementation-aligned authentication flows for Angular applications.
 
 ## Features
 
 - `config`: DI tokens and provider helpers (API base URL, defaults)
 - `data-access`: generated OpenAPI clients plus adapters over the Nest API
-- `state`: signal-based store that drives login/logout, token refresh, and ability hydration
-- `feature`: router policy guard that consumes the shared ability
+- `state`: signal-based store plus explicit provider helper for login/logout, token refresh, and ability hydration
+- `feature`: router policy guard and orchestration components that delegate rendering to auth UI components
 - `util`: CASL ability helpers (`createAppAbility`, `AppAbility`)
-- `ui`: presentational components (reserved for future expansions)
+- `ui`: presentational auth domain form components built on `AnarchitectsUiForm`
 
 ## Installation
 
@@ -30,6 +30,7 @@ Peer dependencies: Angular v20+, `@ngrx/signals`, `@sinclair/typebox`, and the s
 import { ApplicationConfig } from '@angular/core';
 import { provideAuthConfig } from '@anarchitects/auth-angular/config';
 import { provideAuthDataAccess } from '@anarchitects/auth-angular/data-access';
+import { provideAuthState } from '@anarchitects/auth-angular/state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +38,7 @@ export const appConfig: ApplicationConfig = {
       apiBaseUrl: 'https://api.anarchitects.dev',
     }),
     provideAuthDataAccess(),
+    provideAuthState(),
   ],
 };
 ```
@@ -79,14 +81,14 @@ export const routes: Routes = [
 
 ### Secondary entry points
 
-| Import path                              | Description                              |
-| ---------------------------------------- | ---------------------------------------- |
-| `@anarchitects/auth-angular/config`      | DI tokens and providers                  |
-| `@anarchitects/auth-angular/data-access` | Generated API clients and HTTP adapters  |
-| `@anarchitects/auth-angular/state`       | Signal store and CASL ability sync       |
-| `@anarchitects/auth-angular/feature`     | Router policy guard                      |
-| `@anarchitects/auth-angular/util`        | CASL ability factory and typings         |
-| `@anarchitects/auth-angular/ui`          | Presentational components (if available) |
+| Import path                              | Description                             |
+| ---------------------------------------- | --------------------------------------- |
+| `@anarchitects/auth-angular/config`      | DI tokens and providers                 |
+| `@anarchitects/auth-angular/data-access` | Generated API clients and HTTP adapters |
+| `@anarchitects/auth-angular/state`       | Signal store and CASL ability sync      |
+| `@anarchitects/auth-angular/feature`     | Router policy guard                     |
+| `@anarchitects/auth-angular/ui`          | Auth domain form UI components          |
+| `@anarchitects/auth-angular/util`        | CASL ability factory and typings        |
 
 ## Nx scripts
 

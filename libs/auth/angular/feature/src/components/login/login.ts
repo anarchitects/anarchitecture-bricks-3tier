@@ -1,51 +1,28 @@
 import { AuthStore } from '@anarchitects/auth-angular/state';
+import { AnarchitectsAuthUiLoginForm } from '@anarchitects/auth-angular/ui';
 import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
-import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  input,
 } from '@angular/core';
+import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 
 @Component({
   selector: 'anarchitects-auth-feature-login',
-  imports: [AnarchitectsUiForm],
+  imports: [AnarchitectsAuthUiLoginForm],
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnarchitectsFeatureLogin {
   private readonly authStore = inject(AuthStore);
-  formConfig = signal<FormConfig>({
-    id: 'login',
-    version: 1,
-    fields: [
-      {
-        name: 'credential',
-        kind: 'string',
-        required: true,
-        minLength: 2,
-        maxLength: 100,
-        ui: { label: 'Email or Username' },
-      },
-      {
-        name: 'password',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Password' },
-      },
-    ],
-  });
 
-  async submitForm(input: SubmissionRequestDTO) {
-    const loginInput: LoginRequestDTO = {
-      credential: input.payload['credential'] as string,
-      password: input.payload['password'] as string,
-    };
-    await this.authStore.login(loginInput);
+  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
+
+  async submitForm(input: LoginRequestDTO): Promise<void> {
+    await this.authStore.login(input);
   }
 }

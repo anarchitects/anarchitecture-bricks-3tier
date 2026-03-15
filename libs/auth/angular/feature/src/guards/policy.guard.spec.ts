@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanMatchFn } from '@angular/router';
+import { AuthStore } from '@anarchitects/auth-angular/state';
 
 import { provideHttpClient } from '@angular/common/http';
 import { policyGuard } from './policy.guard';
@@ -10,7 +11,15 @@ describe('policyGuard', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient()],
+      providers: [
+        provideHttpClient(),
+        {
+          provide: AuthStore,
+          useValue: {
+            ability: () => undefined,
+          },
+        },
+      ],
     });
   });
 
