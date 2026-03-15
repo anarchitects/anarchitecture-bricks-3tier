@@ -24,6 +24,7 @@ import {
     '[attr.data-density]': 'density()',
     '[attr.aria-live]': 'ariaLive()',
     '[attr.role]': 'tone() === "danger" ? "alert" : "status"',
+    'attr.data-anx-component': '"alert"',
   },
 })
 export class AnarchitectsUiAlert {

@@ -17,8 +17,17 @@ non-branded, token-driven primitives that are extensible by consumer apps.
 
 - Stable host classes (`anx-*`) and `data-*` variant hooks
 - Component-level CSS variables (`--anx-cmp-*`) with system-token fallbacks
-- Projection-based composition (`[anxStart]`, `[anxEnd]`, `[anxActions]`, etc.)
+- Canonical projection slots via `anxSlot="..."` with legacy alias support
 - Wrapper-friendly APIs for consumer-specific styling and behavior
+
+## Composition contract alignment
+
+- Canonical slot selectors:
+  - `anxSlot="start|end|header|content|footer|actions|label|hint|error|..."`
+- Legacy aliases remain supported:
+  - `anxStart`, `anxEnd`, `anxActions`, `anxCardHeader`, `anxCardFooter`, etc.
+- Primitive composition schemas are exported from:
+  - `@anarchitects/common-angular-ui-primitives/contracts`
 
 ## Phase 2 boundaries
 

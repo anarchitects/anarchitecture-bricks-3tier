@@ -13,7 +13,9 @@ const meta: Meta<AnarchitectsUiAlert> = {
     props: args,
     template: `
       <anarchitects-ui-alert [tone]="tone" [appearance]="appearance" [dismissible]="dismissible">
+        <span anxSlot="start">!</span>
         Alert message for the user.
+        <button anxSlot="actions" type="button">Retry</button>
       </anarchitects-ui-alert>
     `,
   }),
@@ -29,4 +31,16 @@ export const DangerDismissible: Story = {
     tone: 'danger',
     dismissible: true,
   },
+};
+
+export const LegacyActions: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-ui-alert [tone]="tone" [appearance]="appearance" [dismissible]="dismissible">
+        Alert message for the user.
+        <button anxActions type="button">Retry</button>
+      </anarchitects-ui-alert>
+    `,
+  }),
 };

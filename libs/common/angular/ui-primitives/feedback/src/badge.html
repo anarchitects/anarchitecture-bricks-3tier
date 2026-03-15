@@ -1,11 +1,16 @@
-<span class="anx-badge__slot anx-badge__slot--start">
-  <ng-content select="[anxStart]"></ng-content>
+<span class="anx-badge__slot anx-badge__slot--start" data-anx-slot="start">
+  <ng-content
+    select="[anxSlot='start'], [anxSlot='prefix'], [anxStart]"
+  ></ng-content>
 </span>
 
-<span class="anx-badge__content">
+<span class="anx-badge__content" data-anx-slot="content">
+  <ng-content select="[anxSlot='content']"></ng-content>
   <ng-content></ng-content>
 </span>
 
-<span class="anx-badge__slot anx-badge__slot--end">
-  <ng-content select="[anxEnd]"></ng-content>
+<span class="anx-badge__slot anx-badge__slot--end" data-anx-slot="end">
+  <ng-content
+    select="[anxSlot='end'], [anxSlot='suffix'], [anxEnd]"
+  ></ng-content>
 </span>

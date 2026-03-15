@@ -7,10 +7,14 @@ import { AnarchitectsUiInputDirective } from './input.directive';
   imports: [AnarchitectsUiField, AnarchitectsUiInputDirective],
   template: `
     <anarchitects-ui-field [forId]="'email'" [required]="true" [invalid]="true">
-      <span anxLabel>Email</span>
+      <span anxSlot="label">Email</span>
+      <span anxLabel>Legacy label</span>
+      <span anxSlot="start">@</span>
       <input id="email" anarchitectsUiInput [invalid]="true" />
-      <span anxHint>Use work email</span>
-      <span anxError>Invalid email</span>
+      <span anxSlot="hint">Use work email</span>
+      <span anxHint>Legacy hint</span>
+      <span anxSlot="error">Invalid email</span>
+      <span anxError>Legacy error</span>
     </anarchitects-ui-field>
   `,
 })
@@ -33,6 +37,9 @@ describe('AnarchitectsUiField', () => {
     expect(text).toContain('Email');
     expect(text).toContain('Use work email');
     expect(text).toContain('Invalid email');
+    expect(text).toContain('Legacy label');
+    expect(text).toContain('Legacy hint');
+    expect(text).toContain('Legacy error');
   });
 
   it('should set invalid state on host', () => {

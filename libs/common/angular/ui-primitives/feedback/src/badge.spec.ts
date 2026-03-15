@@ -4,9 +4,13 @@ import { AnarchitectsUiBadge } from './badge';
 
 @Component({
   imports: [AnarchitectsUiBadge],
-  template: `<anarchitects-ui-badge [tone]="'success'"
-    >Ready</anarchitects-ui-badge
-  >`,
+  template: `
+    <anarchitects-ui-badge [tone]="'success'">
+      <span anxSlot="start">#</span>
+      Ready
+      <span anxEnd>Legacy</span>
+    </anarchitects-ui-badge>
+  `,
 })
 class HostComponent {}
 
@@ -26,5 +30,12 @@ describe('AnarchitectsUiBadge', () => {
       'anarchitects-ui-badge',
     ) as HTMLElement;
     expect(host.getAttribute('data-tone')).toBe('success');
+  });
+
+  it('should project canonical and legacy slot content', () => {
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Ready');
+    expect(text).toContain('#');
+    expect(text).toContain('Legacy');
   });
 });

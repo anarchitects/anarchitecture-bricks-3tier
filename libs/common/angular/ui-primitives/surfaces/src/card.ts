@@ -19,6 +19,7 @@ import {
     class: 'anx-card anx-surface anx-stack',
     '[attr.data-appearance]': 'appearance()',
     '[attr.data-density]': 'density()',
+    'attr.data-anx-component': '"card"',
   },
 })
 export class AnarchitectsUiCard {

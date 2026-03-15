@@ -25,9 +25,9 @@ const meta: Meta<AnarchitectsUiButton> = {
         [disabled]="disabled"
         [type]="type"
       >
-        <span anxStart>+</span>
+        <span anxSlot="start">+</span>
         Save
-        <span anxEnd>-></span>
+        <span anxSlot="end">-></span>
       </anarchitects-ui-button>
     `,
   }),
@@ -49,4 +49,25 @@ export const Loading: Story = {
   args: {
     loading: true,
   },
+};
+
+export const LegacyAliases: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-ui-button
+        [tone]="tone"
+        [appearance]="appearance"
+        [size]="size"
+        [density]="density"
+        [loading]="loading"
+        [disabled]="disabled"
+        [type]="type"
+      >
+        <span anxStart>+</span>
+        Save
+        <span anxEnd>-></span>
+      </anarchitects-ui-button>
+    `,
+  }),
 };

@@ -6,9 +6,11 @@ import { AnarchitectsUiCard } from './card';
   imports: [AnarchitectsUiCard],
   template: `
     <anarchitects-ui-card [appearance]="'elevated'">
-      <span anxCardHeader>Profile</span>
+      <span anxSlot="header">Profile</span>
+      <span anxCardHeader>Legacy header</span>
       Body content
-      <span anxCardFooter>Updated now</span>
+      <span anxSlot="footer">Updated now</span>
+      <span anxCardFooter>Legacy footer</span>
     </anarchitects-ui-card>
   `,
 })
@@ -31,6 +33,8 @@ describe('AnarchitectsUiCard', () => {
     expect(text).toContain('Profile');
     expect(text).toContain('Body content');
     expect(text).toContain('Updated now');
+    expect(text).toContain('Legacy header');
+    expect(text).toContain('Legacy footer');
   });
 
   it('should expose appearance attribute', () => {

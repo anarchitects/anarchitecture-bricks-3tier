@@ -127,6 +127,18 @@
       ],
       "@anarchitects/common-angular-ui-primitives/contracts": [
         "libs/common/angular/ui-primitives/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition": [
+        "libs/common/angular/ui-composition/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition/contracts": [
+        "libs/common/angular/ui-composition/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition/projection": [
+        "libs/common/angular/ui-composition/projection/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition/templates": [
+        "libs/common/angular/ui-composition/templates/src/index.ts"
       ]
     }
   },

@@ -11,6 +11,14 @@ import {
   isPrimitiveSize,
   isPrimitiveTone,
 } from './primitive-variants';
+import {
+  ALERT_COMPOSITION_SCHEMA,
+  BADGE_COMPOSITION_SCHEMA,
+  BUTTON_COMPOSITION_SCHEMA,
+  CARD_COMPOSITION_SCHEMA,
+  FIELD_COMPOSITION_SCHEMA,
+  PRIMITIVE_COMPOSITION_SCHEMAS,
+} from './primitive-composition-schemas';
 
 describe('primitive-variants', () => {
   it('should expose stable contracts', () => {
@@ -31,6 +39,38 @@ describe('primitive-variants', () => {
 
     expect(PRIMITIVE_DATA_ATTRIBUTES.tone).toBe('data-tone');
     expect(PRIMITIVE_DATA_ATTRIBUTES.appearance).toBe('data-appearance');
+  });
+
+  it('should expose primitive composition schemas', () => {
+    expect(BUTTON_COMPOSITION_SCHEMA.supportedSlots).toEqual([
+      'start',
+      'content',
+      'end',
+    ]);
+    expect(FIELD_COMPOSITION_SCHEMA.supportedSlots).toEqual([
+      'label',
+      'start',
+      'content',
+      'end',
+      'hint',
+      'error',
+    ]);
+    expect(CARD_COMPOSITION_SCHEMA.supportedSlots).toEqual([
+      'header',
+      'content',
+      'footer',
+    ]);
+    expect(ALERT_COMPOSITION_SCHEMA.supportedSlots).toEqual([
+      'start',
+      'content',
+      'actions',
+    ]);
+    expect(BADGE_COMPOSITION_SCHEMA.supportedSlots).toEqual([
+      'start',
+      'content',
+      'end',
+    ]);
+    expect(PRIMITIVE_COMPOSITION_SCHEMAS).toHaveLength(6);
   });
 
   it('should validate values', () => {

@@ -41,6 +41,10 @@ libs/
       feedback/
       form-controls/
       surfaces/
+    angular/ui-composition/
+      contracts/
+      projection/
+      templates/
   storybook/
   ts/frontend/data-access/
 

@@ -1,0 +1,11 @@
+{
+  "name": "@anarchitects/common-angular-ui-composition",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "21.1.6"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}

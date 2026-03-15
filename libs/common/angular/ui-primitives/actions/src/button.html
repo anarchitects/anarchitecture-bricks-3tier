@@ -4,11 +4,12 @@
   [disabled]="disabled() || loading()"
   (click)="onClick($event)"
 >
-  <span class="anx-button__slot anx-button__slot--start">
-    <ng-content select="[anxStart]"></ng-content>
+  <span class="anx-button__slot anx-button__slot--start" data-anx-slot="start">
+    <ng-content select="[anxSlot='start'], [anxStart]"></ng-content>
   </span>
 
-  <span class="anx-button__label">
+  <span class="anx-button__label" data-anx-slot="content">
+    <ng-content select="[anxSlot='content']"></ng-content>
     <ng-content></ng-content>
   </span>
 
@@ -16,7 +17,7 @@
   <span class="anx-button__spinner" aria-hidden="true">...</span>
   }
 
-  <span class="anx-button__slot anx-button__slot--end">
-    <ng-content select="[anxEnd]"></ng-content>
+  <span class="anx-button__slot anx-button__slot--end" data-anx-slot="end">
+    <ng-content select="[anxSlot='end'], [anxEnd]"></ng-content>
   </span>
 </button>

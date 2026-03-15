@@ -20,6 +20,7 @@ let nextFieldId = 0;
     '[attr.data-density]': 'density()',
     '[attr.data-invalid]': 'invalid() ? "true" : null',
     '[attr.data-disabled]': 'disabled() ? "true" : null',
+    'attr.data-anx-component': '"field"',
   },
 })
 export class AnarchitectsUiField {

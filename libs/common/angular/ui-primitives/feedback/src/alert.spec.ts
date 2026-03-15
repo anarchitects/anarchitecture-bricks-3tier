@@ -10,7 +10,10 @@ import { AnarchitectsUiAlert } from './alert';
       [dismissible]="true"
       (dismissed)="count = count + 1"
     >
+      <span anxSlot="start">!</span>
       Something happened
+      <button anxSlot="actions" type="button">Retry</button>
+      <button anxActions type="button">Legacy action</button>
     </anarchitects-ui-alert>
   `,
 })
@@ -42,5 +45,12 @@ describe('AnarchitectsUiAlert', () => {
     ) as HTMLButtonElement;
     dismissButton.click();
     expect(fixture.componentInstance.count).toBe(1);
+  });
+
+  it('should render canonical and legacy action slots', () => {
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Something happened');
+    expect(text).toContain('Retry');
+    expect(text).toContain('Legacy action');
   });
 });

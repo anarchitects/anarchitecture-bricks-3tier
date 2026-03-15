@@ -12,9 +12,9 @@ const meta: Meta<AnarchitectsUiCard> = {
     props: args,
     template: `
       <anarchitects-ui-card [appearance]="appearance" [density]="density">
-        <div anxCardHeader>Card Header</div>
+        <div anxSlot="header">Card Header</div>
         Card body content
-        <div anxCardFooter>Footer note</div>
+        <div anxSlot="footer">Footer note</div>
       </anarchitects-ui-card>
     `,
   }),
@@ -29,4 +29,17 @@ export const Elevated: Story = {
   args: {
     appearance: 'elevated',
   },
+};
+
+export const LegacyAliases: Story = {
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-ui-card [appearance]="appearance" [density]="density">
+        <div anxCardHeader>Card Header</div>
+        Card body content
+        <div anxCardFooter>Footer note</div>
+      </anarchitects-ui-card>
+    `,
+  }),
 };

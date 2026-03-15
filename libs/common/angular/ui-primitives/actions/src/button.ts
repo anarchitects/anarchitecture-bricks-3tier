@@ -27,6 +27,7 @@ import {
     '[attr.data-loading]': 'loading() ? "true" : null',
     '[attr.data-disabled]': 'disabled() ? "true" : null',
     '[attr.aria-busy]': 'loading() ? "true" : null',
+    'attr.data-anx-component': '"button"',
   },
 })
 export class AnarchitectsUiButton {

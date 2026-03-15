@@ -13,7 +13,7 @@
         "{workspaceRoot}/libs/storybook/angular/.storybook/compodoc.ts"
       ],
       "options": {
-        "command": "yarn nx run-many -t compodoc -p auth-angular forms-angular common-angular-design common-angular-ui-primitives && yarn nx run angular-docs:merge-json"
+        "command": "yarn nx run-many -t compodoc -p auth-angular forms-angular common-angular-design common-angular-ui-primitives common-angular-ui-composition && yarn nx run angular-docs:merge-json"
       }
     },
     "merge-json": {

@@ -13,9 +13,11 @@ import { AnarchitectsUiButton } from './button';
       [loading]="loading()"
       (pressed)="onPressed()"
     >
-      <span anxStart>start</span>
+      <span anxSlot="start">start</span>
+      <span anxStart>legacy-start</span>
       Save
-      <span anxEnd>end</span>
+      <span anxSlot="end">end</span>
+      <span anxEnd>legacy-end</span>
     </anarchitects-ui-button>
   `,
 })
@@ -74,5 +76,13 @@ describe('AnarchitectsUiButton', () => {
     ) as HTMLButtonElement;
     button.click();
     expect(fixture.componentInstance.pressedCount).toBe(0);
+  });
+
+  it('should render canonical and legacy projected slots', () => {
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('start');
+    expect(text).toContain('end');
+    expect(text).toContain('legacy-start');
+    expect(text).toContain('legacy-end');
   });
 });

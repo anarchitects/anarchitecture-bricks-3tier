@@ -19,6 +19,7 @@ import {
     class: 'anx-spinner anx-inline',
     '[attr.data-size]': 'size()',
     '[attr.data-tone]': 'tone()',
+    'attr.data-anx-component': '"spinner"',
     role: 'status',
   },
 })

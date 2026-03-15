@@ -1,6 +1,6 @@
-<div class="anx-field__label-row anx-inline">
+<div class="anx-field__label-row anx-inline" data-anx-slot="label">
   <label class="anx-field__label" [attr.for]="forId()">
-    <ng-content select="[anxLabel]"></ng-content>
+    <ng-content select="[anxSlot='label'], [anxLabel]"></ng-content>
   </label>
   @if (required()) {
   <span class="anx-field__required" aria-hidden="true">*</span>
@@ -8,27 +8,33 @@
 </div>
 
 <div class="anx-field__control-row anx-inline">
-  <span class="anx-field__slot anx-field__slot--start">
-    <ng-content select="[anxStart]"></ng-content>
+  <span class="anx-field__slot anx-field__slot--start" data-anx-slot="start">
+    <ng-content
+      select="[anxSlot='start'], [anxSlot='prefix'], [anxStart]"
+    ></ng-content>
   </span>
 
-  <div class="anx-field__control">
+  <div class="anx-field__control" data-anx-slot="content">
+    <ng-content select="[anxSlot='content']"></ng-content>
     <ng-content></ng-content>
   </div>
 
-  <span class="anx-field__slot anx-field__slot--end">
-    <ng-content select="[anxEnd]"></ng-content>
+  <span class="anx-field__slot anx-field__slot--end" data-anx-slot="end">
+    <ng-content
+      select="[anxSlot='end'], [anxSlot='suffix'], [anxEnd]"
+    ></ng-content>
   </span>
 </div>
 
-<div class="anx-field__hint anx-text" [id]="hintId">
-  <ng-content select="[anxHint]"></ng-content>
+<div class="anx-field__hint anx-text" [id]="hintId" data-anx-slot="hint">
+  <ng-content select="[anxSlot='hint'], [anxHint]"></ng-content>
 </div>
 
 <div
   class="anx-field__error"
   [id]="errorId"
   [attr.role]="invalid() ? 'alert' : null"
+  data-anx-slot="error"
 >
-  <ng-content select="[anxError]"></ng-content>
+  <ng-content select="[anxSlot='error'], [anxError]"></ng-content>
 </div>

@@ -21,6 +21,7 @@ import {
     '[attr.data-tone]': 'tone()',
     '[attr.data-appearance]': 'appearance()',
     '[attr.data-size]': 'size()',
+    'attr.data-anx-component': '"badge"',
   },
 })
 export class AnarchitectsUiBadge {
