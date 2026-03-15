@@ -48,6 +48,107 @@ Dependency direction:
 - Configure shared transports once at app root (for example mail via `CommonMailerModule`), not inside domain infrastructure modules.
 - Keep domain infrastructure modules adapter-only and use facade feature flags (for example `features.mailer`) for optional domain capabilities.
 
+## TypeORM Cross-Domain Relationship Rule
+
+Domain libraries must **not define TypeORM relations across domains**.
+
+### Rule
+
+If an entity references another domain’s entity:
+
+- Use a **scalar foreign key field** (`userId`, `authorId`, etc.)
+- Do **not import the other domain’s entity**
+- Do **not define `@ManyToOne`, `@OneToMany`, etc. across domains**
+- Do **not extend another domain’s entity**
+
+### Example
+
+Correct:
+
+```ts
+@Entity()
+export class PostEntity {
+  @Column('uuid')
+  authorId!: string;
+}
+```
+
+Incorrect:
+
+```ts
+@ManyToOne(() => UserEntity)
+author!: UserEntity;
+```
+
+### Database Foreign Keys
+
+Cross-domain FKs may exist in the database but **must not be defined in domain entities**.
+
+Instead:
+
+- define them in **integration schemas** used only for migrations
+- place those schemas in:
+
+```text
+tools/typeorm/schemas/
+```
+
+### Data Access Across Domains
+
+When data from another domain is needed, use:
+
+- service composition
+- query builder joins
+- integration views or read models
+
+### Summary
+
+| Case                 | Rule                                    |
+| -------------------- | --------------------------------------- |
+| Same domain          | TypeORM relations allowed               |
+| Cross domain         | Use scalar FK only                      |
+| DB FK                | Define in integration migration schemas |
+| Reads across domains | Join/query/service composition          |
+
+## Angular signalStore Rule
+
+Domain stores must **not use `providedIn: 'root'`.**
+
+### Rule
+
+- State stores in domain libraries must be created **without** `providedIn: 'root'`
+- They must be registered through **provider helpers**
+- App-wide or cross-domain state must be registered explicitly in app or feature `providers`
+- Domain libraries must not implicitly create global singleton state
+
+### Correct
+
+```ts
+@Injectable()
+export class FormsStore {}
+```
+
+```ts
+export function provideFormsState(): Provider[] {
+  return [FormsStore];
+}
+```
+
+### Incorrect
+
+```ts
+@Injectable({ providedIn: 'root' })
+export class FormsStore {}
+```
+
+### State Registration
+
+State must be registered explicitly:
+
+- in route providers
+- in feature providers
+- in application bootstrap providers
+
 ### Shared TS
 
 - `dtos/`: TypeBox DTO contracts

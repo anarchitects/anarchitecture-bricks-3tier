@@ -1,0 +1,28 @@
+{
+  "name": "release-tools",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "root": "tools/release",
+  "sourceRoot": "tools/release",
+  "projectType": "library",
+  "tags": ["scope:release", "type:tooling"],
+  "targets": {
+    "validate-domain-tags": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/validate-domain-tags.mjs"
+      }
+    },
+    "normalize-internal-deps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/normalize-internal-dependency-versions.mjs"
+      }
+    },
+    "normalize-external-peer-ranges": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/normalize-external-peer-ranges.mjs"
+      }
+    }
+  }
+}

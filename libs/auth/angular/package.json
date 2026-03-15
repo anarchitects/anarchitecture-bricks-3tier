@@ -2,17 +2,17 @@
   "name": "@anarchitects/auth-angular",
   "version": "2.0.0",
   "peerDependencies": {
-    "@angular/common": "21.1.6",
-    "@angular/core": "21.1.6",
-    "@anarchitects/auth-ts": "2.0.0",
-    "@anarchitects/forms-angular": "2.0.0",
-    "@anarchitects/forms-ts": "2.0.0",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@anarchitects/auth-ts": "^2.0.0",
+    "@anarchitects/forms-angular": "^2.0.0",
+    "@anarchitects/forms-ts": "^2.0.0",
     "@ngrx/signals": "^20.0.1",
     "@ngrx/operators": "^20.0.1",
     "rxjs": "~7.8.0",
     "jwt-decode": "^4.0.0",
     "@casl/ability": "^6.7.3",
-    "@angular/router": "21.1.6"
+    "@angular/router": "^21.0.0"
   },
   "sideEffects": false,
   "publishConfig": {

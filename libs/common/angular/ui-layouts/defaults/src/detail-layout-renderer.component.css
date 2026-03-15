@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+.anx-default-layout__detail-sidebar {
+  grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+}
+
+.anx-default-layout__detail-side {
+  padding: var(--anx-sys-space-md);
+  align-self: start;
+}

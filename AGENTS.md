@@ -112,3 +112,279 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 - Ensure the new group uses the established release model (domain-scoped and explicit targeting).
 - Update `tools/release/validate-domain-tags.mjs` so folder-to-domain-tag validation includes the new domain mapping.
 - Keep release docs (`README.md`, `CONTRIBUTING.md`) aligned with any new release group additions.
+
+## TypeORM Cross-Domain Relationship Convention
+
+Domain libraries **must not define TypeORM relations across domain boundaries**.
+
+### Core Rule
+
+If an entity references an entity from another domain:
+
+- Use a **scalar foreign key field only**
+- Do **not import the other domain's entity**
+- Do **not define `@ManyToOne`, `@OneToMany`, etc. across domains**
+- Do **not extend another domain’s entity class**
+
+### Example
+
+Correct:
+
+```ts
+@Entity({ schema: BLOG_SCHEMA, name: 'posts' })
+export class PostEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column('uuid', { name: 'author_id' })
+  authorId!: string;
+
+  @Column()
+  title!: string;
+
+  @Column()
+  body!: string;
+}
+```
+
+Incorrect:
+
+```ts
+@ManyToOne(() => UserEntity)
+author!: UserEntity;
+```
+
+Or:
+
+```ts
+export class BlogUserEntity extends UserEntity {
+  @OneToMany(() => PostEntity, (post) => post.author)
+  posts!: PostEntity[];
+}
+```
+
+### Why This Rule Exists
+
+Cross-domain relations:
+
+- leak persistence internals across domains
+- create circular dependencies
+- break modular publishing of domain packages
+- blur schema ownership
+- cause unstable TypeORM migration generation
+
+### Allowed Relationships
+
+TypeORM relations **are allowed within the same domain**.
+
+Examples:
+
+- `UserEntity ↔ RoleEntity`
+- `RoleEntity ↔ PermissionEntity`
+
+### Cross-Domain Foreign Keys in the Database
+
+The database **may still enforce foreign keys across domains**, for example:
+
+```text
+blog.posts.author_id → auth.users.id
+```
+
+However, these **must not be defined in domain entities**.
+
+Instead use the **two-datasource pattern**.
+
+### Two-Datasource Pattern
+
+#### Runtime DataSource
+
+Used by the application.
+
+Characteristics:
+
+- uses domain entities only
+- contains no cross-domain relations
+- used by repositories and services
+
+Example:
+
+```text
+tools/typeorm/datasource.runtime.ts
+```
+
+#### Migrations DataSource
+
+Used only for generating migrations.
+
+Characteristics:
+
+- uses integration schemas
+- defines cross-domain foreign keys
+- prevents TypeORM from dropping foreign keys during migration generation
+
+Example:
+
+```text
+tools/typeorm/datasource.migrations.ts
+```
+
+### Integration Schemas
+
+Cross-domain relationships must be defined in **integration-only `EntitySchema` definitions**.
+
+Recommended location:
+
+```text
+tools/typeorm/schemas/
+```
+
+Example:
+
+```ts
+export const BlogPostSchema = new EntitySchema({
+  name: 'Post',
+  tableName: 'posts',
+  schema: 'blog',
+  columns: {
+    id: { type: 'uuid', primary: true, generated: 'uuid' },
+    authorId: { type: 'uuid', name: 'author_id' },
+    title: { type: String },
+    body: { type: String },
+  },
+  relations: {
+    author: {
+      type: 'many-to-one',
+      target: 'User',
+      joinColumn: { name: 'author_id' },
+      onDelete: 'RESTRICT',
+      onUpdate: 'CASCADE',
+    },
+  },
+});
+```
+
+### Reading Across Domains
+
+When a use case needs data from multiple domains, use one of these approaches:
+
+- application service composition
+- query builder joins
+- integration views or read models
+
+Do **not** introduce cross-domain relations in entities.
+
+### Summary
+
+| Situation             | Rule                             |
+| --------------------- | -------------------------------- |
+| Same-domain relation  | Allowed                          |
+| Cross-domain relation | Use scalar FK                    |
+| Database FK           | Define in integration schemas    |
+| Reads across domains  | Use joins or service composition |
+
+## Angular signalStore State Scoping Convention
+
+Domain state stores must **not be globally registered automatically**.
+
+### Core Rule
+
+Signal stores **must not use**:
+
+```ts
+providedIn: 'root';
+```
+
+Instead stores must be **explicitly provided via provider helpers**.
+
+### Correct Pattern
+
+Store definition:
+
+```ts
+@Injectable()
+export class FormsStore {}
+```
+
+Provider helper:
+
+```ts
+export function provideFormsState(): Provider[] {
+  return [FormsStore];
+}
+```
+
+Application usage:
+
+```ts
+bootstrapApplication(AppComponent, {
+  providers: [...provideFormsState()],
+});
+```
+
+### Why This Rule Exists
+
+Using `providedIn: 'root'` creates **implicit global singleton state**.
+
+Problems:
+
+- accidental cross-feature state sharing
+- hidden coupling between domains
+- harder testing and isolation
+- reduced control over state lifecycle
+
+Explicit providers ensure:
+
+- predictable state scope
+- feature-level isolation
+- composable architecture
+
+### Recommended Scope Locations
+
+Stores should be provided in one of these scopes:
+
+| Scope             | Where                     |
+| ----------------- | ------------------------- |
+| Component subtree | component providers       |
+| Feature route     | route providers           |
+| Feature module    | feature provider function |
+| App-wide          | application bootstrap     |
+
+Example route-scoped state:
+
+```ts
+{
+  path: '',
+  providers: [...provideFormsState()],
+  loadComponent: () => import('./page.component')
+}
+```
+
+### Feature-Level Composition
+
+Features should provide their state and dependencies together.
+
+Example:
+
+```ts
+export function provideFormsFeature(): Provider[] {
+  return [...provideFormsState(), provideFormsApi()];
+}
+```
+
+### Forbidden Pattern
+
+```ts
+@Injectable({ providedIn: 'root' })
+export class FormsStore {}
+```
+
+Domain libraries **must never implicitly create global singleton state**.
+
+### Summary
+
+| Situation          | Rule                                   |
+| ------------------ | -------------------------------------- |
+| Domain store       | No `providedIn: 'root'`                |
+| Store registration | Use provider helpers                   |
+| App-wide state     | Register in app providers              |
+| Feature state      | Register in route or feature providers |

@@ -2,15 +2,15 @@
   "name": "@anarchitects/forms-angular",
   "version": "2.1.0",
   "peerDependencies": {
-    "@angular/common": "21.1.6",
-    "@angular/core": "21.1.6",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
     "@ngrx/signals": "^20.0.1",
     "@ngrx/operators": "^20.0.1",
     "rxjs": "~7.8.0",
-    "@angular/forms": "21.1.6"
+    "@angular/forms": "^21.0.0"
   },
   "dependencies": {
-    "@anarchitects/forms-ts": "2.0.1"
+    "@anarchitects/forms-ts": "^2.0.1"
   },
   "publishConfig": {
     "access": "public"

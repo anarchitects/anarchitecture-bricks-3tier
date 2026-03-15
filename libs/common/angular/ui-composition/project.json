@@ -1,0 +1,56 @@
+{
+  "name": "common-angular-ui-composition",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/angular/ui-composition",
+  "prefix": "anarchitects",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:shared", "tech:angular"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/common/angular/ui-composition/ng-package.json",
+        "tsConfig": "libs/common/angular/ui-composition/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/common/angular/ui-composition/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "tsConfig": "libs/common/angular/ui-composition/tsconfig.spec.json",
+        "include": ["**/*.spec.ts", "**/*.test.ts"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "compodoc": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{workspaceRoot}/dist/docs/compodoc/common-angular-ui-composition"
+      ],
+      "options": {
+        "command": "rm -rf dist/docs/compodoc/common-angular-ui-composition && yarn exec compodoc libs/common/angular/ui-composition/src -p libs/common/angular/ui-composition/tsconfig.lib.json -d dist/docs/compodoc/common-angular-ui-composition/html --disableCoverage --disableGraph --silent && yarn exec compodoc libs/common/angular/ui-composition/src -p libs/common/angular/ui-composition/tsconfig.lib.json -d dist/docs/compodoc/common-angular-ui-composition/json -e json --disableCoverage --disableGraph --silent"
+      }
+    }
+  }
+}

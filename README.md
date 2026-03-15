@@ -30,6 +30,26 @@ libs/
     angular/
     nest/
   common/
+    angular/design/
+      config/
+      contracts/
+      styles/
+      tokens/
+    angular/ui-primitives/
+      actions/
+      contracts/
+      feedback/
+      form-controls/
+      surfaces/
+    angular/ui-composition/
+      contracts/
+      projection/
+      templates/
+    angular/ui-layouts/
+      contracts/
+      registry/
+      host/
+      defaults/
   storybook/
   ts/frontend/data-access/
 

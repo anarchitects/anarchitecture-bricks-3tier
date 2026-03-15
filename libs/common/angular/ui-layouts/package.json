@@ -1,0 +1,15 @@
+{
+  "name": "@anarchitects/common-angular-ui-layouts",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@anarchitects/common-angular-ui-composition": "^0.0.1",
+    "@anarchitects/common-angular-ui-primitives": "^0.0.1",
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "rxjs": "~7.8.0"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -63,6 +63,10 @@
     },
     "build-storybook": {
       "cache": true
+    },
+    "@nx/angular:unit-test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "plugins": [
@@ -123,11 +127,11 @@
       "e2eTestRunner": "playwright",
       "linter": "eslint",
       "style": "css",
-      "unitTestRunner": "jest"
+      "unitTestRunner": "vitest-angular"
     },
     "@nx/angular:library": {
       "linter": "eslint",
-      "unitTestRunner": "jest",
+      "unitTestRunner": "vitest-angular",
       "strict": true,
       "style": "css",
       "buildable": true,

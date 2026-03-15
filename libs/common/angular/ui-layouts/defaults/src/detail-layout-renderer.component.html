@@ -1,0 +1,79 @@
+@if (headerTemplate(); as templateRef) {
+  <div class="anx-default-layout__header anx-heading" data-anx-slot="header">
+    <ng-container *ngTemplateOutlet="templateRef"></ng-container>
+  </div>
+}
+
+@if (toolbarTemplate(); as templateRef) {
+  <div class="anx-default-layout__toolbar anx-inline" data-anx-slot="toolbar">
+    <ng-container *ngTemplateOutlet="templateRef"></ng-container>
+  </div>
+}
+
+@switch (layoutVariant()) {
+  @case ('card') {
+    <anarchitects-ui-card [appearance]="'outlined'">
+      <ng-container
+        *ngTemplateOutlet="
+          requiredContentTemplate();
+          context: { $implicit: model() }
+        "
+      ></ng-container>
+    </anarchitects-ui-card>
+  }
+  @case ('sidebar') {
+    <div
+      class="anx-default-layout__detail-sidebar anx-grid"
+      [style.--anx-layout-columns]="2"
+    >
+      <section data-anx-slot="content" class="anx-default-layout__detail-main">
+        <ng-container
+          *ngTemplateOutlet="
+            requiredContentTemplate();
+            context: { $implicit: model() }
+          "
+        ></ng-container>
+      </section>
+
+      <aside
+        data-anx-slot="sidebar"
+        class="anx-default-layout__detail-side anx-surface"
+      >
+        @if (sidebarTemplate(); as templateRef) {
+          <ng-container
+            *ngTemplateOutlet="templateRef; context: { $implicit: model() }"
+          ></ng-container>
+        } @else {
+          <anarchitects-ui-alert [tone]="'neutral'" [appearance]="'ghost'">
+            No sidebar content provided.
+          </anarchitects-ui-alert>
+        }
+      </aside>
+    </div>
+  }
+  @default {
+    <section
+      data-anx-slot="content"
+      class="anx-default-layout__detail-page anx-stack"
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          requiredContentTemplate();
+          context: { $implicit: model() }
+        "
+      ></ng-container>
+    </section>
+  }
+}
+
+@if (actionsTemplate(); as templateRef) {
+  <div class="anx-default-layout__actions anx-inline" data-anx-slot="actions">
+    <ng-container *ngTemplateOutlet="templateRef"></ng-container>
+  </div>
+}
+
+@if (footerTemplate(); as templateRef) {
+  <div class="anx-default-layout__footer anx-text" data-anx-slot="footer">
+    <ng-container *ngTemplateOutlet="templateRef"></ng-container>
+  </div>
+}

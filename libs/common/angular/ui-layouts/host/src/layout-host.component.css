@@ -1,0 +1,8 @@
+:host {
+  display: block;
+}
+
+.anx-layout-host__surface {
+  padding: var(--anx-layout-block-padding-current);
+  gap: var(--anx-layout-gap-stack);
+}

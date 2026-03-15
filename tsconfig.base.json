@@ -94,6 +94,66 @@
       ],
       "@anarchitects/auth-angular/feature": [
         "libs/auth/angular/feature/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design": [
+        "libs/common/angular/design/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/config": [
+        "libs/common/angular/design/config/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/tokens": [
+        "libs/common/angular/design/tokens/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/styles": [
+        "libs/common/angular/design/styles/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/contracts": [
+        "libs/common/angular/design/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives": [
+        "libs/common/angular/ui-primitives/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/actions": [
+        "libs/common/angular/ui-primitives/actions/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/form-controls": [
+        "libs/common/angular/ui-primitives/form-controls/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/surfaces": [
+        "libs/common/angular/ui-primitives/surfaces/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/feedback": [
+        "libs/common/angular/ui-primitives/feedback/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/contracts": [
+        "libs/common/angular/ui-primitives/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition": [
+        "libs/common/angular/ui-composition/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition/contracts": [
+        "libs/common/angular/ui-composition/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition/projection": [
+        "libs/common/angular/ui-composition/projection/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-composition/templates": [
+        "libs/common/angular/ui-composition/templates/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts": [
+        "libs/common/angular/ui-layouts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/contracts": [
+        "libs/common/angular/ui-layouts/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/registry": [
+        "libs/common/angular/ui-layouts/registry/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/host": [
+        "libs/common/angular/ui-layouts/host/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/defaults": [
+        "libs/common/angular/ui-layouts/defaults/src/index.ts"
       ]
     }
   },
