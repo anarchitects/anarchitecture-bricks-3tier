@@ -23,6 +23,12 @@
       "options": {
         "command": "node tools/release/normalize-external-peer-ranges.mjs"
       }
+    },
+    "check-release-tag-ancestry": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/check-release-tag-ancestry.mjs"
+      }
     }
   }
 }

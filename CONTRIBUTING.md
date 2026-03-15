@@ -79,7 +79,10 @@ nx run forms-angular-example:contract-test
 - Before release PRs, normalize publishable package dependency ranges:
   - `nx run release-tools:normalize-internal-deps`
   - `nx run release-tools:normalize-external-peer-ranges`
+  - `nx run release-tools:check-release-tag-ancestry`
   - external peer normalization derives ranges from root `package.json`; exact root versions become major-wide caret peers (for example `21.1.6` -> `^21.0.0`)
+- The release tag ancestry check fails when a `{projectName}@{version}` tag exists but points to a commit outside current branch history.
+- For local dry-run validation, target only changed projects when possible (for example `nx release version --projects=auth-angular -d`).
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`
