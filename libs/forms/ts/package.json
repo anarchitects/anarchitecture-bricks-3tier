@@ -37,6 +37,6 @@
     "access": "public"
   },
   "peerDependencies": {
-    "@sinclair/typebox": "0.34.41"
+    "@sinclair/typebox": "^0.34.41"
   }
 }
