@@ -7,6 +7,10 @@ export const ANX_BASE_STYLES = `.anx-root,
   --anx-ref-color-neutral-900: #161a20;
   --anx-ref-color-brand-500: #0f6fc6;
   --anx-ref-color-brand-700: #08569c;
+  --anx-ref-color-success-500: #1f8f56;
+  --anx-ref-color-success-50: #ebf8f1;
+  --anx-ref-color-danger-500: #c23b3b;
+  --anx-ref-color-danger-50: #fceeee;
   --anx-ref-shadow-soft: 0 10px 30px rgba(22, 26, 32, 0.08);
 
   --anx-sys-color-surface: var(--anx-ref-color-neutral-0);
@@ -16,6 +20,12 @@ export const ANX_BASE_STYLES = `.anx-root,
   --anx-sys-color-border: var(--anx-ref-color-neutral-100);
   --anx-sys-color-accent: var(--anx-ref-color-brand-500);
   --anx-sys-color-accent-contrast: var(--anx-ref-color-neutral-0);
+  --anx-sys-color-success: var(--anx-ref-color-success-500);
+  --anx-sys-color-success-contrast: var(--anx-ref-color-neutral-0);
+  --anx-sys-color-success-surface: var(--anx-ref-color-success-50);
+  --anx-sys-color-danger: var(--anx-ref-color-danger-500);
+  --anx-sys-color-danger-contrast: var(--anx-ref-color-neutral-0);
+  --anx-sys-color-danger-surface: var(--anx-ref-color-danger-50);
   --anx-sys-radius-sm: 0.25rem;
   --anx-sys-radius-md: 0.5rem;
   --anx-sys-radius-lg: 0.75rem;

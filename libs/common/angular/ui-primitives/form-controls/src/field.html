@@ -1,0 +1,34 @@
+<div class="anx-field__label-row anx-inline">
+  <label class="anx-field__label" [attr.for]="forId()">
+    <ng-content select="[anxLabel]"></ng-content>
+  </label>
+  @if (required()) {
+  <span class="anx-field__required" aria-hidden="true">*</span>
+  }
+</div>
+
+<div class="anx-field__control-row anx-inline">
+  <span class="anx-field__slot anx-field__slot--start">
+    <ng-content select="[anxStart]"></ng-content>
+  </span>
+
+  <div class="anx-field__control">
+    <ng-content></ng-content>
+  </div>
+
+  <span class="anx-field__slot anx-field__slot--end">
+    <ng-content select="[anxEnd]"></ng-content>
+  </span>
+</div>
+
+<div class="anx-field__hint anx-text" [id]="hintId">
+  <ng-content select="[anxHint]"></ng-content>
+</div>
+
+<div
+  class="anx-field__error"
+  [id]="errorId"
+  [attr.role]="invalid() ? 'alert' : null"
+>
+  <ng-content select="[anxError]"></ng-content>
+</div>

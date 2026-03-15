@@ -63,6 +63,10 @@
     },
     "build-storybook": {
       "cache": true
+    },
+    "@nx/angular:unit-test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "plugins": [

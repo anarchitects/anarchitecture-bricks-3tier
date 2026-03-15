@@ -1,0 +1,56 @@
+{
+  "name": "common-angular-ui-primitives",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/angular/ui-primitives",
+  "prefix": "anarchitects",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:shared", "tech:angular"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/common/angular/ui-primitives/ng-package.json",
+        "tsConfig": "libs/common/angular/ui-primitives/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/common/angular/ui-primitives/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "tsConfig": "libs/common/angular/ui-primitives/tsconfig.spec.json",
+        "include": ["**/*.spec.ts", "**/*.test.ts"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "compodoc": {
+      "executor": "nx:run-commands",
+      "outputs": [
+        "{workspaceRoot}/dist/docs/compodoc/common-angular-ui-primitives"
+      ],
+      "options": {
+        "command": "rm -rf dist/docs/compodoc/common-angular-ui-primitives && yarn exec compodoc libs/common/angular/ui-primitives/src -p libs/common/angular/ui-primitives/tsconfig.lib.json -d dist/docs/compodoc/common-angular-ui-primitives/html --disableCoverage --disableGraph --silent && yarn exec compodoc libs/common/angular/ui-primitives/src -p libs/common/angular/ui-primitives/tsconfig.lib.json -d dist/docs/compodoc/common-angular-ui-primitives/json -e json --disableCoverage --disableGraph --silent"
+      }
+    }
+  }
+}

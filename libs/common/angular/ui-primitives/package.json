@@ -1,0 +1,12 @@
+{
+  "name": "@anarchitects/common-angular-ui-primitives",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@anarchitects/common-angular-design": "0.0.1",
+    "@angular/core": "21.1.6"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}

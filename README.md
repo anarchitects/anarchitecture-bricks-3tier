@@ -35,6 +35,12 @@ libs/
       contracts/
       styles/
       tokens/
+    angular/ui-primitives/
+      actions/
+      contracts/
+      feedback/
+      form-controls/
+      surfaces/
   storybook/
   ts/frontend/data-access/
 

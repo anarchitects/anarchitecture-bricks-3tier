@@ -1,0 +1,22 @@
+<span class="anx-alert__slot anx-alert__slot--start">
+  <ng-content select="[anxStart]"></ng-content>
+</span>
+
+<span class="anx-alert__content">
+  <ng-content></ng-content>
+</span>
+
+<span class="anx-alert__actions anx-inline">
+  <ng-content select="[anxActions]"></ng-content>
+
+  @if (dismissible()) {
+  <button
+    type="button"
+    class="anx-alert__dismiss"
+    (click)="onDismiss()"
+    aria-label="Dismiss"
+  >
+    x
+  </button>
+  }
+</span>

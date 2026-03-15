@@ -1,0 +1,51 @@
+:host {
+  --anx-cmp-badge-bg: var(--anx-sys-color-surface-muted);
+  --anx-cmp-badge-fg: var(--anx-sys-color-text);
+  --anx-cmp-badge-border: var(--anx-sys-color-border);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--anx-sys-space-xs);
+  border: 1px solid var(--anx-cmp-badge-border);
+  border-radius: 999px;
+  background: var(--anx-cmp-badge-bg);
+  color: var(--anx-cmp-badge-fg);
+  padding: 0.15rem var(--anx-sys-space-sm);
+  font-size: 0.75rem;
+}
+
+:host([data-tone='primary']) {
+  --anx-cmp-badge-bg: var(--anx-sys-color-accent);
+  --anx-cmp-badge-fg: var(--anx-sys-color-accent-contrast);
+  --anx-cmp-badge-border: var(--anx-sys-color-accent);
+}
+
+:host([data-tone='success']) {
+  --anx-cmp-badge-bg: var(--anx-sys-color-success);
+  --anx-cmp-badge-fg: var(--anx-sys-color-success-contrast);
+  --anx-cmp-badge-border: var(--anx-sys-color-success);
+}
+
+:host([data-tone='danger']) {
+  --anx-cmp-badge-bg: var(--anx-sys-color-danger);
+  --anx-cmp-badge-fg: var(--anx-sys-color-danger-contrast);
+  --anx-cmp-badge-border: var(--anx-sys-color-danger);
+}
+
+:host([data-appearance='ghost']) {
+  background: transparent;
+  border-color: transparent;
+}
+
+:host([data-appearance='outline']) {
+  background: transparent;
+}
+
+:host([data-size='lg']) {
+  padding: 0.2rem var(--anx-sys-space-md);
+  font-size: 0.8125rem;
+}
+
+:host([data-size='sm']) {
+  padding: 0.1rem var(--anx-sys-space-xs);
+  font-size: 0.6875rem;
+}

@@ -109,6 +109,24 @@
       ],
       "@anarchitects/common-angular-design/contracts": [
         "libs/common/angular/design/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives": [
+        "libs/common/angular/ui-primitives/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/actions": [
+        "libs/common/angular/ui-primitives/actions/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/form-controls": [
+        "libs/common/angular/ui-primitives/form-controls/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/surfaces": [
+        "libs/common/angular/ui-primitives/surfaces/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/feedback": [
+        "libs/common/angular/ui-primitives/feedback/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-primitives/contracts": [
+        "libs/common/angular/ui-primitives/contracts/src/index.ts"
       ]
     }
   },

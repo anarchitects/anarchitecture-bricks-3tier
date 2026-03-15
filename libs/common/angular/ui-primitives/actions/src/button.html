@@ -1,0 +1,22 @@
+<button
+  class="anx-button__control anx-inline"
+  [attr.type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="onClick($event)"
+>
+  <span class="anx-button__slot anx-button__slot--start">
+    <ng-content select="[anxStart]"></ng-content>
+  </span>
+
+  <span class="anx-button__label">
+    <ng-content></ng-content>
+  </span>
+
+  @if (loading()) {
+  <span class="anx-button__spinner" aria-hidden="true">...</span>
+  }
+
+  <span class="anx-button__slot anx-button__slot--end">
+    <ng-content select="[anxEnd]"></ng-content>
+  </span>
+</button>
