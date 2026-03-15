@@ -1,8 +1,12 @@
 # @anarchitects/forms-angular/feature
 
 Feature-level orchestration for the forms Angular stack. Import components such as
-`AnarchitectsFeatureForm` from this entry point to combine the signal store, data access, and UI
-layers into a drop-in experience.
+`AnarchitectsFeatureForm`, `AnarchitectsFeatureSubmissionList`, and
+`AnarchitectsFeatureSubmissionDetail` from this entry point to combine the signal store,
+data access, and UI layers into a drop-in experience.
+
+These components remain layout-compatible and forward canonical template/slot hooks to
+the underlying UI layer.
 
 ## License
 

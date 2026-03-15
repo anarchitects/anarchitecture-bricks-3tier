@@ -1,7 +1,16 @@
 # @anarchitects/forms-angular/ui
 
-Presentational components for `@anarchitects/forms-angular`. Import `AnarchitectsUiForm` from this
-entry point to render reactive forms based on contract-driven form configurations.
+Presentational domain UI components for `@anarchitects/forms-angular`.
+
+## Exports
+
+- `AnarchitectsUiForm`
+- `AnarchitectsFormsUiSubmitted`
+- `AnarchitectsFormsUiSubmissionList`
+- `AnarchitectsFormsUiSubmissionDetail`
+
+These components are layout-compatible (`anarchitects-ui-layout-host`) and support
+template overrides via canonical `ng-template[anxTemplate]` contracts.
 
 ## License
 

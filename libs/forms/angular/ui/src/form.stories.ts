@@ -1,11 +1,18 @@
 import { FormConfig } from '@anarchitects/forms-ts';
+import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
+import { moduleMetadata } from '@storybook/angular';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { AnarchitectsUiForm } from './form';
 
 const meta: Meta<AnarchitectsUiForm> = {
   component: AnarchitectsUiForm,
-  title: 'AnarchitectsUiForm',
+  title: 'Forms UI/Form',
+  decorators: [
+    moduleMetadata({
+      imports: [AnxTemplateDirective],
+    }),
+  ],
 };
 export default meta;
 
@@ -70,6 +77,34 @@ export const Primary: Story = {
     const submitButton = await canvas.findByRole('button', { name: /submit/i });
     expect((submitButton as HTMLButtonElement).disabled).toBe(true);
   },
+};
+
+export const GridLayout: Story = {
+  args: {
+    config: mockFormConfig,
+    layout: 'form:grid',
+    layoutOptions: { columns: 2 },
+  },
+};
+
+export const TemplateOverride: Story = {
+  args: {
+    config: mockFormConfig,
+    layout: 'form:stacked',
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-forms-ui-form [config]="config" [layout]="layout">
+        <ng-template anxTemplate="field" let-field>
+          <section class="anx-stack" style="gap: .25rem;">
+            <strong>Custom field template: {{ field.ui?.label ?? field.name }}</strong>
+            <span>Render your own control composition here.</span>
+          </section>
+        </ng-template>
+      </anarchitects-forms-ui-form>
+    `,
+  }),
 };
 
 export const InvalidEmailKeepsFormInvalid: Story = {

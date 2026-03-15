@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.anx-forms-ui-submission-list__item {
+  gap: var(--anx-sys-space-sm);
+}
+
+.anx-forms-ui-submission-list__header {
+  justify-content: space-between;
+}
+
+.anx-forms-ui-submission-list__meta,
+.anx-forms-ui-submission-list__payload {
+  margin: 0;
+}
+
+.anx-forms-ui-submission-list__actions {
+  justify-content: flex-end;
+}
+
+.anx-forms-ui-submission-list__cell {
+  inline-size: 100%;
+  justify-content: space-between;
+  gap: var(--anx-sys-space-sm);
+}

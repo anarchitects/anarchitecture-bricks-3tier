@@ -108,6 +108,17 @@ export const Primary: Story = {
   },
 };
 
+export const CardLayout: Story = {
+  args: {
+    formId: formId,
+    formVersion: formVersion,
+    layout: 'form:card',
+  },
+  parameters: {
+    mockData: [getFormDefinitionMock],
+  },
+};
+
 export const InvalidEmailKeepsFormInvalid: Story = {
   args: {
     formId: formId,

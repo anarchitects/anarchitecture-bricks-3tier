@@ -1,6 +1,6 @@
 # @anarchitects/forms-angular
 
-Angular bricks for consuming the Anarchitecture Forms platform. This package wires together
+Angular domain UI components for consuming the Anarchitecture Forms platform. This package wires together
 configuration, data-access, state, feature, and UI layers so Angular applications can request
 contract-driven form definitions, render them dynamically, and submit responses.
 
@@ -14,8 +14,8 @@ layer in the 3-tier architecture:
 | `@anarchitects/forms-angular/config`      | Injection tokens and provider helpers for base API configuration.          |
 | `@anarchitects/forms-angular/data-access` | HTTP adapters that call the generated forms REST API.                      |
 | `@anarchitects/forms-angular/state`       | Signal store that orchestrates requests, caching, and submission state.    |
-| `@anarchitects/forms-angular/feature`     | Feature component that combines state, UI, and orchestration.              |
-| `@anarchitects/forms-angular/ui`          | Presentational form renderer that builds reactive forms from form configs. |
+| `@anarchitects/forms-angular/feature`     | Feature components that combine state, UI, and orchestration.              |
+| `@anarchitects/forms-angular/ui`          | Presentational form/list/detail components with layout/template contracts. |
 
 Each layer can be consumed independently or as a combined stack, depending on what your app needs.
 
@@ -73,7 +73,8 @@ You can opt into specific slices of the stack:
   with custom facades or state.
 - **State** – inject the `FormsStore` signal store to orchestrate requests and expose reactive signals
   for loading/error/submission status.
-- **UI** – use `AnarchitectsUiForm` directly if you manage fetching and submission elsewhere.
+- **UI** – use `AnarchitectsUiForm`, `AnarchitectsFormsUiSubmissionList`, and
+  `AnarchitectsFormsUiSubmissionDetail` directly if you manage orchestration elsewhere.
 
 ## Publishing
 

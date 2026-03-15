@@ -1,0 +1,53 @@
+<anarchitects-ui-layout-host
+  [kind]="'list'"
+  [layout]="layout()"
+  [model]="layoutModel()"
+  [layoutOptions]="layoutOptions()"
+>
+  <ng-content select="ng-template[anxTemplate]"></ng-content>
+  <ng-content select="[anxSlot]"></ng-content>
+
+  <ng-template anxTemplate="item" let-submission>
+    <article class="anx-forms-ui-submission-list__item anx-stack">
+      <header class="anx-forms-ui-submission-list__header anx-inline">
+        <strong>{{ submission.formId }}</strong>
+        <anarchitects-ui-badge [tone]="'neutral'" [appearance]="'outline'">
+          v{{ submission.formVersion }}
+        </anarchitects-ui-badge>
+      </header>
+
+      <p class="anx-forms-ui-submission-list__meta anx-text">
+        Submitted {{ formatDate(submission.createdAt) }}
+      </p>
+
+      <p class="anx-forms-ui-submission-list__payload anx-text">
+        {{ payloadFieldCount(submission) }} payload field(s)
+      </p>
+
+      <div class="anx-forms-ui-submission-list__actions anx-inline">
+        <anarchitects-ui-button
+          [size]="'sm'"
+          [appearance]="'outline'"
+          (pressed)="onSelect(submission)"
+        >
+          View details
+        </anarchitects-ui-button>
+      </div>
+    </article>
+  </ng-template>
+
+  <ng-template anxTemplate="cell" let-submission>
+    <div class="anx-forms-ui-submission-list__cell anx-inline">
+      <span>
+        {{ submission.formId }} (v{{ submission.formVersion }})
+      </span>
+      <anarchitects-ui-button
+        [size]="'sm'"
+        [appearance]="'ghost'"
+        (pressed)="onSelect(submission)"
+      >
+        Open
+      </anarchitects-ui-button>
+    </div>
+  </ng-template>
+</anarchitects-ui-layout-host>

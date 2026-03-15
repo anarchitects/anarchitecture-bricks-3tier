@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.anx-forms-ui-submission-detail__content {
+  gap: var(--anx-sys-space-md);
+}
+
+.anx-forms-ui-submission-detail__header {
+  gap: var(--anx-sys-space-xs);
+}
+
+.anx-forms-ui-submission-detail__payload {
+  gap: var(--anx-sys-space-sm);
+  margin: 0;
+}
+
+.anx-forms-ui-submission-detail__row {
+  grid-template-columns: minmax(8rem, 12rem) 1fr;
+  gap: var(--anx-sys-space-sm);
+}
+
+.anx-forms-ui-submission-detail__row dt,
+.anx-forms-ui-submission-detail__row dd {
+  margin: 0;
+}
+
+.anx-forms-ui-submission-detail__row dd {
+  overflow-wrap: anywhere;
+}

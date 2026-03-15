@@ -8,6 +8,7 @@ import {
 } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import { FormConfig } from '@anarchitects/forms-ts/models';
+import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -31,6 +32,8 @@ export class AnarchitectsFeatureForm {
   formConfig = signal<FormConfig>({ id: '', version: 1, fields: [] });
   formId = input.required<string>();
   formVersion = input<number>();
+  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
   constructor() {
     effect(() => {

@@ -1,3 +1,21 @@
 :host {
   display: block;
 }
+
+.anx-forms-ui-form__surface {
+  width: 100%;
+}
+
+.anx-forms-ui-form__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--anx-sys-space-xs);
+}
+
+.anx-forms-ui-form__honeypot {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  opacity: 0;
+  pointer-events: none;
+}
