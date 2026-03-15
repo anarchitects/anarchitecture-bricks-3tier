@@ -1,0 +1,35 @@
+<anarchitects-ui-layout-host
+  [kind]="'detail'"
+  [layout]="layout()"
+  [model]="layoutModel()"
+  [layoutOptions]="layoutOptions()"
+>
+  <ng-content select="ng-template[anxTemplate]"></ng-content>
+  <ng-content select="[anxSlot]"></ng-content>
+
+  <ng-template anxTemplate="content" let-model>
+    @if (model.data; as submission) {
+      <article class="anx-forms-ui-submission-detail__content anx-stack">
+        <header class="anx-forms-ui-submission-detail__header anx-stack">
+          <strong>{{ submission.formId }} (v{{ submission.formVersion }})</strong>
+          <span class="anx-text">
+            Submitted {{ formatDate(submission.createdAt) }}
+          </span>
+        </header>
+
+        <dl class="anx-forms-ui-submission-detail__payload anx-stack">
+          @for (entry of payloadEntries(submission); track entry.key) {
+            <div class="anx-forms-ui-submission-detail__row anx-grid">
+              <dt>{{ entry.key }}</dt>
+              <dd>{{ entry.value }}</dd>
+            </div>
+          }
+        </dl>
+      </article>
+    } @else {
+      <anarchitects-ui-alert [tone]="'neutral'" [appearance]="'ghost'">
+        Select a submission to view details.
+      </anarchitects-ui-alert>
+    }
+  </ng-template>
+</anarchitects-ui-layout-host>

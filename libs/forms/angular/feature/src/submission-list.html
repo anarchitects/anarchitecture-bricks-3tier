@@ -1,0 +1,10 @@
+<anarchitects-forms-ui-submission-list
+  [submissions]="submissions()"
+  [title]="title()"
+  [layout]="layout()"
+  [layoutOptions]="layoutOptions()"
+  (selected)="onSelected($event)"
+>
+  <ng-content select="ng-template[anxTemplate]"></ng-content>
+  <ng-content select="[anxSlot]"></ng-content>
+</anarchitects-forms-ui-submission-list>

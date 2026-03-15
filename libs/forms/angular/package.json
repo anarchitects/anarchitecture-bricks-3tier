@@ -2,6 +2,9 @@
   "name": "@anarchitects/forms-angular",
   "version": "2.1.0",
   "peerDependencies": {
+    "@anarchitects/common-angular-ui-composition": "^0.0.1",
+    "@anarchitects/common-angular-ui-layouts": "^0.0.1",
+    "@anarchitects/common-angular-ui-primitives": "^0.0.1",
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
     "@ngrx/signals": "^20.0.1",
