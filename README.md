@@ -130,6 +130,7 @@ Run releases via the **Release (Manual)** GitHub workflow:
 - Use **Publish Packages (Recovery)** only to retry publish if a release run fails after versioning/tagging.
 
 Avoid routine local `yarn nx release`; use the workflow for auditable, controlled domain releases.
+If local dry-runs are needed, run `nx run release-tools:check-release-tag-ancestry` first to ensure existing `{projectName}@{version}` tags are reachable from the current branch.
 
 ## Layering Rules
 

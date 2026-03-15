@@ -192,7 +192,7 @@
       }
     },
     "version": {
-      "preVersionCommand": "yarn nx run-many -t build",
+      "preVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry && yarn nx run-many -t build",
       "conventionalCommits": true,
       "updateDependents": "never"
     },
