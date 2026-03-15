@@ -207,6 +207,7 @@
       }
     },
     "conventionalCommits": {
+      "useCommitScope": false,
       "types": {
         "init": {
           "semverBump": "none",
