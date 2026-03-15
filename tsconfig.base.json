@@ -94,6 +94,21 @@
       ],
       "@anarchitects/auth-angular/feature": [
         "libs/auth/angular/feature/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design": [
+        "libs/common/angular/design/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/config": [
+        "libs/common/angular/design/config/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/tokens": [
+        "libs/common/angular/design/tokens/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/styles": [
+        "libs/common/angular/design/styles/src/index.ts"
+      ],
+      "@anarchitects/common-angular-design/contracts": [
+        "libs/common/angular/design/contracts/src/index.ts"
       ]
     }
   },

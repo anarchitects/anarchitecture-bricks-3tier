@@ -30,6 +30,11 @@ libs/
     angular/
     nest/
   common/
+    angular/design/
+      config/
+      contracts/
+      styles/
+      tokens/
   storybook/
   ts/frontend/data-access/
 
