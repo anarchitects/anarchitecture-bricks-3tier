@@ -39,7 +39,6 @@ const selectFormConfigId = (config: FormConfig) =>
   `${config.id}:${config.version}`;
 
 export const FormsStore = signalStore(
-  { providedIn: 'root' },
   withState<FormState>(initialState),
   withEntities({ entity: type<Submission>(), collection: 'submissions' }),
   withEntities({ entity: type<FormConfig>(), collection: 'formConfigs' }),

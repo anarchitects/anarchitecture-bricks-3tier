@@ -21,17 +21,30 @@ describe('AnarchitectsFeatureForm', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+    mockFormsStore.submitted.set(false);
+    mockFormsStore.selectedFormConfig.set({
+      id: 'test-form',
+      version: 1,
+      fields: [],
+    });
+
     await TestBed.configureTestingModule({
       imports: [AnarchitectsFeatureForm],
-      providers: [{ provide: FormsStore, useValue: mockFormsStore }],
-    }).compileComponents();
+    })
+      .overrideComponent(AnarchitectsFeatureForm, {
+        set: {
+          providers: [{ provide: FormsStore, useValue: mockFormsStore }],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(AnarchitectsFeatureForm);
     component = fixture.componentInstance;
     ref = fixture.componentRef;
     ref.setInput('formId', 'test-form');
     ref.setInput('formVersion', 1);
-    fixture.autoDetectChanges();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

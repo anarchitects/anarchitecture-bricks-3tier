@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideFormsConfig, provideFormsDefaults } from './providers';
-import { API_RESOURCE_PATH, FormsConfig, FORMS_CONFIG } from './tokens';
+import { API_RESOURCE_PATH, FORMS_CONFIG, FormsConfig } from './tokens';
 
 describe('FormsConfig Providers', () => {
   it('should provide default config when using provideFormsDefaults', () => {
@@ -13,7 +13,10 @@ describe('FormsConfig Providers', () => {
     expect(apiResourcePath).toBe('forms');
   });
   it('should override config when using provideFormsConfig', () => {
-    const customConfig: FormsConfig = { apiResourcePath: 'custom-path' };
+    const customConfig: FormsConfig = {
+      apiResourcePath: 'custom-path',
+      apiBaseUrl: '/api',
+    };
     TestBed.configureTestingModule({
       providers: [...provideFormsConfig(customConfig)],
     });
