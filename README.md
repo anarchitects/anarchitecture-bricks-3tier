@@ -45,6 +45,11 @@ libs/
       contracts/
       projection/
       templates/
+    angular/ui-layouts/
+      contracts/
+      registry/
+      host/
+      defaults/
   storybook/
   ts/frontend/data-access/
 

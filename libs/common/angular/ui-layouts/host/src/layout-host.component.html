@@ -1,0 +1,10 @@
+@if (resolvedLayout(); as resolved) {
+  <section class="anx-layout-host__surface anx-surface anx-stack">
+    <ng-container
+      *ngComponentOutlet="
+        resolved.definition.renderer;
+        inputs: rendererInputs()
+      "
+    ></ng-container>
+  </section>
+}

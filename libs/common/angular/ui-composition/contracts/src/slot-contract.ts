@@ -15,6 +15,7 @@ export const KNOWN_ANX_SLOT_NAMES = [
   'suffix',
   'empty',
   'item',
+  'sidebar',
 ] as const;
 
 export type KnownAnxSlotName = (typeof KNOWN_ANX_SLOT_NAMES)[number];

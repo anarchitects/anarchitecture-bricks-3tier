@@ -1,6 +1,9 @@
 import { InjectionToken, Provider, inject } from '@angular/core';
 import { AnxSlotName } from './slot-contract';
-import { AnxTemplateDefaultLayoutRegion, AnxTemplateName } from './template-contract';
+import {
+  AnxTemplateDefaultLayoutRegion,
+  AnxTemplateName,
+} from './template-contract';
 
 export type AnxCompositionSchema = {
   componentKind: string;

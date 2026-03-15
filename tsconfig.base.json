@@ -139,6 +139,21 @@
       ],
       "@anarchitects/common-angular-ui-composition/templates": [
         "libs/common/angular/ui-composition/templates/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts": [
+        "libs/common/angular/ui-layouts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/contracts": [
+        "libs/common/angular/ui-layouts/contracts/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/registry": [
+        "libs/common/angular/ui-layouts/registry/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/host": [
+        "libs/common/angular/ui-layouts/host/src/index.ts"
+      ],
+      "@anarchitects/common-angular-ui-layouts/defaults": [
+        "libs/common/angular/ui-layouts/defaults/src/index.ts"
       ]
     }
   },

@@ -11,8 +11,7 @@ Template composition contracts and helpers.
 ## Usage
 
 ```html
-<ng-template anxTemplate="item" let-item>{{ item.name }}</ng-template>
-<ng-template anxTemplate="empty">No items</ng-template>
+<ng-template anxTemplate="item" let-item>{{ item.name }}</ng-template> <ng-template anxTemplate="empty">No items</ng-template>
 ```
 
 Use `findAnxTemplate(...)` when resolving the active template at runtime.

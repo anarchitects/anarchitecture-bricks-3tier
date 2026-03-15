@@ -28,7 +28,9 @@ describe('AnxSlotDirective', () => {
   it('should normalize known, alias, and app-prefixed slot values', () => {
     const known = fixture.nativeElement.querySelector('#known') as HTMLElement;
     const alias = fixture.nativeElement.querySelector('#alias') as HTMLElement;
-    const custom = fixture.nativeElement.querySelector('#custom') as HTMLElement;
+    const custom = fixture.nativeElement.querySelector(
+      '#custom',
+    ) as HTMLElement;
 
     expect(known.getAttribute('data-anx-slot')).toBe('header');
     expect(alias.getAttribute('data-anx-slot')).toBe('header');

@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.anx-default-layout__header,
+.anx-default-layout__footer {
+  padding-inline: var(--anx-sys-space-sm);
+}
+
+.anx-default-layout__form-grid,
+.anx-default-layout__form-inline,
+.anx-default-layout__form-stacked,
+.anx-default-layout__form-card {
+  gap: var(--anx-layout-gap-stack);
+}
+
+.anx-default-layout__form-grid {
+  grid-template-columns: repeat(var(--anx-layout-columns), minmax(0, 1fr));
+}
+
+.anx-default-layout__form-inline > * {
+  flex: 1 1 min(16rem, 100%);
+}
+
+.anx-default-layout__actions {
+  justify-content: flex-end;
+}

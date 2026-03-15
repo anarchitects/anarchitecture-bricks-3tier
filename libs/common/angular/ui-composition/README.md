@@ -31,6 +31,5 @@ domain UI components, and upcoming layout infrastructure.
 ## Template usage
 
 ```html
-<ng-template anxTemplate="item" let-item>{{ item.name }}</ng-template>
-<ng-template anxTemplate="empty">No items</ng-template>
+<ng-template anxTemplate="item" let-item>{{ item.name }}</ng-template> <ng-template anxTemplate="empty">No items</ng-template>
 ```

@@ -17,6 +17,7 @@ export const KNOWN_ANX_TEMPLATE_NAMES = [
   'item',
   'field',
   'cell',
+  'sidebar',
 ] as const;
 
 export type KnownAnxTemplateName = (typeof KNOWN_ANX_TEMPLATE_NAMES)[number];

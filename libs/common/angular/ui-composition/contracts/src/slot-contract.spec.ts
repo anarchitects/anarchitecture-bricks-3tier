@@ -22,6 +22,7 @@ describe('slot-contract', () => {
       'suffix',
       'empty',
       'item',
+      'sidebar',
     ]);
     expect(ANX_SLOT_ALIASES['anxCardHeader']).toBe('header');
     expect(ANX_SLOT_ALIASES['anxCardFooter']).toBe('footer');

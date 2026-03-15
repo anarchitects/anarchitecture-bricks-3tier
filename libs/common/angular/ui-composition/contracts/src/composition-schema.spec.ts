@@ -38,8 +38,8 @@ describe('composition-schema', () => {
       providers: [],
     });
 
-    const directLookup = TestBed.runInInjectionContext(
-      () => TestBed.inject(ANX_COMPOSITION_SCHEMA, null),
+    const directLookup = TestBed.runInInjectionContext(() =>
+      TestBed.inject(ANX_COMPOSITION_SCHEMA, null),
     );
     const schemas = TestBed.runInInjectionContext(() =>
       injectAnxCompositionSchemas(),

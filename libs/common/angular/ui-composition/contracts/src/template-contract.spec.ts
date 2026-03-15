@@ -23,6 +23,7 @@ describe('template-contract', () => {
       'item',
       'field',
       'cell',
+      'sidebar',
     ]);
   });
 
