@@ -284,6 +284,7 @@ __metadata:
     jsdom: "npm:~22.1.0"
     jsonc-eslint-parser: "npm:^2.1.0"
     jwt-decode: "npm:^4.0.0"
+    marked: "npm:^7.0.3"
     ng-packagr: "npm:21.1.0"
     nodemailer: "npm:^7.0.9"
     nx: "npm:22.5.3"
@@ -20685,6 +20686,15 @@ __metadata:
   bin:
     marked: bin/marked.js
   checksum: 10c0/0d57c2a320feff963f20877c3b9ab3dc609ed7810ddb6cd8c1f8cf6a5fc29556018fdb4f356f872f4daae7cba4a5d9966f0d7af0099037214e092c75bd6aa5ff
+  languageName: node
+  linkType: hard
+
+"marked@npm:^7.0.3":
+  version: 7.0.5
+  resolution: "marked@npm:7.0.5"
+  bin:
+    marked: bin/marked.js
+  checksum: 10c0/a75f90e4ea7ec90cf6b66aaf1d7dd533df3d12d2a974c838f66f823d027edc8ba1d36b2920d4a24cf8b711e6ebc4625016cdf7d1ce95a818a091a2629e9a52dd
   languageName: node
   linkType: hard
 

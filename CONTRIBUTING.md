@@ -56,6 +56,7 @@ nx affected -t lint test build
 
 # Docs and showcases
 nx run angular-docs:generate
+nx run docs-hub:validate-content
 nx run docs-hub:build
 nx run docs-hub:verify
 nx run storybook-angular:storybook
@@ -76,6 +77,7 @@ nx run release-tools:validate-non-bumping-commits
 - For docs-surface PRs (`docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root docs files, docs workflows), use non-bumping commit types only: `docs`, `chore`, `ci`, `style`.
 - Docs-surface PR commits must not contain `!` or `BREAKING CHANGE`.
 - CI enforces docs commit policy via `nx run release-tools:validate-non-bumping-commits`.
+- CI also enforces docs completeness via `nx run docs-hub:validate-content` (required headings for publishable package READMEs and Angular/Nest markdown guides).
 - Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, or `style:`.
 
 ## Release Workflow (Domain Groups)

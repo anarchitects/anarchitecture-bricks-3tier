@@ -5,6 +5,20 @@ Shared UI composition contracts for Angular bricks.
 This package defines stable composition conventions between primitives,
 domain UI components, and upcoming layout infrastructure.
 
+## Features
+
+- Canonical slot + template contracts for reusable Angular UI composition
+- Backward-compatible alias support while converging on canonical slot names
+- Shared schema tokens for future runtime layout discovery
+
+## Installation
+
+```bash
+npm install @anarchitects/common-angular-ui-composition
+# or
+yarn add @anarchitects/common-angular-ui-composition
+```
+
 ## Entry points
 
 - `@anarchitects/common-angular-ui-composition/contracts`
@@ -33,3 +47,13 @@ domain UI components, and upcoming layout infrastructure.
 ```html
 <ng-template anxTemplate="item" let-item>{{ item.name }}</ng-template> <ng-template anxTemplate="empty">No items</ng-template>
 ```
+
+## Usage
+
+Use composition contracts inside domain UI components and shared primitives to keep projection APIs stable while allowing app-level template customisation.
+
+## Development notes
+
+- Add new slot/template names only when they are generic and reusable.
+- Keep legacy alias support non-breaking during migrations.
+- Treat this package as contract-only infrastructure; no domain behavior.

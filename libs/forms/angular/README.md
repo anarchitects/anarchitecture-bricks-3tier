@@ -4,7 +4,13 @@ Angular domain UI components for consuming the Anarchitecture Forms platform. Th
 configuration, data-access, state, feature, and UI layers so Angular applications can request
 contract-driven form definitions, render them dynamically, and submit responses.
 
-## Packages in this family
+## Features
+
+- Layered Angular integration for dynamic form retrieval, rendering, and submission
+- Shared DTO/model contracts aligned with generated OpenAPI clients
+- Composable secondary entry points for app-specific architecture choices
+
+## Entry points
 
 `@anarchitects/forms-angular` exposes several secondary entry points, each mapped to a specific
 layer in the 3-tier architecture:
@@ -31,7 +37,9 @@ You will also need the TypeScript foundation package:
 npm install @anarchitects/forms-ts
 ```
 
-## Quick start
+## Usage
+
+### Quick start
 
 ```typescript
 // app.config.ts
@@ -80,6 +88,12 @@ You can opt into specific slices of the stack:
 
 This package is published as public npm modules. Secondary entry points are shipped as tree-shakeable
 ESM bundles so only the layers you import are included in your application bundle.
+
+## Development notes
+
+- Keep HTTP integration inside `data-access`; avoid direct endpoint calls in components.
+- Keep orchestration in `feature/state`, and keep `ui` components presentational.
+- Keep route and form contract alignment by regenerating OpenAPI when DTO/controller schemas evolve.
 
 ## License
 

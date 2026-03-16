@@ -25,9 +25,33 @@
     "build": {
       "executor": "nx:run-commands",
       "dependsOn": ["sync-packages"],
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/docs/guides/**/*.md"
+        }
+      ],
       "outputs": ["{workspaceRoot}/dist/docs-hub"],
       "options": {
         "command": "node tools/docs-hub/build.mjs"
+      }
+    },
+    "validate-content": {
+      "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/docs/guides/**/*.md"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/**/package.json"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/**/README.md"
+        }
+      ],
+      "options": {
+        "command": "node tools/docs-hub/validate-content.mjs"
       }
     },
     "verify": {

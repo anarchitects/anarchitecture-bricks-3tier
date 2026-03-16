@@ -2,7 +2,21 @@
 
 Shared typed mailer configuration, transport setup, and provider wiring for NestJS apps.
 
-## What It Exports
+## Features
+
+- Shared mailer config namespace + typed injection helpers
+- Adapter wiring (`node` and `noop`) behind a common `MailerPort` contract
+- Root transport setup helpers for deterministic app-level configuration
+
+## Installation
+
+```bash
+npm install @anarchitects/common-nest-mailer @nestjs-modules/mailer
+# or
+yarn add @anarchitects/common-nest-mailer @nestjs-modules/mailer
+```
+
+## Entry points and exports
 
 - `mailerConfig`: `registerAs(...)` config namespace for `@nestjs/config`
 - `MailerConfig`: inferred config type (`ConfigType<typeof mailerConfig>`)
@@ -30,6 +44,13 @@ MAILER_DEFAULT=noreply@example.com
 MAILER_IGNORE_TLS=false
 MAILER_TEMPLATE_DIR=templates
 ```
+
+## Configuration
+
+Configure `mailerConfig` in `ConfigModule.forRoot({ load: [mailerConfig] })` and then choose provider wiring with either:
+
+- `CommonMailerModule.forProviderFromConfig()` for env-driven provider selection
+- `CommonMailerModule.forRoot({ provider: 'node' | 'noop' })` for explicit provider selection
 
 ## Usage (Preferred)
 
@@ -96,6 +117,12 @@ export class MailerSetupService {
   constructor(@InjectMailerConfig() private readonly config: MailerConfig) {}
 }
 ```
+
+## Development notes
+
+- Configure transport once at app root and keep domain modules adapter-focused.
+- Use `MailerPort` as the cross-domain contract to avoid tight coupling to concrete providers.
+- Keep shared module defaults safe for local/dev environments.
 
 ## License
 

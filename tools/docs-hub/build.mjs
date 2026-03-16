@@ -1,9 +1,19 @@
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { marked } from 'marked';
 
 const workspaceRoot = process.cwd();
 const catalogFile = join(workspaceRoot, 'dist/docs-hub/data/packages.catalog.json');
 const outputRoot = join(workspaceRoot, 'dist/docs-hub');
+const angularGuidePath = join(workspaceRoot, 'docs/guides/angular.md');
+const nestGuidePath = join(workspaceRoot, 'docs/guides/nest.md');
+const aiAgentsGuidePath = join(workspaceRoot, 'docs/guides/ai-agents.md');
+const designUiSystemsGuidePath = join(workspaceRoot, 'docs/guides/design-ui-systems.md');
+
+marked.setOptions({
+  gfm: true,
+  breaks: false,
+});
 
 function ensureDir(dirPath) {
   mkdirSync(dirPath, { recursive: true });
@@ -18,12 +28,18 @@ function escapeHtml(input) {
     .replaceAll("'", '&#39;');
 }
 
+function markdownToHtml(markdownContent) {
+  return marked.parse(markdownContent);
+}
+
 function pageTemplate(title, activePath, content, generatedAt) {
   const navItems = [
     { href: '/', label: 'Home' },
     { href: '/packages/', label: 'Packages' },
     { href: '/guides/angular.html', label: 'Angular Guide' },
     { href: '/guides/nest.html', label: 'Nest Guide' },
+    { href: '/guides/design-ui-systems.html', label: 'Design/UI Systems Guide' },
+    { href: '/guides/ai-agents.html', label: 'AI Agents Guide' },
     { href: '/release/', label: 'Release' },
     { href: '/storybook/', label: 'Storybook' },
     { href: '/openapi/openapi.yaml', label: 'OpenAPI' },
@@ -61,11 +77,20 @@ function pageTemplate(title, activePath, content, generatedAt) {
 `;
 }
 
+function writeFile(relativePath, contents) {
+  const targetPath = join(outputRoot, relativePath);
+  ensureDir(join(targetPath, '..'));
+  writeFileSync(targetPath, contents);
+}
+
 function renderPackageTable(packages) {
   const rows = packages
     .map((pkg) => {
-      const readmeCell = pkg.readmeUrl
-        ? `<a href="${pkg.readmeUrl}" target="_blank" rel="noreferrer">README</a>`
+      const renderedCell = pkg.renderedReadmeUrl
+        ? `<a href="${pkg.renderedReadmeUrl}">Rendered</a>`
+        : 'N/A';
+      const sourceCell = pkg.sourceReadmeUrl
+        ? `<a href="${pkg.sourceReadmeUrl}" target="_blank" rel="noreferrer">Source README</a>`
         : 'N/A';
 
       return `<tr>
@@ -73,8 +98,8 @@ function renderPackageTable(packages) {
   <td>${escapeHtml(pkg.version)}</td>
   <td>${escapeHtml(pkg.domain)}</td>
   <td>${escapeHtml(pkg.tech)}</td>
-  <td><code>${escapeHtml(pkg.packageDir)}</code></td>
-  <td>${readmeCell}</td>
+  <td>${renderedCell}</td>
+  <td>${sourceCell}</td>
 </tr>`;
     })
     .join('\n');
@@ -86,8 +111,8 @@ function renderPackageTable(packages) {
       <th>Version</th>
       <th>Domain</th>
       <th>Tech</th>
-      <th>Path</th>
-      <th>README</th>
+      <th>Rendered Docs</th>
+      <th>Source README</th>
     </tr>
   </thead>
   <tbody>
@@ -140,20 +165,27 @@ function renderPackagesPage(catalog) {
     })
     .join('\n');
 
-  return `<h2>Package Catalog</h2>
-<p>This catalog is generated from <code>libs/**/package.json</code> and <code>libs/**/README.md</code>.</p>
-<p>Total packages: <strong>${catalog.packageCount}</strong></p>
+  return `<h2>Publishable Package Catalog</h2>
+<p>This catalog is generated from publishable package metadata under <code>libs/**/package.json</code>.</p>
+<p>Total publishable packages: <strong>${catalog.packageCount}</strong></p>
 ${sections}`;
 }
 
-function writeFile(relativePath, contents) {
-  const targetPath = join(outputRoot, relativePath);
-  ensureDir(join(targetPath, '..'));
-  writeFileSync(targetPath, contents);
+function renderMarkdownPage(title, activePath, markdownContent, generatedAt) {
+  return pageTemplate(
+    title,
+    activePath,
+    `<article class="markdown-body">${markdownToHtml(markdownContent)}</article>`,
+    generatedAt,
+  );
 }
 
 const catalog = JSON.parse(readFileSync(catalogFile, 'utf8'));
 const generatedAt = new Date().toISOString();
+const angularGuideMarkdown = readFileSync(angularGuidePath, 'utf8');
+const nestGuideMarkdown = readFileSync(nestGuidePath, 'utf8');
+const aiAgentsGuideMarkdown = readFileSync(aiAgentsGuidePath, 'utf8');
+const designUiSystemsGuideMarkdown = readFileSync(designUiSystemsGuidePath, 'utf8');
 
 rmSync(outputRoot, { recursive: true, force: true });
 ensureDir(join(outputRoot, 'assets'));
@@ -171,6 +203,7 @@ writeFile(
   --bg: #f8fafc;
   --panel: #ffffff;
   --accent: #0f766e;
+  --code-bg: #f1f5f9;
 }
 * { box-sizing: border-box; }
 body { margin: 0; color: var(--ink); background: linear-gradient(120deg, #f8fafc, #f1f5f9); font-family: "IBM Plex Sans", "Segoe UI", sans-serif; }
@@ -182,11 +215,15 @@ nav a { text-decoration: none; color: var(--ink); border: 1px solid var(--line);
 nav a.active { border-color: var(--accent); color: var(--accent); }
 section, article { background: var(--panel); border: 1px solid var(--line); border-radius: .75rem; padding: 1rem; margin: .75rem 0; }
 h2, h3 { margin-top: 0; }
-code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .92em; }
+code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .92em; background: var(--code-bg); padding: .06rem .25rem; border-radius: .25rem; }
+pre code { display: block; padding: 1rem; overflow-x: auto; line-height: 1.4; }
 table { width: 100%; border-collapse: collapse; margin-top: .5rem; }
 th, td { text-align: left; border-bottom: 1px solid var(--line); padding: .45rem; vertical-align: top; }
 ul { padding-left: 1.2rem; }
 footer { color: var(--muted); }
+.markdown-body h1, .markdown-body h2, .markdown-body h3 { margin-top: 1.4rem; }
+.markdown-body h1:first-child, .markdown-body h2:first-child, .markdown-body h3:first-child { margin-top: 0; }
+.markdown-body a { color: var(--accent); }
 `,
 );
 
@@ -199,9 +236,11 @@ writeFile(
   <h2>Docs Entry Point</h2>
   <p>Primary docs hub for package catalog, implementation guides, and generated docs artifacts.</p>
   <ul>
-    <li><a href="/packages/">Package catalog</a></li>
+    <li><a href="/packages/">Publishable package catalog</a></li>
     <li><a href="/guides/angular.html">Angular application guide</a></li>
     <li><a href="/guides/nest.html">Nest application guide</a></li>
+    <li><a href="/guides/design-ui-systems.html">Design/UI systems guide</a></li>
+    <li><a href="/guides/ai-agents.html">AI coding agents templates</a></li>
     <li><a href="/release/">Release and versioning guidance</a></li>
     <li><a href="/storybook/">Storybook UI docs</a></li>
     <li><a href="/openapi/openapi.yaml">OpenAPI YAML</a> and <a href="/openapi/openapi.json">OpenAPI JSON</a></li>
@@ -221,42 +260,61 @@ writeFile(
   pageTemplate('Packages', '/packages/', renderPackagesPage(catalog), generatedAt),
 );
 
+for (const pkg of catalog.packages) {
+  if (!pkg.readmePath || !pkg.renderedReadmeUrl) {
+    continue;
+  }
+
+  const readmeMarkdown = readFileSync(join(workspaceRoot, pkg.readmePath), 'utf8');
+  const body = `<article class="markdown-body">${markdownToHtml(readmeMarkdown)}</article>
+<section>
+  <h2>Source Links</h2>
+  <ul>
+    <li><a href="/packages/">Back to package catalog</a></li>
+    ${
+      pkg.sourceReadmeUrl
+        ? `<li><a href="${pkg.sourceReadmeUrl}" target="_blank" rel="noreferrer">Source README on GitHub</a></li>`
+        : ''
+    }
+  </ul>
+</section>`;
+  writeFile(
+    `packages/${pkg.slug}/index.html`,
+    pageTemplate(pkg.importPath, '/packages/', body, generatedAt),
+  );
+}
+
 writeFile(
   'guides/angular.html',
-  pageTemplate(
+  renderMarkdownPage(
     'Angular Guide',
     '/guides/angular.html',
-    `<article>
-  <h2>Build Angular Apps With Bricks</h2>
-  <p>Prefer root domain package imports for quick start, then use secondary entry points for advanced composition.</p>
-  <ul>
-    <li>Provide domain config at app bootstrap using <code>provide*&nbsp;Config</code> helpers.</li>
-    <li>Use generated data-access clients instead of manual HTTP calls.</li>
-    <li>Register stores explicitly via provider helpers; avoid implicit global state.</li>
-    <li>Consume feature components for orchestration and UI components for presentation-only use cases.</li>
-  </ul>
-  <p>Reference implementation: Storybook stories and Angular example apps in <code>examples/</code>.</p>
-</article>`,
+    angularGuideMarkdown,
     generatedAt,
   ),
 );
 
 writeFile(
   'guides/nest.html',
-  pageTemplate(
-    'Nest Guide',
-    '/guides/nest.html',
-    `<article>
-  <h2>Build Nest Apps With Bricks</h2>
-  <p>Use facade modules for minimal setup (<code>forRoot</code>/<code>forRootFromConfig</code>) and layered imports when you need custom composition.</p>
-  <ul>
-    <li>Keep route schemas in shared TS DTO libraries and controllers limited to pure Fastify schema fields.</li>
-    <li>Configure shared infrastructure once at app root (for example mail transport).</li>
-    <li>Use domain infrastructure modules as thin adapters over shared contracts.</li>
-    <li>For cross-domain persistence links, keep entity models scalar FK-only and use integration schemas for DB FK management.</li>
-  </ul>
-  <p>API contracts are generated from implementation and published under <a href="/openapi/openapi.yaml">/openapi</a>.</p>
-</article>`,
+  renderMarkdownPage('Nest Guide', '/guides/nest.html', nestGuideMarkdown, generatedAt),
+);
+
+writeFile(
+  'guides/ai-agents.html',
+  renderMarkdownPage(
+    'AI Agents Guide',
+    '/guides/ai-agents.html',
+    aiAgentsGuideMarkdown,
+    generatedAt,
+  ),
+);
+
+writeFile(
+  'guides/design-ui-systems.html',
+  renderMarkdownPage(
+    'Design/UI Systems Guide',
+    '/guides/design-ui-systems.html',
+    designUiSystemsGuideMarkdown,
     generatedAt,
   ),
 );
@@ -266,7 +324,7 @@ writeFile(
   pageTemplate(
     'Release',
     '/release/',
-    `<article>
+    `<article class="markdown-body">
   <h2>Release and Versioning</h2>
   <p>Package releases are manual and domain-scoped using the repository release workflow.</p>
   <ul>
@@ -281,5 +339,11 @@ writeFile(
 );
 
 writeFile('data/packages.catalog.json', `${JSON.stringify(catalog, null, 2)}\n`);
+writeFile('guides/angular.md', angularGuideMarkdown);
+writeFile('guides/nest.md', nestGuideMarkdown);
+writeFile('guides/ai-agents.md', aiAgentsGuideMarkdown);
+writeFile('guides/design-ui-systems.md', designUiSystemsGuideMarkdown);
 
-console.log(`Docs hub static site generated at ${outputRoot}`);
+console.log(
+  `Docs hub static site generated at ${outputRoot} with ${catalog.packageCount} publishable packages.`,
+);

@@ -18,7 +18,7 @@ and generate runtime validation schemas automatically.
 npm install @anarchitects/forms-ts @sinclair/typebox
 ```
 
-## Quick Start
+## Usage
 
 ```typescript
 import { FormConfig, contactForm } from '@anarchitects/forms-ts';
@@ -233,6 +233,12 @@ import { FormDefinitionRequestDTO, FormDefinitionResponseDTO, SubmissionRequestD
 // Builders only
 import { schemaFromConfig } from '@anarchitects/forms-ts/builders';
 ```
+
+## Development notes
+
+- Treat this package as the source of truth for form DTO/model contracts.
+- Keep builder behavior deterministic and framework-agnostic.
+- Regenerate API artifacts and verify contract tests when DTO schemas change.
 
 ## Contributing
 

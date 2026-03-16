@@ -8,6 +8,12 @@ TypeScript DTOs and domain models for the Anarchitecture authentication stack. T
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
 
+## Features
+
+- Centralized TypeBox DTO schemas shared by Angular and Nest stacks
+- Domain model contracts for users, roles, and permissions
+- Reusable validation + type-inference building blocks for auth flows
+
 ## Installation
 
 ```bash
@@ -18,7 +24,7 @@ yarn add @anarchitects/auth-ts
 pnpm add @anarchitects/auth-ts
 ```
 
-## Package structure
+## Entry points
 
 | Import path                    | Description                                      |
 | ------------------------------ | ------------------------------------------------ |
@@ -72,6 +78,12 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 
 - `nx build auth-ts` — build the distributable package with Vite.
 - `nx test auth-ts` — run the Vitest suite (DTO schema checks and type-level assertions).
+
+## Development notes
+
+- Treat this package as the source of truth for auth DTO and model contracts.
+- When changing DTO schemas, regenerate OpenAPI in the workspace (`nx run api-specs:generate`).
+- Keep framework-specific concerns out of this package; Angular/Nest behavior belongs in domain libraries.
 
 ## Contributing
 

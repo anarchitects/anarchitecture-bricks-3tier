@@ -6,6 +6,20 @@ This package provides the **Phase 1 design contract**: tokens, semantic hook con
 base scoped styles, and typed configuration providers. It is intentionally unbranded and
 extensible for consumer applications.
 
+## Features
+
+- Typed design-system config providers for theme, density, surface, and layout defaults
+- Shared semantic token contracts for cross-library visual consistency
+- Base styles and semantic hooks designed for consumer override
+
+## Installation
+
+```bash
+npm install @anarchitects/common-angular-design
+# or
+yarn add @anarchitects/common-angular-design
+```
+
 ## Entry points
 
 - `@anarchitects/common-angular-design/config`
@@ -66,8 +80,18 @@ applyAnxBaseStyles();
 </section>
 ```
 
+## Usage
+
+Use this package as the design contract foundation in app bootstrap, then layer `ui-primitives`, `ui-composition`, and domain UI libraries on top of the same token/context model.
+
 ## Phase 1 boundaries
 
 - No integration into existing `forms` or `auth` Angular UI yet
 - No primitive catalog rollout yet
 - No full layout engine yet
+
+## Development notes
+
+- Keep this package unbranded and contract-first.
+- Add new tokens and semantic hooks only when they generalize across multiple domains.
+- Prefer consumer extension points over package-specific styling decisions.
