@@ -6,6 +6,7 @@ const libsRoot = join(workspaceRoot, 'libs');
 const guideFiles = [
   { path: 'docs/guides/angular.md', key: 'angular' },
   { path: 'docs/guides/nest.md', key: 'nest' },
+  { path: 'docs/guides/ts-contracts.md', key: 'tsContracts' },
   { path: 'docs/guides/design-ui-systems.md', key: 'designUiSystems' },
   { path: 'docs/guides/ai-agents.md', key: 'aiAgents' },
 ];
@@ -14,14 +15,10 @@ const guideRequirements = {
   angular: [
     'intent',
     'architecture',
-    'design system foundations',
-    'quick start with design ui stack',
-    'theme and token customization',
-    'ui composition and primitives',
-    'composition cookbook',
-    'layout runtime',
+    'easy mode with root exports',
+    'advanced mode with secondary entry points',
+    'ts contract integration',
     'layout cookbook',
-    'app composition',
     'state data access',
     'testing and docs workflow',
     'common pitfalls',
@@ -29,17 +26,24 @@ const guideRequirements = {
   nest: [
     'intent',
     'architecture',
-    'module composition',
-    'configuration',
-    'ui contract support',
-    'contract design for ui consumers',
+    'easy mode with composition modules',
+    'advanced mode with layer entry points',
+    'ts contract integration',
+    'library entry point cookbook',
     'schema evolution and compatibility',
-    'forms and auth contract mapping',
-    'infrastructure boundaries',
-    'design ui system aware api evolution',
-    'cookbook for ui impacting backend changes',
     'contract verification workflow',
     'common pitfalls',
+  ],
+  tsContracts: [
+    'intent',
+    'contract ownership model',
+    'domain contract matrix',
+    'forms ts contracts',
+    'auth ts contracts',
+    'consumer mapping angular and nest',
+    'contract change workflow',
+    'compatibility rules',
+    'verification checklist',
   ],
   designUiSystems: [
     'intent',
@@ -105,7 +109,7 @@ const aiGuideRequiredBlocks = [
   },
 ];
 
-const crossGuideDesignUiCoverageTokens = [
+const designUiSystemsRequiredTokens = [
   '@anarchitects/common-angular-design',
   '@anarchitects/common-angular-ui-composition',
   '@anarchitects/common-angular-ui-primitives',
@@ -114,6 +118,31 @@ const crossGuideDesignUiCoverageTokens = [
   '@anarchitects/auth-angular',
   'ui <- feature -> state -> data-access',
   'presentation -> application <- infrastructure',
+];
+
+const requiredDesignGuideLink = '/guides/design-ui-systems.html';
+const requiredTsGuideLink = '/guides/ts-contracts.html';
+const forbiddenSharedHeadingsInFrameworkGuides = [
+  'system layers',
+  'token and theme model',
+  'composition contracts',
+  'primitive contracts',
+  'layout runtime contracts',
+  'domain integration matrix',
+];
+const forbiddenTsCanonicalHeadingsInFrameworkGuides = [
+  'contract ownership model',
+  'domain contract matrix',
+  'forms ts contracts',
+  'auth ts contracts',
+];
+const tsContractsRequiredTokens = [
+  '@anarchitects/forms-ts',
+  '@anarchitects/auth-ts',
+  '@anarchitects/forms-angular',
+  '@anarchitects/auth-angular',
+  '@anarchitects/forms-nest',
+  '@anarchitects/auth-nest',
 ];
 
 function walkFiles(rootDir, targetName) {
@@ -253,21 +282,70 @@ for (const guide of guideFiles) {
       );
     }
   }
+
+  if (guide.key === 'angular' || guide.key === 'nest') {
+    const normalizedMarkdown = markdownContent.toLowerCase();
+    if (!normalizedMarkdown.includes(requiredDesignGuideLink)) {
+      failures.push(
+        `${guide.path}: missing required canonical guide link ("${requiredDesignGuideLink}").`,
+      );
+    }
+    if (!normalizedMarkdown.includes(requiredTsGuideLink)) {
+      failures.push(
+        `${guide.path}: missing required canonical guide link ("${requiredTsGuideLink}").`,
+      );
+    }
+
+    const duplicatedSharedHeadings = forbiddenSharedHeadingsInFrameworkGuides
+      .filter((heading) => headings.includes(heading))
+      .map((heading) => `"${heading}"`);
+
+    if (duplicatedSharedHeadings.length > 0) {
+      failures.push(
+        `${guide.path}: contains forbidden duplicated shared headings -> ${duplicatedSharedHeadings.join(', ')}`,
+      );
+    }
+
+    const duplicatedTsCanonicalHeadings = forbiddenTsCanonicalHeadingsInFrameworkGuides
+      .filter((heading) => headings.includes(heading))
+      .map((heading) => `"${heading}"`);
+
+    if (duplicatedTsCanonicalHeadings.length > 0) {
+      failures.push(
+        `${guide.path}: contains forbidden duplicated TS-canonical headings -> ${duplicatedTsCanonicalHeadings.join(', ')}`,
+      );
+    }
+  }
+
+  if (guide.key === 'designUiSystems') {
+    const normalizedMarkdown = markdownContent.toLowerCase();
+    if (!normalizedMarkdown.includes(requiredTsGuideLink)) {
+      failures.push(
+        `${guide.path}: missing required link to TS contracts guide ("${requiredTsGuideLink}").`,
+      );
+    }
+  }
 }
 
-const coverageSources = ['angular', 'nest', 'designUiSystems'];
-const combinedGuideContent = coverageSources
-  .map((key) => guideContents.get(key) ?? '')
-  .join('\n')
-  .toLowerCase();
-
-const missingCoverageTokens = crossGuideDesignUiCoverageTokens
-  .filter((token) => !combinedGuideContent.includes(token.toLowerCase()))
+const designUiSystemsContent = (guideContents.get('designUiSystems') ?? '').toLowerCase();
+const missingCoverageTokens = designUiSystemsRequiredTokens
+  .filter((token) => !designUiSystemsContent.includes(token.toLowerCase()))
   .map((token) => `"${token}"`);
 
 if (missingCoverageTokens.length > 0) {
   failures.push(
-    `docs/guides/{angular,nest,design-ui-systems}.md: missing required design/ui coverage tokens -> ${missingCoverageTokens.join(', ')}`,
+    `docs/guides/design-ui-systems.md: missing required canonical design/ui coverage tokens -> ${missingCoverageTokens.join(', ')}`,
+  );
+}
+
+const tsContractsContent = (guideContents.get('tsContracts') ?? '').toLowerCase();
+const missingTsCoverageTokens = tsContractsRequiredTokens
+  .filter((token) => !tsContractsContent.includes(token.toLowerCase()))
+  .map((token) => `"${token}"`);
+
+if (missingTsCoverageTokens.length > 0) {
+  failures.push(
+    `docs/guides/ts-contracts.md: missing required canonical TS coverage tokens -> ${missingTsCoverageTokens.join(', ')}`,
   );
 }
 

@@ -4,6 +4,8 @@
 
 This guide defines the cross-stack design and UI system model for Anarchitecture Bricks. It explains how to consume `@anarchitects/*` packages so design contracts, composition APIs, and runtime layouts stay consistent across domains and applications.
 
+Contract ownership for DTOs and domain models is defined in the canonical [TS Contracts Guide](/guides/ts-contracts.html).
+
 ## System Layers
 
 The UI system is layered and should be adopted in order:

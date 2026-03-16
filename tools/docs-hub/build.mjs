@@ -9,6 +9,7 @@ const angularGuidePath = join(workspaceRoot, 'docs/guides/angular.md');
 const nestGuidePath = join(workspaceRoot, 'docs/guides/nest.md');
 const aiAgentsGuidePath = join(workspaceRoot, 'docs/guides/ai-agents.md');
 const designUiSystemsGuidePath = join(workspaceRoot, 'docs/guides/design-ui-systems.md');
+const tsContractsGuidePath = join(workspaceRoot, 'docs/guides/ts-contracts.md');
 
 marked.setOptions({
   gfm: true,
@@ -38,6 +39,7 @@ function pageTemplate(title, activePath, content, generatedAt) {
     { href: '/packages/', label: 'Packages' },
     { href: '/guides/angular.html', label: 'Angular Guide' },
     { href: '/guides/nest.html', label: 'Nest Guide' },
+    { href: '/guides/ts-contracts.html', label: 'TS Contracts Guide' },
     { href: '/guides/design-ui-systems.html', label: 'Design/UI Systems Guide' },
     { href: '/guides/ai-agents.html', label: 'AI Agents Guide' },
     { href: '/release/', label: 'Release' },
@@ -186,6 +188,7 @@ const angularGuideMarkdown = readFileSync(angularGuidePath, 'utf8');
 const nestGuideMarkdown = readFileSync(nestGuidePath, 'utf8');
 const aiAgentsGuideMarkdown = readFileSync(aiAgentsGuidePath, 'utf8');
 const designUiSystemsGuideMarkdown = readFileSync(designUiSystemsGuidePath, 'utf8');
+const tsContractsGuideMarkdown = readFileSync(tsContractsGuidePath, 'utf8');
 
 rmSync(outputRoot, { recursive: true, force: true });
 ensureDir(join(outputRoot, 'assets'));
@@ -239,6 +242,7 @@ writeFile(
     <li><a href="/packages/">Publishable package catalog</a></li>
     <li><a href="/guides/angular.html">Angular application guide</a></li>
     <li><a href="/guides/nest.html">Nest application guide</a></li>
+    <li><a href="/guides/ts-contracts.html">TS contracts guide</a></li>
     <li><a href="/guides/design-ui-systems.html">Design/UI systems guide</a></li>
     <li><a href="/guides/ai-agents.html">AI coding agents templates</a></li>
     <li><a href="/release/">Release and versioning guidance</a></li>
@@ -300,6 +304,16 @@ writeFile(
 );
 
 writeFile(
+  'guides/ts-contracts.html',
+  renderMarkdownPage(
+    'TS Contracts Guide',
+    '/guides/ts-contracts.html',
+    tsContractsGuideMarkdown,
+    generatedAt,
+  ),
+);
+
+writeFile(
   'guides/ai-agents.html',
   renderMarkdownPage(
     'AI Agents Guide',
@@ -341,6 +355,7 @@ writeFile(
 writeFile('data/packages.catalog.json', `${JSON.stringify(catalog, null, 2)}\n`);
 writeFile('guides/angular.md', angularGuideMarkdown);
 writeFile('guides/nest.md', nestGuideMarkdown);
+writeFile('guides/ts-contracts.md', tsContractsGuideMarkdown);
 writeFile('guides/ai-agents.md', aiAgentsGuideMarkdown);
 writeFile('guides/design-ui-systems.md', designUiSystemsGuideMarkdown);
 
