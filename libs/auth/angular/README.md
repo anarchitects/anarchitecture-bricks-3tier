@@ -79,7 +79,7 @@ export const routes: Routes = [
 ];
 ```
 
-### Secondary entry points
+## Entry points
 
 | Import path                              | Description                             |
 | ---------------------------------------- | --------------------------------------- |

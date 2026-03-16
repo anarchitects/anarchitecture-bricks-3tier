@@ -4,6 +4,12 @@ NestJS bricks that expose the Forms platform implementation through layered modu
 application services, HTTP controllers, and infrastructure adapters so a NestJS host can fetch form
 definitions and accept submissions without re-implementing domain logic.
 
+## Features
+
+- Facade + layered module composition for deterministic host integration
+- Implementation-aligned controllers and services backed by shared DTO contracts
+- Pluggable infrastructure adapters for persistence and mail delivery
+
 ## Entry points
 
 | Entry point                                           | Responsibility                                                                                                       |
@@ -29,7 +35,9 @@ yarn add @anarchitects/forms-nest @anarchitects/forms-ts @anarchitects/common-ne
 `@anarchitects/forms-ts` provides the DTOs and models referenced by the Nest modules and should be
 installed alongside the bricks.
 
-## Quick start
+## Usage
+
+### Quick start
 
 ```typescript
 import { Module } from '@nestjs/common';
@@ -126,6 +134,12 @@ Use layered composition when you need to swap or selectively compose infrastruct
   adapter that implements `MailerPort` will work.
 - **Extend application services:** The exported `FormsService` and `SubmissionsService` can be
   injected elsewhere to compose additional workflows, while keeping API behavior consistent.
+
+## Development notes
+
+- Keep route schemas sourced from shared TS DTO libraries and avoid inline schema drift.
+- Configure shared infrastructure at app root; keep domain infrastructure modules adapter-thin.
+- Preserve layered boundaries (`presentation -> application <- infrastructure`) when extending modules.
 
 ## License
 

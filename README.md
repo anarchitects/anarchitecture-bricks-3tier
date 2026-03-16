@@ -114,6 +114,7 @@ nx run forms-angular-example:contract-test
 | `nx run api-specs:mock`                      | Run Prism mock server from generated OpenAPI          |
 | `nx run api-specs:verify`                    | Validate required endpoints + snapshot stability      |
 | `nx run angular-docs:generate`               | Generate and merge Compodoc docs                      |
+| `nx run docs-hub:validate-content`           | Enforce required docs sections for guides and READMEs |
 | `nx run storybook-angular:build-storybook`   | Build Storybook with technical docs metadata          |
 | `nx run docs-hub:build`                      | Build static docs hub pages                           |
 | `nx run docs-hub:verify`                     | Validate docs hub outputs and required links          |
@@ -159,6 +160,8 @@ If local dry-runs are needed, run `nx run release-tools:check-release-tag-ancest
 - Compodoc provides Angular technical API metadata and pages.
 - OpenAPI provides HTTP contract documentation derived from implementation.
 - Docs hub static site is generated via `nx run docs-hub:build` and published by `.github/workflows/docs-pages.yml`.
+- Markdown guide sources live in `docs/guides/angular.md` and `docs/guides/nest.md`; docs-hub renders them into HTML during build.
+- Publishable package `README.md` files are rendered as docs pages under `/packages/<package-slug>/` and linked alongside source README URLs.
 - Production docs URL: `https://bricks-3tier.anarchitects.dev` (Storybook under `/storybook`, OpenAPI under `/openapi`).
 
 ## Docs PR Commit Policy

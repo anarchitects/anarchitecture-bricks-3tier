@@ -81,12 +81,23 @@ function detectTech(relativePackagePath) {
   return 'other';
 }
 
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .replace(/^@/, '')
+    .replaceAll('/', '-')
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 const remoteResult = runGit(['remote', 'get-url', 'origin']);
 const repoWebUrl =
   remoteResult.status === 0 ? normalizeRepoWebUrl(remoteResult.stdout) : null;
 
 const packageFiles = walkFiles(libsRoot, 'package.json');
 const packages = [];
+const usedSlugs = new Set();
 
 for (const packageFile of packageFiles) {
   const packageDir = join(packageFile, '..');
@@ -94,29 +105,40 @@ for (const packageFile of packageFiles) {
   const relativePackagePath = relative(workspaceRoot, packageFile).replaceAll('\\', '/');
   const relativePackageDir = relative(workspaceRoot, packageDir).replaceAll('\\', '/');
   const relativeReadmePath = relative(workspaceRoot, readmePath).replaceAll('\\', '/');
-
   const packageJson = JSON.parse(readFileSync(packageFile, 'utf8'));
+
+  if (!packageJson.publishConfig) {
+    continue;
+  }
+
   const importPath =
     typeof packageJson.name === 'string' && packageJson.name.length > 0
       ? packageJson.name
       : relativePackageDir;
 
-  const catalogEntry = {
+  let slug = slugify(importPath);
+  let counter = 2;
+  while (usedSlugs.has(slug)) {
+    slug = `${slugify(importPath)}-${counter}`;
+    counter += 1;
+  }
+  usedSlugs.add(slug);
+
+  const hasReadme = existsSync(readmePath);
+
+  packages.push({
     importPath,
     version: typeof packageJson.version === 'string' ? packageJson.version : '0.0.0',
     packageJsonPath: relativePackagePath,
     packageDir: relativePackageDir,
-    readmePath: existsSync(readmePath) ? relativeReadmePath : null,
-    readmeUrl:
-      existsSync(readmePath) && repoWebUrl
-        ? `${repoWebUrl}/blob/main/${relativeReadmePath}`
-        : null,
     domain: detectDomain(relativePackagePath),
     tech: detectTech(relativePackagePath),
-    publishable: Boolean(packageJson.publishConfig),
-  };
-
-  packages.push(catalogEntry);
+    slug,
+    readmePath: hasReadme ? relativeReadmePath : null,
+    renderedReadmeUrl: hasReadme ? `/packages/${slug}/` : null,
+    sourceReadmeUrl:
+      hasReadme && repoWebUrl ? `${repoWebUrl}/blob/main/${relativeReadmePath}` : null,
+  });
 }
 
 packages.sort((left, right) => left.importPath.localeCompare(right.importPath));
@@ -137,5 +159,5 @@ writeFileSync(
 );
 
 console.log(
-  `Docs hub package catalog generated at ${outputFile} (${packages.length} package entries).`,
+  `Docs hub package catalog generated at ${outputFile} (${packages.length} publishable package entries).`,
 );

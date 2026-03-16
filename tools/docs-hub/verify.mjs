@@ -9,6 +9,8 @@ const requiredFiles = [
   'packages/index.html',
   'guides/angular.html',
   'guides/nest.html',
+  'guides/design-ui-systems.html',
+  'guides/ai-agents.html',
   'release/index.html',
   'assets/site.css',
   'data/packages.catalog.json',
@@ -33,12 +35,37 @@ if (!Array.isArray(catalog.packages) || catalog.packages.length === 0) {
   process.exit(1);
 }
 
+const missingPackagePages = [];
+for (const pkg of catalog.packages) {
+  if (!pkg.readmePath || !pkg.slug) {
+    continue;
+  }
+
+  const renderedPage = join(docsRoot, `packages/${pkg.slug}/index.html`);
+  if (!existsSync(renderedPage)) {
+    missingPackagePages.push(`- ${pkg.importPath} (${renderedPage})`);
+  }
+}
+
+if (missingPackagePages.length > 0) {
+  console.error('Missing rendered package README pages:');
+  for (const item of missingPackagePages) {
+    console.error(item);
+  }
+  process.exit(1);
+}
+
 const homePage = readFileSync(join(docsRoot, 'index.html'), 'utf8');
-if (!homePage.includes('/storybook/') || !homePage.includes('/openapi/openapi.yaml')) {
-  console.error('Home page does not include required Storybook/OpenAPI entry links.');
+if (
+  !homePage.includes('/storybook/') ||
+  !homePage.includes('/openapi/openapi.yaml') ||
+  !homePage.includes('/guides/design-ui-systems.html') ||
+  !homePage.includes('/guides/ai-agents.html')
+) {
+  console.error('Home page does not include required docs entry links.');
   process.exit(1);
 }
 
 console.log(
-  `Docs hub verification passed (${requiredFiles.length} files, ${catalog.packages.length} packages).`,
+  `Docs hub verification passed (${requiredFiles.length} core files, ${catalog.packages.length} package entries).`,
 );
