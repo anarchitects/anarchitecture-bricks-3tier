@@ -9,6 +9,7 @@ const requiredFiles = [
   'packages/index.html',
   'guides/angular.html',
   'guides/nest.html',
+  'guides/ts-contracts.html',
   'guides/design-ui-systems.html',
   'guides/ai-agents.html',
   'release/index.html',
@@ -59,6 +60,7 @@ const homePage = readFileSync(join(docsRoot, 'index.html'), 'utf8');
 if (
   !homePage.includes('/storybook/') ||
   !homePage.includes('/openapi/openapi.yaml') ||
+  !homePage.includes('/guides/ts-contracts.html') ||
   !homePage.includes('/guides/design-ui-systems.html') ||
   !homePage.includes('/guides/ai-agents.html')
 ) {

@@ -2,119 +2,95 @@
 
 ## Intent
 
-This guide describes how to compose NestJS applications from Anarchitecture Bricks while preserving strict backend layering and producing stable contracts for Angular design/UI consumers.
+This is the Nest implementation cookbook for Anarchitecture Bricks. It focuses on backend module composition and entry-point usage, while shared cross-stack contracts stay canonical in:
 
-For shared cross-stack design and UI contracts, also use the [Design/UI Systems Guide](/guides/design-ui-systems.html).
+- [TS Contracts Guide](/guides/ts-contracts.html)
+- [Design/UI Systems Guide](/guides/design-ui-systems.html)
 
 ## Architecture
 
 - Nest libraries follow: `presentation -> application <- infrastructure`.
-- Shared contracts (DTOs/models/schemas) come from `@anarchitects/*-ts`.
-- Domain modules expose both facade imports and secondary entry points.
-- Controllers must keep `@RouteSchema` fields pure and imported from shared DTO/schema packages.
-- OpenAPI metadata remains centralized in specs tooling, not inside controllers.
+- Shared contracts (DTOs/models/schemas) are consumed from TS packages (`@anarchitects/forms-ts`, `@anarchitects/auth-ts`).
+- Domain libraries expose both facade composition modules and layer-specific secondary entry points.
+- Controllers keep `@RouteSchema` pure and imported from TS contract libraries.
+- OpenAPI metadata is assigned centrally in specs tooling.
 
-## Module Composition
+## Easy Mode with Composition Modules
 
-Use one of two integration styles:
+Use facade composition modules for the default host-app path:
 
-1. **Facade mode**: import root module and call `forRoot(...)` for fast setup.
-2. **Advanced mode**: compose `application`, `presentation`, and infrastructure modules individually for targeted overrides.
+```ts
+import { Module } from '@nestjs/common';
+import { FormsModule } from '@anarchitects/forms-nest';
+import { AuthModule } from '@anarchitects/auth-nest';
 
-Prefer facade mode for host applications by default. Use advanced composition only when replacing persistence/mailer adapters, layering custom modules, or integrating alternative infrastructure.
+@Module({
+  imports: [
+    FormsModule.forRoot({}),
+    FormsModule.forRootFromConfig(),
+    AuthModule.forRoot({}),
+    AuthModule.forRootFromConfig(),
+  ],
+})
+export class AppModule {}
+```
 
-## Configuration
+Easy mode is preferred when teams want predictable integration and minimal Nest wiring.
 
-- Use typed `registerAs(...)` config exports from each domain/config entry point.
-- Prefer `forRootFromConfig(...)` when runtime behavior is environment-driven.
-- Maintain consistent precedence: explicit overrides > config values > defaults.
-- Keep secrets and runtime values in host app config, not in domain logic.
-- Configure shared transports once at app root (mailer, etc.), then keep domain modules adapter-thin.
+## Advanced Mode with Layer Entry Points
 
-## UI Contract Support
+Use layered entry points when you need explicit control over domain composition:
 
-Nest modules should explicitly support frontend design/UI systems by returning stable, implementation-aligned contracts:
+- `@anarchitects/forms-nest/application`
+- `@anarchitects/forms-nest/presentation`
+- `@anarchitects/forms-nest/infrastructure-*`
+- `@anarchitects/forms-nest/config`
+- `@anarchitects/auth-nest/application`
+- `@anarchitects/auth-nest/presentation`
+- `@anarchitects/auth-nest/infrastructure-*`
+- `@anarchitects/auth-nest/config`
 
-- Preserve schema compatibility for frontend rendering surfaces (forms, auth flows, validation payloads).
-- Keep DTO/schema evolution additive when possible to avoid breaking Angular UI composition/layout expectations.
-- Keep endpoint semantics deterministic so state and layout selection logic can stay in frontend layers.
-- Avoid leaking backend persistence details into API contracts consumed by `@anarchitects/*-angular`.
+Advanced mode is for replacing adapters, customizing policy wiring, or composing only selected layers while preserving facade compatibility.
 
-Practical cross-stack guidance:
+## TS Contract Integration
 
-- `@anarchitects/forms-nest` should continue exposing predictable form definition/submission contracts that Angular feature/UI layers can render dynamically.
-- `@anarchitects/auth-nest` should keep auth lifecycle contracts stable so Angular state/feature layers can orchestrate policies and session flows consistently.
-- Treat OpenAPI output as the source for client sync; frontend layers depend on it for contract-safe rendering.
+Contract ownership is TS-first:
 
-## Contract Design for UI Consumers
+- Forms contracts in `@anarchitects/forms-ts`
+- Auth contracts in `@anarchitects/auth-ts`
 
-Design backend contracts as UI-facing building blocks:
+Nest libraries (`@anarchitects/forms-nest`, `@anarchitects/auth-nest`) map these contracts in presentation/application layers and keep schemas synchronized for OpenAPI generation. Ownership and compatibility policy are defined in [TS Contracts Guide](/guides/ts-contracts.html).
 
-- Keep field names and structures stable across versions when consumed by `@anarchitects/forms-angular` and `@anarchitects/auth-angular`.
-- Return explicit enums/flags that allow frontend layout or state decisions without brittle string parsing.
-- Keep validation and error payload shapes predictable so UI primitives can render consistent feedback.
-- Avoid backend-specific persistence implementation details in response DTOs.
+## Library Entry Point Cookbook
+
+- Fast start:
+  use root module imports (`@anarchitects/forms-nest`, `@anarchitects/auth-nest`) with `forRoot` or `forRootFromConfig`.
+- Config-driven environments:
+  prefer `forRootFromConfig` with typed `registerAs` config.
+- Adapter override:
+  keep facade contract stable, then replace only targeted `infrastructure-*` pieces through secondary entry points.
+- Partial composition:
+  combine `application` and selected `presentation`/`infrastructure-*` modules when host apps need strict control.
 
 ## Schema Evolution and Compatibility
 
-Follow a compatibility-first change strategy:
-
-- Add new optional fields before introducing required replacements.
-- Deprecate fields in docs first, then remove only after consumer migration windows.
-- Keep existing endpoints behaviorally stable while introducing new capabilities.
-- Coordinate contract updates through shared TS DTO packages and OpenAPI regeneration in one change-set.
-
-## Forms and Auth Contract Mapping
-
-Cross-stack mapping guidance:
-
-- Forms domain:
-  keep form definition and submission contracts stable so Angular runtime layouts (`form:*`, `list:*`, `detail:*`) keep rendering without custom edge logic.
-- Auth domain:
-  keep lifecycle routes (register/login/logout/refresh/activate/reset) consistent so Angular state and policy guards remain deterministic.
-- Both domains:
-  keep contract changes synchronized with `@anarchitects/*-ts` and frontend client updates.
-
-## Infrastructure Boundaries
-
-- Keep infrastructure modules adapter-focused and thin.
-- Avoid cross-domain TypeORM relations in entities; use scalar foreign keys and integration schemas for cross-domain FK constraints.
-- Keep domain internals isolated behind exported tokens/contracts.
-- When cross-domain reads are needed, use application composition or dedicated query integrations, not cross-domain entity relations.
-
-## Design/UI-System Aware API Evolution
-
-When changing backend behavior that influences UI composition:
-
-- Update shared TS contracts first (`@anarchitects/*-ts`), then implementation.
-- Regenerate OpenAPI and validate downstream client/generator outputs.
-- Ensure route schema changes preserve clear migration paths for Angular feature/UI consumers.
-- Keep response payloads explicit enough for frontend layout/composition decisions, but free of presentation styling concerns.
-
-## Cookbook for UI-Impacting Backend Changes
-
-- Change: add UI-facing field to existing response
-  Update shared DTO, update controller schema import, regenerate OpenAPI, update frontend adapter/state mapping, run contract tests.
-- Change: new flow endpoint (for example auth recovery extension)
-  Add route schema in TS contracts first, implement controller/service, map OpenAPI metadata centrally, then integrate frontend feature/state.
-- Change: forms payload evolution
-  Introduce additive fields and keep existing schema keys valid until frontend migration is complete.
-- Change: mailer or persistence adapter swap
-  Keep facade contracts unchanged; limit changes to infrastructure wiring.
+- Introduce additive fields before removals.
+- Keep backward-compatible schema keys during migration windows.
+- Coordinate TS + Nest + Angular updates in one change when compatibility risk exists.
+- Preserve stable contracts required by frontend composition and runtime layout behavior.
 
 ## Contract Verification Workflow
 
-- Validate route schemas remain imported from shared TS DTO libraries (no inline drift).
-- Run OpenAPI generation and inspect diff for breaking changes.
-- Run frontend contract consumers against updated clients for forms/auth critical paths.
-- Run docs checks to keep guidance aligned:
+- Validate that controller schemas import TS contracts (no inline drift).
+- Run OpenAPI generation and inspect diffs for compatibility impact.
+- Verify Angular consumers (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`) against updated contracts.
+- Run docs quality checks:
   `yarn nx run docs-hub:validate-content`, `yarn nx run docs-hub:build`, `yarn nx run docs-hub:verify`.
 
 ## Common Pitfalls
 
-- Defining OpenAPI metadata directly in controllers instead of centralized metadata mapping.
-- Bypassing shared DTO schemas with inline route schema definitions.
-- Coupling domain modules to environment access directly.
-- Mixing cross-domain persistence relations into runtime entity models.
-- Re-implementing transport/provider wiring per domain instead of reusing shared infrastructure bricks.
-- Introducing backend contract changes without verifying impact on Angular design/UI rendering flows.
+- Treating Nest libraries as contract owners instead of TS consumers.
+- Skipping facade modules and jumping to layer entry points for simple use cases.
+- Defining inline route schemas instead of importing TS DTO schemas.
+- Mixing persistence internals across domain boundaries.
+- Introducing schema changes without verifying cross-stack consumer impact.
