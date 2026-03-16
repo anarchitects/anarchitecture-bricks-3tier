@@ -56,11 +56,16 @@ nx affected -t lint test build
 
 # Docs and showcases
 nx run angular-docs:generate
+nx run docs-hub:build
+nx run docs-hub:verify
 nx run storybook-angular:storybook
 nx run auth-nest-example:contract-test
 nx run auth-angular-example:contract-test
 nx run forms-nest-example:contract-test
 nx run forms-angular-example:contract-test
+
+# Docs-surface commit policy check
+nx run release-tools:validate-non-bumping-commits
 ```
 
 ## Pull Requests
@@ -68,6 +73,10 @@ nx run forms-angular-example:contract-test
 - Use Conventional Commits (`feat`, `fix`, `refactor`, `chore`, `docs`, etc.).
 - Document API-impacting changes with generated OpenAPI diff output.
 - Include contract-test updates when endpoints or response schemas change.
+- For docs-surface PRs (`docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root docs files, docs workflows), use non-bumping commit types only: `docs`, `chore`, `ci`, `style`.
+- Docs-surface PR commits must not contain `!` or `BREAKING CHANGE`.
+- CI enforces docs commit policy via `nx run release-tools:validate-non-bumping-commits`.
+- Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, or `style:`.
 
 ## Release Workflow (Domain Groups)
 

@@ -37,6 +37,9 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
 
       - run: yarn install --immutable
+      - run: yarn nx run release-tools:validate-non-bumping-commits
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       - run: yarn nx-cloud record -- yarn nx run api-specs:lint
       - run: yarn nx-cloud record -- yarn nx run angular-docs:generate
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
