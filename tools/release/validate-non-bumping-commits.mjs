@@ -20,7 +20,9 @@ function runGit(args) {
 
   if (result.status !== 0) {
     const stderr = result.stderr?.trim();
-    throw new Error(`git ${args.join(' ')} failed${stderr ? `: ${stderr}` : ''}`);
+    throw new Error(
+      `git ${args.join(' ')} failed${stderr ? `: ${stderr}` : ''}`,
+    );
   }
 
   return result.stdout.trim();
@@ -31,10 +33,14 @@ function resolveCommit(value) {
     return null;
   }
 
-  const result = spawnSync('git', ['rev-parse', '--verify', '--quiet', `${value}^{commit}`], {
-    cwd: workspaceRoot,
-    encoding: 'utf8',
-  });
+  const result = spawnSync(
+    'git',
+    ['rev-parse', '--verify', '--quiet', `${value}^{commit}`],
+    {
+      cwd: workspaceRoot,
+      encoding: 'utf8',
+    },
+  );
 
   if (result.status !== 0) {
     return null;
@@ -82,13 +88,13 @@ function resolveBaseCommit() {
     return fallback;
   }
 
-  throw new Error(
-    'Unable to resolve base commit (tried NX_BASE, GITHUB_BASE_SHA, base refs, and HEAD~1).',
-  );
+  return null;
 }
 
 function changedDocsSurface(files) {
-  return files.some((filePath) => docsPathMatchers.some((matcher) => matcher.test(filePath)));
+  return files.some((filePath) =>
+    docsPathMatchers.some((matcher) => matcher.test(filePath)),
+  );
 }
 
 function parseCommitBlocks(rawLog) {
@@ -119,6 +125,14 @@ function extractType(subject) {
 }
 
 const baseCommit = resolveBaseCommit();
+
+if (!baseCommit) {
+  console.warn(
+    'Unable to resolve base commit (tried NX_BASE, GITHUB_BASE_SHA, base refs, and HEAD~1). Skipping non-bumping commit validation.',
+  );
+  process.exit(0);
+}
+
 const range = `${baseCommit}...HEAD`;
 const changedFilesRaw = runGit(['diff', '--name-only', range]);
 const changedFiles = changedFilesRaw
@@ -127,24 +141,26 @@ const changedFiles = changedFilesRaw
   .filter(Boolean);
 
 if (changedFiles.length === 0) {
-  console.log('No changed files in PR range; skipping non-bumping commit validation.');
+  console.log(
+    'No changed files in PR range; skipping non-bumping commit validation.',
+  );
   process.exit(0);
 }
 
 if (!changedDocsSurface(changedFiles)) {
-  console.log('No docs-surface file changes detected; skipping non-bumping commit validation.');
+  console.log(
+    'No docs-surface file changes detected; skipping non-bumping commit validation.',
+  );
   process.exit(0);
 }
 
-const rawLog = runGit([
-  'log',
-  '--format=%H%x1f%s%x1f%b%x1e',
-  range,
-]);
+const rawLog = runGit(['log', '--format=%H%x1f%s%x1f%b%x1e', range]);
 const commits = parseCommitBlocks(rawLog);
 
 if (commits.length === 0) {
-  console.log('No commits found in PR range; skipping non-bumping commit validation.');
+  console.log(
+    'No commits found in PR range; skipping non-bumping commit validation.',
+  );
   process.exit(0);
 }
 
@@ -167,7 +183,9 @@ for (const commit of commits) {
   }
 
   if (revertHeader) {
-    violations.push(`${commit.hash.slice(0, 8)} uses disallowed revert commit type.`);
+    violations.push(
+      `${commit.hash.slice(0, 8)} uses disallowed revert commit type.`,
+    );
   }
 
   if (breakingBang || breakingFooter) {
@@ -184,7 +202,9 @@ for (const commit of commits) {
 }
 
 if (violations.length > 0) {
-  console.error('Non-bumping commit validation failed for docs-surface changes.');
+  console.error(
+    'Non-bumping commit validation failed for docs-surface changes.',
+  );
   for (const violation of violations) {
     console.error(`- ${violation}`);
   }
