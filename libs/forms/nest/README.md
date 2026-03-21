@@ -4,6 +4,13 @@ NestJS bricks that expose the Forms platform implementation through layered modu
 application services, HTTP controllers, and infrastructure adapters so a NestJS host can fetch form
 definitions and accept submissions without re-implementing domain logic.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating integration code for `@anarchitects/forms-nest`.
+- Start with `@anarchitects/forms-nest` root facade (`FormsModule.forRoot(...)` or `FormsModule.forRootFromConfig(...)`) unless you explicitly need layered overrides.
+- Keep shared mail transport setup at app root via `@anarchitects/common-nest-mailer`; keep forms infrastructure modules adapter-focused.
+- Use DTO contracts from `@anarchitects/forms-ts` and keep route/schema behavior aligned with this package guidance.
+
 ## Features
 
 - Facade + layered module composition for deterministic host integration

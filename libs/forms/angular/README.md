@@ -4,6 +4,14 @@ Angular domain UI components for consuming the Anarchitecture Forms platform. Th
 configuration, data-access, state, feature, and UI layers so Angular applications can request
 contract-driven form definitions, render them dynamically, and submit responses.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating integration code for `@anarchitects/forms-angular`.
+- Compose using public entry points only (`config`, `data-access`, `state`, `feature`, `ui`); do not import internal files.
+- Respect Angular layering: `ui <- feature -> state -> data-access` with `config`/`util` shared.
+- Register state and providers explicitly via helper functions in app/route providers.
+- Keep contracts aligned with `@anarchitects/forms-ts`.
+
 ## Features
 
 - Layered Angular integration for dynamic form retrieval, rendering, and submission

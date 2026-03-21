@@ -3,6 +3,13 @@
 Schema-first form configuration and validation library built with TypeBox. Define forms declaratively
 and generate runtime validation schemas automatically.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating DTO/model code that depends on `@anarchitects/forms-ts`.
+- Treat this package as the contract source of truth for forms models/DTOs used by Angular and Nest packages.
+- Prefer public exports (`@anarchitects/forms-ts`, `/builders`, `/dtos`, `/models`) and avoid internal path imports.
+- Keep framework-specific behavior outside this package.
+
 ## Features
 
 - 🏗️ **Declarative Form Configuration** - Define forms with field types, validation rules, and UI metadata

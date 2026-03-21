@@ -8,6 +8,13 @@ TypeScript DTOs and domain models for the Anarchitecture authentication stack. T
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating DTO/model code that depends on `@anarchitects/auth-ts`.
+- Treat this package as the source of truth for auth DTO and model contracts.
+- Prefer public exports (`@anarchitects/auth-ts`, `/dtos`, `/models`) and avoid internal path imports.
+- Keep framework-specific behavior in Angular/Nest packages, not in this TS contract package.
+
 ## Features
 
 - Centralized TypeBox DTO schemas shared by Angular and Nest stacks

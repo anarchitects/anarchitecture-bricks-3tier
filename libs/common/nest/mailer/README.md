@@ -2,6 +2,13 @@
 
 Shared typed mailer configuration, transport setup, and provider wiring for NestJS apps.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating mailer integration code with `@anarchitects/common-nest-mailer`.
+- Configure transport once at app root (`CommonMailerModule.forRootFromConfig()`), then use provider wiring for domain adapters.
+- Treat `MailerPort` as the cross-domain contract; keep domain modules decoupled from concrete mailer implementations.
+- Use only public exports from this package and keep provider selection explicit (`node` or `noop`).
+
 ## Features
 
 - Shared mailer config namespace + typed injection helpers

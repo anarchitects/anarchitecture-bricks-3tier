@@ -2,6 +2,13 @@
 
 NestJS services, controllers, and infrastructure for the Anarchitecture authentication domain. This package wires contract-driven DTOs from `@anarchitects/auth-ts`, orchestrates user lifecycle flows (registration, activation, login/logout, password management, email verification), and persists auth state through pluggable repositories.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating integration code for `@anarchitects/auth-nest`.
+- Start with `AuthModule.forRoot(...)` or `AuthModule.forRootFromConfig(...)` from the root entry point unless you need explicit layered composition.
+- Keep shared mail transport setup at app root via `@anarchitects/common-nest-mailer`; keep auth mailer infrastructure adapter-only.
+- Use DTO contracts from `@anarchitects/auth-ts` and preserve `presentation -> application <- infrastructure` boundaries.
+
 ## Features
 
 - **Application layer** – `JwtAuthService`, `BcryptHashService`, JWT Passport strategy, CASL-based `PoliciesService` and `AbilityFactory` encapsulating business rules for tokens, passwords, and fine-grained access control.
