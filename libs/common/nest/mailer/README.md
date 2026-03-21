@@ -66,7 +66,10 @@ Configure mail transport once at app root, then let domain mailer modules consum
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 
 @Module({
   imports: [
@@ -117,7 +120,10 @@ export class AppModule {}
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { InjectMailerConfig, MailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  InjectMailerConfig,
+  MailerConfig,
+} from '@anarchitects/common-nest-mailer';
 
 @Injectable()
 export class MailerSetupService {

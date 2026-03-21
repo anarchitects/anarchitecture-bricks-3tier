@@ -146,7 +146,10 @@ console.log(errors); // []
 ### Using DTOs for API Integration
 
 ```typescript
-import { FormDefinitionRequestDTO, SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import {
+  FormDefinitionRequestDTO,
+  SubmissionRequestDTO,
+} from '@anarchitects/forms-ts/dtos';
 
 // Request a form definition
 const formRequest: FormDefinitionRequestDTO = {
@@ -232,10 +235,19 @@ The library provides subpath exports for better tree-shaking:
 import { FormConfig, FormField, contactForm } from '@anarchitects/forms-ts';
 
 // Models only
-import { FormField, FieldKind, FormConfig } from '@anarchitects/forms-ts/models';
+import {
+  FormField,
+  FieldKind,
+  FormConfig,
+} from '@anarchitects/forms-ts/models';
 
 // DTOs only
-import { FormDefinitionRequestDTO, FormDefinitionResponseDTO, SubmissionRequestDTO, SubmissionResponseDTO } from '@anarchitects/forms-ts/dtos';
+import {
+  FormDefinitionRequestDTO,
+  FormDefinitionResponseDTO,
+  SubmissionRequestDTO,
+  SubmissionResponseDTO,
+} from '@anarchitects/forms-ts/dtos';
 
 // Builders only
 import { schemaFromConfig } from '@anarchitects/forms-ts/builders';

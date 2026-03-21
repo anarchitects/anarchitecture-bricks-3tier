@@ -95,7 +95,10 @@ export class AppModule {}
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { AuthModule } from '@anarchitects/auth-nest';
 import { authConfig } from '@anarchitects/auth-nest/config';
 
@@ -147,7 +150,10 @@ AuthModule.forRoot({
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
 import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
@@ -221,7 +227,10 @@ export class AuthController {
 ```ts
 import { TypeormAuthUserRepository } from '@anarchitects/auth-nest/infrastructure-persistence';
 
-await authUserRepository.invalidateTokens([hashedAccessToken, hashedRefreshToken], userId);
+await authUserRepository.invalidateTokens(
+  [hashedAccessToken, hashedRefreshToken],
+  userId,
+);
 ```
 
 ### Route-level authorization with policies

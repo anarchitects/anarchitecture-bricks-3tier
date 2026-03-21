@@ -49,7 +49,10 @@ installed alongside the bricks.
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { FormsModule } from '@anarchitects/forms-nest';
 import { formsConfig } from '@anarchitects/forms-nest/config';
 
@@ -93,7 +96,10 @@ and root mailer setup when the mailer feature is enabled). The presentation cont
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { FormsApplicationModule } from '@anarchitects/forms-nest/application';
 import { FormsPresentationModule } from '@anarchitects/forms-nest/presentation';
 import { FormsInfrastructurePersistenceModule } from '@anarchitects/forms-nest/infrastructure-persistence';

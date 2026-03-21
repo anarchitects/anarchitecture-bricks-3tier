@@ -67,7 +67,13 @@ import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
 @Component({
   selector: 'app-contact-form',
   imports: [AnarchitectsFeatureForm],
-  template: ` <anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" (submitted)="onSubmitted()" /> `,
+  template: `
+    <anarchitects-forms-feature-form
+      [formId]="'contact_default'"
+      [formVersion]="1"
+      (submitted)="onSubmitted()"
+    />
+  `,
 })
 export class ContactFormRoute {
   onSubmitted(): void {

@@ -45,7 +45,10 @@ pnpm add @anarchitects/auth-ts
 
 ```ts
 import { Value } from '@sinclair/typebox/value';
-import { LoginRequestSchema, LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
+import {
+  LoginRequestSchema,
+  LoginRequestDTO,
+} from '@anarchitects/auth-ts/dtos';
 
 const payload: LoginRequestDTO = {
   credential: 'user@example.com',
@@ -64,7 +67,9 @@ if (errors.length > 0) {
 > import { FormatRegistry } from '@sinclair/typebox';
 >
 > FormatRegistry.Set('email', (value: unknown): value is string => {
->   return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+>   return (
+>     typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+>   );
 > });
 > ```
 
@@ -75,7 +80,12 @@ import { User, Role, Permission } from '@anarchitects/auth-ts/models';
 
 function can(user: User, action: string, subject: string): boolean {
   const roles: Role[] = user.roles ?? [];
-  return roles.some((role) => (role.permissions ?? []).some((permission: Permission) => permission.action === action && permission.subject === subject));
+  return roles.some((role) =>
+    (role.permissions ?? []).some(
+      (permission: Permission) =>
+        permission.action === action && permission.subject === subject,
+    ),
+  );
 }
 ```
 
