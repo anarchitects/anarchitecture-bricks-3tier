@@ -55,3 +55,7 @@ vitest.config.*.timestamp*
 
 storybook-static
 __screenshots__/
+
+.nx/polygraph
+.claude/worktrees
+.claude/settings.local.json

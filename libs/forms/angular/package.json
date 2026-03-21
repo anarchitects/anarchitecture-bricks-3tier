@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/forms-angular",
-  "version": "2.2.0",
+  "version": "0.1.0",
   "peerDependencies": {
     "@anarchitects/common-angular-ui-composition": "^0.0.1",
     "@anarchitects/common-angular-ui-layouts": "^0.0.1",
@@ -13,7 +13,7 @@
     "@angular/forms": "^21.0.0"
   },
   "dependencies": {
-    "@anarchitects/forms-ts": "^2.0.1"
+    "@anarchitects/forms-ts": "^0.1.0"
   },
   "publishConfig": {
     "access": "public"

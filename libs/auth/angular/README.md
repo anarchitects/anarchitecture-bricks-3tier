@@ -2,6 +2,14 @@
 
 Angular domain libraries for the Anarchitecture auth domain. The package is organized into standalone slices (config, data-access, feature, state, util, ui) that compose implementation-aligned authentication flows for Angular applications.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating integration code for `@anarchitects/auth-angular`.
+- Use public entry points only (`config`, `data-access`, `feature`, `state`, `util`, `ui`); do not import internal files.
+- Register providers and state explicitly via `provideAuthConfig`, `provideAuthDataAccess`, and `provideAuthState`.
+- Keep policy and ability behavior aligned with contracts from `@anarchitects/auth-ts`.
+- Preserve Angular layering and keep orchestration out of UI components.
+
 ## Features
 
 - `config`: DI tokens and provider helpers (API base URL, defaults)
@@ -74,7 +82,8 @@ export const routes: Routes = [
     path: 'admin',
     canMatch: [policyGuard],
     data: { action: 'manage', subject: 'admin-section' },
-    loadComponent: () => import('./admin.component').then((m) => m.AdminComponent),
+    loadComponent: () =>
+      import('./admin.component').then((m) => m.AdminComponent),
   },
 ];
 ```

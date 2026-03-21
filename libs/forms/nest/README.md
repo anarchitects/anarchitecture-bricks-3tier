@@ -4,6 +4,13 @@ NestJS bricks that expose the Forms platform implementation through layered modu
 application services, HTTP controllers, and infrastructure adapters so a NestJS host can fetch form
 definitions and accept submissions without re-implementing domain logic.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating integration code for `@anarchitects/forms-nest`.
+- Start with `@anarchitects/forms-nest` root facade (`FormsModule.forRoot(...)` or `FormsModule.forRootFromConfig(...)`) unless you explicitly need layered overrides.
+- Keep shared mail transport setup at app root via `@anarchitects/common-nest-mailer`; keep forms infrastructure modules adapter-focused.
+- Use DTO contracts from `@anarchitects/forms-ts` and keep route/schema behavior aligned with this package guidance.
+
 ## Features
 
 - Facade + layered module composition for deterministic host integration
@@ -42,7 +49,10 @@ installed alongside the bricks.
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { FormsModule } from '@anarchitects/forms-nest';
 import { formsConfig } from '@anarchitects/forms-nest/config';
 
@@ -86,7 +96,10 @@ and root mailer setup when the mailer feature is enabled). The presentation cont
 ```typescript
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { FormsApplicationModule } from '@anarchitects/forms-nest/application';
 import { FormsPresentationModule } from '@anarchitects/forms-nest/presentation';
 import { FormsInfrastructurePersistenceModule } from '@anarchitects/forms-nest/infrastructure-persistence';

@@ -13,6 +13,20 @@ These overlays are valid in:
 
 The guidance is package-focused and applies whenever libraries from `@anarchitects/*` are used.
 
+## README-First Enforcement Overlay
+
+Use this overlay in every agent instruction file that consumes Bricks packages:
+
+```md
+## Bricks README-First Overlay (Required)
+
+- Before generating code, identify every `@anarchitects/*` package involved and read each package README end-to-end.
+- Treat package READMEs as the primary source of integration truth (entry points, provider setup, expected composition, and constraints).
+- Do not guess imports, module wiring, or runtime behavior when README guidance exists.
+- If README guidance and local app code differ, align with README contracts unless a host override is explicitly documented.
+- In generated code comments/PR notes, cite which package README sections drove decisions.
+```
+
 ## Bricks Core Overlay
 
 Use this overlay for general package usage and architecture boundaries:
@@ -22,6 +36,7 @@ Use this overlay for general package usage and architecture boundaries:
 ```md
 ## Anarchitecture Bricks Overlay
 
+- Apply the Bricks README-First Overlay first.
 - Prioritize public package contracts from `@anarchitects/*` and avoid internal path imports.
 - Keep Angular layering strict: `ui <- feature -> state -> data-access` with `config` and `util` shared.
 - Keep Nest layering strict: `presentation -> application <- infrastructure` with `config` and `util` shared.
@@ -36,6 +51,7 @@ Use this overlay when working with Angular package consumption (`@anarchitects/*
 ```md
 ## Angular Packages Overlay
 
+- Apply the Bricks README-First Overlay first for every `@anarchitects/*-angular` package you import.
 - Compose features using published Angular packages such as `@anarchitects/forms-angular` and `@anarchitects/auth-angular`.
 - Keep state explicit via provider helpers; avoid implicit global singletons for domain stores.
 - Use generated or typed domain contracts from `@anarchitects/*` TS libraries for request/response boundaries.
@@ -49,6 +65,7 @@ Use this overlay when working with Nest package consumption (`@anarchitects/*-ne
 ```md
 ## Nest Packages Overlay
 
+- Apply the Bricks README-First Overlay first for every `@anarchitects/*-nest` package you import.
 - Start with facade modules from packages such as `@anarchitects/forms-nest` or `@anarchitects/auth-nest`.
 - Use secondary entry points only when explicit overrides are needed.
 - Keep route schemas sourced from shared DTO packages and avoid inline schema drift.
@@ -76,6 +93,7 @@ Use these copy/paste patterns for each target agent file.
 ```md
 ## Anarchitecture Bricks Overlay
 
+- Paste Bricks README-First Overlay at the top (required).
 - Paste the Bricks Core Overlay.
 - Paste Angular Packages Overlay and/or Nest Packages Overlay depending on the host app stack.
 - Paste Release Safety Overlay.
@@ -86,6 +104,7 @@ Use these copy/paste patterns for each target agent file.
 ```md
 ## Claude Bricks Overlay
 
+- Apply Bricks README-First Overlay before any code generation.
 - Follow the same Bricks Core, Angular/Nest, and Release Safety overlays used in `AGENTS.md`.
 - Keep responses aligned with published contracts from `@anarchitects/*`.
 ```
@@ -95,6 +114,7 @@ Use these copy/paste patterns for each target agent file.
 ```md
 ## Gemini Bricks Overlay
 
+- Apply Bricks README-First Overlay before any code generation.
 - Follow the same Bricks Core, Angular/Nest, and Release Safety overlays used in `AGENTS.md`.
 - Favor package-level composition guidance over repository-internal assumptions.
 ```
@@ -104,6 +124,7 @@ Use these copy/paste patterns for each target agent file.
 ```md
 ## Copilot Bricks Overlay
 
+- Apply Bricks README-First Overlay before any code generation.
 - Apply Bricks overlays from `AGENTS.md` for package usage decisions.
 - Keep guidance scoped to published packages and architecture boundaries in `@anarchitects/*`.
 ```

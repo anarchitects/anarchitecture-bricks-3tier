@@ -3,6 +3,13 @@
 Schema-first form configuration and validation library built with TypeBox. Define forms declaratively
 and generate runtime validation schemas automatically.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating DTO/model code that depends on `@anarchitects/forms-ts`.
+- Treat this package as the contract source of truth for forms models/DTOs used by Angular and Nest packages.
+- Prefer public exports (`@anarchitects/forms-ts`, `/builders`, `/dtos`, `/models`) and avoid internal path imports.
+- Keep framework-specific behavior outside this package.
+
 ## Features
 
 - 🏗️ **Declarative Form Configuration** - Define forms with field types, validation rules, and UI metadata
@@ -139,7 +146,10 @@ console.log(errors); // []
 ### Using DTOs for API Integration
 
 ```typescript
-import { FormDefinitionRequestDTO, SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import {
+  FormDefinitionRequestDTO,
+  SubmissionRequestDTO,
+} from '@anarchitects/forms-ts/dtos';
 
 // Request a form definition
 const formRequest: FormDefinitionRequestDTO = {
@@ -225,10 +235,19 @@ The library provides subpath exports for better tree-shaking:
 import { FormConfig, FormField, contactForm } from '@anarchitects/forms-ts';
 
 // Models only
-import { FormField, FieldKind, FormConfig } from '@anarchitects/forms-ts/models';
+import {
+  FormField,
+  FieldKind,
+  FormConfig,
+} from '@anarchitects/forms-ts/models';
 
 // DTOs only
-import { FormDefinitionRequestDTO, FormDefinitionResponseDTO, SubmissionRequestDTO, SubmissionResponseDTO } from '@anarchitects/forms-ts/dtos';
+import {
+  FormDefinitionRequestDTO,
+  FormDefinitionResponseDTO,
+  SubmissionRequestDTO,
+  SubmissionResponseDTO,
+} from '@anarchitects/forms-ts/dtos';
 
 // Builders only
 import { schemaFromConfig } from '@anarchitects/forms-ts/builders';

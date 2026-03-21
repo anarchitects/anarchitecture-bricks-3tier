@@ -2,6 +2,13 @@
 
 NestJS services, controllers, and infrastructure for the Anarchitecture authentication domain. This package wires contract-driven DTOs from `@anarchitects/auth-ts`, orchestrates user lifecycle flows (registration, activation, login/logout, password management, email verification), and persists auth state through pluggable repositories.
 
+## Developer + AI Agent Start Here
+
+- Read this README before generating integration code for `@anarchitects/auth-nest`.
+- Start with `AuthModule.forRoot(...)` or `AuthModule.forRootFromConfig(...)` from the root entry point unless you need explicit layered composition.
+- Keep shared mail transport setup at app root via `@anarchitects/common-nest-mailer`; keep auth mailer infrastructure adapter-only.
+- Use DTO contracts from `@anarchitects/auth-ts` and preserve `presentation -> application <- infrastructure` boundaries.
+
 ## Features
 
 - **Application layer** – `JwtAuthService`, `BcryptHashService`, JWT Passport strategy, CASL-based `PoliciesService` and `AbilityFactory` encapsulating business rules for tokens, passwords, and fine-grained access control.
@@ -88,7 +95,10 @@ export class AppModule {}
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { AuthModule } from '@anarchitects/auth-nest';
 import { authConfig } from '@anarchitects/auth-nest/config';
 
@@ -140,7 +150,10 @@ AuthModule.forRoot({
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
 import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
@@ -214,7 +227,10 @@ export class AuthController {
 ```ts
 import { TypeormAuthUserRepository } from '@anarchitects/auth-nest/infrastructure-persistence';
 
-await authUserRepository.invalidateTokens([hashedAccessToken, hashedRefreshToken], userId);
+await authUserRepository.invalidateTokens(
+  [hashedAccessToken, hashedRefreshToken],
+  userId,
+);
 ```
 
 ### Route-level authorization with policies

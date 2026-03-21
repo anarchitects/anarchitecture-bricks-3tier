@@ -209,6 +209,12 @@
     "conventionalCommits": {
       "useCommitScope": false,
       "types": {
+        "feat": {
+          "semverBump": "minor"
+        },
+        "fix": {
+          "semverBump": "patch"
+        },
         "init": {
           "semverBump": "none",
           "message": "init: initial commit"
@@ -227,9 +233,14 @@
         },
         "ci": {
           "semverBump": "none"
+        },
+        "test": {
+          "semverBump": "none"
+        },
+        "e2e": {
+          "semverBump": "none"
         }
       }
     }
-  },
-  "bust": 1
+  }
 }
