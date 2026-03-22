@@ -1,5 +1,6 @@
 import { FormConfig } from '@anarchitects/forms-ts';
 import type { Meta, StoryObj } from '@storybook/angular';
+import { HttpResponse, http } from 'msw';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { AnarchitectsFeatureForm } from './form';
 
@@ -58,42 +59,54 @@ const mockFormConfig: FormConfig = {
   ],
 };
 
-const getFormDefinitionMock = {
-  url: `/api/forms/${formId}?formVersion=${formVersion}`,
-  method: 'GET',
-  status: 200,
-  response: {
-    config: mockFormConfig,
-    schema: {},
-  },
-};
+const getFormDefinitionHandler = http.get(
+  '/api/forms/:requestedFormId',
+  ({ params, request }) => {
+    const requestedFormId = params['requestedFormId'];
+    const requestedVersion = new URL(request.url).searchParams.get('formVersion');
 
-const submitFormMock = {
-  url: '/api/forms/submit',
-  method: 'POST',
-  status: 201,
-  response: {
-    id: 'submission-1',
-    formId,
-    formVersion,
-    payload: {
-      name: 'Jane Doe',
-      email: 'jane.doe@example.com',
-      message: 'Hello from Storybook',
-      consent: true,
-    },
-    createdAt: '2025-01-01T00:00:00.000Z',
-    updatedAt: '2025-01-01T00:00:00.000Z',
+    if (
+      requestedFormId !== formId ||
+      requestedVersion !== String(formVersion)
+    ) {
+      return HttpResponse.json({ message: 'Form not found' }, { status: 404 });
+    }
+
+    return HttpResponse.json({
+      config: mockFormConfig,
+      schema: {},
+    });
   },
-};
+);
+
+const submitFormHandler = http.post('/api/forms/submit', () =>
+  HttpResponse.json(
+    {
+      id: 'submission-1',
+      formId,
+      formVersion,
+      payload: {
+        name: 'Jane Doe',
+        email: 'jane.doe@example.com',
+        message: 'Hello from Storybook',
+        consent: true,
+      },
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+    },
+    { status: 201 },
+  ),
+);
 
 export const Primary: Story = {
   args: {
-    formId: formId,
-    formVersion: formVersion,
+    formId,
+    formVersion,
   },
   parameters: {
-    mockData: [getFormDefinitionMock],
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
   },
   play: async ({ canvas }) => {
     expect(await canvas.findByLabelText(/name/i)).toBeTruthy();
@@ -110,22 +123,26 @@ export const Primary: Story = {
 
 export const CardLayout: Story = {
   args: {
-    formId: formId,
-    formVersion: formVersion,
+    formId,
+    formVersion,
     layout: 'form:card',
   },
   parameters: {
-    mockData: [getFormDefinitionMock],
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
   },
 };
 
 export const InvalidEmailKeepsFormInvalid: Story = {
   args: {
-    formId: formId,
-    formVersion: formVersion,
+    formId,
+    formVersion,
   },
   parameters: {
-    mockData: [getFormDefinitionMock],
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
   },
   play: async ({ canvas }) => {
     await userEvent.type(await canvas.findByLabelText(/name/i), 'Jane Doe');
@@ -148,11 +165,13 @@ export const InvalidEmailKeepsFormInvalid: Story = {
 
 export const SuccessfulSubmitShowsThankYouMessage: Story = {
   args: {
-    formId: formId,
-    formVersion: formVersion,
+    formId,
+    formVersion,
   },
   parameters: {
-    mockData: [getFormDefinitionMock, submitFormMock],
+    msw: {
+      handlers: [getFormDefinitionHandler, submitFormHandler],
+    },
   },
   play: async ({ canvas }) => {
     await userEvent.type(await canvas.findByLabelText(/name/i), 'Jane Doe');
