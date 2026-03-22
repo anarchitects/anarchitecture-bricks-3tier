@@ -13,15 +13,15 @@ import { jwtDecode } from 'jwt-decode';
 import { authBearerTokenInterceptor } from './bearer-token.interceptor';
 import { authErrorInterceptor } from './auth-error.interceptor';
 
-jest.mock('jwt-decode', () => ({
-  jwtDecode: jest.fn(),
+vi.mock('jwt-decode', () => ({
+  jwtDecode: vi.fn(),
 }));
 
 describe('authErrorInterceptor', () => {
   let http: HttpClient;
   let httpController: HttpTestingController;
   const mockRouter = {
-    navigateByUrl: jest.fn().mockResolvedValue(true),
+    navigateByUrl: vi.fn().mockResolvedValue(true),
   };
 
   beforeEach(() => {
@@ -41,16 +41,16 @@ describe('authErrorInterceptor', () => {
 
   afterEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     httpController.verify();
   });
 
   it('should refresh tokens and retry request on 403', () => {
     localStorage.setItem('accessToken', 'expired-access-token');
     localStorage.setItem('refreshToken', 'refresh-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
-    const responseSpy = jest.fn();
+    const responseSpy = vi.fn();
 
     http.get('/api/protected').subscribe(responseSpy);
 
@@ -87,9 +87,9 @@ describe('authErrorInterceptor', () => {
 
   it('should redirect to login when refresh token is missing', () => {
     localStorage.setItem('accessToken', 'expired-access-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
-    const errorSpy = jest.fn();
+    const errorSpy = vi.fn();
 
     http.get('/api/protected').subscribe({ error: errorSpy });
 
@@ -111,9 +111,9 @@ describe('authErrorInterceptor', () => {
   it('should redirect to login when refresh request fails', () => {
     localStorage.setItem('accessToken', 'expired-access-token');
     localStorage.setItem('refreshToken', 'refresh-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
-    const errorSpy = jest.fn();
+    const errorSpy = vi.fn();
 
     http.get('/api/protected').subscribe({ error: errorSpy });
 
@@ -140,9 +140,9 @@ describe('authErrorInterceptor', () => {
   it('should not attempt refresh for public login endpoint failures', () => {
     localStorage.setItem('accessToken', 'expired-access-token');
     localStorage.setItem('refreshToken', 'refresh-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
-    const errorSpy = jest.fn();
+    const errorSpy = vi.fn();
 
     http.post('/api/auth/login', { credential: 'u', password: 'p' }).subscribe({
       error: errorSpy,

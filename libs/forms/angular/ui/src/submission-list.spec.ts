@@ -42,7 +42,7 @@ describe('AnarchitectsFormsUiSubmissionList', () => {
   });
 
   it('should emit selected submission', () => {
-    const emitSpy = jest.spyOn(component.selected, 'emit');
+    const emitSpy = vi.spyOn(component.selected, 'emit');
     const nativeElement = fixture.nativeElement as HTMLElement;
     const button = nativeElement.querySelector('button');
 

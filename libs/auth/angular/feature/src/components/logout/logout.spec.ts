@@ -7,7 +7,7 @@ describe('AnarchitectsFeatureLogout', () => {
   let component: AnarchitectsFeatureLogout;
   let fixture: ComponentFixture<AnarchitectsFeatureLogout>;
   const mockAuthStore = {
-    logout: jest.fn().mockResolvedValue(undefined),
+    logout: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AnarchitectsFeatureLogout', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call AuthStore.logout when refresh token exists', async () => {

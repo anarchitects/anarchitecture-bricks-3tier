@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { delay, of } from 'rxjs';
 import { FormsStore } from './forms.store';
 import { FormConfig } from '@anarchitects/forms-ts/models';
@@ -20,7 +20,7 @@ const mockFormConfig: FormConfig = {
 
 const setup = () => {
   const mockFormsApi = {
-    getDefinition: jest.fn((id: string, version?: number) =>
+    getDefinition: vi.fn((id: string, version?: number) =>
       of({
         config: {
           ...mockFormConfig,
@@ -30,7 +30,7 @@ const setup = () => {
         schema: {},
       }).pipe(delay(100)),
     ),
-    submitForm: jest.fn(() =>
+    submitForm: vi.fn(() =>
       of({
         id: 'submission-1',
         formId: 'contact',
@@ -53,16 +53,25 @@ const setup = () => {
 };
 
 describe('Forms', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
   it('should create an instance', () => {
     expect(setup()).toBeTruthy();
   });
   describe('getFormDefinition', () => {
-    it('should load form definition and update state', fakeAsync(() => {
+    it('should load form definition and update state', async () => {
       const store = setup();
       store.getFormDefinition({ id: 'contact', version: 1 });
       expect(store.loading()).toBe(true);
       expect(store.error()).toBeNull();
-      tick(100);
+      await vi.advanceTimersByTimeAsync(100);
       expect(store.loading()).toBe(false);
       expect(store.error()).toBeNull();
       expect(store.selectedId()).toBe('contact');
@@ -78,16 +87,16 @@ describe('Forms', () => {
         id: 'contact',
         version: 1,
       });
-    }));
+    });
 
-    it('should keep multiple versions of the same form id', fakeAsync(() => {
+    it('should keep multiple versions of the same form id', async () => {
       const store = setup();
 
       store.getFormDefinition({ id: 'contact', version: 1 });
-      tick(100);
+      await vi.advanceTimersByTimeAsync(100);
 
       store.getFormDefinition({ id: 'contact', version: 2 });
-      tick(100);
+      await vi.advanceTimersByTimeAsync(100);
 
       expect(store.formConfigsEntities()).toEqual(
         expect.arrayContaining([
@@ -98,11 +107,11 @@ describe('Forms', () => {
       expect(store.formConfigsEntities()).toHaveLength(2);
       expect(store.selectedVersion()).toBe(2);
       expect(store.selectedFormConfig()?.version).toBe(2);
-    }));
+    });
   });
 
   describe('submitForm', () => {
-    it('should submit form and update state', fakeAsync(() => {
+    it('should submit form and update state', async () => {
       const store = setup();
       const submissionDto = {
         formId: 'contact',
@@ -112,11 +121,11 @@ describe('Forms', () => {
       store.submitForm(submissionDto);
       expect(store.loading()).toBe(true);
       expect(store.error()).toBeNull();
-      tick(100);
+      await vi.advanceTimersByTimeAsync(100);
       expect(store.loading()).toBe(false);
       expect(store.error()).toBeNull();
       expect(store.submitted()).toBe(true);
       expect(store.submissionsEntities().length).toBe(1);
-    }));
+    });
   });
 });

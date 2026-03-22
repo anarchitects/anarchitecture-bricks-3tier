@@ -5,8 +5,8 @@ import { UpdateEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { jwtDecode } from 'jwt-decode';
 import { AnarchitectsFeatureUpdateEmail } from './update-email';
 
-jest.mock('jwt-decode', () => ({
-  jwtDecode: jest.fn(),
+vi.mock('jwt-decode', () => ({
+  jwtDecode: vi.fn(),
 }));
 
 describe('AnarchitectsFeatureUpdateEmail', () => {
@@ -14,8 +14,8 @@ describe('AnarchitectsFeatureUpdateEmail', () => {
   let fixture: ComponentFixture<AnarchitectsFeatureUpdateEmail>;
   let ref: ComponentRef<AnarchitectsFeatureUpdateEmail>;
   const mockAuthStore = {
-    loggedInUser: jest.fn(),
-    updateEmail: jest.fn().mockResolvedValue(undefined),
+    loggedInUser: vi.fn(),
+    updateEmail: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -32,7 +32,7 @@ describe('AnarchitectsFeatureUpdateEmail', () => {
 
   afterEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should map payload and call AuthStore.updateEmail with input userId', async () => {
@@ -55,7 +55,7 @@ describe('AnarchitectsFeatureUpdateEmail', () => {
   it('should fallback to decoded access token sub for userId', async () => {
     mockAuthStore.loggedInUser.mockReturnValue(undefined);
     localStorage.setItem('accessToken', 'access-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
 
     await component.submitForm({
       newEmail: 'next@example.com',

@@ -62,7 +62,7 @@ describe('AnarchitectsFeatureSubmissionList', () => {
   });
 
   it('should emit selected submission from UI event', () => {
-    const emitSpy = jest.spyOn(component.selected, 'emit');
+    const emitSpy = vi.spyOn(component.selected, 'emit');
 
     component.onSelected(mockSubmissions()[0]);
 

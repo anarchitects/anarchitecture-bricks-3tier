@@ -16,12 +16,12 @@ describe('AnarchitectsFeatureForm', () => {
       version: 1,
       fields: [],
     }),
-    getFormDefinition: jest.fn(),
-    submitForm: jest.fn(),
+    getFormDefinition: vi.fn(),
+    submitForm: vi.fn(),
   };
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFormsStore.submitted.set(false);
     mockFormsStore.selectedFormConfig.set({
       id: 'test-form',

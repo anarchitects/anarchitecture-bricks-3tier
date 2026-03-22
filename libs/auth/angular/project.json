@@ -1,7 +1,7 @@
 {
   "name": "auth-angular",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/auth/angular/src",
+  "sourceRoot": "libs/auth/angular",
   "prefix": "anarchitects",
   "projectType": "library",
   "release": {
@@ -34,11 +34,10 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/angular:unit-test",
       "options": {
-        "jestConfig": "libs/auth/angular/jest.config.ts",
-        "tsConfig": "libs/auth/angular/tsconfig.spec.json"
+        "tsConfig": "libs/auth/angular/tsconfig.spec.json",
+        "include": ["**/*.spec.ts", "**/*.test.ts"]
       }
     },
     "lint": {

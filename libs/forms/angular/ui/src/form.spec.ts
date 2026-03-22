@@ -68,7 +68,7 @@ describe('Form', () => {
 
   it('should emit submitted event with correct payload on valid submit', () => {
     expect(component.formGroup.valid).toBe(false);
-    const spy = jest.spyOn(component.submitted, 'emit');
+    const spy = vi.spyOn(component.submitted, 'emit');
     component.formGroup.setValue({
       email: 'test@example.com',
       name: 'Test User',
@@ -87,7 +87,7 @@ describe('Form', () => {
     });
   });
   it('should not emit submitted event on invalid submit', () => {
-    const spy = jest.spyOn(component.submitted, 'emit');
+    const spy = vi.spyOn(component.submitted, 'emit');
     component.formGroup.setValue({
       email: 'invalid-email',
       name: 'Tu',
