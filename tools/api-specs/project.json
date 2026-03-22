@@ -8,6 +8,7 @@
   "targets": {
     "generate": {
       "executor": "nx:run-commands",
+      "cache": true,
       "inputs": [
         "default",
         {
@@ -30,6 +31,7 @@
     },
     "lint": {
       "executor": "nx:run-commands",
+      "cache": true,
       "dependsOn": ["generate"],
       "inputs": [
         "default",

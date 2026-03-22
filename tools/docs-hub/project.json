@@ -8,6 +8,7 @@
   "targets": {
     "sync-packages": {
       "executor": "nx:run-commands",
+      "cache": true,
       "inputs": [
         "default",
         {
@@ -24,6 +25,7 @@
     },
     "build": {
       "executor": "nx:run-commands",
+      "cache": true,
       "dependsOn": ["sync-packages"],
       "inputs": [
         "default",
@@ -38,6 +40,7 @@
     },
     "validate-content": {
       "executor": "nx:run-commands",
+      "cache": true,
       "inputs": [
         "default",
         {
@@ -56,6 +59,7 @@
     },
     "verify": {
       "executor": "nx:run-commands",
+      "cache": true,
       "dependsOn": ["build"],
       "options": {
         "command": "node tools/docs-hub/verify.mjs"

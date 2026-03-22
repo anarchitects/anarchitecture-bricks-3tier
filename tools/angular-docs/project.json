@@ -8,6 +8,28 @@
   "targets": {
     "generate": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        {
+          "fileset": "{workspaceRoot}/libs/auth/angular/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/forms/angular/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/common/angular/design/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/common/angular/ui-primitives/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/common/angular/ui-composition/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/common/angular/ui-layouts/**/*"
+        }
+      ],
       "outputs": [
         "{workspaceRoot}/dist/docs/compodoc",
         "{workspaceRoot}/libs/storybook/angular/.storybook/compodoc.ts"
@@ -18,6 +40,7 @@
     },
     "merge-json": {
       "executor": "nx:run-commands",
+      "cache": true,
       "inputs": [
         "default",
         {
