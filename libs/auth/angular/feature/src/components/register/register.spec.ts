@@ -7,7 +7,7 @@ describe('AnarchitectsFeatureRegister', () => {
   let component: AnarchitectsFeatureRegister;
   let fixture: ComponentFixture<AnarchitectsFeatureRegister>;
   const mockAuthStore = {
-    registerUser: jest.fn().mockResolvedValue(undefined),
+    registerUser: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AnarchitectsFeatureRegister', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should delegate registration to AuthStore', async () => {

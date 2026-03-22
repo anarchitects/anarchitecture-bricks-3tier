@@ -1,7 +1,7 @@
 {
   "name": "common-angular-design",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/common/angular/design/src",
+  "sourceRoot": "libs/common/angular/design",
   "prefix": "anarchitects",
   "projectType": "library",
   "release": {
@@ -34,11 +34,10 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "executor": "@nx/angular:unit-test",
       "options": {
-        "jestConfig": "libs/common/angular/design/jest.config.cts",
-        "tsConfig": "libs/common/angular/design/tsconfig.spec.json"
+        "tsConfig": "libs/common/angular/design/tsconfig.spec.json",
+        "include": ["**/*.spec.ts", "**/*.test.ts"]
       }
     },
     "lint": {

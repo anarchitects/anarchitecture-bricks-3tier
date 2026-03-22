@@ -5,8 +5,8 @@ import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { jwtDecode } from 'jwt-decode';
 import { AnarchitectsFeatureRefreshTokens } from './refresh-tokens';
 
-jest.mock('jwt-decode', () => ({
-  jwtDecode: jest.fn(),
+vi.mock('jwt-decode', () => ({
+  jwtDecode: vi.fn(),
 }));
 
 describe('AnarchitectsFeatureRefreshTokens', () => {
@@ -14,8 +14,8 @@ describe('AnarchitectsFeatureRefreshTokens', () => {
   let fixture: ComponentFixture<AnarchitectsFeatureRefreshTokens>;
   let ref: ComponentRef<AnarchitectsFeatureRefreshTokens>;
   const mockAuthStore = {
-    loggedInUser: jest.fn(),
-    refreshTokens: jest.fn().mockResolvedValue(undefined),
+    loggedInUser: vi.fn(),
+    refreshTokens: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -32,7 +32,7 @@ describe('AnarchitectsFeatureRefreshTokens', () => {
 
   afterEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call AuthStore.refreshTokens with input userId', async () => {
@@ -52,7 +52,7 @@ describe('AnarchitectsFeatureRefreshTokens', () => {
   it('should fallback to decoded access token sub for userId', async () => {
     mockAuthStore.loggedInUser.mockReturnValue(undefined);
     localStorage.setItem('accessToken', 'access-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
 
     await component.submitForm({ refreshToken: 'refresh-token' });
 

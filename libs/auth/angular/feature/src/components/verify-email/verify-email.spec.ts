@@ -7,7 +7,7 @@ describe('AnarchitectsFeatureVerifyEmail', () => {
   let component: AnarchitectsFeatureVerifyEmail;
   let fixture: ComponentFixture<AnarchitectsFeatureVerifyEmail>;
   const mockAuthStore = {
-    verifyEmail: jest.fn().mockResolvedValue(undefined),
+    verifyEmail: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AnarchitectsFeatureVerifyEmail', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should delegate verify-email action to AuthStore', async () => {

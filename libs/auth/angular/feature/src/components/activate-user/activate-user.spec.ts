@@ -7,7 +7,7 @@ describe('AnarchitectsFeatureActivateUser', () => {
   let component: AnarchitectsFeatureActivateUser;
   let fixture: ComponentFixture<AnarchitectsFeatureActivateUser>;
   const mockAuthStore = {
-    activateUser: jest.fn().mockResolvedValue(undefined),
+    activateUser: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AnarchitectsFeatureActivateUser', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should delegate activation to AuthStore', async () => {

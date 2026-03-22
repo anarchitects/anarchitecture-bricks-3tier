@@ -7,7 +7,7 @@ describe('AnarchitectsFeatureLogin', () => {
   let component: AnarchitectsFeatureLogin;
   let fixture: ComponentFixture<AnarchitectsFeatureLogin>;
   const mockAuthStore = {
-    login: jest.fn().mockResolvedValue(undefined),
+    login: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AnarchitectsFeatureLogin', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create', () => {

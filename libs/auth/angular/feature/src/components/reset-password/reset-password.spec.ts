@@ -7,7 +7,7 @@ describe('AnarchitectsFeatureResetPassword', () => {
   let component: AnarchitectsFeatureResetPassword;
   let fixture: ComponentFixture<AnarchitectsFeatureResetPassword>;
   const mockAuthStore = {
-    resetPassword: jest.fn().mockResolvedValue(undefined),
+    resetPassword: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -22,7 +22,7 @@ describe('AnarchitectsFeatureResetPassword', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should delegate reset-password action to AuthStore', async () => {

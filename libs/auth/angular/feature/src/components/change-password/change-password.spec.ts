@@ -5,8 +5,8 @@ import { ChangePasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { jwtDecode } from 'jwt-decode';
 import { AnarchitectsFeatureChangePassword } from './change-password';
 
-jest.mock('jwt-decode', () => ({
-  jwtDecode: jest.fn(),
+vi.mock('jwt-decode', () => ({
+  jwtDecode: vi.fn(),
 }));
 
 describe('AnarchitectsFeatureChangePassword', () => {
@@ -14,8 +14,8 @@ describe('AnarchitectsFeatureChangePassword', () => {
   let fixture: ComponentFixture<AnarchitectsFeatureChangePassword>;
   let ref: ComponentRef<AnarchitectsFeatureChangePassword>;
   const mockAuthStore = {
-    loggedInUser: jest.fn(),
-    changePassword: jest.fn().mockResolvedValue(undefined),
+    loggedInUser: vi.fn(),
+    changePassword: vi.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -32,7 +32,7 @@ describe('AnarchitectsFeatureChangePassword', () => {
 
   afterEach(() => {
     localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should map and call AuthStore.changePassword with input userId', async () => {
@@ -56,7 +56,7 @@ describe('AnarchitectsFeatureChangePassword', () => {
   it('should fallback to decoded access token sub for userId', async () => {
     mockAuthStore.loggedInUser.mockReturnValue(undefined);
     localStorage.setItem('accessToken', 'access-token');
-    jest.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
 
     await component.submitForm({
       currentPassword: 'old-password',
