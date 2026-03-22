@@ -87,13 +87,17 @@ nx run release-tools:validate-non-bumping-commits
 - The workflow runs full `nx release --groups=<domain>` (version, changelog, git/tag, GitHub release, publish).
 - Do not run local `nx release` before merging PRs.
 - Use **Publish Packages (Recovery)** only if publishing needs to be retried after a failed release run.
+- Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
+- Do not create or push final `{projectName}@{version}` release tags from a release-prep branch before merge.
+- If a release-prep PR is squash-merged after tags were created on the branch, retarget those tags to the merge commit on `main` before running release.
 - Before release PRs, normalize publishable package dependency ranges:
   - `nx run release-tools:normalize-internal-deps`
   - `nx run release-tools:normalize-external-peer-ranges`
   - `nx run release-tools:check-release-tag-ancestry`
   - external peer normalization derives ranges from root `package.json`; exact root versions become major-wide caret peers (for example `21.1.6` -> `^21.0.0`)
 - The release tag ancestry check fails when a `{projectName}@{version}` tag exists but points to a commit outside current branch history.
-- For local dry-run validation, target only changed projects when possible (for example `nx release version --projects=auth-angular -d`).
+- Group-scoped release preflight runs only the selected release group's ancestry check and builds.
+- For local dry-run validation, use the release group syntax when possible (for example `yarn nx release --groups=forms -d`).
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`

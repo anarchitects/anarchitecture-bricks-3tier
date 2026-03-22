@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 
 const workspaceRoot = process.cwd();
 const libsRoot = join(workspaceRoot, 'libs');
+const selectedProjects = parseSelectedProjects(process.argv.slice(2));
 
 function walkDirectories(rootDir, fileName) {
   const stack = [rootDir];
@@ -32,6 +33,42 @@ function walkDirectories(rootDir, fileName) {
 
 function runGit(args) {
   return spawnSync('git', args, { cwd: workspaceRoot, encoding: 'utf8' });
+}
+
+function parseSelectedProjects(argv) {
+  const selected = new Set();
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+
+    if (arg === '--projects') {
+      const value = argv[index + 1];
+      if (typeof value === 'string') {
+        for (const project of value.split(',')) {
+          const trimmed = project.trim();
+          if (trimmed) {
+            selected.add(trimmed);
+          }
+        }
+      }
+      index += 1;
+      continue;
+    }
+
+    if (!arg.startsWith('--projects=')) {
+      continue;
+    }
+
+    const value = arg.slice('--projects='.length);
+    for (const project of value.split(',')) {
+      const trimmed = project.trim();
+      if (trimmed) {
+        selected.add(trimmed);
+      }
+    }
+  }
+
+  return selected;
 }
 
 function resolveTagCommit(tagName) {
@@ -74,6 +111,10 @@ for (const projectJsonPath of projectJsonFiles) {
   const projectName = projectJson.name;
 
   if (typeof projectName !== 'string' || !isPublishableProject(projectDir, packageJson)) {
+    continue;
+  }
+
+  if (selectedProjects.size > 0 && !selectedProjects.has(projectName)) {
     continue;
   }
 
