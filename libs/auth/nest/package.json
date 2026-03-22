@@ -1,25 +1,27 @@
 {
   "name": "@anarchitects/auth-nest",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "tslib": "^2.3.0",
-    "@nestjs/common": "^11.0.0",
-    "@nestjs/jwt": "^11.0.1",
-    "@anarchitects/auth-ts": "^0.1.0",
-    "bcrypt": "^6.0.0",
-    "@nestjs/passport": "^11.0.5",
-    "passport-jwt": "^4.0.1",
-    "@nestjs/config": "^4.0.2",
-    "typeorm": "^0.3.27",
-    "uuidv7": "^1.0.2",
-    "@nestjs/typeorm": "^11.0.0",
-    "@nestjs/platform-fastify": "^11.1.6",
+    "@anarchitects/auth-ts": "^0.3.0",
+    "@anarchitects/common-nest-mailer": "^0.3.0",
     "@casl/ability": "^6.7.3",
+    "bcrypt": "^6.0.0",
+    "passport-jwt": "^4.0.1",
+    "tslib": "^2.3.0",
+    "uuidv7": "^1.0.2"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.0",
-    "@anarchitects/common-nest-mailer": "^0.1.0"
+    "@nestjs/jwt": "^11.0.1",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-fastify": "^11.1.6",
+    "@nestjs/typeorm": "^11.0.0",
+    "typeorm": "^0.3.27"
   },
   "publishConfig": {
     "access": "public"
@@ -42,5 +44,14 @@
         "src/config/index.d.ts"
       ]
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/auth/nest"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/auth/nest",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   }
 }

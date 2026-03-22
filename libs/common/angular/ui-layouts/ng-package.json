@@ -3,5 +3,9 @@
   "dest": "../../../../dist/libs/common/angular/ui-layouts",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "allowedNonPeerDependencies": [
+    "@anarchitects/common-angular-ui-composition",
+    "@anarchitects/common-angular-ui-primitives"
+  ]
 }

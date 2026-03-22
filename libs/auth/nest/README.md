@@ -20,17 +20,17 @@ NestJS services, controllers, and infrastructure for the Anarchitecture authenti
 ## Installation
 
 ```bash
-npm install @anarchitects/auth-nest @anarchitects/common-nest-mailer
+npm install @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/passport @nestjs/platform-fastify @nestjs/typeorm typeorm
 # or
-yarn add @anarchitects/auth-nest @anarchitects/common-nest-mailer
+yarn add @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/passport @nestjs/platform-fastify @nestjs/typeorm typeorm
 ```
 
 Peer requirements:
 
 - `@nestjs/common`, `@nestjs/core`, `@nestjs/jwt`, `@nestjs/typeorm`, `@nestjs/config`, `@nestjs/passport`
-- `@anarchitects/auth-ts` for DTOs and shared models
-- `@casl/ability` for RBAC policy evaluation
-- `@nestjs-modules/mailer` (when using the mailer module)
+- `@nestjs/platform-fastify`, `typeorm`
+
+The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` packages are installed transitively. Runtime utilities such as `@casl/ability`, `bcrypt`, and `passport-jwt` are direct dependencies of this package. Add `@nestjs-modules/mailer` only when your host app enables the shared/common mailer integration.
 
 ## Exports
 

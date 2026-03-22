@@ -2,8 +2,19 @@
   "name": "@anarchitects/storybook-angular",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^20.3.0",
-    "@angular/core": "^20.3.0"
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/angular": "^10.1.11"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/storybook/angular"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/storybook/angular",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  }
 }

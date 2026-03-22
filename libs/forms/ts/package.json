@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/forms-ts",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "type": "module",
   "main": "./index.cjs",
   "module": "./index.js",
@@ -36,7 +36,16 @@
   "publishConfig": {
     "access": "public"
   },
-  "peerDependencies": {
+  "dependencies": {
     "@sinclair/typebox": "^0.34.41"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/forms/ts"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/forms/ts",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   }
 }

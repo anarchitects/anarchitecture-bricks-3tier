@@ -1,22 +1,33 @@
 {
   "name": "@anarchitects/auth-angular",
-  "version": "0.1.0",
+  "version": "0.3.0",
+  "dependencies": {
+    "@anarchitects/auth-ts": "^0.3.0",
+    "@anarchitects/common-angular-ui-layouts": "^0.0.1",
+    "@anarchitects/forms-angular": "^0.3.0",
+    "@anarchitects/forms-ts": "^0.3.0",
+    "@casl/ability": "^6.7.3",
+    "jwt-decode": "^4.0.0"
+  },
   "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
-    "@anarchitects/auth-ts": "^0.1.0",
-    "@anarchitects/common-angular-ui-layouts": "^0.0.1",
-    "@anarchitects/forms-angular": "^0.1.0",
-    "@anarchitects/forms-ts": "^0.1.0",
-    "@ngrx/signals": "^20.0.1",
+    "@angular/router": "^21.0.0",
     "@ngrx/operators": "^20.0.1",
-    "rxjs": "~7.8.0",
-    "jwt-decode": "^4.0.0",
-    "@casl/ability": "^6.7.3",
-    "@angular/router": "^21.0.0"
+    "@ngrx/signals": "^20.0.1",
+    "rxjs": "~7.8.0"
   },
   "sideEffects": false,
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/auth/angular"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/auth/angular",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   }
 }

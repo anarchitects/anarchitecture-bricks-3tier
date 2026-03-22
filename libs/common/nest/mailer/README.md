@@ -18,10 +18,16 @@ Shared typed mailer configuration, transport setup, and provider wiring for Nest
 ## Installation
 
 ```bash
-npm install @anarchitects/common-nest-mailer @nestjs-modules/mailer
+npm install @anarchitects/common-nest-mailer @nestjs/common @nestjs/config @nestjs-modules/mailer
 # or
-yarn add @anarchitects/common-nest-mailer @nestjs-modules/mailer
+yarn add @anarchitects/common-nest-mailer @nestjs/common @nestjs/config @nestjs-modules/mailer
 ```
+
+Peer requirements:
+
+- `@nestjs/common`
+- `@nestjs/config`
+- `@nestjs-modules/mailer`
 
 ## Entry points and exports
 
