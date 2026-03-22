@@ -67,6 +67,10 @@
     "@nx/angular:unit-test": {
       "cache": true,
       "inputs": ["default", "^production"]
+    },
+    "compodoc": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "plugins": [
