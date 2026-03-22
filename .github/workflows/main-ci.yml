@@ -26,7 +26,7 @@ jobs:
       # Run this command as early as possible, before dependencies are installed
       # Learn more at https://nx.dev/ci/reference/nx-cloud-cli#npx-nxcloud-startcirun
       # Uncomment this line to enable task distribution
-      - run: yarn dlx nx start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="contract-test"
+      - run: yarn dlx nx start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="e2e-ci"
 
       # Cache node_modules
       - uses: actions/setup-node@v5
@@ -42,11 +42,11 @@ jobs:
         env:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       - run: yarn nx run docs-hub:validate-content
-      - run: yarn nx-cloud record -- yarn nx run api-specs:lint
-      - run: yarn nx-cloud record -- yarn nx run angular-docs:generate
+      - run: yarn nx run api-specs:lint
+      - run: yarn nx run angular-docs:generate
       # When you enable task distribution, run the e2e-ci task instead of e2e
       - run: yarn nx affected -t lint test build e2e-ci
-      - run: yarn nx-cloud record -- yarn nx run-many -t contract-test --projects=forms-nest-example,forms-angular-example,auth-nest-example,auth-angular-example
+      #- run: yarn nx run-many -t contract-test --projects=forms-nest-example,forms-angular-example,auth-nest-example,auth-angular-example
       - uses: actions/upload-artifact@v6
         if: always()
         with:

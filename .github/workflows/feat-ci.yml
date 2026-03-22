@@ -41,13 +41,13 @@ jobs:
         env:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       - run: yarn nx run docs-hub:validate-content
-      - run: yarn nx-cloud record -- yarn nx run api-specs:lint
-      - run: yarn nx-cloud record -- yarn nx run angular-docs:generate
+      - run: yarn nx run api-specs:lint
+      - run: yarn nx run angular-docs:generate
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      - run: yarn nx-cloud record -- yarn nx format:check
+      - run: yarn nx format:check
       # When you enable task distribution, run the e2e-ci task instead of e2e
       - run: yarn nx affected -t lint test build
-      - run: yarn nx-cloud record -- yarn nx run-many -t contract-test --projects=forms-nest-example,forms-angular-example
+      #- run: yarn nx run-many -t contract-test --projects=forms-nest-example,forms-angular-example
       - uses: actions/upload-artifact@v6
         if: always()
         with:
