@@ -36,14 +36,15 @@ Each layer can be consumed independently or as a combined stack, depending on wh
 ## Installation
 
 ```bash
-npm install @anarchitects/forms-angular @angular/forms @angular/common@">=20" @ngrx/signals
+npm install @anarchitects/forms-angular @angular/common @angular/core @angular/forms @ngrx/operators @ngrx/signals rxjs
 ```
 
-You will also need the TypeScript foundation package:
+Peer requirements:
 
-```bash
-npm install @anarchitects/forms-ts
-```
+- `@angular/common`, `@angular/core`, `@angular/forms`
+- `@ngrx/operators`, `@ngrx/signals`, `rxjs`
+
+The internal `@anarchitects/forms-ts` and common UI packages are installed transitively.
 
 ## Usage
 

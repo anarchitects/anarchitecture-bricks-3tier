@@ -3,5 +3,13 @@
   "dest": "../../../dist/libs/auth/angular",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "allowedNonPeerDependencies": [
+    "@anarchitects/auth-ts",
+    "@anarchitects/common-angular-ui-layouts",
+    "@anarchitects/forms-angular",
+    "@anarchitects/forms-ts",
+    "@casl/ability",
+    "jwt-decode"
+  ]
 }

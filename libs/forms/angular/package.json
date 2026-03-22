@@ -1,22 +1,31 @@
 {
   "name": "@anarchitects/forms-angular",
   "version": "0.3.0",
-  "peerDependencies": {
+  "dependencies": {
     "@anarchitects/common-angular-ui-composition": "^0.0.1",
     "@anarchitects/common-angular-ui-layouts": "^0.0.1",
     "@anarchitects/common-angular-ui-primitives": "^0.0.1",
+    "@anarchitects/forms-ts": "^0.3.0"
+  },
+  "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
-    "@ngrx/signals": "^20.0.1",
+    "@angular/forms": "^21.0.0",
     "@ngrx/operators": "^20.0.1",
-    "rxjs": "~7.8.0",
-    "@angular/forms": "^21.0.0"
-  },
-  "dependencies": {
-    "@anarchitects/forms-ts": "^0.3.0"
+    "@ngrx/signals": "^20.0.1",
+    "rxjs": "~7.8.0"
   },
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/forms/angular"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/forms/angular",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  }
 }

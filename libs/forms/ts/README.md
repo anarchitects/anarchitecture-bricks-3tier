@@ -22,8 +22,10 @@ and generate runtime validation schemas automatically.
 ## Installation
 
 ```bash
-npm install @anarchitects/forms-ts @sinclair/typebox
+npm install @anarchitects/forms-ts
 ```
+
+`@sinclair/typebox` is installed transitively for the package runtime. Install it explicitly in your app only if you also import TypeBox helpers directly, for example `@sinclair/typebox/value`.
 
 ## Usage
 

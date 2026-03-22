@@ -4,5 +4,8 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "allowedNonPeerDependencies": []
+  "allowedNonPeerDependencies": [
+    "@anarchitects/common-angular-design",
+    "@anarchitects/common-angular-ui-composition"
+  ]
 }

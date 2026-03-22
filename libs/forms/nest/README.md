@@ -34,13 +34,17 @@ the exported tokens.
 ## Installation
 
 ```bash
-npm install @anarchitects/forms-nest @anarchitects/forms-ts @anarchitects/common-nest-mailer @nestjs/typeorm typeorm @nestjs-modules/mailer
+npm install @anarchitects/forms-nest @nestjs/common @nestjs/config @nestjs/platform-fastify @nestjs/typeorm typeorm
 # or
-yarn add @anarchitects/forms-nest @anarchitects/forms-ts @anarchitects/common-nest-mailer @nestjs/typeorm typeorm @nestjs-modules/mailer
+yarn add @anarchitects/forms-nest @nestjs/common @nestjs/config @nestjs/platform-fastify @nestjs/typeorm typeorm
 ```
 
-`@anarchitects/forms-ts` provides the DTOs and models referenced by the Nest modules and should be
-installed alongside the bricks.
+Peer requirements:
+
+- `@nestjs/common`, `@nestjs/config`, `@nestjs/platform-fastify`, `@nestjs/typeorm`
+- `typeorm`
+
+The internal `@anarchitects/forms-ts` and `@anarchitects/common-nest-mailer` packages are installed transitively. Add `@nestjs-modules/mailer` only when your host app enables the shared/common mailer integration.
 
 ## Usage
 

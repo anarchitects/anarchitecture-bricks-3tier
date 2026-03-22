@@ -6,16 +6,16 @@
   "types": "./src/index.d.ts",
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/platform-fastify": "^11.1.6",
-    "typeorm": "^0.3.27",
-    "uuidv7": "^1.0.2",
-    "@nestjs/typeorm": "^11.0.0"
+    "@nestjs/typeorm": "^11.0.0",
+    "typeorm": "^0.3.27"
   },
   "dependencies": {
-    "tslib": "^2.3.0",
-    "@nestjs/config": "^4.0.2",
+    "@anarchitects/common-nest-mailer": "^0.3.0",
     "@anarchitects/forms-ts": "^0.3.0",
-    "@anarchitects/common-nest-mailer": "^0.3.0"
+    "tslib": "^2.3.0",
+    "uuidv7": "^1.0.2"
   },
   "publishConfig": {
     "access": "public"
@@ -38,5 +38,14 @@
         "src/presentation/index.d.ts"
       ]
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/forms/nest"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/forms/nest",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   }
 }

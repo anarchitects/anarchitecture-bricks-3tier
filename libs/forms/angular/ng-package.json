@@ -4,5 +4,10 @@
   "lib": {
     "entryFile": "src/index.ts"
   },
-  "allowedNonPeerDependencies": ["@anarchitects/forms-ts"]
+  "allowedNonPeerDependencies": [
+    "@anarchitects/common-angular-ui-composition",
+    "@anarchitects/common-angular-ui-layouts",
+    "@anarchitects/common-angular-ui-primitives",
+    "@anarchitects/forms-ts"
+  ]
 }

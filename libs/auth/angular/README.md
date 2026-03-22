@@ -22,12 +22,17 @@ Angular domain libraries for the Anarchitecture auth domain. The package is orga
 ## Installation
 
 ```bash
-npm install @anarchitects/auth-angular
+npm install @anarchitects/auth-angular @angular/common @angular/core @angular/router @ngrx/operators @ngrx/signals rxjs
 # or
-yarn add @anarchitects/auth-angular
+yarn add @anarchitects/auth-angular @angular/common @angular/core @angular/router @ngrx/operators @ngrx/signals rxjs
 ```
 
-Peer dependencies: Angular v20+, `@ngrx/signals`, `@sinclair/typebox`, and the sibling packages `@anarchitects/auth-ts` & `@anarchitects/auth-nest` (for end-to-end flows).
+Peer requirements:
+
+- `@angular/common`, `@angular/core`, `@angular/router`
+- `@ngrx/operators`, `@ngrx/signals`, `rxjs`
+
+The internal `@anarchitects/auth-ts`, `@anarchitects/forms-angular`, `@anarchitects/forms-ts`, and shared layout packages are installed transitively. Runtime utilities such as `jwt-decode` and `@casl/ability` are bundled as direct dependencies of this package.
 
 ## Usage
 
