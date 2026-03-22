@@ -180,19 +180,27 @@
     "groups": {
       "forms": {
         "projectsRelationship": "independent",
-        "projects": ["directory:libs/forms/**"]
+        "projects": ["directory:libs/forms/**"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=forms-angular,forms-nest,forms-ts && yarn nx run-many -t build -p forms-angular,forms-nest,forms-ts"
+        }
       },
       "auth": {
         "projectsRelationship": "independent",
-        "projects": ["directory:libs/auth/**"]
+        "projects": ["directory:libs/auth/**"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=auth-angular,auth-nest,auth-ts && yarn nx run-many -t build -p auth-angular,auth-nest,auth-ts"
+        }
       },
       "common": {
         "projectsRelationship": "independent",
-        "projects": ["directory:libs/common/**"]
+        "projects": ["directory:libs/common/**"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts,common-nest-mailer && yarn nx run-many -t build -p common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts,common-nest-mailer"
+        }
       }
     },
     "version": {
-      "preVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry && yarn nx run-many -t build",
       "conventionalCommits": true,
       "updateDependents": "never"
     },

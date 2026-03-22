@@ -1,6 +1,7 @@
 export default {
   displayName: 'auth-angular',
   preset: '../../../jest.preset.js',
+  maxWorkers: 4,
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../../coverage/libs/auth/angular',
   transform: {

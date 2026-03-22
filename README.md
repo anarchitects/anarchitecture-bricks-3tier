@@ -132,9 +132,12 @@ Run releases via the **Release (Manual)** GitHub workflow:
 - Workflow input `domain` must be one of: `forms`, `auth`, `common`.
 - The workflow runs full `nx release --groups=<domain>` including publish.
 - Use **Publish Packages (Recovery)** only to retry publish if a release run fails after versioning/tagging.
+- Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
+- Do not create or push final release tags from a release-prep branch before merge.
+- If a release-prep PR is squash-merged after tags were created on the branch, retarget those tags to the merge commit on `main` before running release.
 
 Avoid routine local `yarn nx release`; use the workflow for auditable, controlled domain releases.
-If local dry-runs are needed, run `nx run release-tools:check-release-tag-ancestry` first to ensure existing `{projectName}@{version}` tags are reachable from the current branch.
+If local dry-runs are needed, use the group syntax, for example `yarn nx release --groups=forms -d`.
 
 ## Layering Rules
 
