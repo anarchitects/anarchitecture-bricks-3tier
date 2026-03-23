@@ -568,7 +568,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        config: unknown;
+                        config: {
+                            delivery?: {
+                                /** Format: email */
+                                adminEmail?: string;
+                                autoReply?: {
+                                    enabled: boolean;
+                                    subject: string;
+                                    templateId: string;
+                                };
+                                subject?: string;
+                                templateId?: string;
+                                webhooks?: {
+                                    secret?: string;
+                                    /** Format: uri */
+                                    url: string;
+                                }[];
+                            };
+                            fields: {
+                                kind: "string" | "password" | "email" | "textarea" | "boolean" | "select" | "file";
+                                maxLength?: number;
+                                minLength?: number;
+                                name: string;
+                                options?: {
+                                    label: string;
+                                    value: string;
+                                }[];
+                                pattern?: string;
+                                required?: boolean;
+                                ui?: {
+                                    help?: string;
+                                    label?: string;
+                                    placeholder?: string;
+                                    rows?: number;
+                                };
+                            }[];
+                            id: string;
+                            security?: {
+                                captcha: "turnstile" | "hcaptcha" | "none";
+                                honeypot?: string;
+                            };
+                            validationRules?: {
+                                /** @enum {string} */
+                                kind: "matchFields";
+                                message?: string;
+                                sourceField: string;
+                                targetField: string;
+                            }[];
+                            version: number;
+                        };
                         schema: unknown;
                     };
                 };

@@ -6,6 +6,14 @@ describe('FormConfigEntity', () => {
     id: faker.string.alphanumeric(12),
     version: 1,
     fields: [{ name: 'email', kind: 'email' as const, required: true }],
+    validationRules: [
+      {
+        kind: 'matchFields' as const,
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
     security: { captcha: 'none' as const },
   };
 

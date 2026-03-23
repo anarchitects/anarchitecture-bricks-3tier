@@ -14,6 +14,9 @@ export class FormConfigEntity implements FormConfig {
   fields!: FormConfig['fields'];
 
   @Column({ type: 'jsonb', nullable: true })
+  validationRules?: FormConfig['validationRules'];
+
+  @Column({ type: 'jsonb', nullable: true })
   security?: FormConfig['security'];
 
   @Column({ type: 'jsonb', nullable: true })

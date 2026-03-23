@@ -41,8 +41,16 @@ const buildValidFormDefinitionResponse = (): FormDefinitionResponseDTO => ({
   version: faker.number.int({ min: 1, max: 100 }),
   fields: Array.from(
     { length: faker.number.int({ min: 1, max: 5 }) },
-    buildValidFormField
+    buildValidFormField,
   ),
+  validationRules: [
+    {
+      kind: 'matchFields',
+      sourceField: 'password',
+      targetField: 'confirmPassword',
+      message: 'Passwords must match.',
+    },
+  ],
   security: {
     honeypot: faker.lorem.word(),
     captcha: faker.helpers.arrayElement([
@@ -108,7 +116,7 @@ describe('FormDefinitionResponseSchema', () => {
           ...validResponse,
           id: 123,
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect(
@@ -117,7 +125,7 @@ describe('FormDefinitionResponseSchema', () => {
           ...validResponse,
           id: null,
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
   });
 
@@ -130,7 +138,7 @@ describe('FormDefinitionResponseSchema', () => {
           ...validResponse,
           version: 0,
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect(
@@ -139,7 +147,7 @@ describe('FormDefinitionResponseSchema', () => {
           ...validResponse,
           version: -1,
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect(
@@ -148,7 +156,7 @@ describe('FormDefinitionResponseSchema', () => {
           ...validResponse,
           version: 1.5,
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
   });
 
@@ -161,7 +169,7 @@ describe('FormDefinitionResponseSchema', () => {
           ...validResponse,
           fields: 'not-an-array',
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect(
@@ -175,7 +183,7 @@ describe('FormDefinitionResponseSchema', () => {
             },
           ],
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect(
@@ -189,7 +197,7 @@ describe('FormDefinitionResponseSchema', () => {
             },
           ],
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
   });
 
@@ -239,7 +247,7 @@ describe('FormDefinitionResponseSchema', () => {
             captcha: 'invalid-captcha',
           },
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect([
@@ -250,6 +258,52 @@ describe('FormDefinitionResponseSchema', () => {
         },
       }),
     ]).toStrictEqual([]);
+  });
+
+  it('validates optional cross-field validation rules', () => {
+    const validResponse = buildValidFormDefinitionResponse();
+
+    expect([
+      ...Value.Errors(FormDefinitionResponseSchema, {
+        ...validResponse,
+        validationRules: [
+          {
+            kind: 'matchFields',
+            sourceField: 'password',
+            targetField: 'confirmPassword',
+          },
+        ],
+      }),
+    ]).toStrictEqual([]);
+
+    expect(
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          validationRules: [
+            {
+              kind: 'unknown',
+              sourceField: 'password',
+              targetField: 'confirmPassword',
+            },
+          ],
+        }),
+      ].length,
+    ).toBeGreaterThan(0);
+
+    expect(
+      [
+        ...Value.Errors(FormDefinitionResponseSchema, {
+          ...validResponse,
+          validationRules: [
+            {
+              kind: 'matchFields',
+              sourceField: 'password',
+            },
+          ],
+        }),
+      ].length,
+    ).toBeGreaterThan(0);
   });
 
   it('validates optional delivery configuration', () => {
@@ -263,7 +317,7 @@ describe('FormDefinitionResponseSchema', () => {
             adminEmail: 'invalid-email',
           },
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
 
     expect(
@@ -279,7 +333,7 @@ describe('FormDefinitionResponseSchema', () => {
             ],
           },
         }),
-      ].length
+      ].length,
     ).toBeGreaterThan(0);
   });
 
@@ -289,19 +343,19 @@ describe('FormDefinitionResponseSchema', () => {
     const missingId = { ...validResponse } as Record<string, unknown>;
     delete missingId['id'];
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, missingId)].length
+      [...Value.Errors(FormDefinitionResponseSchema, missingId)].length,
     ).toBeGreaterThan(0);
 
     const missingVersion = { ...validResponse } as Record<string, unknown>;
     delete missingVersion['version'];
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, missingVersion)].length
+      [...Value.Errors(FormDefinitionResponseSchema, missingVersion)].length,
     ).toBeGreaterThan(0);
 
     const missingFields = { ...validResponse } as Record<string, unknown>;
     delete missingFields['fields'];
     expect(
-      [...Value.Errors(FormDefinitionResponseSchema, missingFields)].length
+      [...Value.Errors(FormDefinitionResponseSchema, missingFields)].length,
     ).toBeGreaterThan(0);
   });
 });

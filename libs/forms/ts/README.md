@@ -16,6 +16,7 @@ and generate runtime validation schemas automatically.
 - ⚡ **Runtime Schema Generation** - Automatically generate TypeBox schemas from form configs
 - 🔒 **Type Safety** - Full TypeScript support with inferred types
 - 🎯 **Field Validation** - Built-in support for strings, emails, textareas, booleans, selects, and file uploads
+- 🔁 **Cross-Field Validation Rules** - Declarative transport-safe rules such as password confirmation
 - 🛡️ **Security Features** - Honeypot and CAPTCHA integration options
 - 📧 **Delivery Configuration** - Email notifications and webhook support
 
@@ -148,10 +149,7 @@ console.log(errors); // []
 ### Using DTOs for API Integration
 
 ```typescript
-import {
-  FormDefinitionRequestDTO,
-  SubmissionRequestDTO,
-} from '@anarchitects/forms-ts/dtos';
+import { FormDefinitionRequestDTO, SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 
 // Request a form definition
 const formRequest: FormDefinitionRequestDTO = {
@@ -177,6 +175,14 @@ const submission: SubmissionRequestDTO = {
 ```typescript
 const secureForm: FormConfig = {
   // ... other config
+  validationRules: [
+    {
+      kind: 'matchFields',
+      sourceField: 'password',
+      targetField: 'confirmPassword',
+      message: 'Passwords must match.',
+    },
+  ],
   security: {
     honeypot: 'website', // Honeypot field name
     captcha: 'turnstile', // 'turnstile' | 'hcaptcha' | 'none'
@@ -237,19 +243,10 @@ The library provides subpath exports for better tree-shaking:
 import { FormConfig, FormField, contactForm } from '@anarchitects/forms-ts';
 
 // Models only
-import {
-  FormField,
-  FieldKind,
-  FormConfig,
-} from '@anarchitects/forms-ts/models';
+import { FormField, FieldKind, FormConfig } from '@anarchitects/forms-ts/models';
 
 // DTOs only
-import {
-  FormDefinitionRequestDTO,
-  FormDefinitionResponseDTO,
-  SubmissionRequestDTO,
-  SubmissionResponseDTO,
-} from '@anarchitects/forms-ts/dtos';
+import { FormDefinitionRequestDTO, FormDefinitionResponseDTO, SubmissionRequestDTO, SubmissionResponseDTO } from '@anarchitects/forms-ts/dtos';
 
 // Builders only
 import { schemaFromConfig } from '@anarchitects/forms-ts/builders';

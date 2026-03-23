@@ -2,6 +2,7 @@ import { FormConfig } from '@anarchitects/forms-ts';
 import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
 import { moduleMetadata } from '@storybook/angular';
 import type { Meta, StoryObj } from '@storybook/angular';
+import { ValidatorFn } from '@angular/forms';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { AnarchitectsUiForm } from './form';
 
@@ -61,6 +62,44 @@ const mockFormConfig: FormConfig = {
     },
   ],
 };
+
+const passwordValidationConfig: FormConfig = {
+  id: 'register-form',
+  version: 1,
+  fields: [
+    {
+      name: 'password',
+      kind: 'password',
+      required: true,
+      minLength: 6,
+      ui: {
+        label: 'Password',
+      },
+    },
+    {
+      name: 'confirmPassword',
+      kind: 'password',
+      required: true,
+      minLength: 6,
+      ui: {
+        label: 'Confirm Password',
+      },
+    },
+  ],
+  validationRules: [
+    {
+      kind: 'matchFields',
+      sourceField: 'password',
+      targetField: 'confirmPassword',
+      message: 'Passwords must match.',
+    },
+  ],
+};
+
+const blockedEmailValidator: ValidatorFn = (control) =>
+  control.get('email')?.value === 'blocked@example.com'
+    ? { runtimeBlocked: true }
+    : null;
 
 export const Primary: Story = {
   args: {
@@ -162,5 +201,47 @@ export const SuccessfulSubmitResetsFields: Story = {
       expect(messageInput.value).toBe('');
       expect(consentCheckbox.checked).toBe(false);
     });
+  },
+};
+
+export const CrossFieldValidation: Story = {
+  args: {
+    config: passwordValidationConfig,
+  },
+  play: async ({ canvas }) => {
+    await userEvent.type(
+      await canvas.findByLabelText(/^password$/i),
+      'secret123',
+    );
+    await userEvent.type(
+      await canvas.findByLabelText(/confirm password/i),
+      'secret124',
+    );
+
+    expect(await canvas.findByText(/passwords must match/i)).toBeTruthy();
+  },
+};
+
+export const RuntimeValidators: Story = {
+  args: {
+    config: mockFormConfig,
+    runtimeValidators: [blockedEmailValidator],
+  },
+  play: async ({ canvas }) => {
+    await userEvent.type(await canvas.findByLabelText(/name/i), 'Jane Doe');
+    await userEvent.type(
+      await canvas.findByLabelText(/email/i),
+      'blocked@example.com',
+    );
+    await userEvent.type(
+      await canvas.findByLabelText(/message/i),
+      'Hello from Storybook',
+    );
+    await userEvent.click(
+      await canvas.findByRole('checkbox', { name: /consent/i }),
+    );
+
+    const submitButton = await canvas.findByRole('button', { name: /submit/i });
+    expect((submitButton as HTMLButtonElement).disabled).toBe(true);
   },
 };

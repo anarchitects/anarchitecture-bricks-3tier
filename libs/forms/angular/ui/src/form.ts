@@ -1,5 +1,9 @@
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
+import {
+  FormConfig,
+  FormField,
+  FormValidationRule,
+} from '@anarchitects/forms-ts/models';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -10,7 +14,14 @@ import {
   input,
   output,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { AnarchitectsUiButton } from '@anarchitects/common-angular-ui-primitives/actions';
 import {
   AnarchitectsUiField,
@@ -23,6 +34,67 @@ import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-compositio
 import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 import { provideAnxDefaultLayouts } from '@anarchitects/common-angular-ui-layouts/defaults';
 import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
+
+type CrossFieldError = {
+  kind: string;
+  message: string;
+};
+
+type CrossFieldErrors = Record<string, CrossFieldError>;
+
+function buildFieldValidators(field: FormField): ValidatorFn[] {
+  const validators: ValidatorFn[] = [];
+
+  if (field.required) {
+    validators.push(Validators.required);
+  }
+  if (field.minLength) {
+    validators.push(Validators.minLength(field.minLength));
+  }
+  if (field.maxLength) {
+    validators.push(Validators.maxLength(field.maxLength));
+  }
+  if (field.kind === 'email') {
+    validators.push(Validators.email);
+  }
+
+  return validators;
+}
+
+function buildConfigValidator(
+  rules: readonly FormValidationRule[] | undefined,
+): ValidatorFn | null {
+  if (!rules?.length) {
+    return null;
+  }
+
+  return (control: AbstractControl): ValidationErrors | null => {
+    const crossField: CrossFieldErrors = {};
+
+    for (const rule of rules) {
+      if (rule.kind !== 'matchFields') {
+        continue;
+      }
+
+      const sourceControl = control.get(rule.sourceField);
+      const targetControl = control.get(rule.targetField);
+      if (!sourceControl || !targetControl) {
+        continue;
+      }
+
+      if (sourceControl.value === targetControl.value) {
+        continue;
+      }
+
+      crossField[rule.targetField] = {
+        kind: rule.kind,
+        message: rule.message ?? 'Fields must match.',
+      };
+    }
+
+    return Object.keys(crossField).length > 0 ? { crossField } : null;
+  };
+}
 
 @Component({
   selector: 'anarchitects-forms-ui-form',
@@ -51,6 +123,7 @@ export class AnarchitectsUiForm {
   private readonly fb = inject(FormBuilder);
   readonly formGroup = this.fb.group({});
   readonly config = input.required<FormConfig>();
+  readonly runtimeValidators = input<readonly ValidatorFn[]>([]);
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<SubmissionRequestDTO>();
@@ -63,29 +136,52 @@ export class AnarchitectsUiForm {
   constructor() {
     effect(() => {
       const config = this.config();
-      if (config) {
-        this.formGroup.reset();
-        this.formGroup.clearValidators();
-        this.formGroup.clearAsyncValidators();
-        this.formGroup.updateValueAndValidity();
-        for (const f of config.fields) {
-          const v = [];
-          if (f.required) {
-            v.push(Validators.required);
-          }
-          if (f.minLength) {
-            v.push(Validators.minLength(f.minLength));
-          }
-          if (f.maxLength) {
-            v.push(Validators.maxLength(f.maxLength));
-          }
-          if (f.kind === 'email') {
-            v.push(Validators.email);
-          }
-          this.formGroup.addControl(f.name, this.fb.control(null, v));
-        }
+
+      for (const fieldName of Object.keys(this.formGroup.controls)) {
+        this.formGroup.removeControl(fieldName);
       }
+
+      for (const field of config.fields) {
+        this.formGroup.addControl(
+          field.name,
+          this.fb.control(null, buildFieldValidators(field)),
+        );
+      }
+
+      this.formGroup.reset();
+      this.formGroup.updateValueAndValidity({ emitEvent: false });
     });
+
+    effect(() => {
+      const configValidator = buildConfigValidator(
+        this.config().validationRules,
+      );
+      const validators = [
+        ...(configValidator ? [configValidator] : []),
+        ...this.runtimeValidators(),
+      ];
+
+      this.formGroup.setValidators(validators.length > 0 ? validators : null);
+      this.formGroup.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
+  private crossFieldError(fieldName: string): CrossFieldError | null {
+    const errors = this.formGroup.errors?.['crossField'] as
+      | CrossFieldErrors
+      | undefined;
+
+    return errors?.[fieldName] ?? null;
+  }
+
+  private shouldShowCrossFieldError(fieldName: string): boolean {
+    const control = this.formGroup.get(fieldName);
+
+    return Boolean(
+      control &&
+        this.crossFieldError(fieldName) &&
+        (control.touched || control.dirty),
+    );
   }
 
   fieldId(fieldName: string): string {
@@ -94,34 +190,44 @@ export class AnarchitectsUiForm {
 
   fieldErrorMessage(fieldName: string): string | null {
     const control = this.formGroup.get(fieldName);
-    if (!control || !control.touched || !control.invalid) {
+    if (!control) {
       return null;
     }
 
-    if (control.hasError('required')) {
-      return 'This field is required.';
+    if (control.touched && control.invalid) {
+      if (control.hasError('required')) {
+        return 'This field is required.';
+      }
+
+      if (control.hasError('email')) {
+        return 'Enter a valid email address.';
+      }
+
+      if (control.hasError('minlength')) {
+        const requiredLength = control.getError('minlength')?.requiredLength;
+        return `Minimum length is ${requiredLength}.`;
+      }
+
+      if (control.hasError('maxlength')) {
+        const requiredLength = control.getError('maxlength')?.requiredLength;
+        return `Maximum length is ${requiredLength}.`;
+      }
+
+      return 'Invalid value.';
     }
 
-    if (control.hasError('email')) {
-      return 'Enter a valid email address.';
-    }
-
-    if (control.hasError('minlength')) {
-      const requiredLength = control.getError('minlength')?.requiredLength;
-      return `Minimum length is ${requiredLength}.`;
-    }
-
-    if (control.hasError('maxlength')) {
-      const requiredLength = control.getError('maxlength')?.requiredLength;
-      return `Maximum length is ${requiredLength}.`;
-    }
-
-    return 'Invalid value.';
+    return this.shouldShowCrossFieldError(fieldName)
+      ? (this.crossFieldError(fieldName)?.message ?? null)
+      : null;
   }
 
   isFieldInvalid(fieldName: string): boolean {
     const control = this.formGroup.get(fieldName);
-    return Boolean(control && control.touched && control.invalid);
+
+    return Boolean(
+      (control && control.touched && control.invalid) ||
+        this.shouldShowCrossFieldError(fieldName),
+    );
   }
 
   onSubmit() {

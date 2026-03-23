@@ -14,6 +14,14 @@ describe('FormsController', () => {
       { name: 'test', kind: 'string' as const },
       { name: 'email', kind: 'email' as const },
     ],
+    validationRules: [
+      {
+        kind: 'matchFields',
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
   };
 
   const mockFormDefinitionEnvelope = {
@@ -50,7 +58,7 @@ describe('FormsController', () => {
       const result = await controller.getFormDefinition(formId, {
         formVersion: 2,
       });
-      expect(result).toBe(mockFormDefinitionEnvelope);
+      expect(result).toEqual(mockFormDefinitionEnvelope);
       expect(mockFormService.getDefinition).toHaveBeenCalledWith(formId, 2);
     });
 
