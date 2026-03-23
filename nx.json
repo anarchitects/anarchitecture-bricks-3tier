@@ -186,7 +186,13 @@
         "projectsRelationship": "independent",
         "projects": ["directory:libs/forms/**"],
         "version": {
-          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=forms-angular,forms-nest,forms-ts && yarn nx run-many -t build -p forms-angular,forms-nest,forms-ts"
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=forms-angular,forms-nest,forms-ts && yarn nx run-many -t build -p forms-angular,forms-nest,forms-ts",
+          "updateDependents": "auto",
+          "preserveMatchingDependencyRanges": [
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies"
+          ]
         }
       },
       "auth": {
