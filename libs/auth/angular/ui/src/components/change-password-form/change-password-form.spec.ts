@@ -17,6 +17,17 @@ describe('AnarchitectsAuthUiChangePasswordForm', () => {
     await fixture.whenStable();
   });
 
+  it('should configure confirmPassword to match newPassword', () => {
+    expect(component.formConfig().validationRules).toEqual([
+      {
+        kind: 'matchFields',
+        sourceField: 'newPassword',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ]);
+  });
+
   it('should map submission payload to ChangePasswordRequestDTO', () => {
     let emitted: ChangePasswordRequestDTO | undefined;
     component.submitted.subscribe((value) => {

@@ -54,6 +54,14 @@ export class AnarchitectsAuthUiResetPasswordForm {
         ui: { label: 'Confirm Password' },
       },
     ],
+    validationRules: [
+      {
+        kind: 'matchFields',
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
   }));
 
   onSubmitted(input: SubmissionRequestDTO): void {

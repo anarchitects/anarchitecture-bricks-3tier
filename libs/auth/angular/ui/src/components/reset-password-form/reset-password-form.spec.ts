@@ -20,6 +20,17 @@ describe('AnarchitectsAuthUiResetPasswordForm', () => {
     await fixture.whenStable();
   });
 
+  it('should configure confirmPassword to match password', () => {
+    expect(component.formConfig().validationRules).toEqual([
+      {
+        kind: 'matchFields',
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ]);
+  });
+
   it('should map payload token and password fields', () => {
     let emitted: ResetPasswordRequestDTO | undefined;
     component.submitted.subscribe((value) => {

@@ -53,6 +53,14 @@ export class AnarchitectsAuthUiChangePasswordForm {
         ui: { label: 'Confirm Password' },
       },
     ],
+    validationRules: [
+      {
+        kind: 'matchFields',
+        sourceField: 'newPassword',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
   });
 
   onSubmitted(input: SubmissionRequestDTO): void {
