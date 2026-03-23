@@ -68,7 +68,7 @@ jobs:
           git config user.email "anarchitects-bot[bot]@users.noreply.github.com"
 
       - name: Run release for selected domain group
-        run: yarn nx release --groups=${{ inputs.domain }} --yes
+        run: yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} --yes
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
