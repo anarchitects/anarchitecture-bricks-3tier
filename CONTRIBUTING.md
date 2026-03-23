@@ -84,8 +84,8 @@ nx run release-tools:validate-non-bumping-commits
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
 - Select exactly one domain group input: `forms`, `auth`, or `common`.
-- The workflow runs full `nx release --groups=<domain>` (version, changelog, git/tag, GitHub release, publish).
-- Do not run local `nx release` before merging PRs.
+- The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --yes`.
+- Do not run local `nx release` before merging PRs; use the repo runner instead.
 - Use **Publish Packages (Recovery)** only if publishing needs to be retried after a failed release run.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final `{projectName}@{version}` release tags from a release-prep branch before merge.
@@ -97,7 +97,7 @@ nx run release-tools:validate-non-bumping-commits
   - external peer normalization derives ranges from root `package.json`; exact root versions become major-wide caret peers (for example `21.1.6` -> `^21.0.0`)
 - The release tag ancestry check fails when a `{projectName}@{version}` tag exists but points to a commit outside current branch history.
 - Group-scoped release preflight runs only the selected release group's ancestry check and builds.
-- For local dry-run validation, use the release group syntax when possible (for example `yarn nx release --groups=forms -d`).
+- For local dry-run validation, use the repo runner (for example `yarn nx run release-tools:domain-release -- --domain=forms -d`).
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`

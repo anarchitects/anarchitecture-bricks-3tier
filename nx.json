@@ -199,14 +199,38 @@
         "projectsRelationship": "independent",
         "projects": ["directory:libs/auth/**"],
         "version": {
-          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=auth-angular,auth-nest,auth-ts && yarn nx run-many -t build -p auth-angular,auth-nest,auth-ts"
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=auth-angular,auth-nest,auth-ts && yarn nx run-many -t build -p auth-angular,auth-nest,auth-ts",
+          "updateDependents": "auto",
+          "preserveMatchingDependencyRanges": [
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies"
+          ]
         }
       },
-      "common": {
+      "common-angular": {
         "projectsRelationship": "independent",
-        "projects": ["directory:libs/common/**"],
+        "projects": [
+          "common-angular-ui-composition",
+          "common-angular-design",
+          "common-angular-ui-primitives",
+          "common-angular-ui-layouts"
+        ],
         "version": {
-          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts,common-nest-mailer && yarn nx run-many -t build -p common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts,common-nest-mailer"
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts && yarn nx run-many -t build -p common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts",
+          "updateDependents": "auto",
+          "preserveMatchingDependencyRanges": [
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies"
+          ]
+        }
+      },
+      "common-nest": {
+        "projectsRelationship": "independent",
+        "projects": ["common-nest-mailer"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=common-nest-mailer && yarn nx run common-nest-mailer:build"
         }
       }
     },

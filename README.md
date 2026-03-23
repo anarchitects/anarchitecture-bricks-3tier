@@ -119,6 +119,7 @@ nx run forms-angular-example:contract-test
 | `nx run docs-hub:build`                      | Build static docs hub pages                           |
 | `nx run docs-hub:verify`                     | Validate docs hub outputs and required links          |
 | `nx run release-tools:validate-non-bumping-commits` | Enforce non-bumping commit types for docs-surface PRs |
+| `nx run release-tools:domain-release -- --domain=forms -d` | Dry-run the supported domain release workflow         |
 | `nx run auth-nest-example:contract-test`     | Validate auth Nest runtime responses against OpenAPI  |
 | `nx run auth-angular-example:contract-test`  | Validate auth Angular data-access against Prism mock  |
 | `nx run forms-nest-example:contract-test`    | Validate Nest runtime responses against OpenAPI       |
@@ -130,14 +131,14 @@ nx run forms-angular-example:contract-test
 Run releases via the **Release (Manual)** GitHub workflow:
 
 - Workflow input `domain` must be one of: `forms`, `auth`, `common`.
-- The workflow runs full `nx release --groups=<domain>` including publish.
+- The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --yes`, which handles versioning, changelog generation, git/tagging, GitHub releases, and publish.
 - Use **Publish Packages (Recovery)** only to retry publish if a release run fails after versioning/tagging.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final release tags from a release-prep branch before merge.
 - If a release-prep PR is squash-merged after tags were created on the branch, retarget those tags to the merge commit on `main` before running release.
 
-Avoid routine local `yarn nx release`; use the workflow for auditable, controlled domain releases.
-If local dry-runs are needed, use the group syntax, for example `yarn nx release --groups=forms -d`.
+Avoid routine local `yarn nx release`; use the workflow or the repo runner for auditable, controlled domain releases.
+If local dry-runs are needed, use the repo runner, for example `yarn nx run release-tools:domain-release -- --domain=forms -d`.
 
 ## Layering Rules
 

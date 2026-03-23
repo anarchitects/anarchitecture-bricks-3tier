@@ -35,6 +35,18 @@
       "options": {
         "command": "node tools/release/validate-non-bumping-commits.mjs"
       }
+    },
+    "domain-release": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/run-domain-release.mjs"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test tools/release/domain-release-lib.spec.mjs"
+      }
     }
   }
 }
