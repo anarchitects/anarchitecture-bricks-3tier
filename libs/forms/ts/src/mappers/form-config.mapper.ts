@@ -9,6 +9,7 @@ const cloneConfig = (config: FormConfig): FormConfig => ({
     options: field.options?.map((option) => ({ ...option })),
     ui: field.ui ? { ...field.ui } : undefined,
   })),
+  validationRules: config.validationRules?.map((rule) => ({ ...rule })),
   security: config.security ? { ...config.security } : undefined,
   delivery: config.delivery
     ? {

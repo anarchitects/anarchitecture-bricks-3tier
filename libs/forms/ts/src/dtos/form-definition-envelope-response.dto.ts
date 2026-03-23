@@ -1,7 +1,8 @@
 import { Static, Type } from '@sinclair/typebox';
+import { FormDefinitionResponseSchema } from './form-definition-response.dto';
 
 export const FormDefinitionEnvelopeResponseSchema = Type.Object({
-  config: Type.Unknown(),
+  config: FormDefinitionResponseSchema,
   schema: Type.Unknown(),
 });
 

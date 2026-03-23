@@ -18,10 +18,18 @@ export interface FormField {
   ui?: { label?: string; placeholder?: string; rows?: number; help?: string };
 }
 
+export type FormValidationRule = {
+  kind: 'matchFields';
+  sourceField: string;
+  targetField: string;
+  message?: string;
+};
+
 export interface FormConfig {
   id: string;
   version: number;
   fields: FormField[];
+  validationRules?: FormValidationRule[];
   security?: { honeypot?: string; captcha?: 'turnstile' | 'hcaptcha' | 'none' };
   delivery?: {
     adminEmail?: string;

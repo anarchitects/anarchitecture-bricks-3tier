@@ -12,6 +12,14 @@ describe('TypeOrmFormConfigsRepository', () => {
     id: 'contact_default',
     version: 1,
     fields: [{ name: 'email', kind: 'email', required: true }],
+    validationRules: [
+      {
+        kind: 'matchFields',
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
   };
 
   const mockRepository = {

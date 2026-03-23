@@ -17,6 +17,14 @@ describe('FormsService', () => {
         required: true,
       },
     ],
+    validationRules: [
+      {
+        kind: 'matchFields',
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
   };
 
   const mockFormConfigsRepository = {
@@ -47,6 +55,9 @@ describe('FormsService', () => {
       expect(result).toHaveProperty('config');
       expect(result).toHaveProperty('schema');
       expect(result.config).toEqual(mockFormConfig);
+      expect(result.config.validationRules).toEqual(
+        mockFormConfig.validationRules,
+      );
       expect(mockFormConfigsRepository.getFormConfig).toHaveBeenCalledWith(
         'contact_default',
         1,

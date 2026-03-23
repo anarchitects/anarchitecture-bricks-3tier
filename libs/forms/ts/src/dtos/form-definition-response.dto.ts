@@ -20,8 +20,8 @@ const formField = Type.Object({
       Type.Object({
         value: Type.String(),
         label: Type.String(),
-      })
-    )
+      }),
+    ),
   ),
   ui: Type.Optional(
     Type.Object({
@@ -29,13 +29,22 @@ const formField = Type.Object({
       placeholder: Type.Optional(Type.String()),
       rows: Type.Optional(Type.Integer({ minimum: 1 })),
       help: Type.Optional(Type.String()),
-    })
+    }),
   ),
 });
+
+const formValidationRule = Type.Object({
+  kind: Type.Literal('matchFields'),
+  sourceField: Type.String(),
+  targetField: Type.String(),
+  message: Type.Optional(Type.String()),
+});
+
 export const FormDefinitionResponseSchema = Type.Object({
   id: Type.String(),
   version: Type.Integer({ minimum: 1 }),
   fields: Type.Array(formField),
+  validationRules: Type.Optional(Type.Array(formValidationRule)),
   security: Type.Optional(
     Type.Object({
       honeypot: Type.Optional(Type.String()),
@@ -44,7 +53,7 @@ export const FormDefinitionResponseSchema = Type.Object({
         Type.Literal('hcaptcha'),
         Type.Literal('none'),
       ]),
-    })
+    }),
   ),
   delivery: Type.Optional(
     Type.Object({
@@ -56,17 +65,17 @@ export const FormDefinitionResponseSchema = Type.Object({
           enabled: Type.Boolean(),
           templateId: Type.String(),
           subject: Type.String(),
-        })
+        }),
       ),
       webhooks: Type.Optional(
         Type.Array(
           Type.Object({
             url: Type.String({ format: 'uri' }),
             secret: Type.Optional(Type.String()),
-          })
-        )
+          }),
+        ),
       ),
-    })
+    }),
   ),
 });
 

@@ -634,7 +634,247 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "config": {},
+                    "config": {
+                      "properties": {
+                        "delivery": {
+                          "properties": {
+                            "adminEmail": {
+                              "format": "email",
+                              "type": "string"
+                            },
+                            "autoReply": {
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                },
+                                "subject": {
+                                  "type": "string"
+                                },
+                                "templateId": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "enabled",
+                                "templateId",
+                                "subject"
+                              ],
+                              "type": "object"
+                            },
+                            "subject": {
+                              "type": "string"
+                            },
+                            "templateId": {
+                              "type": "string"
+                            },
+                            "webhooks": {
+                              "items": {
+                                "properties": {
+                                  "secret": {
+                                    "type": "string"
+                                  },
+                                  "url": {
+                                    "format": "uri",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "url"
+                                ],
+                                "type": "object"
+                              },
+                              "type": "array"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "fields": {
+                          "items": {
+                            "properties": {
+                              "kind": {
+                                "anyOf": [
+                                  {
+                                    "enum": [
+                                      "string"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  {
+                                    "enum": [
+                                      "password"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  {
+                                    "enum": [
+                                      "email"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  {
+                                    "enum": [
+                                      "textarea"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  {
+                                    "enum": [
+                                      "boolean"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  {
+                                    "enum": [
+                                      "select"
+                                    ],
+                                    "type": "string"
+                                  },
+                                  {
+                                    "enum": [
+                                      "file"
+                                    ],
+                                    "type": "string"
+                                  }
+                                ]
+                              },
+                              "maxLength": {
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "minLength": {
+                                "minimum": 0,
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "options": {
+                                "items": {
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "value": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "value",
+                                    "label"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": "array"
+                              },
+                              "pattern": {
+                                "type": "string"
+                              },
+                              "required": {
+                                "type": "boolean"
+                              },
+                              "ui": {
+                                "properties": {
+                                  "help": {
+                                    "type": "string"
+                                  },
+                                  "label": {
+                                    "type": "string"
+                                  },
+                                  "placeholder": {
+                                    "type": "string"
+                                  },
+                                  "rows": {
+                                    "minimum": 1,
+                                    "type": "integer"
+                                  }
+                                },
+                                "type": "object"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "kind"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "security": {
+                          "properties": {
+                            "captcha": {
+                              "anyOf": [
+                                {
+                                  "enum": [
+                                    "turnstile"
+                                  ],
+                                  "type": "string"
+                                },
+                                {
+                                  "enum": [
+                                    "hcaptcha"
+                                  ],
+                                  "type": "string"
+                                },
+                                {
+                                  "enum": [
+                                    "none"
+                                  ],
+                                  "type": "string"
+                                }
+                              ]
+                            },
+                            "honeypot": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "captcha"
+                          ],
+                          "type": "object"
+                        },
+                        "validationRules": {
+                          "items": {
+                            "properties": {
+                              "kind": {
+                                "enum": [
+                                  "matchFields"
+                                ],
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "sourceField": {
+                                "type": "string"
+                              },
+                              "targetField": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "sourceField",
+                              "targetField"
+                            ],
+                            "type": "object"
+                          },
+                          "type": "array"
+                        },
+                        "version": {
+                          "minimum": 1,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "version",
+                        "fields"
+                      ],
+                      "type": "object"
+                    },
                     "schema": {}
                   },
                   "required": [
