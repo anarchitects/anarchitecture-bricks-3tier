@@ -1,8 +1,8 @@
 {
   "name": "@anarchitects/auth-angular",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "dependencies": {
-    "@anarchitects/auth-ts": "^0.3.0",
+    "@anarchitects/auth-ts": "^0.4.0",
     "@anarchitects/common-angular-ui-layouts": "^0.0.1",
     "@anarchitects/forms-angular": "^0.3.0",
     "@anarchitects/forms-ts": "^0.3.0",
