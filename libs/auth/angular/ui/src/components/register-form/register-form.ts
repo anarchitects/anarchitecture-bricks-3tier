@@ -51,6 +51,14 @@ export class AnarchitectsAuthUiRegisterForm {
         required: true,
       },
     ],
+    validationRules: [
+      {
+        kind: 'matchFields',
+        sourceField: 'password',
+        targetField: 'confirmPassword',
+        message: 'Passwords must match.',
+      },
+    ],
   });
 
   onSubmitted(input: SubmissionRequestDTO): void {
