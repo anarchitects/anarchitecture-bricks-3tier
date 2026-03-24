@@ -5,6 +5,7 @@ import {
 } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { AuthApi } from './auth-api';
+import { SUPPRESS_AUTH_FAILURE_REDIRECT } from './interceptors/auth-error.interceptor';
 
 describe('AuthApi', () => {
   let service: AuthApi;
@@ -19,6 +20,7 @@ describe('AuthApi', () => {
   });
   afterEach(() => {
     httpController.verify();
+    TestBed.resetTestingModule();
   });
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -166,6 +168,22 @@ describe('AuthApi', () => {
       service.getLoggedInUserInfo().subscribe();
       const req = httpController.expectOne('/api/auth/me');
       expect(req.request.method).toBe('GET');
+      req.flush({
+        user: { id: 'user-123', email: 'user@example.com' },
+        rbac: [{ action: 'read', subject: 'Project' }],
+      });
+    });
+
+    it('should optionally suppress auth failure redirects for startup restore', () => {
+      service
+        .getLoggedInUserInfo({ suppressAuthFailureRedirect: true })
+        .subscribe();
+      const req = httpController.expectOne('/api/auth/me');
+
+      expect(req.request.context.get(SUPPRESS_AUTH_FAILURE_REDIRECT)).toBe(
+        true,
+      );
+
       req.flush({
         user: { id: 'user-123', email: 'user@example.com' },
         rbac: [{ action: 'read', subject: 'Project' }],

@@ -13,3 +13,4 @@ export function withAuthHttpInterceptors() {
 
 export * from './bearer-token.interceptor';
 export * from './auth-error.interceptor';
+export * from './auth-token.utils';

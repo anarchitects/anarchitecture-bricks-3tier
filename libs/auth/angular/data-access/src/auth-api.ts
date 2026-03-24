@@ -14,8 +14,13 @@ import {
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { PolicyRule, User } from '@anarchitects/auth-ts/models';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { SUPPRESS_AUTH_FAILURE_REDIRECT } from './interceptors/auth-error.interceptor';
+
+export type AuthApiRequestOptions = {
+  suppressAuthFailureRedirect?: boolean;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -91,9 +96,14 @@ export class AuthApi {
     );
   }
 
-  getLoggedInUserInfo() {
+  getLoggedInUserInfo(options: AuthApiRequestOptions = {}) {
+    const context = options.suppressAuthFailureRedirect
+      ? new HttpContext().set(SUPPRESS_AUTH_FAILURE_REDIRECT, true)
+      : undefined;
+
     return this.http.get<{ user: User; rbac: PolicyRule[] }>(
       `${this.resourceUrl}/me`,
+      context ? { context } : undefined,
     );
   }
 }

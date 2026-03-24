@@ -1,4 +1,5 @@
 import {
+  HttpContext,
   HttpClient,
   provideHttpClient,
   withInterceptors,
@@ -11,7 +12,10 @@ import {
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { authBearerTokenInterceptor } from './bearer-token.interceptor';
-import { authErrorInterceptor } from './auth-error.interceptor';
+import {
+  authErrorInterceptor,
+  SUPPRESS_AUTH_FAILURE_REDIRECT,
+} from './auth-error.interceptor';
 
 vi.mock('jwt-decode', () => ({
   jwtDecode: vi.fn(),
@@ -43,6 +47,7 @@ describe('authErrorInterceptor', () => {
     localStorage.clear();
     vi.clearAllMocks();
     httpController.verify();
+    TestBed.resetTestingModule();
   });
 
   it('should refresh tokens and retry request on 403', () => {
@@ -63,8 +68,8 @@ describe('authErrorInterceptor', () => {
       { status: 403, statusText: 'Forbidden' }
     );
 
-    const refreshReq = httpController.expectOne(
-      '/api/auth/refresh-tokens/user-123'
+    const refreshReq = httpController.expectOne((req) =>
+      req.url.includes('/api/auth/refresh-tokens/')
     );
     expect(refreshReq.request.method).toBe('POST');
     expect(refreshReq.request.body).toEqual({ refreshToken: 'refresh-token' });
@@ -123,8 +128,8 @@ describe('authErrorInterceptor', () => {
       { status: 401, statusText: 'Unauthorized' }
     );
 
-    const refreshReq = httpController.expectOne(
-      '/api/auth/refresh-tokens/user-123'
+    const refreshReq = httpController.expectOne((req) =>
+      req.url.includes('/api/auth/refresh-tokens/')
     );
     refreshReq.flush(
       { message: 'refresh denied' },
@@ -158,6 +163,39 @@ describe('authErrorInterceptor', () => {
       httpController.match((req) => req.url.includes('/refresh-tokens/'))
     ).toHaveLength(0);
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  it('should suppress redirect when the request opts out during startup restore', () => {
+    localStorage.setItem('accessToken', 'expired-access-token');
+    localStorage.setItem('refreshToken', 'refresh-token');
+    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
+
+    const errorSpy = vi.fn();
+
+    http
+      .get('/api/protected', {
+        context: new HttpContext().set(SUPPRESS_AUTH_FAILURE_REDIRECT, true),
+      })
+      .subscribe({ error: errorSpy });
+
+    const initialReq = httpController.expectOne('/api/protected');
+    initialReq.flush(
+      { message: 'unauthorized' },
+      { status: 401, statusText: 'Unauthorized' }
+    );
+
+    const refreshReq = httpController.expectOne((req) =>
+      req.url.includes('/api/auth/refresh-tokens/')
+    );
+    refreshReq.flush(
+      { message: 'refresh denied' },
+      { status: 401, statusText: 'Unauthorized' }
+    );
+
+    expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+    expect(localStorage.getItem('accessToken')).toBeNull();
+    expect(localStorage.getItem('refreshToken')).toBeNull();
     expect(errorSpy).toHaveBeenCalled();
   });
 });

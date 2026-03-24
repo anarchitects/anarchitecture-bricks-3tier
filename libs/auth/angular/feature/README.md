@@ -4,7 +4,8 @@ Feature-level orchestration for Angular auth. It ships route guards plus standal
 
 ## Exports
 
-- `policyGuard`: standalone `CanMatchFn` that denies routes unless the logged-in ability can perform the configured action on the configured subject.
+- `policyGuard`: standalone coarse `CanMatchFn` for route-attempt checks.
+- `resourcePolicyGuard`: standalone `CanActivateFn` for resolved-resource authorization checks.
 - `AnarchitectsFeatureRegister`
 - `AnarchitectsFeatureLogin`
 - `AnarchitectsFeatureActivateUser`
@@ -20,7 +21,10 @@ Feature-level orchestration for Angular auth. It ships route guards plus standal
 
 ```ts
 import { Routes } from '@angular/router';
-import { policyGuard } from '@anarchitects/auth-angular/feature';
+import {
+  policyGuard,
+  resourcePolicyGuard,
+} from '@anarchitects/auth-angular/feature';
 
 export const routes: Routes = [
   {
@@ -29,10 +33,26 @@ export const routes: Routes = [
     data: { action: 'manage', subject: 'admin-section' },
     loadComponent: () => import('./admin.component').then((m) => m.AdminComponent),
   },
+  {
+    path: 'posts/:postId/edit',
+    canMatch: [policyGuard],
+    canActivate: [resourcePolicyGuard],
+    data: {
+      action: 'update',
+      subject: 'Post',
+      resourceKey: 'post',
+      unauthorizedRedirectTo: '/posts',
+    },
+    loadComponent: () => import('./post-edit.component').then((m) => m.PostEditComponent),
+  },
 ];
 ```
 
-The guard reads the `AuthStore` ability snapshot. Ensure the state layer is explicitly provided in your app/route providers by wiring `provideAuthState()` from `@anarchitects/auth-angular/state`.
+`policyGuard` reads the hydrated RBAC rules and applies the shared coarse route matcher from `@anarchitects/auth-ts`. It intentionally does not decide ownership-sensitive access by itself.
+
+Use `resourcePolicyGuard` when the route already has the concrete entity in `route.data`. It evaluates the hydrated CASL ability against that loaded resource and redirects away when access is denied.
+
+Ensure the state layer is explicitly provided in your app/route providers by wiring `...provideAuthState()` from `@anarchitects/auth-angular/state`.
 
 ### Token-driven actions
 
