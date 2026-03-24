@@ -8,6 +8,7 @@ import {
   mapAuthConfigToApplicationModuleOptions,
   resolveAuthApplicationModuleOptions,
 } from '../config';
+import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import {
   ConfigurableModuleClass,
@@ -15,6 +16,8 @@ import {
 } from './application.module-definition';
 import { AbilityFactory } from './factories/ability.factory';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
+import { AuthEnginePort } from './services/auth-engine.port';
+import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
@@ -71,10 +74,23 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
           }),
         }),
       );
-      providers.push(JwtAuthService, JwtStrategy, {
-        provide: AuthService,
-        useExisting: JwtAuthService,
-      });
+      providers.push(
+        AuthOrchestrationService,
+        LegacyJwtAuthEngineAdapter,
+        JwtStrategy,
+        {
+          provide: AuthEnginePort,
+          useExisting: LegacyJwtAuthEngineAdapter,
+        },
+        {
+          provide: AuthService,
+          useExisting: AuthOrchestrationService,
+        },
+        {
+          provide: JwtAuthService,
+          useExisting: AuthOrchestrationService,
+        },
+      );
       exports.push(AuthService);
     }
     return {

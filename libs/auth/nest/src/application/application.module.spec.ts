@@ -1,8 +1,12 @@
 import { DynamicModule } from '@nestjs/common';
 import { AuthApplicationModule } from './application.module';
+import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
+import { AuthEnginePort } from './services/auth-engine.port';
+import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import { AuthService } from './services/auth.service';
+import { JwtAuthService } from './services/jwt-auth.service';
 
 const ORIGINAL_AUTH_PERSISTENCE = process.env['AUTH_PERSISTENCE'];
 const ORIGINAL_AUTH_STRATEGIES = process.env['AUTH_STRATEGIES'];
@@ -79,6 +83,36 @@ describe('AuthApplicationModule', () => {
     });
 
     expect(moduleMetadata.exports).toContain(AuthService);
+  });
+
+  it('should wire AuthService and AuthEnginePort through the orchestration seam', () => {
+    const moduleMetadata = AuthApplicationModule.forRoot({
+      authStrategies: ['jwt'],
+      encryption: {
+        algorithm: 'bcrypt',
+        key: 'explicit-key',
+      },
+      persistence: { persistence: 'typeorm' },
+    });
+
+    expect(moduleMetadata.providers).toEqual(
+      expect.arrayContaining([
+        AuthOrchestrationService,
+        LegacyJwtAuthEngineAdapter,
+        expect.objectContaining({
+          provide: AuthEnginePort,
+          useExisting: LegacyJwtAuthEngineAdapter,
+        }),
+        expect.objectContaining({
+          provide: AuthService,
+          useExisting: AuthOrchestrationService,
+        }),
+        expect.objectContaining({
+          provide: JwtAuthService,
+          useExisting: AuthOrchestrationService,
+        }),
+      ]),
+    );
   });
 
   it('should resolve AUTH_STRATEGIES through forRootFromConfig', () => {
