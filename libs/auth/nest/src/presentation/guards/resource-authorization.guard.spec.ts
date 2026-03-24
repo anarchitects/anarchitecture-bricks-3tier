@@ -251,4 +251,22 @@ describe('ResourceAuthorizationGuard', () => {
       ),
     ).rejects.toThrow(ForbiddenException);
   });
+
+  it('fails when ability construction rejects malformed persisted rules', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue([
+      { action: 'read', subject: 'Post', idParam: 'postId' },
+    ]);
+    mockPoliciesService.buildAbilityForUser.mockRejectedValue(
+      new Error('Malformed persisted policy rule payload'),
+    );
+
+    await expect(
+      guard.canActivate(
+        createExecutionContext({
+          user: { id: 'user-1' },
+          params: { postId: 'post-1' },
+        }),
+      ),
+    ).rejects.toThrow('Malformed persisted policy rule payload');
+  });
 });

@@ -192,6 +192,26 @@ describe('AuthStore', () => {
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/login');
   });
 
+  it('clears tokens and session when login hydration rejects malformed rbac', async () => {
+    const { store } = setup({
+      authApiOverrides: {
+        getLoggedInUserInfo: vi.fn(() =>
+          throwError(() => new Error('Invalid rbac.')),
+        ),
+      },
+    });
+
+    store.login({ credential: 'testuser', password: 'password' });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(localStorage.getItem('accessToken')).toBeNull();
+    expect(localStorage.getItem('refreshToken')).toBeNull();
+    expect(store.isLoggedIn()).toBe(false);
+    expect(store.rbac()).toEqual([]);
+    expect(store.ability()).toBeUndefined();
+    expect(store.error()).toBe('Invalid rbac.');
+  });
+
   it('hydrates raw rbac and ability on login', async () => {
     const { store } = setup();
 
@@ -243,6 +263,32 @@ describe('AuthStore', () => {
     expect(store.isLoggedIn()).toBe(true);
     expect(store.rbac()).toEqual(hydratedSession.rbac);
     expect(store.ability()?.can('update', 'Post')).toBe(true);
+  });
+
+  it('clears tokens and session when refresh hydration rejects malformed rbac', async () => {
+    localStorage.setItem('accessToken', validAccessToken);
+    localStorage.setItem('refreshToken', validRefreshToken);
+
+    const { store } = setup({
+      authApiOverrides: {
+        getLoggedInUserInfo: vi.fn(() =>
+          throwError(() => new Error('Invalid rbac.')),
+        ),
+      },
+    });
+
+    store.refreshTokens({
+      userId: 'user-id',
+      dto: { refreshToken: validRefreshToken },
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(localStorage.getItem('accessToken')).toBeNull();
+    expect(localStorage.getItem('refreshToken')).toBeNull();
+    expect(store.isLoggedIn()).toBe(false);
+    expect(store.rbac()).toEqual([]);
+    expect(store.ability()).toBeUndefined();
+    expect(store.error()).toBe('Invalid rbac.');
   });
 
   it('toggles restoring only around bootstrap restore', async () => {

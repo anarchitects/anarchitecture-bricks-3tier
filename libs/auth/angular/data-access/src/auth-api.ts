@@ -12,10 +12,12 @@ import {
   ResetPasswordRequestDTO,
   UpdateEmailRequestDTO,
   VerifyEmailRequestDTO,
+  parsePolicyRuleArrayDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { PolicyRule, User } from '@anarchitects/auth-ts/models';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { map } from 'rxjs';
 import { SUPPRESS_AUTH_FAILURE_REDIRECT } from './interceptors/auth-error.interceptor';
 
 export type AuthApiRequestOptions = {
@@ -101,9 +103,16 @@ export class AuthApi {
       ? new HttpContext().set(SUPPRESS_AUTH_FAILURE_REDIRECT, true)
       : undefined;
 
-    return this.http.get<{ user: User; rbac: PolicyRule[] }>(
-      `${this.resourceUrl}/me`,
-      context ? { context } : undefined,
-    );
+    return this.http
+      .get<{ user: User; rbac: unknown }>(
+        `${this.resourceUrl}/me`,
+        context ? { context } : undefined,
+      )
+      .pipe(
+        map(({ user, rbac }) => ({
+          user,
+          rbac: parsePolicyRuleArrayDTO(rbac, 'rbac') as PolicyRule[],
+        })),
+      );
   }
 }

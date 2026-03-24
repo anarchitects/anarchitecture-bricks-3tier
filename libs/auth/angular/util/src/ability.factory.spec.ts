@@ -116,4 +116,32 @@ describe('Ability', () => {
       ability.can('update', subject('Post', { id: 'post-2', archived: true })),
     ).toBe(false);
   });
+
+  it('fails closed when malformed rules are provided', () => {
+    const ability = createAppAbility([null] as unknown as PolicyRule[]);
+
+    expect(ability.can('read', 'Post')).toBe(false);
+  });
+
+  it('returns false for malformed concrete resource inputs', () => {
+    const ability = createAppAbility([{ action: 'read', subject: 'Post' }]);
+
+    expect(
+      canAccessResource(
+        ability,
+        'read',
+        'Post',
+        null as unknown as Record<string, unknown>,
+      ),
+    ).toBe(false);
+    expect(
+      canAccessResourceField(
+        ability,
+        'read',
+        'Post',
+        'title',
+        null as unknown as Record<string, unknown>,
+      ),
+    ).toBe(false);
+  });
 });

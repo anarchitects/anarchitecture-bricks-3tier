@@ -83,4 +83,29 @@ describe('route policy matcher', () => {
       ]),
     ).toBe(true);
   });
+
+  it('fails closed for malformed rule entries', () => {
+    expect(
+      canAttemptRoutePolicy(routePolicy, [null] as unknown as never[]),
+    ).toBe(false);
+    expect(
+      canAttemptRoutePolicy(routePolicy, [
+        { action: 'update', subject: '' },
+      ] as unknown as never[]),
+    ).toBe(false);
+    expect(
+      canAttemptRoutePolicy(routePolicy, [
+        { action: 'update', subject: 'Post', extra: true },
+      ] as unknown as never[]),
+    ).toBe(false);
+  });
+
+  it('fails closed for malformed route policy metadata', () => {
+    expect(
+      canAttemptRoutePolicy(
+        { action: '', subject: 'Post' } as unknown as never,
+        [{ action: 'update', subject: 'Post' }],
+      ),
+    ).toBe(false);
+  });
 });

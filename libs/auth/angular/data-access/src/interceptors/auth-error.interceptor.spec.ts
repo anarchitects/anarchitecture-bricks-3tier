@@ -10,16 +10,14 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
 import { authBearerTokenInterceptor } from './bearer-token.interceptor';
 import {
   authErrorInterceptor,
   SUPPRESS_AUTH_FAILURE_REDIRECT,
 } from './auth-error.interceptor';
 
-vi.mock('jwt-decode', () => ({
-  jwtDecode: vi.fn(),
-}));
+const decodableAccessToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEyMyJ9.signature';
 
 describe('authErrorInterceptor', () => {
   let http: HttpClient;
@@ -51,9 +49,8 @@ describe('authErrorInterceptor', () => {
   });
 
   it('should refresh tokens and retry request on 403', () => {
-    localStorage.setItem('accessToken', 'expired-access-token');
+    localStorage.setItem('accessToken', decodableAccessToken);
     localStorage.setItem('refreshToken', 'refresh-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
     const responseSpy = vi.fn();
 
@@ -61,7 +58,7 @@ describe('authErrorInterceptor', () => {
 
     const initialReq = httpController.expectOne('/api/protected');
     expect(initialReq.request.headers.get('Authorization')).toBe(
-      'Bearer expired-access-token'
+      `Bearer ${decodableAccessToken}`
     );
     initialReq.flush(
       { message: 'forbidden' },
@@ -91,8 +88,7 @@ describe('authErrorInterceptor', () => {
   });
 
   it('should redirect to login when refresh token is missing', () => {
-    localStorage.setItem('accessToken', 'expired-access-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
+    localStorage.setItem('accessToken', decodableAccessToken);
 
     const errorSpy = vi.fn();
 
@@ -114,9 +110,8 @@ describe('authErrorInterceptor', () => {
   });
 
   it('should redirect to login when refresh request fails', () => {
-    localStorage.setItem('accessToken', 'expired-access-token');
+    localStorage.setItem('accessToken', decodableAccessToken);
     localStorage.setItem('refreshToken', 'refresh-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
     const errorSpy = vi.fn();
 
@@ -143,9 +138,8 @@ describe('authErrorInterceptor', () => {
   });
 
   it('should not attempt refresh for public login endpoint failures', () => {
-    localStorage.setItem('accessToken', 'expired-access-token');
+    localStorage.setItem('accessToken', decodableAccessToken);
     localStorage.setItem('refreshToken', 'refresh-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
     const errorSpy = vi.fn();
 
@@ -167,9 +161,8 @@ describe('authErrorInterceptor', () => {
   });
 
   it('should suppress redirect when the request opts out during startup restore', () => {
-    localStorage.setItem('accessToken', 'expired-access-token');
+    localStorage.setItem('accessToken', decodableAccessToken);
     localStorage.setItem('refreshToken', 'refresh-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'user-123' });
 
     const errorSpy = vi.fn();
 

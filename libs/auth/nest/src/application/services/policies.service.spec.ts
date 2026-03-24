@@ -53,6 +53,38 @@ describe('PoliciesService', () => {
     },
   ];
 
+  const malformedPermissions: Array<{
+    description: string;
+    permission: Partial<Permission>;
+  }> = [
+    {
+      description: 'empty action',
+      permission: { action: '' },
+    },
+    {
+      description: 'missing subject',
+      permission: { subject: undefined },
+    },
+    {
+      description: 'non-object conditions',
+      permission: {
+        conditions: [] as unknown as Record<string, unknown>,
+      },
+    },
+    {
+      description: 'invalid fields payload',
+      permission: { fields: 'title' as unknown as string[] },
+    },
+    {
+      description: 'non-boolean inverted',
+      permission: { inverted: 'true' as unknown as boolean },
+    },
+    {
+      description: 'non-string reason',
+      permission: { reason: 123 as unknown as string },
+    },
+  ];
+
   const mockAuthUserRepository = {
     findOne: jest.fn().mockResolvedValue(mockUser),
   };
@@ -82,26 +114,29 @@ describe('PoliciesService', () => {
       expect(permissions).toEqual(expectedPolicyRules);
     });
 
-    it('should fail closed on malformed persisted policy rules', async () => {
-      mockAuthUserRepository.findOne.mockResolvedValueOnce({
-        ...mockUser,
-        roles: [
-          {
-            ...mockRole,
-            permissions: [
-              {
-                ...mockPermission,
-                action: '',
-              },
-            ],
-          },
-        ],
-      });
+    it.each(malformedPermissions)(
+      'should fail closed on malformed persisted policy rules: $description',
+      async ({ permission }) => {
+        mockAuthUserRepository.findOne.mockResolvedValueOnce({
+          ...mockUser,
+          roles: [
+            {
+              ...mockRole,
+              permissions: [
+                {
+                  ...mockPermission,
+                  ...permission,
+                },
+              ],
+            },
+          ],
+        });
 
-      await expect(service.rulesForUser(mockUser)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-    });
+        await expect(service.rulesForUser(mockUser)).rejects.toThrow(
+          InternalServerErrorException,
+        );
+      },
+    );
   });
 
   describe('buildAbilityForUser', () => {

@@ -153,4 +153,40 @@ describe('resourcePolicyGuard', () => {
 
     await expect(resultPromise).resolves.toBe(true);
   });
+
+  it('redirects when the resource payload is missing or malformed', async () => {
+    const { router } = setup({
+      rbac: [{ action: 'read', subject: 'Post' }],
+    });
+
+    const missingResult = await firstValueFrom(
+      executeGuard(
+        {
+          data: {
+            action: 'read',
+            resourceKey: 'post',
+            subject: 'Post',
+          },
+        } as never,
+        { url: '/posts/post-1/edit' } as never,
+      ) as Observable<boolean | UrlTree>,
+    );
+
+    const invalidResult = await firstValueFrom(
+      executeGuard(
+        {
+          data: {
+            action: 'read',
+            resourceKey: 'post',
+            subject: 'Post',
+            post: 'not-an-object',
+          },
+        } as never,
+        { url: '/posts/post-1/edit' } as never,
+      ) as Observable<boolean | UrlTree>,
+    );
+
+    expect(router.serializeUrl(missingResult as UrlTree)).toBe('/posts/post-1');
+    expect(router.serializeUrl(invalidResult as UrlTree)).toBe('/posts/post-1');
+  });
 });
