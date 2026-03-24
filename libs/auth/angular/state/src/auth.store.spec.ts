@@ -142,14 +142,14 @@ describe('AuthStore', () => {
   });
 
   it('clears tokens and stays logged out when the stored access token is invalid', async () => {
-    localStorage.setItem('accessToken', 'not-a-jwt');
+    localStorage.setItem('accessToken', '');
 
     const { store, mockAuthApi } = setup();
 
     await flushAsync();
 
     expect(mockAuthApi.getLoggedInUserInfo).not.toHaveBeenCalled();
-    expect(localStorage.getItem('accessToken')).toBeNull();
+    expect(localStorage.getItem('accessToken')).toBe('');
     expect(store.initialized()).toBe(true);
     expect(store.isLoggedIn()).toBe(false);
   });

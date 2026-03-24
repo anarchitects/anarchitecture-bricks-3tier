@@ -26,8 +26,18 @@ const waitForAuthInitialization = (initialized: Signal<boolean>) => {
   return toObservable(initialized).pipe(filter(Boolean), take(1));
 };
 
+const stripTrailingSlashes = (value: string): string => {
+  let end = value.length;
+
+  while (end > 0 && value[end - 1] === '/') {
+    end -= 1;
+  }
+
+  return value.slice(0, end);
+};
+
 const buildParentUrl = (state: RouterStateSnapshot): string => {
-  const path = state.url.split('?')[0].replace(/\/+$/, '');
+  const path = stripTrailingSlashes(state.url.split('?')[0]);
   const segments = path.split('/').filter(Boolean);
 
   if (segments.length <= 1) {
