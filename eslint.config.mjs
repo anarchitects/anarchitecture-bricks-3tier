@@ -21,7 +21,35 @@ export default [
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
             {
-              sourceTag: '*',
+              sourceTag: 'domain:shared',
+              onlyDependOnLibsWithTags: ['domain:shared'],
+            },
+            {
+              sourceTag: 'domain:forms',
+              onlyDependOnLibsWithTags: ['domain:shared', 'domain:forms'],
+            },
+            {
+              sourceTag: 'domain:auth',
+              onlyDependOnLibsWithTags: [
+                'domain:shared',
+                'domain:forms',
+                'domain:auth',
+              ],
+            },
+            {
+              sourceTag: 'domain:storybook',
+              onlyDependOnLibsWithTags: ['*'],
+            },
+            {
+              sourceTag: 'scope:docs',
+              onlyDependOnLibsWithTags: ['*'],
+            },
+            {
+              sourceTag: 'scope:release',
+              onlyDependOnLibsWithTags: ['*'],
+            },
+            {
+              sourceTag: 'scope:ts-frontend',
               onlyDependOnLibsWithTags: ['*'],
             },
           ],
