@@ -20,6 +20,29 @@ describe('auth module option mappers', () => {
     persistence: 'typeorm',
     mailerProvider: 'noop',
     authStrategies: ['jwt'],
+    engine: 'better-auth',
+    sessionMode: 'session',
+    features: {
+      passkeys: true,
+      social: true,
+      oidc: false,
+    },
+    spike: {
+      baseUrl: 'http://localhost:3100/api/auth',
+      secret: '0123456789abcdef0123456789abcdef',
+      proofHarnessEnabled: true,
+      socialProviders: {
+        github: {
+          clientId: 'github-client',
+          clientSecret: 'github-secret',
+        },
+      },
+      passkeys: {
+        rpID: 'example.test',
+        rpName: 'Example Test',
+        origin: 'https://example.test',
+      },
+    },
   };
 
   it('maps persistence options from auth config', () => {
@@ -37,6 +60,29 @@ describe('auth module option mappers', () => {
   it('maps application options from auth config', () => {
     expect(mapAuthConfigToApplicationModuleOptions(config)).toEqual({
       authStrategies: ['jwt'],
+      engine: 'better-auth',
+      sessionMode: 'session',
+      features: {
+        passkeys: true,
+        social: true,
+        oidc: false,
+      },
+      spike: {
+        baseUrl: 'http://localhost:3100/api/auth',
+        secret: '0123456789abcdef0123456789abcdef',
+        proofHarnessEnabled: true,
+        socialProviders: {
+          github: {
+            clientId: 'github-client',
+            clientSecret: 'github-secret',
+          },
+        },
+        passkeys: {
+          rpID: 'example.test',
+          rpName: 'Example Test',
+          origin: 'https://example.test',
+        },
+      },
       encryption: {
         algorithm: 'bcrypt',
         key: 'key',
@@ -49,6 +95,29 @@ describe('auth module option mappers', () => {
     expect(mapAuthConfigToPresentationModuleOptions(config)).toEqual({
       application: {
         authStrategies: ['jwt'],
+        engine: 'better-auth',
+        sessionMode: 'session',
+        features: {
+          passkeys: true,
+          social: true,
+          oidc: false,
+        },
+        spike: {
+          baseUrl: 'http://localhost:3100/api/auth',
+          secret: '0123456789abcdef0123456789abcdef',
+          proofHarnessEnabled: true,
+          socialProviders: {
+            github: {
+              clientId: 'github-client',
+              clientSecret: 'github-secret',
+            },
+          },
+          passkeys: {
+            rpID: 'example.test',
+            rpName: 'Example Test',
+            origin: 'https://example.test',
+          },
+        },
         encryption: {
           algorithm: 'bcrypt',
           key: 'key',
@@ -63,6 +132,29 @@ describe('auth module option mappers', () => {
       presentation: {
         application: {
           authStrategies: ['jwt'],
+          engine: 'better-auth',
+          sessionMode: 'session',
+          features: {
+            passkeys: true,
+            social: true,
+            oidc: false,
+          },
+          spike: {
+            baseUrl: 'http://localhost:3100/api/auth',
+            secret: '0123456789abcdef0123456789abcdef',
+            proofHarnessEnabled: true,
+            socialProviders: {
+              github: {
+                clientId: 'github-client',
+                clientSecret: 'github-secret',
+              },
+            },
+            passkeys: {
+              rpID: 'example.test',
+              rpName: 'Example Test',
+              origin: 'https://example.test',
+            },
+          },
           encryption: {
             algorithm: 'bcrypt',
             key: 'key',
@@ -81,6 +173,26 @@ describe('auth module option resolvers', () => {
   it('resolves default application options deterministically', () => {
     expect(resolveAuthApplicationModuleOptions({})).toEqual({
       authStrategies: ['jwt'],
+      engine: 'legacy-jwt',
+      sessionMode: 'jwt',
+      features: {
+        passkeys: false,
+        social: false,
+        oidc: false,
+      },
+      spike: {
+        baseUrl: 'http://localhost:3000/api/auth',
+        secret: 'better-auth-spike-secret-32-chars-minimum',
+        proofHarnessEnabled: false,
+        socialProviders: {
+          github: undefined,
+        },
+        passkeys: {
+          rpID: 'localhost',
+          rpName: 'Anarchitecture Auth Spike',
+          origin: undefined,
+        },
+      },
       encryption: {
         algorithm: 'bcrypt',
         key: 'default_encryption_key',
@@ -95,6 +207,26 @@ describe('auth module option resolvers', () => {
       presentation: {
         application: {
           authStrategies: ['jwt'],
+          engine: 'legacy-jwt',
+          sessionMode: 'jwt',
+          features: {
+            passkeys: false,
+            social: false,
+            oidc: false,
+          },
+          spike: {
+            baseUrl: 'http://localhost:3000/api/auth',
+            secret: 'better-auth-spike-secret-32-chars-minimum',
+            proofHarnessEnabled: false,
+            socialProviders: {
+              github: undefined,
+            },
+            passkeys: {
+              rpID: 'localhost',
+              rpName: 'Anarchitecture Auth Spike',
+              origin: undefined,
+            },
+          },
           encryption: {
             algorithm: 'bcrypt',
             key: 'default_encryption_key',
@@ -120,6 +252,26 @@ describe('auth module option resolvers', () => {
       }),
     ).toEqual({
       authStrategies: ['jwt'],
+      engine: 'legacy-jwt',
+      sessionMode: 'jwt',
+      features: {
+        passkeys: false,
+        social: false,
+        oidc: false,
+      },
+      spike: {
+        baseUrl: 'http://localhost:3000/api/auth',
+        secret: 'better-auth-spike-secret-32-chars-minimum',
+        proofHarnessEnabled: false,
+        socialProviders: {
+          github: undefined,
+        },
+        passkeys: {
+          rpID: 'localhost',
+          rpName: 'Anarchitecture Auth Spike',
+          origin: undefined,
+        },
+      },
       encryption: {
         algorithm: 'bcrypt',
         key: 'default_encryption_key',

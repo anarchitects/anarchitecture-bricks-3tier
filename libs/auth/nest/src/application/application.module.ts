@@ -8,6 +8,7 @@ import {
   mapAuthConfigToApplicationModuleOptions,
   resolveAuthApplicationModuleOptions,
 } from '../config';
+import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
 import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import {
@@ -30,19 +31,26 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
   static forRoot(options: AuthApplicationModuleOptions = {}): DynamicModule {
     const resolvedOptions: typeof OPTIONS_TYPE =
       resolveAuthApplicationModuleOptions(options);
-    const { authStrategies, encryption, persistence, resourceAuthorization } =
-      resolvedOptions;
+    const {
+      authStrategies,
+      engine,
+      encryption,
+      persistence,
+      resourceAuthorization,
+    } = resolvedOptions;
     const imports = [
       ConfigModule.forFeature(authConfig),
       AuthPersistenceModule.forRoot(persistence),
     ];
     const providers = [];
     const exports = [];
+
     providers.push(AbilityFactory, PoliciesService, {
       provide: AUTH_RESOURCE_AUTHORIZATION_LOADERS,
       useValue: resourceAuthorization.loaders,
     });
     exports.push(AUTH_RESOURCE_AUTHORIZATION_LOADERS, PoliciesService);
+
     switch (encryption.algorithm) {
       case 'bcrypt':
         providers.push(BcryptHashService, {
@@ -52,13 +60,13 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
         exports.push(HashService);
         break;
       case 'argon2':
-        // Future implementation for Argon2HashService can be added here
         throw new Error('Argon2HashService not implemented yet');
       default:
         throw new Error(
           `Unsupported encryption algorithm: ${encryption.algorithm}`,
         );
     }
+
     if (authStrategies.includes('jwt')) {
       imports.push(
         JwtModule.registerAsync({
@@ -74,14 +82,10 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
           }),
         }),
       );
+
       providers.push(
         AuthOrchestrationService,
-        LegacyJwtAuthEngineAdapter,
         JwtStrategy,
-        {
-          provide: AuthEnginePort,
-          useExisting: LegacyJwtAuthEngineAdapter,
-        },
         {
           provide: AuthService,
           useExisting: AuthOrchestrationService,
@@ -93,6 +97,19 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
       );
       exports.push(AuthService);
     }
+
+    if (engine === 'better-auth') {
+      providers.push(BetterAuthAuthEngineAdapter, {
+        provide: AuthEnginePort,
+        useExisting: BetterAuthAuthEngineAdapter,
+      });
+    } else {
+      providers.push(LegacyJwtAuthEngineAdapter, {
+        provide: AuthEnginePort,
+        useExisting: LegacyJwtAuthEngineAdapter,
+      });
+    }
+
     return {
       ...super.forRoot(resolvedOptions),
       imports,

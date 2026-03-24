@@ -1,3 +1,5 @@
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import {
   LoginRequestDTO,
   LoginResponseDTO,
@@ -5,9 +7,13 @@ import {
   RefreshTokenRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { User } from '@anarchitects/auth-ts/models';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { AuthEnginePort } from '../application/services/auth-engine.port';
+import {
+  AuthEngineCapabilityReport,
+  AuthEnginePort,
+  AuthPasskeySignInInput,
+  AuthSignOutOrRefreshInput,
+  AuthSocialSignInInput,
+} from '../application/services/auth-engine.port';
 import { HashService } from '../application/services/hash.service';
 import { AuthUserRepository } from '../infrastructure-persistence/repositories/auth-user.repository';
 
@@ -101,6 +107,60 @@ export class LegacyJwtAuthEngineAdapter implements AuthEnginePort {
     }
 
     return this.generateTokens(user);
+  }
+
+  async describeCapabilities(): Promise<AuthEngineCapabilityReport> {
+    return {
+      engine: 'legacy-jwt',
+      flows: [
+        {
+          flow: 'password-sign-in',
+          status: 'supported',
+          notes: 'Existing legacy JWT email-or-username login path.',
+        },
+        {
+          flow: 'passkey-sign-in',
+          status: 'unsupported',
+          notes: 'Legacy JWT engine does not implement WebAuthn.',
+        },
+        {
+          flow: 'social-sign-in',
+          status: 'unsupported',
+          notes: 'Legacy JWT engine does not implement social provider sign-in.',
+        },
+        {
+          flow: 'sign-out-or-refresh',
+          status: 'supported',
+          notes: 'Existing refresh-token flow remains available on the legacy engine.',
+        },
+      ],
+    };
+  }
+
+  passwordSignIn(dto: LoginRequestDTO): Promise<LoginResponseDTO> {
+    return this.login(dto);
+  }
+
+  passkeySignIn(_input: AuthPasskeySignInInput): Promise<unknown> {
+    return Promise.reject(
+      new Error('Passkey sign-in is unavailable on the legacy JWT engine.'),
+    );
+  }
+
+  socialSignIn(_input: AuthSocialSignInInput): Promise<unknown> {
+    return Promise.reject(
+      new Error('Social sign-in is unavailable on the legacy JWT engine.'),
+    );
+  }
+
+  signOutOrRefresh(input: AuthSignOutOrRefreshInput): Promise<unknown> {
+    if (input.mode === 'refresh') {
+      return this.refreshTokens(input.userId, input.dto);
+    }
+
+    return Promise.reject(
+      new Error('Legacy JWT proof path only supports refresh for the spike.'),
+    );
   }
 
   private async generateTokens(user: User) {
