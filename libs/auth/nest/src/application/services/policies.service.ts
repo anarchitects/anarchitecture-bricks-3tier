@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
 import { PolicyRule, User } from '@anarchitects/auth-ts/models';
 import { AppAbility, AbilityFactory } from '../factories/ability.factory';
+import { toValidatedPersistedPolicyRule } from './persisted-policy-rule';
 
 @Injectable()
 export class PoliciesService {
   constructor(
     private readonly authUserRepository: AuthUserRepository,
-    private readonly abilityFactory: AbilityFactory
+    private readonly abilityFactory: AbilityFactory,
   ) {}
 
   async rulesForUser(authUser: User): Promise<PolicyRule[]> {
@@ -16,21 +16,23 @@ export class PoliciesService {
       where: { id: authUser.id },
       relations: ['roles', 'roles.permissions'],
     });
-    const inject = (c?: any) =>
-      !c ? undefined : JSON.parse(JSON.stringify(c));
     if (!user) {
       return [];
     }
-    return (user.roles ?? []).flatMap((role) =>
-      (role.permissions ?? []).map<PolicyRule>((permission) => ({
-        action: permission.action,
-        subject: permission.subject,
-        conditions: inject(permission.conditions),
-        fields: permission.fields ?? undefined,
-        inverted: permission.inverted ?? false,
-        reason: permission.reason ?? undefined,
-      }))
-    );
+
+    try {
+      return (user.roles ?? []).flatMap((role) =>
+        (role.permissions ?? []).map((permission) =>
+          toValidatedPersistedPolicyRule(permission),
+        ),
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Malformed persisted policy rule payload: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   async buildAbilityForUser(authUser: User): Promise<AppAbility> {

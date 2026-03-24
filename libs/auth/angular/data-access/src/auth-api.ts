@@ -27,14 +27,14 @@ export class AuthApi {
   registerUser(dto: RegisterRequestDTO) {
     return this.http.post<RegisterResponseDTO>(
       `${this.resourceUrl}/register`,
-      dto
+      dto,
     );
   }
 
   activateUser(dto: ActivateUserRequestDTO) {
     return this.http.patch<{ success: boolean }>(
       `${this.resourceUrl}/activate`,
-      dto
+      dto,
     );
   }
 
@@ -45,55 +45,55 @@ export class AuthApi {
   logout(dto: LogoutRequestDTO) {
     return this.http.post<{ success: boolean }>(
       `${this.resourceUrl}/logout`,
-      dto
+      dto,
     );
   }
 
   changePassword(userId: string, dto: ChangePasswordRequestDTO) {
     return this.http.patch<{ success: boolean }>(
       `${this.resourceUrl}/change-password/${userId}`,
-      dto
+      dto,
     );
   }
 
   forgotPassword(dto: ForgotPasswordRequestDTO) {
     return this.http.post<{ success: boolean }>(
       `${this.resourceUrl}/forgot-password`,
-      dto
+      dto,
     );
   }
 
   resetPassword(dto: ResetPasswordRequestDTO) {
     return this.http.post<{ success: boolean }>(
       `${this.resourceUrl}/reset-password`,
-      dto
+      dto,
     );
   }
 
   verifyEmail(dto: VerifyEmailRequestDTO) {
     return this.http.post<{ success: boolean }>(
       `${this.resourceUrl}/verify-email`,
-      dto
+      dto,
     );
   }
 
   updateEmail(userId: string, dto: UpdateEmailRequestDTO) {
     return this.http.patch<{ success: boolean }>(
       `${this.resourceUrl}/update-email/${userId}`,
-      dto
+      dto,
     );
   }
 
   refreshTokens(userId: string, dto: RefreshTokenRequestDTO) {
     return this.http.post<LoginResponseDTO>(
       `${this.resourceUrl}/refresh-tokens/${userId}`,
-      dto
+      dto,
     );
   }
 
   getLoggedInUserInfo() {
     return this.http.get<{ user: User; rbac: PolicyRule[] }>(
-      `${this.resourceUrl}/me`
+      `${this.resourceUrl}/me`,
     );
   }
 }

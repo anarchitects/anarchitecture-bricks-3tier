@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtAuthService } from './jwt-auth.service';
 import { HashService } from './hash.service';
@@ -80,7 +81,7 @@ describe('JwtAuthService', () => {
         confirmPassword: 'password124',
       };
       await expect(service.registerUser(dto)).rejects.toThrow(
-        'Passwords do not match'
+        'Passwords do not match',
       );
     });
   });
@@ -115,7 +116,7 @@ describe('JwtAuthService', () => {
       });
       expect(mockHashService.compare).toHaveBeenCalledWith(
         'password123',
-        'hashedPassword'
+        'hashedPassword',
       );
       expect(mockJwtService.signAsync).toHaveBeenCalledWith({
         sub: 'user-id',
@@ -152,13 +153,13 @@ describe('JwtAuthService', () => {
       expect(result).toEqual({ success: true });
       expect(mockAuthUserRepository.invalidateTokens).toHaveBeenCalledWith(
         ['hashed-token', 'hashed-token'],
-        'user-id'
+        'user-id',
       );
     });
     it('should throw error for missing refresh token', async () => {
       const dto = { accessToken: 'access-token', refreshToken: '' };
       await expect(service.logout(dto)).rejects.toThrow(
-        'Refresh token is required'
+        'Refresh token is required',
       );
     });
     it('should throw error for invalid refresh token', async () => {
@@ -168,7 +169,7 @@ describe('JwtAuthService', () => {
       };
       mockJwtService.verifyAsync.mockRejectedValueOnce(new Error());
       await expect(service.logout(dto)).rejects.toThrow(
-        'Invalid refresh token'
+        'Invalid refresh token',
       );
     });
     it('should throw error if user not found during logout', async () => {
@@ -176,7 +177,7 @@ describe('JwtAuthService', () => {
       mockJwtService.verifyAsync.mockResolvedValueOnce({ sub: 'user-id' });
       mockAuthUserRepository.findOne.mockResolvedValueOnce(null);
       await expect(service.logout(dto)).rejects.toThrow(
-        'Invalid refresh token'
+        'Invalid refresh token',
       );
     });
   });
@@ -196,7 +197,7 @@ describe('JwtAuthService', () => {
       expect(result).toEqual({ success: true });
       expect(mockHashService.compare).toHaveBeenCalledWith(
         'currentPassword',
-        'hashedCurrentPassword'
+        'hashedCurrentPassword',
       );
       expect(mockHashService.hash).toHaveBeenCalledWith('newPassword123');
       expect(mockAuthUserRepository.update).toHaveBeenCalledWith({
@@ -217,7 +218,7 @@ describe('JwtAuthService', () => {
       });
       mockHashService.compare.mockResolvedValueOnce(false);
       await expect(service.changePassword(dto.userId, dto)).rejects.toThrow(
-        'Invalid current password'
+        'Invalid current password',
       );
     });
     it('should throw error if new passwords do not match', async () => {
@@ -228,7 +229,7 @@ describe('JwtAuthService', () => {
         confirmPassword: 'newPassword124',
       };
       await expect(service.changePassword(dto.userId, dto)).rejects.toThrow(
-        'Passwords do not match'
+        'Passwords do not match',
       );
     });
     it('should throw error if user not found during password change', async () => {
@@ -240,7 +241,7 @@ describe('JwtAuthService', () => {
       };
       mockAuthUserRepository.findOne.mockResolvedValueOnce(null);
       await expect(service.changePassword(dto.userId, dto)).rejects.toThrow(
-        'User not found'
+        'User not found',
       );
     });
   });
@@ -259,7 +260,7 @@ describe('JwtAuthService', () => {
       const dto = { email: 'user@example.com' };
       mockAuthUserRepository.findOne.mockResolvedValueOnce(null);
       await expect(service.forgotPassword(dto)).rejects.toThrow(
-        'User not found'
+        'User not found',
       );
     });
   });
@@ -290,7 +291,7 @@ describe('JwtAuthService', () => {
         confirmPassword: 'newPassword124',
       };
       await expect(service.resetPassword(dto)).rejects.toThrow(
-        'Passwords do not match'
+        'Passwords do not match',
       );
     });
     it('should throw error if token is invalid during reset', async () => {
@@ -340,13 +341,13 @@ describe('JwtAuthService', () => {
       expect(result).toEqual({ success: true });
       expect(mockHashService.compare).toHaveBeenCalledWith(
         'password123',
-        'hashedPassword'
+        'hashedPassword',
       );
       expect(mockAuthUserRepository.update).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 'user-id',
           email: 'new-email@example.com',
-        })
+        }),
       );
     });
     it('should throw error if user not found during email update', async () => {
@@ -357,7 +358,7 @@ describe('JwtAuthService', () => {
       };
       mockAuthUserRepository.findOne.mockResolvedValueOnce(null);
       await expect(service.updateEmail(userId, dto)).rejects.toThrow(
-        'User not found'
+        'User not found',
       );
     });
     it('should throw error if password is invalid during email update', async () => {
@@ -373,7 +374,7 @@ describe('JwtAuthService', () => {
       });
       mockHashService.compare.mockResolvedValueOnce(false);
       await expect(service.updateEmail(userId, dto)).rejects.toThrow(
-        'Invalid password'
+        'Invalid password',
       );
     });
   });
@@ -398,7 +399,7 @@ describe('JwtAuthService', () => {
       const dto = { refreshToken: 'invalid-refresh-token' };
       mockJwtService.verifyAsync.mockRejectedValueOnce(new Error());
       await expect(service.refreshTokens(userId, dto)).rejects.toThrow(
-        'Invalid refresh token'
+        'Invalid refresh token',
       );
     });
     it('should throw error if token subject does not match userId during token refresh', async () => {
@@ -408,7 +409,7 @@ describe('JwtAuthService', () => {
         sub: 'other-user-id',
       });
       await expect(service.refreshTokens(userId, dto)).rejects.toThrow(
-        'Invalid refresh token'
+        'Invalid refresh token',
       );
     });
     it('should throw error if user not found during token refresh', async () => {
@@ -417,7 +418,73 @@ describe('JwtAuthService', () => {
       mockJwtService.verifyAsync.mockResolvedValueOnce({ sub: 'user-id' });
       mockAuthUserRepository.findOne.mockResolvedValueOnce(null);
       await expect(service.refreshTokens(userId, dto)).rejects.toThrow(
-        'User not found'
+        'User not found',
+      );
+    });
+  });
+
+  describe('getLoggedInUserInfo', () => {
+    it('should return the user and validated policy rules', async () => {
+      mockAuthUserRepository.findOne.mockResolvedValueOnce({
+        id: 'user-id',
+        email: 'user@example.com',
+        roles: [
+          {
+            permissions: [
+              {
+                action: 'read',
+                subject: 'Project',
+                conditions: { ownerId: 'user-id' },
+                fields: ['name'],
+                inverted: false,
+                reason: 'Allowed',
+              },
+            ],
+          },
+        ],
+      });
+
+      await expect(service.getLoggedInUserInfo('user-id')).resolves.toEqual({
+        user: {
+          id: 'user-id',
+          email: 'user@example.com',
+          roles: [{ permissions: [expect.any(Object)] }],
+        },
+        rbac: [
+          {
+            action: 'read',
+            subject: 'Project',
+            conditions: { ownerId: 'user-id' },
+            fields: ['name'],
+            inverted: false,
+            reason: 'Allowed',
+          },
+        ],
+      });
+    });
+
+    it('should fail closed on malformed persisted policy rules', async () => {
+      mockAuthUserRepository.findOne.mockResolvedValueOnce({
+        id: 'user-id',
+        email: 'user@example.com',
+        roles: [
+          {
+            permissions: [
+              {
+                action: '',
+                subject: 'Project',
+                conditions: null,
+                fields: null,
+                inverted: false,
+                reason: null,
+              },
+            ],
+          },
+        ],
+      });
+
+      await expect(service.getLoggedInUserInfo('user-id')).rejects.toThrow(
+        InternalServerErrorException,
       );
     });
   });

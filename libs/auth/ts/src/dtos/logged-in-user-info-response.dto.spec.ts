@@ -6,7 +6,7 @@ describe('LoggedInUserInfoResponseSchema', () => {
     ...Value.Errors(LoggedInUserInfoResponseSchema, payload),
   ];
 
-  it('accepts user info response with unknown user and RBAC entries', () => {
+  it('accepts user info response with schema-valid RBAC entries', () => {
     expect(
       validate({
         user: { id: 'user-id-123', email: 'test@example.com' },
@@ -24,6 +24,15 @@ describe('LoggedInUserInfoResponseSchema', () => {
       validate({
         user: { id: 'user-id-123' },
         rbac: { action: 'read', subject: 'all' },
+      }),
+    ).not.toHaveLength(0);
+  });
+
+  it('rejects malformed rules inside the rbac array', () => {
+    expect(
+      validate({
+        user: { id: 'user-id-123' },
+        rbac: [{ action: 'read', extra: true }],
       }),
     ).not.toHaveLength(0);
   });

@@ -84,7 +84,7 @@ describe('AuthApi', () => {
       };
       service.changePassword(userId, dto).subscribe();
       const req = httpController.expectOne(
-        `/api/auth/change-password/${userId}`
+        `/api/auth/change-password/${userId}`,
       );
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual(dto);
@@ -150,13 +150,25 @@ describe('AuthApi', () => {
       const userId = 'user-123';
       service.refreshTokens(userId, dto).subscribe();
       const req = httpController.expectOne(
-        `/api/auth/refresh-tokens/${userId}`
+        `/api/auth/refresh-tokens/${userId}`,
       );
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(dto);
       req.flush({
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
+      });
+    });
+  });
+
+  describe('getLoggedInUserInfo', () => {
+    it('should call the logged-in user info endpoint', () => {
+      service.getLoggedInUserInfo().subscribe();
+      const req = httpController.expectOne('/api/auth/me');
+      expect(req.request.method).toBe('GET');
+      req.flush({
+        user: { id: 'user-123', email: 'user@example.com' },
+        rbac: [{ action: 'read', subject: 'Project' }],
       });
     });
   });
