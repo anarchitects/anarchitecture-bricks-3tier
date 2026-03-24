@@ -15,20 +15,28 @@ import {
 } from './application.module-definition';
 import { AbilityFactory } from './factories/ability.factory';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
+import { AuthEnginePort } from './services/auth-engine.port';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
 import { JwtAuthService } from './services/jwt-auth.service';
 import { PoliciesService } from './services/policies.service';
 import { JwtStrategy } from './strategies/jwt-strategy';
+import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
+import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 
 @Module({})
 export class AuthApplicationModule extends ConfigurableModuleClass {
   static forRoot(options: AuthApplicationModuleOptions = {}): DynamicModule {
     const resolvedOptions: typeof OPTIONS_TYPE =
       resolveAuthApplicationModuleOptions(options);
-    const { authStrategies, encryption, persistence, resourceAuthorization } =
-      resolvedOptions;
+    const {
+      authStrategies,
+      engine,
+      encryption,
+      persistence,
+      resourceAuthorization,
+    } = resolvedOptions;
     const imports = [
       ConfigModule.forFeature(authConfig),
       AuthPersistenceModule.forRoot(persistence),
@@ -77,6 +85,19 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
       });
       exports.push(AuthService);
     }
+
+    if (engine === 'better-auth') {
+      providers.push(BetterAuthAuthEngineAdapter, {
+        provide: AuthEnginePort,
+        useExisting: BetterAuthAuthEngineAdapter,
+      });
+    } else {
+      providers.push(LegacyJwtAuthEngineAdapter, {
+        provide: AuthEnginePort,
+        useExisting: LegacyJwtAuthEngineAdapter,
+      });
+    }
+
     return {
       ...super.forRoot(resolvedOptions),
       imports,

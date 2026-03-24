@@ -12,6 +12,29 @@ export const DEFAULT_AUTH_ENCRYPTION_KEY = 'default_encryption_key';
 export const DEFAULT_AUTH_PERSISTENCE = 'typeorm';
 export const DEFAULT_AUTH_MAILER_PROVIDER = 'node';
 export const DEFAULT_AUTH_STRATEGIES = ['jwt'] as const;
+export const DEFAULT_AUTH_ENGINE = 'legacy-jwt';
+export const DEFAULT_AUTH_SESSION_MODE = 'jwt';
+
+const parseBoolean = (value: string | undefined, fallback = false): boolean => {
+  if (value === undefined) {
+    return fallback;
+  }
+
+  switch (value.trim().toLowerCase()) {
+    case '1':
+    case 'true':
+    case 'yes':
+    case 'on':
+      return true;
+    case '0':
+    case 'false':
+    case 'no':
+    case 'off':
+      return false;
+    default:
+      throw new Error(`Unsupported boolean value: ${value}`);
+  }
+};
 
 const parseMailerProvider = (): CommonMailerProvider => {
   const value = process.env['AUTH_MAILER_PROVIDER'];
@@ -42,6 +65,36 @@ const parseAuthStrategies = (): string[] => {
   return parsed.length > 0 ? parsed : [...DEFAULT_AUTH_STRATEGIES];
 };
 
+const parseAuthEngine = (): 'legacy-jwt' | 'better-auth' => {
+  const value = process.env['AUTH_ENGINE'];
+  if (value === undefined) {
+    return DEFAULT_AUTH_ENGINE;
+  }
+
+  switch (value) {
+    case 'legacy-jwt':
+    case 'better-auth':
+      return value;
+    default:
+      throw new Error(`Unsupported auth engine: ${value}`);
+  }
+};
+
+const parseSessionMode = (): 'jwt' | 'session' => {
+  const value = process.env['AUTH_SESSION_MODE'];
+  if (value === undefined) {
+    return DEFAULT_AUTH_SESSION_MODE;
+  }
+
+  switch (value) {
+    case 'jwt':
+    case 'session':
+      return value;
+    default:
+      throw new Error(`Unsupported auth session mode: ${value}`);
+  }
+};
+
 export const authConfig = registerAs(AUTH_CONFIG_KEY, () => ({
   jwtSecret: process.env['AUTH_JWT_SECRET'] ?? DEFAULT_AUTH_JWT_SECRET,
   jwtExpiration:
@@ -56,6 +109,33 @@ export const authConfig = registerAs(AUTH_CONFIG_KEY, () => ({
   persistence: process.env['AUTH_PERSISTENCE'] ?? DEFAULT_AUTH_PERSISTENCE,
   mailerProvider: parseMailerProvider(),
   authStrategies: parseAuthStrategies(),
+  engine: parseAuthEngine(),
+  sessionMode: parseSessionMode(),
+  features: {
+    passkeys: parseBoolean(process.env['AUTH_FEATURE_PASSKEYS']),
+    social: parseBoolean(process.env['AUTH_FEATURE_SOCIAL']),
+    oidc: parseBoolean(process.env['AUTH_FEATURE_OIDC']),
+  },
+  spike: {
+    baseUrl:
+      process.env['AUTH_SPIKE_BASE_URL'] ?? 'http://localhost:3000/api/auth',
+    secret:
+      process.env['AUTH_SPIKE_SECRET'] ??
+      'better-auth-spike-secret-32-chars-minimum',
+    proofHarnessEnabled: parseBoolean(process.env['AUTH_SPIKE_PROOF_HARNESS']),
+    socialProviders: {
+      github: {
+        clientId: process.env['AUTH_SOCIAL_GITHUB_CLIENT_ID'],
+        clientSecret: process.env['AUTH_SOCIAL_GITHUB_CLIENT_SECRET'],
+      },
+    },
+    passkeys: {
+      rpID: process.env['AUTH_PASSKEY_RP_ID'] ?? 'localhost',
+      rpName:
+        process.env['AUTH_PASSKEY_RP_NAME'] ?? 'Anarchitecture Auth Spike',
+      origin: process.env['AUTH_PASSKEY_ORIGIN'],
+    },
+  },
 }));
 
 export type AuthConfig = ConfigType<typeof authConfig>;

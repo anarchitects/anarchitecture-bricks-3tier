@@ -10,6 +10,19 @@ const AUTH_ENV_KEYS = [
   'AUTH_PERSISTENCE',
   'AUTH_MAILER_PROVIDER',
   'AUTH_STRATEGIES',
+  'AUTH_ENGINE',
+  'AUTH_SESSION_MODE',
+  'AUTH_FEATURE_PASSKEYS',
+  'AUTH_FEATURE_SOCIAL',
+  'AUTH_FEATURE_OIDC',
+  'AUTH_SPIKE_BASE_URL',
+  'AUTH_SPIKE_SECRET',
+  'AUTH_SPIKE_PROOF_HARNESS',
+  'AUTH_SOCIAL_GITHUB_CLIENT_ID',
+  'AUTH_SOCIAL_GITHUB_CLIENT_SECRET',
+  'AUTH_PASSKEY_RP_ID',
+  'AUTH_PASSKEY_RP_NAME',
+  'AUTH_PASSKEY_ORIGIN',
 ] as const;
 
 type AuthEnvKey = (typeof AUTH_ENV_KEYS)[number];
@@ -52,6 +65,29 @@ describe('authConfig', () => {
       persistence: 'typeorm',
       mailerProvider: 'node',
       authStrategies: ['jwt'],
+      engine: 'legacy-jwt',
+      sessionMode: 'jwt',
+      features: {
+        passkeys: false,
+        social: false,
+        oidc: false,
+      },
+      spike: {
+        baseUrl: 'http://localhost:3000/api/auth',
+        secret: 'better-auth-spike-secret-32-chars-minimum',
+        proofHarnessEnabled: false,
+        socialProviders: {
+          github: {
+            clientId: undefined,
+            clientSecret: undefined,
+          },
+        },
+        passkeys: {
+          rpID: 'localhost',
+          rpName: 'Anarchitecture Auth Spike',
+          origin: undefined,
+        },
+      },
     });
   });
 
@@ -65,6 +101,19 @@ describe('authConfig', () => {
     process.env['AUTH_PERSISTENCE'] = 'typeorm';
     process.env['AUTH_MAILER_PROVIDER'] = 'noop';
     process.env['AUTH_STRATEGIES'] = 'jwt, custom';
+    process.env['AUTH_ENGINE'] = 'better-auth';
+    process.env['AUTH_SESSION_MODE'] = 'session';
+    process.env['AUTH_FEATURE_PASSKEYS'] = 'true';
+    process.env['AUTH_FEATURE_SOCIAL'] = 'true';
+    process.env['AUTH_FEATURE_OIDC'] = 'false';
+    process.env['AUTH_SPIKE_BASE_URL'] = 'http://localhost:3100/internal/auth';
+    process.env['AUTH_SPIKE_SECRET'] = '0123456789abcdef0123456789abcdef';
+    process.env['AUTH_SPIKE_PROOF_HARNESS'] = 'true';
+    process.env['AUTH_SOCIAL_GITHUB_CLIENT_ID'] = 'github-client';
+    process.env['AUTH_SOCIAL_GITHUB_CLIENT_SECRET'] = 'github-secret';
+    process.env['AUTH_PASSKEY_RP_ID'] = 'example.test';
+    process.env['AUTH_PASSKEY_RP_NAME'] = 'Example Test';
+    process.env['AUTH_PASSKEY_ORIGIN'] = 'https://example.test';
 
     expect(authConfig()).toEqual({
       jwtSecret: 'jwt-secret',
@@ -76,6 +125,29 @@ describe('authConfig', () => {
       persistence: 'typeorm',
       mailerProvider: 'noop',
       authStrategies: ['jwt', 'custom'],
+      engine: 'better-auth',
+      sessionMode: 'session',
+      features: {
+        passkeys: true,
+        social: true,
+        oidc: false,
+      },
+      spike: {
+        baseUrl: 'http://localhost:3100/internal/auth',
+        secret: '0123456789abcdef0123456789abcdef',
+        proofHarnessEnabled: true,
+        socialProviders: {
+          github: {
+            clientId: 'github-client',
+            clientSecret: 'github-secret',
+          },
+        },
+        passkeys: {
+          rpID: 'example.test',
+          rpName: 'Example Test',
+          origin: 'https://example.test',
+        },
+      },
     });
   });
 
@@ -83,6 +155,12 @@ describe('authConfig', () => {
     process.env['AUTH_MAILER_PROVIDER'] = 'invalid';
 
     expect(() => authConfig()).toThrow('Unsupported mailer provider: invalid');
+  });
+
+  it('throws when AUTH_ENGINE is unsupported', () => {
+    process.env['AUTH_ENGINE'] = 'invalid';
+
+    expect(() => authConfig()).toThrow('Unsupported auth engine: invalid');
   });
 
   it('falls back to default strategies when AUTH_STRATEGIES is empty', () => {
