@@ -127,7 +127,6 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
       'Better Auth refresh-token mapping is unavailable in the spike adapter.',
     );
   }
-
   async passwordSignIn(dto: LoginRequestDTO): Promise<LoginResponseDTO> {
     const auth = await this.getAuthInstance();
 
