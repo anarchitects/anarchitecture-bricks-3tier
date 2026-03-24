@@ -106,25 +106,25 @@ nx run forms-angular-example:contract-test
 
 ## Key Nx Targets
 
-| Command                                      | Description                                           |
-| -------------------------------------------- | ----------------------------------------------------- |
-| `nx run api-specs:generate`                  | Generate OpenAPI JSON/YAML from Nest controllers      |
-| `nx run api-specs:lint`                      | Lint generated OpenAPI                                |
-| `nx run api-specs:diff`                      | Compare generated OpenAPI against `origin/main`       |
-| `nx run api-specs:mock`                      | Run Prism mock server from generated OpenAPI          |
-| `nx run api-specs:verify`                    | Validate required endpoints + snapshot stability      |
-| `nx run angular-docs:generate`               | Generate and merge Compodoc docs                      |
-| `nx run docs-hub:validate-content`           | Enforce required docs sections for guides and READMEs |
-| `nx run storybook-angular:build-storybook`   | Build Storybook with technical docs metadata          |
-| `nx run docs-hub:build`                      | Build static docs hub pages                           |
-| `nx run docs-hub:verify`                     | Validate docs hub outputs and required links          |
-| `nx run release-tools:validate-non-bumping-commits` | Enforce non-bumping commit types for docs-surface PRs |
+| Command                                                    | Description                                           |
+| ---------------------------------------------------------- | ----------------------------------------------------- |
+| `nx run api-specs:generate`                                | Generate OpenAPI JSON/YAML from Nest controllers      |
+| `nx run api-specs:lint`                                    | Lint generated OpenAPI                                |
+| `nx run api-specs:diff`                                    | Compare generated OpenAPI against `origin/main`       |
+| `nx run api-specs:mock`                                    | Run Prism mock server from generated OpenAPI          |
+| `nx run api-specs:verify`                                  | Validate required endpoints + snapshot stability      |
+| `nx run angular-docs:generate`                             | Generate and merge Compodoc docs                      |
+| `nx run docs-hub:validate-content`                         | Enforce required docs sections for guides and READMEs |
+| `nx run storybook-angular:build-storybook`                 | Build Storybook with technical docs metadata          |
+| `nx run docs-hub:build`                                    | Build static docs hub pages                           |
+| `nx run docs-hub:verify`                                   | Validate docs hub outputs and required links          |
+| `nx run release-tools:validate-non-bumping-commits`        | Enforce non-bumping commit types for docs-surface PRs |
 | `nx run release-tools:domain-release -- --domain=forms -d` | Dry-run the supported domain release workflow         |
-| `nx run auth-nest-example:contract-test`     | Validate auth Nest runtime responses against OpenAPI  |
-| `nx run auth-angular-example:contract-test`  | Validate auth Angular data-access against Prism mock  |
-| `nx run forms-nest-example:contract-test`    | Validate Nest runtime responses against OpenAPI       |
-| `nx run forms-angular-example:contract-test` | Validate Angular data-access calls against Prism mock |
-| `nx affected -t lint test build`             | Standard affected checks                              |
+| `nx run auth-nest-example:contract-test`                   | Validate auth Nest runtime responses against OpenAPI  |
+| `nx run auth-angular-example:contract-test`                | Validate auth Angular data-access against Prism mock  |
+| `nx run forms-nest-example:contract-test`                  | Validate Nest runtime responses against OpenAPI       |
+| `nx run forms-angular-example:contract-test`               | Validate Angular data-access calls against Prism mock |
+| `nx affected -t lint test build`                           | Standard affected checks                              |
 
 ## Release By Domain
 
@@ -174,6 +174,17 @@ If local dry-runs are needed, use the repo runner, for example `yarn nx run rele
 - Do not use `!` or `BREAKING CHANGE` markers in docs-surface commits.
 - CI enforces this via `nx run release-tools:validate-non-bumping-commits`.
 - For squash merges of docs-surface PRs, use a non-bumping squash subject (`docs:`, `chore:`, `ci:`, or `style:`).
+
+## Human-In-The-Loop Shortlist
+
+See the contributor workflow context in [CONTRIBUTING.md](CONTRIBUTING.md#human-in-the-loop-shortlist).
+
+- Humans review all AI-proposed code changes.
+- Humans own `git commit`, pull request creation, and pull request merge.
+- AI agents must explicitly call out potential breaking changes.
+- AI agents must explicitly call out when a bug fix may justify npm package deprecation.
+- Deprecation actions are proposed-only until explicit human approval is provided.
+- AI agents may suggest commit message options; humans run the final commit command.
 
 ## License
 

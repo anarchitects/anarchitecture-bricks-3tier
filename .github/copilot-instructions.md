@@ -191,6 +191,46 @@ State must be registered explicitly:
 - Keep example apps in sync with library integration contracts.
 - Keep APIs and documentation deterministic and reproducible.
 
+## Project Planning Workflow
+
+For issue-driven implementation work, agents must keep the GitHub planning board in sync with execution progress.
+
+- Project: https://github.com/orgs/anarchitects/projects/15
+- Working view: Board
+- Sprint field: Milestone
+- Status options: Backlog, Todo, In Progress, In Review, Blocked, Done
+
+### Status Transition Rules
+
+- Move issue to In Progress when active coding starts.
+- Move issue to Blocked when external dependencies prevent progress.
+- Move issue to In Review when implementation is ready for review or an implementation PR exists.
+- Move issue to Done when completion criteria are met.
+- Use Backlog or Todo for not-yet-started work based on planning intent.
+
+### Operational Rules
+
+- Include board updates as part of the implementation routine, not as a separate optional step.
+- Preserve existing Priority and Milestone unless user asks to change them.
+- For new sub-issues, add them to the project and assign Milestone according to the current sprint plan.
+
+## Human In The Loop Workflow
+
+AI coding agents operate in assistive mode and do not replace human code ownership.
+
+### Review And Delivery
+
+- Human developers review all AI-proposed code changes.
+- Human developers perform git commit operations.
+- Human developers create and merge pull requests.
+- AI coding agents may suggest commit messages, but must not treat suggestions as committed history.
+
+### Breaking Change And Deprecation Handling
+
+- AI coding agents must explicitly state when a change introduces potential breaking behavior.
+- AI coding agents must explicitly state when a bug fix may justify npm package deprecation of previously published versions.
+- AI coding agents may prepare deprecation instructions, but execution is allowed only after explicit human approval.
+
 ## Don't
 
 - Reintroduce `contracts/openapi.yaml` as source-of-truth.
