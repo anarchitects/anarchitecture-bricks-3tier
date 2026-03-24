@@ -1,3 +1,4 @@
+import { parsePolicyRuleArrayDTO } from '../dtos';
 import { LoggedInUserInfoResponseDTO } from '../dtos/logged-in-user-info-response.dto';
 import { PolicyRule, User } from '../models';
 import { PolicyRuleWire, PublicUser } from './auth-public.types';
@@ -36,12 +37,10 @@ export const fromLoggedInUserInfoResponseDTO = (
   options: { passwordHash: string; token?: string | null },
 ): LoggedInUserInfoModel => {
   const user = assertObject(dto.user, 'user');
-  const rbac = Array.isArray(dto.rbac) ? dto.rbac : [];
+  const rbac = parsePolicyRuleArrayDTO(dto.rbac, 'rbac');
 
   return {
     user: fromPublicUser(user as PublicUser, options),
-    rbac: rbac.map((rule) =>
-      fromPolicyRuleWire(assertObject(rule, 'rbac rule') as PolicyRuleWire),
-    ),
+    rbac: rbac.map((rule) => fromPolicyRuleWire(rule as PolicyRuleWire)),
   };
 };

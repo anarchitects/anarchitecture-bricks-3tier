@@ -388,7 +388,16 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        rbac: unknown[];
+                        rbac: {
+                            action: string;
+                            conditions?: {
+                                [key: string]: unknown;
+                            };
+                            fields?: string[];
+                            inverted?: boolean;
+                            reason?: string;
+                            subject: string;
+                        }[];
                         user: unknown;
                     };
                 };

@@ -4,21 +4,20 @@ import { AuthApi } from '../../data-access/src';
 import { AuthStore } from './auth.store';
 import { provideAuthState } from './auth-state.provider';
 
-vi.mock('jwt-decode', () => ({
-  jwtDecode: vi.fn(() => ({
-    sub: 'user-id',
-    email: 'user@example.com',
-  })),
-}));
+const validAccessToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIn0.signature';
+const validRefreshToken =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIn0.signature';
 
 const setup = () => {
   const mockAuthApi = {
     registerUser: vi.fn(() => of({ success: true }).pipe(delay(100))),
     activateUser: vi.fn(() => of({ success: true }).pipe(delay(100))),
     login: vi.fn(() =>
-      of({ accessToken: 'access-token', refreshToken: 'refresh-token' }).pipe(
-        delay(100),
-      ),
+      of({
+        accessToken: validAccessToken,
+        refreshToken: validRefreshToken,
+      }).pipe(delay(100)),
     ),
     logout: vi.fn(() => of({ success: true }).pipe(delay(100))),
     changePassword: vi.fn(() => of({ success: true }).pipe(delay(100))),
@@ -28,14 +27,14 @@ const setup = () => {
     verifyEmail: vi.fn(() => of({ success: true }).pipe(delay(100))),
     refreshTokens: vi.fn(() =>
       of({
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
+        accessToken: validAccessToken,
+        refreshToken: validRefreshToken,
       }).pipe(delay(100)),
     ),
     getLoggedInUserInfo: vi.fn(() =>
       of({
         user: { id: 'user-id', email: 'user@example.com' },
-        rbac: {},
+        rbac: [],
       }),
     ),
   };
@@ -108,8 +107,8 @@ describe('AuthStore', () => {
     it('should call logout API and update state', async () => {
       const store = setup();
       store.logout({
-        accessToken: 'access-token',
-        refreshToken: 'refresh-token',
+        accessToken: validAccessToken,
+        refreshToken: validRefreshToken,
       });
       expect(store.loading()).toBe(true);
       expect(store.error()).toBeNull();
@@ -125,7 +124,7 @@ describe('AuthStore', () => {
       const store = setup();
       store.refreshTokens({
         userId: 'user-id',
-        dto: { refreshToken: 'refresh-token' },
+        dto: { refreshToken: validRefreshToken },
       });
       expect(store.loading()).toBe(true);
       expect(store.error()).toBeNull();

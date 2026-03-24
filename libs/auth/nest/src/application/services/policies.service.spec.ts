@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PoliciesService } from './policies.service';
 import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
@@ -80,13 +81,34 @@ describe('PoliciesService', () => {
       const permissions = await service.rulesForUser(mockUser);
       expect(permissions).toEqual(expectedPolicyRules);
     });
+
+    it('should fail closed on malformed persisted policy rules', async () => {
+      mockAuthUserRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        roles: [
+          {
+            ...mockRole,
+            permissions: [
+              {
+                ...mockPermission,
+                action: '',
+              },
+            ],
+          },
+        ],
+      });
+
+      await expect(service.rulesForUser(mockUser)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+    });
   });
 
   describe('buildAbilityForUser', () => {
     it('should build ability for the user', async () => {
       const ability = await service.buildAbilityForUser(mockUser);
       expect(mockAbilityFactory.buildAbility).toHaveBeenCalledWith(
-        expectedPolicyRules
+        expectedPolicyRules,
       );
       expect(ability).toEqual({});
     });

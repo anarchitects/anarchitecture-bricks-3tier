@@ -13,4 +13,5 @@ export * from './success-response.dto';
 export * from './update-email-request.dto';
 export * from './user-id-params.dto';
 export * from './verify-email-request.dto';
+export * from './policy-rule.dto';
 export * from './logged-in-user-info-response.dto';

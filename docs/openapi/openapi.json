@@ -295,7 +295,42 @@
                 "schema": {
                   "properties": {
                     "rbac": {
-                      "items": {},
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "action": {
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "conditions": {
+                            "additionalProperties": {},
+                            "type": "object"
+                          },
+                          "fields": {
+                            "items": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "inverted": {
+                            "type": "boolean"
+                          },
+                          "reason": {
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "subject": {
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "action",
+                          "subject"
+                        ],
+                        "type": "object"
+                      },
                       "type": "array"
                     },
                     "user": {}

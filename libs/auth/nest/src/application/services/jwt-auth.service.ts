@@ -13,18 +13,23 @@ import {
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { PolicyRule, Role, User } from '@anarchitects/auth-ts/models';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
 import { AuthService } from './auth.service';
 import { HashService } from './hash.service';
+import { toValidatedPersistedPolicyRule } from './persisted-policy-rule';
 
 @Injectable()
 export class JwtAuthService implements AuthService {
   constructor(
     private readonly hashService: HashService,
     private readonly authUserRepository: AuthUserRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async registerUser(dto: RegisterRequestDTO): Promise<RegisterResponseDTO> {
@@ -51,7 +56,7 @@ export class JwtAuthService implements AuthService {
   }
 
   async activateUser(
-    dto: ActivateUserRequestDTO
+    dto: ActivateUserRequestDTO,
   ): Promise<{ success: boolean }> {
     const { token } = dto;
     const user = await this.authUserRepository.findOne(token);
@@ -73,7 +78,7 @@ export class JwtAuthService implements AuthService {
     }
     const isPasswordValid = await this.hashService.compare(
       password,
-      user.passwordHash
+      user.passwordHash,
     );
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid credentials');
@@ -109,7 +114,7 @@ export class JwtAuthService implements AuthService {
     const tokenHashes = await Promise.all(
       [accessToken, refreshToken]
         .filter((token): token is string => Boolean(token))
-        .map((token) => this.hashService.hash(token))
+        .map((token) => this.hashService.hash(token)),
     );
 
     await this.authUserRepository.invalidateTokens(tokenHashes, user.id);
@@ -119,7 +124,7 @@ export class JwtAuthService implements AuthService {
 
   async changePassword(
     userId: string,
-    dto: ChangePasswordRequestDTO
+    dto: ChangePasswordRequestDTO,
   ): Promise<{ success: boolean }> {
     const { currentPassword, newPassword, confirmPassword } = dto;
     if (newPassword !== confirmPassword) {
@@ -133,7 +138,7 @@ export class JwtAuthService implements AuthService {
     }
     const isCurrentPasswordValid = await this.hashService.compare(
       currentPassword,
-      user.passwordHash
+      user.passwordHash,
     );
     if (!isCurrentPasswordValid) {
       throw new BadRequestException('Invalid current password');
@@ -143,7 +148,7 @@ export class JwtAuthService implements AuthService {
     return { success: true };
   }
   async forgotPassword(
-    dto: ForgotPasswordRequestDTO
+    dto: ForgotPasswordRequestDTO,
   ): Promise<{ success: boolean }> {
     const { email } = dto;
     const user = await this.authUserRepository.findOne({ where: { email } });
@@ -157,7 +162,7 @@ export class JwtAuthService implements AuthService {
     return { success: true };
   }
   async resetPassword(
-    dto: ResetPasswordRequestDTO
+    dto: ResetPasswordRequestDTO,
   ): Promise<{ success: boolean }> {
     const { token, password, confirmPassword } = dto;
     if (password !== confirmPassword) {
@@ -186,7 +191,7 @@ export class JwtAuthService implements AuthService {
 
   async updateEmail(
     userId: string,
-    dto: UpdateEmailRequestDTO
+    dto: UpdateEmailRequestDTO,
   ): Promise<{ success: boolean }> {
     const { newEmail, password } = dto;
     const user = await this.authUserRepository.findOne({
@@ -207,7 +212,7 @@ export class JwtAuthService implements AuthService {
 
   async refreshTokens(
     userId: string,
-    dto: RefreshTokenRequestDTO
+    dto: RefreshTokenRequestDTO,
   ): Promise<LoginResponseDTO> {
     const { refreshToken } = dto;
     const payload = await this.jwtService
@@ -229,7 +234,7 @@ export class JwtAuthService implements AuthService {
     }
 
     const isTokenInvalidated = await this.authUserRepository.isTokenInvalidated(
-      await this.hashService.hash(refreshToken)
+      await this.hashService.hash(refreshToken),
     );
 
     if (isTokenInvalidated) {
@@ -240,29 +245,37 @@ export class JwtAuthService implements AuthService {
   }
 
   async getLoggedInUserInfo(
-    userId: string
+    userId: string,
   ): Promise<{ user: User; rbac: PolicyRule[] }> {
     const user = await this.authUserRepository.findOne({
       where: { id: userId },
-      relations: ['roles', 'permissions'],
+      relations: ['roles', 'roles.permissions'],
     });
     if (!user) {
       throw new BadRequestException('User not found');
     }
-    const rbac: PolicyRule[] = [];
-    user.roles?.forEach((role) => {
-      role.permissions?.forEach((permission) => {
-        rbac.push({
-          action: permission.action,
-          subject: permission.subject,
-          conditions: permission.conditions ?? undefined,
-          fields: permission.fields ?? undefined,
-          reason: permission.reason ?? undefined,
-          inverted: permission.inverted ?? false,
+
+    const rbac = this.getValidatedPolicyRules(user);
+    return { user, rbac };
+  }
+
+  private getValidatedPolicyRules(user: User): PolicyRule[] {
+    try {
+      const rbac: PolicyRule[] = [];
+      user.roles?.forEach((role) => {
+        role.permissions?.forEach((permission) => {
+          rbac.push(toValidatedPersistedPolicyRule(permission));
         });
       });
-    });
-    return { user, rbac };
+
+      return rbac;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Malformed persisted policy rule payload: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private async generateTokens(user: User) {
