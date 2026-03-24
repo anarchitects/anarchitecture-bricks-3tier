@@ -12,7 +12,7 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(InvalidatedTokenEntity)
-    private readonly invalidatedTokenRepository: Repository<InvalidatedTokenEntity>
+    private readonly invalidatedTokenRepository: Repository<InvalidatedTokenEntity>,
   ) {}
   async find(conditions: FindManyOptions<User> = {}): Promise<User[]> {
     return this.userRepository.find(conditions);
@@ -21,7 +21,7 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
     const user = await this.userRepository.findOne(conditions);
     if (!user) {
       throw new NotFoundException(
-        `User with conditions #${JSON.stringify(conditions)} not found`
+        `User with conditions #${JSON.stringify(conditions)} not found`,
       );
     }
     return user;
@@ -44,13 +44,13 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
 
   async invalidateTokens(
     tokens: string[],
-    userId: string | null
+    userId: string | null,
   ): Promise<void> {
     const invalidatedTokens = tokens.map((token) =>
       this.invalidatedTokenRepository.create({
         tokenId: token,
         userId,
-      })
+      }),
     );
     await this.invalidatedTokenRepository.save(invalidatedTokens);
   }

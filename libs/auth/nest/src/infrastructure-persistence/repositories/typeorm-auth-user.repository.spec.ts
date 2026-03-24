@@ -29,14 +29,14 @@ describe('TypeormAuthUserRepository', () => {
         ({
           ...mockUser,
           ...entity,
-        } as User)
+        }) as User,
     ),
     preload: jest.fn().mockImplementation(
       async (partial: Partial<User>) =>
         ({
           ...mockUser,
           ...partial,
-        } as User)
+        }) as User,
     ),
     remove: jest.fn().mockResolvedValue(mockUser),
   };

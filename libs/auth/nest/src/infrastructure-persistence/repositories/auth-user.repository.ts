@@ -10,7 +10,7 @@ export abstract class AuthUserRepository {
   abstract delete(userId: string): Promise<User>;
   abstract invalidateTokens(
     tokens: string[],
-    userId: string | null
+    userId: string | null,
   ): Promise<void>;
   abstract isTokenInvalidated(tokenId: string): Promise<boolean>;
 }

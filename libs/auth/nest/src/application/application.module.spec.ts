@@ -1,5 +1,6 @@
 import { DynamicModule } from '@nestjs/common';
 import { AuthApplicationModule } from './application.module';
+import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import { AuthService } from './services/auth.service';
 
@@ -22,6 +23,9 @@ describe('AuthApplicationModule', () => {
   });
 
   it('should compose persistence forRoot options when overrides are provided', () => {
+    const loaders = {
+      Post: jest.fn(),
+    };
     const moduleMetadata = AuthApplicationModule.forRoot({
       authStrategies: ['jwt'],
       encryption: {
@@ -29,6 +33,7 @@ describe('AuthApplicationModule', () => {
         key: 'explicit-key',
       },
       persistence: { persistence: 'typeorm' },
+      resourceAuthorization: { loaders },
     });
 
     expect(moduleMetadata.module).toBe(AuthApplicationModule);
@@ -36,6 +41,14 @@ describe('AuthApplicationModule', () => {
       moduleMetadata.imports as DynamicModule[];
     expect(configImport).toBeDefined();
     expect(persistenceImport.module).toBe(AuthPersistenceModule);
+    expect(moduleMetadata.providers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          provide: AUTH_RESOURCE_AUTHORIZATION_LOADERS,
+          useValue: loaders,
+        }),
+      ]),
+    );
   });
 
   it('should resolve AUTH_PERSISTENCE through forRootFromConfig', () => {

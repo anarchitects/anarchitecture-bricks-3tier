@@ -8,7 +8,10 @@ import {
   NoopMailerAdapter,
 } from '@anarchitects/common-nest-mailer';
 import { NodeMailerAdapter } from './infrastructure-mailer/adapters/node-mailer.adapter';
-import { AuthService } from './application';
+import {
+  AUTH_RESOURCE_AUTHORIZATION_LOADERS,
+  AuthService,
+} from './application';
 import { AuthModule } from './auth.module';
 import { AuthController } from './presentation';
 
@@ -100,12 +103,24 @@ describe('AuthModule', () => {
   });
 
   it('should compile and resolve auth tokens when mailer is disabled via forRoot', async () => {
+    const postLoader = jest.fn();
     const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmTestingModule,
         AuthModule.forRoot({
           ...authModuleOptions,
+          presentation: {
+            ...authModuleOptions.presentation,
+            application: {
+              ...authModuleOptions.presentation.application,
+              resourceAuthorization: {
+                loaders: {
+                  Post: postLoader,
+                },
+              },
+            },
+          },
           mailer: {
             provider: 'noop',
           },
@@ -118,6 +133,11 @@ describe('AuthModule', () => {
     expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
       NoopMailerAdapter,
     );
+    expect(
+      moduleRef.get(AUTH_RESOURCE_AUTHORIZATION_LOADERS, { strict: false }),
+    ).toEqual({
+      Post: postLoader,
+    });
   });
 
   it('should keep forRoot explicit and ignore AUTH_MAILER_PROVIDER', async () => {

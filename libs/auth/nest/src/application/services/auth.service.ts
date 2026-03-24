@@ -19,32 +19,32 @@ import { Injectable } from '@nestjs/common';
 export abstract class AuthService {
   abstract registerUser(dto: RegisterRequestDTO): Promise<RegisterResponseDTO>;
   abstract activateUser(
-    dto: ActivateUserRequestDTO
+    dto: ActivateUserRequestDTO,
   ): Promise<{ success: boolean }>;
   abstract login(dto: LoginRequestDTO): Promise<LoginResponseDTO>;
   abstract logout(dto: LogoutRequestDTO): Promise<{ success: boolean }>;
   abstract changePassword(
     userId: string,
-    dto: ChangePasswordRequestDTO
+    dto: ChangePasswordRequestDTO,
   ): Promise<{ success: boolean }>;
   abstract forgotPassword(
-    dto: ForgotPasswordRequestDTO
+    dto: ForgotPasswordRequestDTO,
   ): Promise<{ success: boolean }>;
   abstract resetPassword(
-    dto: ResetPasswordRequestDTO
+    dto: ResetPasswordRequestDTO,
   ): Promise<{ success: boolean }>;
   abstract verifyEmail(
-    dto: VerifyEmailRequestDTO
+    dto: VerifyEmailRequestDTO,
   ): Promise<{ success: boolean }>;
   abstract updateEmail(
     userId: string,
-    dto: UpdateEmailRequestDTO
+    dto: UpdateEmailRequestDTO,
   ): Promise<{ success: boolean }>;
   abstract refreshTokens(
     userId: string,
-    dto: RefreshTokenRequestDTO
+    dto: RefreshTokenRequestDTO,
   ): Promise<LoginResponseDTO>;
   abstract getLoggedInUserInfo(
-    userId: string
+    userId: string,
   ): Promise<{ user: User; rbac: PolicyRule[] }>;
 }

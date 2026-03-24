@@ -95,10 +95,7 @@ export class AppModule {}
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  CommonMailerModule,
-  mailerConfig,
-} from '@anarchitects/common-nest-mailer';
+import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { AuthModule } from '@anarchitects/auth-nest';
 import { authConfig } from '@anarchitects/auth-nest/config';
 
@@ -150,10 +147,7 @@ AuthModule.forRoot({
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  CommonMailerModule,
-  mailerConfig,
-} from '@anarchitects/common-nest-mailer';
+import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
 import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
@@ -227,28 +221,46 @@ export class AuthController {
 ```ts
 import { TypeormAuthUserRepository } from '@anarchitects/auth-nest/infrastructure-persistence';
 
-await authUserRepository.invalidateTokens(
-  [hashedAccessToken, hashedRefreshToken],
-  userId,
-);
+await authUserRepository.invalidateTokens([hashedAccessToken, hashedRefreshToken], userId);
 ```
 
 ### Route-level authorization with policies
 
 ```ts
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { PoliciesGuard, Policies } from '@anarchitects/auth-nest/presentation';
+import { Controller, Patch, UseGuards } from '@nestjs/common';
+import { AuthorizedResource, AuthorizeResource, Policies, PoliciesGuard } from '@anarchitects/auth-nest/presentation';
 
-@Controller('admin')
+@Controller('posts')
 @UseGuards(PoliciesGuard)
-export class AdminController {
-  @Get()
-  @Policies({ action: 'manage', subject: 'User' })
-  getAdminDashboard() {
-    return { status: 'ok' };
+export class PostsController {
+  constructor(private readonly postsService: PostsService) {}
+
+  @Patch(':postId')
+  @Policies({ action: 'update', subject: 'Post' })
+  @AuthorizeResource({ action: 'update', subject: 'Post', idParam: 'postId' })
+  async updatePost(@AuthorizedResource() post: Post) {
+    return this.postsService.update(post);
   }
 }
 ```
+
+```ts
+import { AuthModule } from '@anarchitects/auth-nest';
+
+AuthModule.forRoot({
+  presentation: {
+    application: {
+      resourceAuthorization: {
+        loaders: {
+          Post: async ({ resourceId }) => postsRepository.findById(resourceId),
+        },
+      },
+    },
+  },
+});
+```
+
+`@Policies()` remains the coarse route-level pre-check. `@AuthorizeResource(...)` uses the app-registered loader to fetch the concrete entity, evaluates the instance-level CASL rule behind the scenes, and attaches the authorized resource to the request so `@AuthorizedResource()` can read it in the handler.
 
 ## REST endpoints
 
