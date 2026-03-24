@@ -69,15 +69,11 @@ function run() {
   const errors = [];
 
   if (formsToAuthEdges.length > 0) {
-    errors.push(
-      `Forms domain must not depend on auth domain: ${formsToAuthEdges.join(', ')}`,
-    );
+    errors.push('Forms domain must not depend on auth domain.');
   }
 
   if (sharedToDomainEdges.length > 0) {
-    errors.push(
-      `Shared domain must not depend on forms/auth domains: ${sharedToDomainEdges.join(', ')}`,
-    );
+    errors.push('Shared domain must not depend on forms/auth domains.');
   }
 
   if (hasAuthNestToFormsNest) {
@@ -95,8 +91,8 @@ function run() {
   console.log(
     [
       'Domain boundary verification passed.',
-      `Checked ${formsProjects.length} forms project(s) for reverse auth dependencies.`,
-      `Checked ${sharedProjects.length} shared project(s) for forms/auth dependencies.`,
+      'Checked forms projects for reverse auth dependencies.',
+      'Checked shared projects for forms/auth dependencies.',
       'Confirmed auth-nest has no direct forms-nest dependency.',
     ].join(' '),
   );
