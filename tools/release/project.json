@@ -12,6 +12,12 @@
         "command": "node tools/release/validate-domain-tags.mjs"
       }
     },
+    "verify-domain-boundaries": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/verify-domain-boundaries.mjs"
+      }
+    },
     "normalize-internal-deps": {
       "executor": "nx:run-commands",
       "options": {
