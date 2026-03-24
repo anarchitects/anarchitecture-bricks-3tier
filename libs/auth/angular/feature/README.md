@@ -52,6 +52,15 @@ export const routes: Routes = [
 
 Use `resourcePolicyGuard` when the route already has the concrete entity in `route.data`. It evaluates the hydrated CASL ability against that loaded resource and redirects away when access is denied.
 
+This means a typical ownership-sensitive flow looks like this:
+
+- `policyGuard` allows the route attempt for `{ action, subject }`
+- `resourcePolicyGuard` checks the resolved entity when the route already has it
+- UI elements such as edit buttons still use `canAccessResource(...)` or `canAccessResourceField(...)`
+- the backend remains responsible for the final instance-level authorization decision
+
+Do not treat `policyGuard` as a full `PolicyRule` mirror. It is intentionally coarse.
+
 Ensure the state layer is explicitly provided in your app/route providers by wiring `...provideAuthState()` from `@anarchitects/auth-angular/state`.
 
 ### Token-driven actions

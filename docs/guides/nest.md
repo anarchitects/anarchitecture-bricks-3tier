@@ -61,6 +61,19 @@ Contract ownership is TS-first:
 
 Nest libraries (`@anarchitects/forms-nest`, `@anarchitects/auth-nest`) map these contracts in presentation/application layers and keep schemas synchronized for OpenAPI generation. Ownership and compatibility policy are defined in [TS Contracts Guide](/guides/ts-contracts.html).
 
+## Auth CASL Guidance
+
+For `@anarchitects/auth-nest`, document and preserve the two-layer authorization model:
+
+- `@anarchitects/auth-ts` owns the `PolicyRule` shape
+- `@Policies()` is a coarse route-level pre-check over `{ action, subject }`
+- `@AuthorizeResource(...)` is the resource-aware path that loads the entity and evaluates the concrete CASL rule
+- `@AuthorizedResource()` exposes that already authorized entity to the handler
+
+This split is required for ownership-sensitive rules. Route metadata alone cannot prove that a user may update a specific post; the resource must be loaded before CASL can make that final decision.
+
+Malformed persisted permission payloads are treated as trust-boundary failures and must fail closed instead of being partially trusted.
+
 ## Library Entry Point Cookbook
 
 - Fast start:

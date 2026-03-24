@@ -41,3 +41,13 @@ export const appConfig: ApplicationConfig = {
   providers: [provideHttpClient(withAuthHttpInterceptors())],
 };
 ```
+
+## Authorization Payload Expectations
+
+`AuthApi.getLoggedInUserInfo()` is the frontend trust boundary for `/auth/me` authorization data:
+
+- it expects `rbac` to match the shared `PolicyRule` contract from `@anarchitects/auth-ts`
+- malformed `rbac` payloads are rejected fail-closed before they reach `AuthStore`
+- bootstrap restore may suppress forced login redirects while still rejecting malformed authorization data
+
+Use the state and util layers for authorization behavior after this boundary rather than trusting raw HTTP JSON in feature/UI code.
