@@ -107,6 +107,54 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 - Passing lint/build/test for affected scope.
 - Consistent architecture boundaries and naming.
 
+## Project Planning And Board Sync
+
+When executing work tied to GitHub issues in this repository, keep the planning board synchronized as part of the implementation workflow.
+
+- Planning project: https://github.com/orgs/anarchitects/projects/15
+- Working view: Board
+- Sprint field: Milestone
+- Status field values: Backlog, Todo, In Progress, In Review, Blocked, Done
+
+### Required Behavior During Issue Work
+
+- Before coding starts on an issue, set the issue Status to In Progress.
+- If work is intentionally queued or deferred, set Status to Backlog.
+- If work is ready and selected for active execution but not started, set Status to Todo.
+- If blocked by dependency, environment, or decision gate, set Status to Blocked.
+- When a PR is opened for the issue, set Status to In Review.
+- When work is fully completed and validated, set Status to Done.
+
+### Scope Rules
+
+- Apply board status updates to parent issues and sub-issues involved in the current implementation.
+- Keep Priority and Milestone values intact unless user explicitly asks to change them.
+- When creating new implementation sub-issues, assign Milestone based on sprint plan and add to project 15.
+- Prefer non-interactive gh commands and confirm updates by querying project items after bulk changes.
+
+## Human In The Loop Governance
+
+For all implementation work, keep humans as the control point for code acceptance and release actions.
+
+### Ownership Rules
+
+- AI coding agents may analyze, edit files, run validation, and suggest commit messages.
+- Human developers review all code changes.
+- Human developers perform git commit, pull request creation, and pull request merge.
+- AI coding agents must never finalize commits or merge PRs as a replacement for human review.
+
+### Breaking Change And Deprecation Disclosure
+
+- AI coding agents must explicitly call out potential breaking changes in every implementation summary when applicable.
+- AI coding agents must explicitly call out when a bug fix may warrant npm package deprecation of existing published versions.
+- AI coding agents may propose and prepare deprecation actions, but execution requires explicit human approval.
+- Until human approval is provided, deprecation operations must remain proposed-only.
+
+### Commit Guidance
+
+- AI coding agents should always suggest one or more clear commit message options.
+- Human developers execute the final commit command.
+
 ## Release Workflow Rules
 
 - Release ownership is CI-based via GitHub Actions, not local developer machines.

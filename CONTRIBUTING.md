@@ -80,6 +80,17 @@ nx run release-tools:validate-non-bumping-commits
 - CI also enforces docs completeness via `nx run docs-hub:validate-content` (required headings for publishable package READMEs and Angular/Nest markdown guides).
 - Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, or `style:`.
 
+## Human-In-The-Loop Shortlist
+
+See the top-level policy summary in [README.md](README.md#human-in-the-loop-shortlist).
+
+- Humans review all AI-proposed code changes.
+- Humans own `git commit`, pull request creation, and pull request merge.
+- AI agents must explicitly call out potential breaking changes.
+- AI agents must explicitly call out when a bug fix may justify npm package deprecation.
+- Deprecation actions are proposed-only until explicit human approval is provided.
+- AI agents may suggest commit message options; humans run the final commit command.
+
 ## Release Workflow (Domain Groups)
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
