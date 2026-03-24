@@ -2,6 +2,8 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthController } from './controllers/auth.controller';
 import { AuthApplicationModule } from '../application';
+import { PoliciesGuard } from './guards/policies.guard';
+import { ResourceAuthorizationGuard } from './guards/resource-authorization.guard';
 import {
   authConfig,
   mapAuthConfigToPresentationModuleOptions,
@@ -10,6 +12,8 @@ import type { AuthPresentationModuleOptions } from '../config';
 
 @Module({
   controllers: [AuthController],
+  providers: [PoliciesGuard, ResourceAuthorizationGuard],
+  exports: [PoliciesGuard, ResourceAuthorizationGuard],
 })
 export class AuthPresentationModule {
   static forRoot(options: AuthPresentationModuleOptions = {}): DynamicModule {

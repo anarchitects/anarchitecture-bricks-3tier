@@ -7,6 +7,7 @@ import {
 } from './auth.config';
 import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
 import type { AuthConfig } from './auth.config';
+import type { ResourceAuthorizationOptions } from '../application/resource-authorization.types';
 
 export type AuthPersistenceModuleOptions = {
   persistence?: string;
@@ -31,6 +32,7 @@ export type AuthApplicationModuleOptions = {
     key?: string;
   };
   persistence?: AuthPersistenceModuleOptions;
+  resourceAuthorization?: ResourceAuthorizationOptions;
 };
 
 export type ResolvedAuthApplicationModuleOptions = {
@@ -40,6 +42,7 @@ export type ResolvedAuthApplicationModuleOptions = {
     key: string;
   };
   persistence: ResolvedAuthPersistenceModuleOptions;
+  resourceAuthorization: Required<ResourceAuthorizationOptions>;
 };
 
 export type AuthPresentationModuleOptions = {
@@ -87,6 +90,9 @@ export const resolveAuthApplicationModuleOptions = (
     key: options.encryption?.key ?? DEFAULT_AUTH_ENCRYPTION_KEY,
   },
   persistence: resolveAuthPersistenceModuleOptions(options.persistence),
+  resourceAuthorization: {
+    loaders: { ...(options.resourceAuthorization?.loaders ?? {}) },
+  },
 });
 
 export const resolveAuthPresentationModuleOptions = (

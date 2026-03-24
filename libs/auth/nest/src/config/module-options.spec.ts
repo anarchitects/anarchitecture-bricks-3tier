@@ -86,6 +86,7 @@ describe('auth module option resolvers', () => {
         key: 'default_encryption_key',
       },
       persistence: { persistence: 'typeorm' },
+      resourceAuthorization: { loaders: {} },
     });
   });
 
@@ -99,11 +100,32 @@ describe('auth module option resolvers', () => {
             key: 'default_encryption_key',
           },
           persistence: { persistence: 'typeorm' },
+          resourceAuthorization: { loaders: {} },
         },
       },
       mailer: {
         provider: 'node',
       },
+    });
+  });
+
+  it('resolves explicit resource authorization loaders deterministically', () => {
+    const loaders = {
+      Post: jest.fn(),
+    };
+
+    expect(
+      resolveAuthApplicationModuleOptions({
+        resourceAuthorization: { loaders },
+      }),
+    ).toEqual({
+      authStrategies: ['jwt'],
+      encryption: {
+        algorithm: 'bcrypt',
+        key: 'default_encryption_key',
+      },
+      persistence: { persistence: 'typeorm' },
+      resourceAuthorization: { loaders },
     });
   });
 });
