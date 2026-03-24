@@ -27,6 +27,15 @@ describe('AuthApplicationModule', () => {
       Post: jest.fn(),
     };
     const moduleMetadata = AuthApplicationModule.forRoot({
+      engine: 'better-auth',
+      sessionMode: 'session',
+      features: {
+        passkeys: true,
+        social: true,
+      },
+      spike: {
+        proofHarnessEnabled: true,
+      },
       authStrategies: ['jwt'],
       encryption: {
         algorithm: 'bcrypt',
@@ -63,6 +72,7 @@ describe('AuthApplicationModule', () => {
     process.env['AUTH_PERSISTENCE'] = 'unsupported';
 
     const moduleMetadata = AuthApplicationModule.forRootFromConfig({
+      engine: 'legacy-jwt',
       persistence: { persistence: 'typeorm' },
     });
 
@@ -86,5 +96,17 @@ describe('AuthApplicationModule', () => {
     const moduleMetadata = AuthApplicationModule.forRootFromConfig();
 
     expect(moduleMetadata.exports).not.toContain(AuthService);
+  });
+
+  it('should allow a better-auth engine without changing the public AuthService export', () => {
+    const moduleMetadata = AuthApplicationModule.forRoot({
+      engine: 'better-auth',
+      authStrategies: ['jwt'],
+      spike: {
+        proofHarnessEnabled: true,
+      },
+    });
+
+    expect(moduleMetadata.exports).toContain(AuthService);
   });
 });
