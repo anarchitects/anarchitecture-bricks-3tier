@@ -58,3 +58,13 @@ After the first restore attempt completes or is skipped:
 - `store.rbac()` and `store.ability()` are hydrated when the session is valid
 
 Use `initialized()` to avoid protected-route flicker during app startup.
+
+## Authorization State Notes
+
+`AuthStore` is the Angular trust boundary for hydrated auth session state:
+
+- raw `rbac` rules are stored alongside the derived CASL ability
+- `/auth/me` authorization payloads are validated before the store trusts them
+- malformed RBAC during restore, login, or refresh fails closed by clearing the session instead of keeping partial authorization state
+
+Use `store.rbac()` for coarse route-attempt checks and `store.ability()` for concrete resource checks.

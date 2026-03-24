@@ -73,6 +73,17 @@ Angular consumers (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`) 
 - Keep `feature` as composition/orchestration and `ui` as presentational/token-driven.
 - Sync backend schema changes by regenerating OpenAPI and updating Angular adapters before merge.
 
+## Auth CASL Guidance
+
+For `@anarchitects/auth-angular`, keep the authorization split explicit:
+
+- `@anarchitects/auth-ts` owns the serialized auth rule shape
+- `policyGuard` is a coarse route-attempt check over `{ action, subject }`
+- `resourcePolicyGuard` is for resolved-resource routes
+- `canAccessResource(...)` and `canAccessResourceField(...)` are for concrete UI/resource checks
+
+Do not treat Angular route metadata as full instance-level authorization. If the app has not loaded the resource yet, the Angular side can only make the coarse "attempt" decision. Nest still remains the final enforcement boundary for instance-sensitive access.
+
 ## Testing and Docs Workflow
 
 - Unit-test `state` and `feature` layers independently of primitive visuals.

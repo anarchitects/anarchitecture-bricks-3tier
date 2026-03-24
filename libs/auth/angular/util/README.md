@@ -9,6 +9,16 @@ Utility layer for Angular auth. Re-exported via `@anarchitects/auth-angular/util
 - `canAccessResourceField(...)`: checks whether a specific field-level action is allowed for a concrete resource.
 - `AppAbility`: CASL ability type configured for `Action`/`Subject` pairs defined in `@anarchitects/auth-ts/models`.
 
+## When To Use These Helpers
+
+Use this layer for concrete resource decisions, not coarse route metadata:
+
+- `createAppAbility(rules)` builds the frontend CASL ability from validated RBAC rules
+- `canAccessResource(...)` answers instance-level questions such as "may this user edit this post?"
+- `canAccessResourceField(...)` answers field-sensitive UI questions such as inline title editing
+
+If you only need coarse route-attempt semantics, use `policyGuard` and `RoutePolicy` instead of calling CASL directly here.
+
 ## Usage
 
 ```ts

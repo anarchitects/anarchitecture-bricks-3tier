@@ -19,6 +19,17 @@ Angular domain libraries for the Anarchitecture auth domain. The package is orga
 - `util`: CASL ability helpers (`createAppAbility`, `canAccessResource`, `canAccessResourceField`, `AppAbility`)
 - `ui`: presentational auth domain form components built on `AnarchitectsUiForm`
 
+## Authorization Model
+
+CASL integration in `@anarchitects/auth-angular` mirrors the backend split instead of pretending every check is the same:
+
+- `policyGuard` is coarse and answers "may this user attempt work on this subject at all?"
+- `resourcePolicyGuard` checks a resolved concrete resource route
+- `canAccessResource(...)` and `canAccessResourceField(...)` are the intended UI checks for edit buttons, row actions, and field-sensitive affordances
+- `AuthStore` hydrates both raw `rbac` rules and the derived CASL ability
+
+Angular should hide or redirect on unauthorized work, but Nest remains the final enforcement boundary for instance-sensitive access.
+
 ## Installation
 
 ```bash
@@ -180,6 +191,7 @@ export class PostActionsComponent {
 - Data-access layer should always use the generated OpenAPI clients—no manual HTTP calls.
 - State layer uses Angular signals via `@ngrx/signals` for reactive updates, hydrates raw RBAC rules plus the derived CASL ability, and restores sessions eagerly when provided.
 - `AuthStore.initialized()` and `AuthStore.restoring()` let apps avoid auth flicker while bootstrap restore completes.
+- `/auth/me` RBAC payloads are parsed at the frontend trust boundary; malformed authorization data fails closed instead of producing a partially trusted ability.
 - Ability creation and concrete resource checks are centralised in `@anarchitects/auth-angular/util`; import the helpers instead of instantiating CASL directly.
 - `policyGuard` is coarse by design; use `resourcePolicyGuard` and backend instance checks for ownership-sensitive routes.
 - Keep UI, feature, data-access, state, and config layers decoupled per architecture guidelines.

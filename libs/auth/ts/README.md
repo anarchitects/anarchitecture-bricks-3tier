@@ -21,6 +21,31 @@ Use it to validate inbound/outbound payloads, share typings between Angular/Nest
 - Domain model contracts for users, roles, and permissions
 - Reusable validation + type-inference building blocks for auth flows
 
+## Authorization Contract
+
+`@anarchitects/auth-ts` is the source of truth for serialized auth rule shape, but it does not enforce frontend or backend authorization by itself.
+
+### `PolicyRule`
+
+Serialized RBAC rules use the following contract:
+
+- required: `action`, `subject`
+- optional: `conditions`, `fields`, `inverted`, `reason`
+- `action` and `subject` stay open strings for compatibility across apps
+- malformed rule payloads are rejected fail-closed by the shared DTO parsers
+
+This is the contract emitted by `/auth/me`, persisted through auth permission mapping, and consumed by Angular/Nest authorization helpers.
+
+### `RoutePolicy`
+
+`RoutePolicy` is intentionally narrower than `PolicyRule`:
+
+- shape: `{ action, subject }`
+- purpose: coarse route-attempt checks
+- not a substitute for instance-level authorization
+
+Use `RoutePolicy` when a consumer only needs to answer "may this user attempt this kind of work at all?" Concrete ownership or field-sensitive checks still belong to loaded resources and CASL ability evaluation in Angular/Nest layers.
+
 ## Installation
 
 ```bash
@@ -99,6 +124,7 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 ## Development notes
 
 - Treat this package as the source of truth for auth DTO and model contracts.
+- Use `parsePolicyRuleDTO(...)` / `parsePolicyRuleArrayDTO(...)` when authorization rules cross trust boundaries and need runtime validation.
 - When changing DTO schemas, regenerate OpenAPI in the workspace (`nx run api-specs:generate`).
 - Keep framework-specific concerns out of this package; Angular/Nest behavior belongs in domain libraries.
 

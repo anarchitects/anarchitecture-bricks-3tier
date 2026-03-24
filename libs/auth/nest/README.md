@@ -37,8 +37,8 @@ The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` pack
 | Import path                                          | Contents                                                                                                                                         |
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                          |
-| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `JwtAuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, `JwtStrategy` |
-| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `@Policies()` decorator                                                             |
+| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `JwtAuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, `JwtStrategy`, resource-authorization helpers/types |
+| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy` |
 | `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`, migration                                                            |
 | `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                          |
 | `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                            |
@@ -262,6 +262,32 @@ AuthModule.forRoot({
 
 `@Policies()` remains the coarse route-level pre-check. `@AuthorizeResource(...)` uses the app-registered loader to fetch the concrete entity, evaluates the instance-level CASL rule behind the scenes, and attaches the authorized resource to the request so `@AuthorizedResource()` can read it in the handler.
 
+## Authorization Model
+
+CASL integration in `@anarchitects/auth-nest` is intentionally split into two layers:
+
+- `@Policies()` uses `RoutePolicy` and performs a coarse route-level pre-check
+- `@AuthorizeResource(...)` performs the concrete instance-level check after loading the resource
+- `@AuthorizedResource()` gives the handler access to the already loaded and authorized entity
+
+Use this split to avoid overstating what route metadata can prove. Ownership-sensitive rules such as "writers may only update their own posts" need the concrete resource instance before CASL can decide correctly.
+
+### What the library enforces
+
+- persisted permission payloads are validated before they become `PolicyRule[]`
+- malformed persisted permission payloads fail closed with a server-side error
+- missing registered resource loader is treated as configuration error
+- missing route param yields `400`
+- missing resource yields `404`
+
+### What the host app must provide
+
+- subject-specific resource loaders for `@AuthorizeResource(...)`
+- domain resource retrieval logic and repository access
+- route resolver/handler composition that fits the app's domain model
+
+The library owns authorization orchestration. The host app still owns how domain resources are found.
+
 ## REST endpoints
 
 The `AuthController` exposes the following routes (all prefixed with `/auth`):
@@ -292,6 +318,7 @@ The `AuthController` exposes the following routes (all prefixed with `/auth`):
 - Default persistence is TypeORM with schema-qualified tables (see `libs/auth/nest/src/infrastructure-persistence`).
 - Invalidated tokens use an unlogged cache table for quick revocation lookups.
 - Route schemas are defined in `@anarchitects/auth-ts/dtos` and imported into controller `@RouteSchema` decorators — do not define inline schemas.
+- Keep `@Policies()` guidance coarse in docs and examples; use `@AuthorizeResource(...)` for instance-sensitive authorization.
 - OpenAPI metadata (`operationId`, `tags`) is assigned in `tools/api-specs/route-metadata.ts`, not in controllers.
 
 ## License
