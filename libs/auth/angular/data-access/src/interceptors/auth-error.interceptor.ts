@@ -29,6 +29,9 @@ import {
 } from './auth-token.utils';
 
 const AUTH_RETRY_ATTEMPTED = new HttpContextToken<boolean>(() => false);
+export const SUPPRESS_AUTH_FAILURE_REDIRECT = new HttpContextToken<boolean>(
+  () => false,
+);
 const LOGIN_REDIRECT_PATH = '/login';
 
 let refreshTokensRequest$: Observable<LoginResponseDTO> | null = null;
@@ -71,6 +74,10 @@ function redirectToLogin(router: Router | null): void {
   }
 }
 
+function shouldRedirectToLogin(req: Parameters<HttpInterceptorFn>[0]): boolean {
+  return !req.context.get(SUPPRESS_AUTH_FAILURE_REDIRECT);
+}
+
 function getRefreshTokensRequest(
   http: HttpClient,
   refreshUrl: string,
@@ -110,7 +117,9 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
       ) {
         if (req.context.get(AUTH_RETRY_ATTEMPTED)) {
           clearStoredTokens();
-          redirectToLogin(router ?? null);
+          if (shouldRedirectToLogin(req)) {
+            redirectToLogin(router ?? null);
+          }
         }
 
         return throwError(() => error);
@@ -122,7 +131,9 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (!refreshToken || !userId) {
         clearStoredTokens();
-        redirectToLogin(router ?? null);
+        if (shouldRedirectToLogin(req)) {
+          redirectToLogin(router ?? null);
+        }
         return throwError(() => error);
       }
 
@@ -141,7 +152,9 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
         }),
         catchError((refreshError) => {
           clearStoredTokens();
-          redirectToLogin(router ?? null);
+          if (shouldRedirectToLogin(req)) {
+            redirectToLogin(router ?? null);
+          }
           return throwError(() => refreshError);
         })
       );

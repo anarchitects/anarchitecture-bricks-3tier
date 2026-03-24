@@ -8,5 +8,6 @@ export * from './components/update-email/update-email';
 export * from './components/logout/logout';
 export * from './components/refresh-tokens/refresh-tokens';
 export * from './guards/policy.guard';
+export * from './guards/resource-policy.guard';
 
 export * from './components/login/login';

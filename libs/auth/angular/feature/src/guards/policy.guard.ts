@@ -1,18 +1,23 @@
 import { AuthStore } from '@anarchitects/auth-angular/state';
-import { inject } from '@angular/core';
+import { canAttemptRoutePolicy, RoutePolicy } from '@anarchitects/auth-ts/models';
+import { inject, Signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { CanMatchFn } from '@angular/router';
+import { filter, map, of, take } from 'rxjs';
 
-export const policyGuard: CanMatchFn = (route) => {
-  const { action, subject } = route.data as {
-    action: string;
-    subject: string;
-  };
-  const authStore = inject(AuthStore);
-  const ability = authStore.ability?.();
-
-  if (!ability) {
-    return false;
+const waitForAuthInitialization = (initialized: Signal<boolean>) => {
+  if (initialized()) {
+    return of(true);
   }
 
-  return ability.can(action, subject);
+  return toObservable(initialized).pipe(filter(Boolean), take(1));
+};
+
+export const policyGuard: CanMatchFn = (route) => {
+  const routePolicy = route.data as RoutePolicy;
+  const authStore = inject(AuthStore);
+
+  return waitForAuthInitialization(authStore.initialized).pipe(
+    map(() => canAttemptRoutePolicy(routePolicy, authStore.rbac())),
+  );
 };

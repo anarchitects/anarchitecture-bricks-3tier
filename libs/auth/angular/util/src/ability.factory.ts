@@ -1,14 +1,48 @@
 import { Action, PolicyRule, Subject } from '@anarchitects/auth-ts/models';
-import { createMongoAbility, MongoAbility } from '@casl/ability';
+import { createMongoAbility, MongoAbility, subject } from '@casl/ability';
 
-type AbilitySubject =
-  | Subject
-  | (Record<string, unknown> & { __caslSubjectType__?: Subject });
+type AbilitySubject = Subject | object;
 
-export type AppAbility = MongoAbility<
-  [Action, AbilitySubject],
-  { conditions: Record<string, unknown> }
->;
+type AbilityResource = Record<string, unknown>;
 
-export const createAppAbility = (rules: PolicyRule[]) =>
-  createMongoAbility(rules);
+export type AppAbility = MongoAbility<[Action, AbilitySubject]>;
+
+export const createAppAbility = (rules: PolicyRule[]): AppAbility =>
+  createMongoAbility(rules) as AppAbility;
+
+export const asAppAbilitySubject = <TResource extends AbilityResource>(
+  subjectName: Subject,
+  resource: TResource,
+): TResource & { __caslSubjectType__: Subject } =>
+  subject(subjectName, resource) as TResource & { __caslSubjectType__: Subject };
+
+export const canAccessResource = <TResource extends AbilityResource>(
+  ability: AppAbility | undefined,
+  action: Action,
+  subjectName: Subject,
+  resource: TResource,
+): boolean => {
+  if (!ability) {
+    return false;
+  }
+
+  return ability.can(action, asAppAbilitySubject(subjectName, resource));
+};
+
+export const canAccessResourceField = <TResource extends AbilityResource>(
+  ability: AppAbility | undefined,
+  action: Action,
+  subjectName: Subject,
+  field: string,
+  resource: TResource,
+): boolean => {
+  if (!ability) {
+    return false;
+  }
+
+  return ability.can(
+    action,
+    asAppAbilitySubject(subjectName, resource),
+    field,
+  );
+};

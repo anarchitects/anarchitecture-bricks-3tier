@@ -14,9 +14,9 @@ Angular domain libraries for the Anarchitecture auth domain. The package is orga
 
 - `config`: DI tokens and provider helpers (API base URL, defaults)
 - `data-access`: generated OpenAPI clients plus adapters over the Nest API
-- `state`: signal-based store plus explicit provider helper for login/logout, token refresh, and ability hydration
-- `feature`: router policy guard and orchestration components that delegate rendering to auth UI components
-- `util`: CASL ability helpers (`createAppAbility`, `AppAbility`)
+- `state`: signal-based store plus explicit provider helper for login/logout, token refresh, eager session restore, and ability hydration
+- `feature`: coarse route guard, resource-aware route guard, and orchestration components that delegate rendering to auth UI components
+- `util`: CASL ability helpers (`createAppAbility`, `canAccessResource`, `canAccessResourceField`, `AppAbility`)
 - `ui`: presentational auth domain form components built on `AnarchitectsUiForm`
 
 ## Installation
@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
       apiBaseUrl: 'https://api.anarchitects.dev',
     }),
     provideAuthDataAccess(),
-    provideAuthState(),
+    ...provideAuthState(),
   ],
 };
 ```
@@ -80,7 +80,10 @@ export class AppComponent {
 ```ts
 // app.routes.ts
 import { Routes } from '@angular/router';
-import { policyGuard } from '@anarchitects/auth-angular/feature';
+import {
+  policyGuard,
+  resourcePolicyGuard,
+} from '@anarchitects/auth-angular/feature';
 
 export const routes: Routes = [
   {
@@ -90,7 +93,68 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./admin.component').then((m) => m.AdminComponent),
   },
+  {
+    path: 'posts/:postId/edit',
+    canMatch: [policyGuard],
+    canActivate: [resourcePolicyGuard],
+    data: {
+      action: 'update',
+      subject: 'Post',
+      resourceKey: 'post',
+      unauthorizedRedirectTo: '/posts',
+    },
+    loadComponent: () =>
+      import('./post-edit.component').then((m) => m.PostEditComponent),
+  },
 ];
+```
+
+`policyGuard` is a coarse route-attempt guard. It answers "may this user attempt work on this subject at all?" by using the shared route matcher from `@anarchitects/auth-ts`. Concrete ownership checks still belong to loaded resources. Use `resourcePolicyGuard` for resolved edit/detail routes and `canAccessResource(...)` / `canAccessResourceField(...)` for UI elements such as edit buttons.
+
+Blog ownership example:
+
+```ts
+import { Component, computed, inject, input } from '@angular/core';
+import {
+  canAccessResource,
+  canAccessResourceField,
+} from '@anarchitects/auth-angular/util';
+import { AuthStore } from '@anarchitects/auth-angular/state';
+
+@Component({
+  selector: 'app-post-actions',
+  template: `
+    @if (canEdit()) {
+      <a [routerLink]="['/posts', post().id, 'edit']">Edit</a>
+    }
+    @if (canEditTitle()) {
+      <button type="button">Rename title</button>
+    }
+  `,
+})
+export class PostActionsComponent {
+  readonly post = input.required<{ id: string; authorId: string }>();
+  private readonly authStore = inject(AuthStore);
+
+  readonly canEdit = computed(() =>
+    canAccessResource(
+      this.authStore.ability(),
+      'update',
+      'Post',
+      this.post(),
+    ),
+  );
+
+  readonly canEditTitle = computed(() =>
+    canAccessResourceField(
+      this.authStore.ability(),
+      'update',
+      'Post',
+      'title',
+      this.post(),
+    ),
+  );
+}
 ```
 
 ## Entry points
@@ -99,10 +163,10 @@ export const routes: Routes = [
 | ---------------------------------------- | --------------------------------------- |
 | `@anarchitects/auth-angular/config`      | DI tokens and providers                 |
 | `@anarchitects/auth-angular/data-access` | Generated API clients and HTTP adapters |
-| `@anarchitects/auth-angular/state`       | Signal store and CASL ability sync      |
-| `@anarchitects/auth-angular/feature`     | Router policy guard                     |
+| `@anarchitects/auth-angular/state`       | Signal store, eager restore, CASL ability sync |
+| `@anarchitects/auth-angular/feature`     | Coarse and resource-aware router guards |
 | `@anarchitects/auth-angular/ui`          | Auth domain form UI components          |
-| `@anarchitects/auth-angular/util`        | CASL ability factory and typings        |
+| `@anarchitects/auth-angular/util`        | CASL ability/resource helpers and typings |
 
 ## Nx scripts
 
@@ -114,8 +178,10 @@ export const routes: Routes = [
 
 - DTOs live in `@anarchitects/auth-ts`; regenerate OpenAPI docs when route schemas change (`nx run api-specs:generate`).
 - Data-access layer should always use the generated OpenAPI clients—no manual HTTP calls.
-- State layer uses Angular signals via `@ngrx/signals` for reactive updates and caches the CASL ability returned by the API.
-- Ability creation is centralised in `@anarchitects/auth-angular/util`; import `createAppAbility` instead of instantiating CASL directly.
+- State layer uses Angular signals via `@ngrx/signals` for reactive updates, hydrates raw RBAC rules plus the derived CASL ability, and restores sessions eagerly when provided.
+- `AuthStore.initialized()` and `AuthStore.restoring()` let apps avoid auth flicker while bootstrap restore completes.
+- Ability creation and concrete resource checks are centralised in `@anarchitects/auth-angular/util`; import the helpers instead of instantiating CASL directly.
+- `policyGuard` is coarse by design; use `resourcePolicyGuard` and backend instance checks for ownership-sensitive routes.
 - Keep UI, feature, data-access, state, and config layers decoupled per architecture guidelines.
 
 ## License

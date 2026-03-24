@@ -1,6 +1,10 @@
 import { PolicyRule } from '@anarchitects/auth-ts/models';
 import { subject } from '@casl/ability';
-import { createAppAbility } from './ability.factory';
+import {
+  canAccessResource,
+  canAccessResourceField,
+  createAppAbility,
+} from './ability.factory';
 
 const emptyRules: PolicyRule[] = [];
 
@@ -49,5 +53,67 @@ describe('Ability', () => {
     const ability = createAppAbility(rules);
 
     expect(ability.can('delete', 'Comment')).toBe(false);
+  });
+
+  it('supports field-scoped checks for concrete resources', () => {
+    const rules: PolicyRule[] = [
+      { action: 'update', subject: 'Post', fields: ['title'] },
+    ];
+
+    const ability = createAppAbility(rules);
+    const post = { id: 'post-1', authorId: 'user-1' };
+
+    expect(canAccessResourceField(ability, 'update', 'Post', 'title', post)).toBe(
+      true,
+    );
+    expect(canAccessResourceField(ability, 'update', 'Post', 'body', post)).toBe(
+      false,
+    );
+  });
+
+  it('supports concrete resource ownership checks', () => {
+    const rules: PolicyRule[] = [
+      {
+        action: 'update',
+        subject: 'Post',
+        conditions: { authorId: 'user-1' },
+      },
+    ];
+
+    const ability = createAppAbility(rules);
+
+    expect(
+      canAccessResource(ability, 'update', 'Post', {
+        id: 'post-1',
+        authorId: 'user-1',
+      }),
+    ).toBe(true);
+    expect(
+      canAccessResource(ability, 'update', 'Post', {
+        id: 'post-2',
+        authorId: 'user-2',
+      }),
+    ).toBe(false);
+  });
+
+  it('applies inverted rules to concrete resources', () => {
+    const rules: PolicyRule[] = [
+      { action: 'update', subject: 'Post' },
+      {
+        action: 'update',
+        subject: 'Post',
+        conditions: { archived: true },
+        inverted: true,
+      },
+    ];
+
+    const ability = createAppAbility(rules);
+
+    expect(
+      ability.can('update', subject('Post', { id: 'post-1', archived: false })),
+    ).toBe(true);
+    expect(
+      ability.can('update', subject('Post', { id: 'post-2', archived: true })),
+    ).toBe(false);
   });
 });

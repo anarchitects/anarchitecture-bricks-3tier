@@ -3,6 +3,10 @@ import { provideAuthConfig, provideAuthDefaults } from './providers';
 import { API_RESOURCE_PATH, AUTH_CONFIG } from './tokens';
 
 describe('AuthConfig Providers', () => {
+  afterEach(() => {
+    TestBed.resetTestingModule();
+  });
+
   it('should provide default config when using provideAuthDefaults', () => {
     TestBed.configureTestingModule({
       providers: [...provideAuthDefaults()],
