@@ -4,6 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth-api';
 import { SUPPRESS_AUTH_FAILURE_REDIRECT } from './interceptors/auth-error.interceptor';
 
@@ -188,6 +189,18 @@ describe('AuthApi', () => {
         user: { id: 'user-123', email: 'user@example.com' },
         rbac: [{ action: 'read', subject: 'Project' }],
       });
+    });
+
+    it('should reject malformed rbac payloads at the API boundary', async () => {
+      const responsePromise = firstValueFrom(service.getLoggedInUserInfo());
+      const req = httpController.expectOne('/api/auth/me');
+
+      req.flush({
+        user: { id: 'user-123', email: 'user@example.com' },
+        rbac: [{ action: 'read', subject: '' }],
+      });
+
+      await expect(responsePromise).rejects.toThrow(/Invalid rbac/);
     });
   });
 });

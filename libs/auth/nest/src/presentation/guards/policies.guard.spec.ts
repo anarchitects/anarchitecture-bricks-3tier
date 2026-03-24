@@ -141,4 +141,17 @@ describe('PoliciesGuard', () => {
       guard.canActivate(createExecutionContext({ id: 'user-1' })),
     ).rejects.toThrow(ForbiddenException);
   });
+
+  it('bubbles malformed persisted policy failures instead of allowing access', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue([
+      { action: 'update', subject: 'Post' },
+    ]);
+    mockPoliciesService.rulesForUser.mockRejectedValue(
+      new Error('Malformed persisted policy rule payload'),
+    );
+
+    await expect(
+      guard.canActivate(createExecutionContext({ id: 'user-1' })),
+    ).rejects.toThrow('Malformed persisted policy rule payload');
+  });
 });

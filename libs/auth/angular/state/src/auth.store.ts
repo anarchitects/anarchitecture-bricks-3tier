@@ -38,7 +38,7 @@ import {
   withEntities,
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, pipe, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, pipe, switchMap, tap, throwError } from 'rxjs';
 import { AUTH_STATE_OPTIONS } from './auth-state.options';
 
 type AuthState = {
@@ -127,6 +127,18 @@ const redirectToLogin = (router: Router | null): void => {
   if (typeof window !== 'undefined') {
     window.location.assign(LOGIN_REDIRECT_PATH);
   }
+};
+
+const failClosedHydration = (
+  store: object,
+  error: unknown,
+  state: Partial<AuthState> = {},
+) => {
+  clearStoredTokens();
+  clearAuthenticatedSession(store, {
+    error: toErrorMessage(error),
+    ...state,
+  });
 };
 
 export const AuthStore = signalStore(
@@ -277,7 +289,12 @@ export const AuthStore = signalStore(
                 return EMPTY;
               }
 
-              return store._authApi.getLoggedInUserInfo();
+              return store._authApi.getLoggedInUserInfo().pipe(
+                catchError((error: unknown) => {
+                  failClosedHydration(store, error, { initialized: true });
+                  return throwError(() => error);
+                }),
+              );
             }),
             tapResponse({
               next: ({ user, rbac }) => {
@@ -291,7 +308,10 @@ export const AuthStore = signalStore(
                 patchState(store, { initialized: true });
               },
               error: (error: unknown) => {
-                patchState(store, { error: toErrorMessage(error) });
+                patchState(store, {
+                  error: toErrorMessage(error),
+                  initialized: true,
+                });
               },
               finalize: () => {
                 patchState(store, { loading: false });
@@ -439,7 +459,12 @@ export const AuthStore = signalStore(
                 return EMPTY;
               }
 
-              return store._authApi.getLoggedInUserInfo();
+              return store._authApi.getLoggedInUserInfo().pipe(
+                catchError((error: unknown) => {
+                  failClosedHydration(store, error, { initialized: true });
+                  return throwError(() => error);
+                }),
+              );
             }),
             tapResponse({
               next: ({ user, rbac }) => {
@@ -453,7 +478,10 @@ export const AuthStore = signalStore(
                 patchState(store, { initialized: true });
               },
               error: (error: unknown) => {
-                patchState(store, { error: toErrorMessage(error) });
+                patchState(store, {
+                  error: toErrorMessage(error),
+                  initialized: true,
+                });
               },
               finalize: () => {
                 patchState(store, { loading: false });

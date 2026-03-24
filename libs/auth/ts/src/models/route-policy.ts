@@ -1,6 +1,30 @@
+import { parsePolicyRuleDTO } from '../dtos';
 import { PolicyRule } from './auth.types';
 
 export type RoutePolicy = Pick<PolicyRule, 'action' | 'subject'>;
+
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === 'string' && value.length > 0;
+
+const isRoutePolicy = (value: unknown): value is RoutePolicy =>
+  !!value &&
+  typeof value === 'object' &&
+  isNonEmptyString((value as RoutePolicy).action) &&
+  isNonEmptyString((value as RoutePolicy).subject);
+
+const parseRoutePolicyRules = (value: unknown): PolicyRule[] | null => {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  try {
+    return value.map((policyRule, index) =>
+      parsePolicyRuleDTO(policyRule, `policyRules[${index}]`),
+    );
+  } catch {
+    return null;
+  }
+};
 
 const matchesRoutePolicy = (
   routePolicy: RoutePolicy,
@@ -17,7 +41,16 @@ export const canAttemptRoutePolicy = (
   routePolicy: RoutePolicy,
   policyRules: PolicyRule[],
 ): boolean => {
-  const matchingRules = policyRules.filter((policyRule) =>
+  if (!isRoutePolicy(routePolicy)) {
+    return false;
+  }
+
+  const parsedPolicyRules = parseRoutePolicyRules(policyRules);
+  if (!parsedPolicyRules) {
+    return false;
+  }
+
+  const matchingRules = parsedPolicyRules.filter((policyRule) =>
     matchesRoutePolicy(routePolicy, policyRule),
   );
 

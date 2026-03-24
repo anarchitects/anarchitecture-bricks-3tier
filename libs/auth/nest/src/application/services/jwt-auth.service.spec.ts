@@ -8,6 +8,75 @@ import { JwtService } from '@nestjs/jwt';
 describe('JwtAuthService', () => {
   let service: JwtAuthService;
 
+  const malformedPermissions = [
+    {
+      description: 'empty action',
+      permission: {
+        action: '',
+        subject: 'Project',
+        conditions: null,
+        fields: null,
+        inverted: false,
+        reason: null,
+      },
+    },
+    {
+      description: 'missing subject',
+      permission: {
+        action: 'read',
+        subject: undefined,
+        conditions: null,
+        fields: null,
+        inverted: false,
+        reason: null,
+      },
+    },
+    {
+      description: 'invalid conditions',
+      permission: {
+        action: 'read',
+        subject: 'Project',
+        conditions: [],
+        fields: null,
+        inverted: false,
+        reason: null,
+      },
+    },
+    {
+      description: 'invalid fields',
+      permission: {
+        action: 'read',
+        subject: 'Project',
+        conditions: null,
+        fields: 'name',
+        inverted: false,
+        reason: null,
+      },
+    },
+    {
+      description: 'invalid inverted flag',
+      permission: {
+        action: 'read',
+        subject: 'Project',
+        conditions: null,
+        fields: null,
+        inverted: 'true',
+        reason: null,
+      },
+    },
+    {
+      description: 'invalid reason',
+      permission: {
+        action: 'read',
+        subject: 'Project',
+        conditions: null,
+        fields: null,
+        inverted: false,
+        reason: 123,
+      },
+    },
+  ];
+
   let mockHashService: {
     hash: jest.Mock;
     compare: jest.Mock;
@@ -463,29 +532,23 @@ describe('JwtAuthService', () => {
       });
     });
 
-    it('should fail closed on malformed persisted policy rules', async () => {
-      mockAuthUserRepository.findOne.mockResolvedValueOnce({
-        id: 'user-id',
-        email: 'user@example.com',
-        roles: [
-          {
-            permissions: [
-              {
-                action: '',
-                subject: 'Project',
-                conditions: null,
-                fields: null,
-                inverted: false,
-                reason: null,
-              },
-            ],
-          },
-        ],
-      });
+    it.each(malformedPermissions)(
+      'should fail closed on malformed persisted policy rules: $description',
+      async ({ permission }) => {
+        mockAuthUserRepository.findOne.mockResolvedValueOnce({
+          id: 'user-id',
+          email: 'user@example.com',
+          roles: [
+            {
+              permissions: [permission],
+            },
+          ],
+        });
 
-      await expect(service.getLoggedInUserInfo('user-id')).rejects.toThrow(
-        InternalServerErrorException,
-      );
-    });
+        await expect(service.getLoggedInUserInfo('user-id')).rejects.toThrow(
+          InternalServerErrorException,
+        );
+      },
+    );
   });
 });

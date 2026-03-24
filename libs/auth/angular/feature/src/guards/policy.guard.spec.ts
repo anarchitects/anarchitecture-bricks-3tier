@@ -129,4 +129,19 @@ describe('policyGuard', () => {
 
     await expect(canMatchPromise).resolves.toBe(true);
   });
+
+  it('should fail closed for malformed rule arrays', async () => {
+    setup({
+      rbac: [null] as unknown as PolicyRule[],
+    });
+
+    const canMatch = await firstValueFrom(
+      executeGuard(
+        { data: { action: 'read', subject: 'Document' } } as never,
+        [],
+      ) as Observable<boolean>,
+    );
+
+    expect(canMatch).toBe(false);
+  });
 });
