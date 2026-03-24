@@ -1,15 +1,15 @@
 import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
-  signal,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { refreshTokensFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-refresh-tokens-form',
@@ -27,30 +27,14 @@ export class AnarchitectsAuthUiRefreshTokensForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<RefreshTokenRequestDTO>();
 
-  readonly formConfig = signal<FormConfig>({
-    id: 'refresh-tokens',
-    version: 1,
-    fields: [
-      {
-        name: 'refreshToken',
-        kind: 'string',
-        required: false,
-        minLength: 1,
-        ui: { label: 'Refresh Token' },
-      },
-    ],
-  });
+  readonly formConfig = computed(() =>
+    refreshTokensFormBridge.resolveFormConfig(),
+  );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const refreshToken =
-      (input.payload['refreshToken'] as string | undefined) ||
-      localStorage.getItem('refreshToken') ||
-      undefined;
-
-    if (!refreshToken) {
-      return;
+    const dto = refreshTokensFormBridge.mapSubmission(input);
+    if (dto) {
+      this.submitted.emit(dto);
     }
-
-    this.submitted.emit({ refreshToken });
   }
 }

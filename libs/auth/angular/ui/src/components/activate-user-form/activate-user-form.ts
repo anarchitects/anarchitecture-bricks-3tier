@@ -1,7 +1,6 @@
 import { ActivateUserRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,6 +9,7 @@ import {
   output,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { activateUserFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-activate-user-form',
@@ -28,27 +28,16 @@ export class AnarchitectsAuthUiActivateUserForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<ActivateUserRequestDTO>();
 
-  readonly formConfig = computed<FormConfig>(() => ({
-    id: 'activate-user',
-    version: 1,
-    fields: [
-      {
-        name: 'token',
-        kind: 'string',
-        required: !this.token(),
-        minLength: 1,
-        ui: { label: 'Activation Token' },
-      },
-    ],
-  }));
+  readonly formConfig = computed(() =>
+    activateUserFormBridge.resolveFormConfig({ token: this.token() }),
+  );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const token =
-      (input.payload['token'] as string | undefined) || this.token();
-    if (!token) {
-      return;
+    const dto = activateUserFormBridge.mapSubmission(input, {
+      token: this.token(),
+    });
+    if (dto) {
+      this.submitted.emit(dto);
     }
-
-    this.submitted.emit({ token });
   }
 }

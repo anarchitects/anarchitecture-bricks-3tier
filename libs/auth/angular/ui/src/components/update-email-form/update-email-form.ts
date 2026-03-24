@@ -1,15 +1,15 @@
 import { UpdateEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
-  signal,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { updateEmailFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-update-email-form',
@@ -27,30 +27,12 @@ export class AnarchitectsAuthUiUpdateEmailForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<UpdateEmailRequestDTO>();
 
-  readonly formConfig = signal<FormConfig>({
-    id: 'update-email',
-    version: 1,
-    fields: [
-      {
-        name: 'newEmail',
-        kind: 'email',
-        required: true,
-        ui: { label: 'New Email' },
-      },
-      {
-        name: 'password',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Password' },
-      },
-    ],
-  });
+  readonly formConfig = computed(() => updateEmailFormBridge.resolveFormConfig());
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    this.submitted.emit({
-      newEmail: input.payload['newEmail'] as string,
-      password: input.payload['password'] as string | undefined,
-    });
+    const dto = updateEmailFormBridge.mapSubmission(input);
+    if (dto) {
+      this.submitted.emit(dto);
+    }
   }
 }
