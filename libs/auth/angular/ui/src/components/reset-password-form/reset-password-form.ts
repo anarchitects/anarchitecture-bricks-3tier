@@ -1,7 +1,6 @@
 import { ResetPasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,6 +9,7 @@ import {
   output,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { resetPasswordFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-reset-password-form',
@@ -28,53 +28,16 @@ export class AnarchitectsAuthUiResetPasswordForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<ResetPasswordRequestDTO>();
 
-  readonly formConfig = computed<FormConfig>(() => ({
-    id: 'reset-password',
-    version: 1,
-    fields: [
-      {
-        name: 'token',
-        kind: 'string',
-        required: !this.token(),
-        minLength: 1,
-        ui: { label: 'Reset Token' },
-      },
-      {
-        name: 'password',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Password' },
-      },
-      {
-        name: 'confirmPassword',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Confirm Password' },
-      },
-    ],
-    validationRules: [
-      {
-        kind: 'matchFields',
-        sourceField: 'password',
-        targetField: 'confirmPassword',
-        message: 'Passwords must match.',
-      },
-    ],
-  }));
+  readonly formConfig = computed(() =>
+    resetPasswordFormBridge.resolveFormConfig({ token: this.token() }),
+  );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const token =
-      (input.payload['token'] as string | undefined) || this.token();
-    if (!token) {
-      return;
-    }
-
-    this.submitted.emit({
-      token,
-      password: input.payload['password'] as string,
-      confirmPassword: input.payload['confirmPassword'] as string,
+    const dto = resetPasswordFormBridge.mapSubmission(input, {
+      token: this.token(),
     });
+    if (dto) {
+      this.submitted.emit(dto);
+    }
   }
 }

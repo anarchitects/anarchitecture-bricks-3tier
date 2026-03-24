@@ -1,15 +1,15 @@
 import { RegisterRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
-  signal,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { registerFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-register-form',
@@ -27,46 +27,12 @@ export class AnarchitectsAuthUiRegisterForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<RegisterRequestDTO>();
 
-  readonly formConfig = signal<FormConfig>({
-    id: 'register',
-    version: 1,
-    fields: [
-      {
-        name: 'userName',
-        kind: 'string',
-        ui: { label: 'Username' },
-        required: false,
-      },
-      { name: 'email', kind: 'email', ui: { label: 'Email' }, required: true },
-      {
-        name: 'password',
-        kind: 'password',
-        ui: { label: 'Password' },
-        required: true,
-      },
-      {
-        name: 'confirmPassword',
-        kind: 'password',
-        ui: { label: 'Confirm Password' },
-        required: true,
-      },
-    ],
-    validationRules: [
-      {
-        kind: 'matchFields',
-        sourceField: 'password',
-        targetField: 'confirmPassword',
-        message: 'Passwords must match.',
-      },
-    ],
-  });
+  readonly formConfig = computed(() => registerFormBridge.resolveFormConfig());
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    this.submitted.emit({
-      userName: input.payload['userName'] as string | undefined,
-      email: input.payload['email'] as string,
-      password: input.payload['password'] as string,
-      confirmPassword: input.payload['confirmPassword'] as string,
-    });
+    const dto = registerFormBridge.mapSubmission(input);
+    if (dto) {
+      this.submitted.emit(dto);
+    }
   }
 }

@@ -1,15 +1,15 @@
 import { ChangePasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
-  signal,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { changePasswordFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-change-password-form',
@@ -27,47 +27,14 @@ export class AnarchitectsAuthUiChangePasswordForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<ChangePasswordRequestDTO>();
 
-  readonly formConfig = signal<FormConfig>({
-    id: 'change-password',
-    version: 1,
-    fields: [
-      {
-        name: 'currentPassword',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Current Password' },
-      },
-      {
-        name: 'newPassword',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'New Password' },
-      },
-      {
-        name: 'confirmPassword',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Confirm Password' },
-      },
-    ],
-    validationRules: [
-      {
-        kind: 'matchFields',
-        sourceField: 'newPassword',
-        targetField: 'confirmPassword',
-        message: 'Passwords must match.',
-      },
-    ],
-  });
+  readonly formConfig = computed(() =>
+    changePasswordFormBridge.resolveFormConfig(),
+  );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    this.submitted.emit({
-      currentPassword: input.payload['currentPassword'] as string,
-      newPassword: input.payload['newPassword'] as string,
-      confirmPassword: input.payload['confirmPassword'] as string,
-    });
+    const dto = changePasswordFormBridge.mapSubmission(input);
+    if (dto) {
+      this.submitted.emit(dto);
+    }
   }
 }

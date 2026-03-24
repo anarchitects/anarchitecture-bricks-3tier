@@ -1,15 +1,15 @@
 import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
-  signal,
 } from '@angular/core';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { loginFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
   selector: 'anarchitects-auth-ui-login-form',
@@ -27,32 +27,12 @@ export class AnarchitectsAuthUiLoginForm {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<LoginRequestDTO>();
 
-  readonly formConfig = signal<FormConfig>({
-    id: 'login',
-    version: 1,
-    fields: [
-      {
-        name: 'credential',
-        kind: 'string',
-        required: true,
-        minLength: 2,
-        maxLength: 100,
-        ui: { label: 'Email or Username' },
-      },
-      {
-        name: 'password',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Password' },
-      },
-    ],
-  });
+  readonly formConfig = computed(() => loginFormBridge.resolveFormConfig());
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    this.submitted.emit({
-      credential: input.payload['credential'] as string,
-      password: input.payload['password'] as string,
-    });
+    const dto = loginFormBridge.mapSubmission(input);
+    if (dto) {
+      this.submitted.emit(dto);
+    }
   }
 }
