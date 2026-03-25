@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  computeHybridReleasePlanFromBumps,
   computeHybridReleasePlan,
   createTransientVersionPlan,
   getInternalGroupsForDomain,
@@ -50,6 +51,64 @@ test('computeHybridReleasePlan keeps patch bumps independent', () => {
     'forms-angular': 'patch',
     'forms-nest': 'none',
     'forms-ts': 'patch',
+  });
+});
+
+test('computeHybridReleasePlanFromBumps propagates dependency patch bumps to dependents', () => {
+  const authGroup = buildReleaseGroup('auth', ['auth-angular', 'auth-nest', 'auth-ts']);
+  const plan = computeHybridReleasePlanFromBumps({
+    releaseGroups: [authGroup],
+    releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+    currentVersions: {
+      'auth-angular': '0.4.0',
+      'auth-nest': '0.4.0',
+      'auth-ts': '0.4.0',
+    },
+    directProjectBumps: {
+      'auth-angular': 'none',
+      'auth-nest': 'none',
+      'auth-ts': 'patch',
+    },
+    projectToDependents: new Map([
+      ['auth-ts', new Set(['auth-angular', 'auth-nest'])],
+      ['auth-angular', new Set()],
+      ['auth-nest', new Set()],
+    ]),
+  });
+
+  assert.deepEqual(plan, {
+    'auth-angular': 'patch',
+    'auth-nest': 'patch',
+    'auth-ts': 'patch',
+  });
+});
+
+test('computeHybridReleasePlanFromBumps promotes all fixed-group peers when one project bumps', () => {
+  const fixedGroup = {
+    name: 'common-fixed',
+    projects: ['common-a', 'common-b'],
+    projectsRelationship: 'fixed',
+  };
+  const plan = computeHybridReleasePlanFromBumps({
+    releaseGroups: [fixedGroup],
+    releaseGroupToFilteredProjects: new Map([[fixedGroup, new Set(fixedGroup.projects)]]),
+    currentVersions: {
+      'common-a': '0.4.0',
+      'common-b': '0.4.2',
+    },
+    directProjectBumps: {
+      'common-a': 'patch',
+      'common-b': 'none',
+    },
+    projectToDependents: new Map([
+      ['common-a', new Set()],
+      ['common-b', new Set()],
+    ]),
+  });
+
+  assert.deepEqual(plan, {
+    'common-a': 'patch',
+    'common-b': 'patch',
   });
 });
 

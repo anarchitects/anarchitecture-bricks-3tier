@@ -10,15 +10,28 @@ import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 
 import {
-  TRANSIENT_VERSION_PLAN_PREFIX,
-  computeHybridReleasePlan,
+  computeHybridReleasePlanFromBumps,
   createTransientVersionPlan,
   getInternalGroupsForDomain,
   hasAnyVersionPlanBumps,
 } from './domain-release-lib.mjs';
 
 const require = createRequire(import.meta.url);
+const semver = require('semver');
 const { ReleaseClient } = require('nx/release');
+const { FsTree } = require('nx/src/generators/tree.js');
+const { createProjectFileMapUsingProjectGraph } = require('nx/src/project-graph/file-map-utils.js');
+const { createProjectGraphAsync } = require('nx/src/project-graph/project-graph.js');
+const {
+  createNxReleaseConfig,
+  handleNxReleaseConfigError,
+} = require('nx/src/command-line/release/config/config.js');
+const {
+  createReleaseGraph,
+} = require('nx/src/command-line/release/utils/release-graph.js');
+const {
+  deriveSpecifierFromConventionalCommits,
+} = require('nx/src/command-line/release/version/derive-specifier-from-conventional-commits.js');
 const {
   ReleaseVersion,
   createCommitMessageValues,
@@ -52,21 +65,10 @@ async function main() {
   assertNoExistingVersionPlans();
 
   const baseClient = new ReleaseClient({});
-  const discovery = await baseClient.releaseVersion({
-    groups: internalGroups,
-    dryRun: true,
-    verbose: options.verbose,
+  const projectBumps = await discoverHybridReleasePlan({
     firstRelease: options.firstRelease,
-    gitCommit: false,
-    gitTag: false,
-    stageChanges: false,
-  });
-
-  const selectedReleaseGroups = filterReleaseGroups(discovery.releaseGraph, internalGroups);
-  const projectBumps = computeHybridReleasePlan({
-    releaseGroups: selectedReleaseGroups,
-    releaseGroupToFilteredProjects: discovery.releaseGraph.releaseGroupToFilteredProjects,
-    versionData: discovery.projectsVersionData,
+    groups: internalGroups,
+    verbose: options.verbose,
   });
 
   logComputedPlan(projectBumps);
@@ -193,6 +195,86 @@ async function main() {
   } else {
     console.log('Skipped publishing packages.');
   }
+}
+
+async function discoverHybridReleasePlan({ firstRelease, groups, verbose }) {
+  const tree = new FsTree(workspaceRoot, verbose);
+  const projectGraph = await createProjectGraphAsync({ exitOnError: true });
+  const { error: configError, nxReleaseConfig } = await createNxReleaseConfig(
+    projectGraph,
+    await createProjectFileMapUsingProjectGraph(projectGraph),
+    rawNxJson.release ?? {},
+  );
+
+  if (configError) {
+    await handleNxReleaseConfigError(configError);
+    process.exit(1);
+  }
+
+  const releaseGraph = await createReleaseGraph({
+    tree,
+    projectGraph,
+    nxReleaseConfig,
+    filters: { groups },
+    firstRelease,
+    verbose,
+  });
+  const selectedReleaseGroups = filterReleaseGroups(releaseGraph, groups);
+  const directProjectBumps = {};
+  const currentVersions = {};
+
+  for (const releaseGroup of selectedReleaseGroups) {
+    const filteredProjects = Array.from(
+      releaseGraph.releaseGroupToFilteredProjects.get(releaseGroup) ?? releaseGroup.projects ?? [],
+    );
+
+    for (const projectName of filteredProjects) {
+      if (projectName in directProjectBumps) {
+        continue;
+      }
+
+      const finalConfig = releaseGraph.finalConfigsByProject.get(projectName);
+      if (!finalConfig) {
+        throw new Error(`Unable to resolve release config for project "${projectName}".`);
+      }
+
+      if (finalConfig.specifierSource !== 'conventional-commits') {
+        throw new Error(
+          `Project "${projectName}" in release group "${releaseGroup.name}" must use conventional commits for domain-release planning.`,
+        );
+      }
+
+      const currentVersion = releaseGraph.cachedCurrentVersions.get(projectName);
+      if (currentVersion === undefined) {
+        throw new Error(`Unable to resolve the current version for project "${projectName}".`);
+      }
+
+      currentVersions[projectName] = currentVersion;
+
+      const bumpSpecifier = await deriveSpecifierFromConventionalCommits(
+        nxReleaseConfig,
+        projectGraph,
+        releaseGraph.projectLoggers.get(projectName),
+        releaseGroup,
+        projectGraph.nodes[projectName],
+        !!semver.prerelease(currentVersion),
+        releaseGraph.cachedLatestMatchingGitTag.get(projectName),
+        releaseGraph,
+        finalConfig.fallbackCurrentVersionResolver,
+        undefined,
+      );
+
+      directProjectBumps[projectName] = bumpSpecifier;
+    }
+  }
+
+  return computeHybridReleasePlanFromBumps({
+    releaseGroups: selectedReleaseGroups,
+    releaseGroupToFilteredProjects: releaseGraph.releaseGroupToFilteredProjects,
+    currentVersions,
+    directProjectBumps,
+    projectToDependents: releaseGraph.projectToDependents,
+  });
 }
 
 function parseArgs(argv) {

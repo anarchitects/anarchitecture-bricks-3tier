@@ -24,27 +24,8 @@ jobs:
           echo "This recovery workflow must run from main. Current ref: ${{ github.ref }}"
           exit 1
 
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          filter: tree:0
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: yarn
-          registry-url: https://registry.npmjs.org/
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Validate domain tags
-        run: node tools/release/validate-domain-tags.mjs
+      - name: Prepare publish workspace
+        uses: ./.github/actions/setup-release-env
 
       - name: Build release artifacts
         run: yarn nx run-many -t build --skip-nx-cache
