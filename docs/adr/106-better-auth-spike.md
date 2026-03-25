@@ -2,7 +2,7 @@
 
 ## Status
 
-Decision-ready, pending final human confirmation.
+Accepted - Conditional GO.
 
 ## Context
 
@@ -51,38 +51,33 @@ The spike and follow-on sub-issues established the following:
   native dynamic `import()` without forcing a package-format migration during
   the spike.
 
-### Persistence recommendation
+### Persistence strategy
 
 - Persistence fit was analyzed separately in [ADR 121](./121-better-auth-persistence-recommendation.md).
-- The preferred path is isolated Better Auth-owned persistence.
-- A custom Better Auth TypeORM adapter remains an explicit fallback only, not
-  the default recommendation.
+- The accepted model is configuration-driven and abstracted behind an
+  application-layer persistence port.
+- Supported Better Auth persistence modes are:
+  - `isolated`
+  - `typeorm-adapter`
+- The default Better Auth persistence mode is `isolated`.
+- The `isolated` mode supports both:
+  - `same-db`
+  - `separate-db`
+- The default isolated topology is `same-db`.
 
 ## Decision Outcome
 
-Final human confirmation is still required.
+- Final outcome: `Conditional GO`
 
-Current default interpretation of the evidence:
-
-- **Recommended outcome:** `Conditional GO`
-
-Confirmed decision slot:
-
-- Final outcome: `TO BE CONFIRMED BY HUMAN REVIEW`
-- Allowed final values:
-  - `GO`
-  - `Conditional GO`
-  - `NO-GO`
-
-Rationale for the current default interpretation:
+Rationale for the final outcome:
 
 - Better Auth appears viable as an internal engine candidate behind
   `AuthEnginePort`.
 - Public package APIs remained framework-agnostic through the spike and
   boundary work.
 - The remaining concerns are implementation constraints, not spike failure:
-  persistence ownership, session-vs-JWT mapping decisions, and continued public
-  API containment.
+  configuration-driven persistence composition, session-vs-JWT mapping
+  decisions, and continued public API containment.
 
 ## Finalized Conclusions
 
@@ -103,10 +98,21 @@ Rationale for the current default interpretation:
 
 ### Persistence direction
 
-- Preferred path: isolated Better Auth-owned persistence internal to
-  `auth-nest`.
-- Fallback path: custom Better Auth TypeORM adapter, only if isolated
-  persistence becomes operationally unacceptable.
+- Better Auth remains internal to `auth-nest`.
+- Better Auth persistence must remain abstracted behind an application-layer
+  port.
+- Persistence mode is configuration-driven.
+- Supported Better Auth persistence modes are:
+  - `isolated`
+  - `typeorm-adapter`
+- Default Better Auth persistence mode: `isolated`.
+- Supported isolated topologies are:
+  - `same-db`
+  - `separate-db`
+- Default isolated topology: `same-db`.
+- The custom TypeORM adapter starts as an internal repo implementation and may
+  later be extracted to an Anarchitects community repo once the contract and
+  maintenance shape are stable.
 - Current TypeORM legacy JWT persistence remains the default and should not be
   remapped to Better Auth tables by default.
 
@@ -129,12 +135,18 @@ follow-on implementation:
 If the final outcome is `GO` or `Conditional GO`:
 
 - Create a separate follow-on implementation parent issue/epic.
+- Create a separate parallel parent issue for Anarchitects community Better
+  Auth integrations.
 - Keep `legacy-jwt` as the default engine until that follow-on implementation
   lands and is explicitly approved.
 - Treat passkeys, social flows, DTO additions, Better Auth persistence tables,
   Angular integration, and docs/contract updates as follow-on work.
-- Apply the isolated Better Auth persistence recommendation from ADR 121 unless
-  the fallback trigger is explicitly met.
+- When `engine=better-auth`, default the persistence mode to `isolated`.
+- When `engine=better-auth` and `persistence.mode=isolated`, default the
+  topology to `same-db`.
+- Support the internal TypeORM adapter in parallel as a configuration-driven
+  Better Auth persistence mode, while incubating its extraction path in the
+  community repo track.
 
 If the final outcome is `NO-GO`:
 
@@ -143,21 +155,3 @@ If the final outcome is `NO-GO`:
 - Keep the repo on the `legacy-jwt` engine path.
 - Treat the completed spike/boundary work as closed evaluation effort rather
   than migration start.
-
-## Final Decision To Be Confirmed
-
-Before closing `#123` and `#106`, a human should edit this ADR and replace:
-
-- `Final outcome: TO BE CONFIRMED BY HUMAN REVIEW`
-
-with one of:
-
-- `Final outcome: GO`
-- `Final outcome: Conditional GO`
-- `Final outcome: NO-GO`
-
-At the same time, update the `Status` section from:
-
-- `Decision-ready, pending final human confirmation.`
-
-to the final decision status that matches the chosen outcome.
