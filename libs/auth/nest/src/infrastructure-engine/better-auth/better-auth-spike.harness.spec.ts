@@ -5,6 +5,9 @@ import { AuthEnginePort } from '../../application/services/auth-engine.port';
 describe('BetterAuthSpikeHarness', () => {
   it('maps engine capability reports into a proof matrix', async () => {
     const authEnginePort: AuthEnginePort = {
+      login: jest.fn(),
+      logout: jest.fn(),
+      refreshTokens: jest.fn(),
       describeCapabilities: jest.fn().mockResolvedValue({
         engine: 'better-auth',
         flows: [

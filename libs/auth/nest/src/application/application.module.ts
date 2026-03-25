@@ -8,6 +8,8 @@ import {
   mapAuthConfigToApplicationModuleOptions,
   resolveAuthApplicationModuleOptions,
 } from '../config';
+import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
+import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import {
   ConfigurableModuleClass,
@@ -16,14 +18,13 @@ import {
 import { AbilityFactory } from './factories/ability.factory';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
 import { AuthEnginePort } from './services/auth-engine.port';
+import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
 import { JwtAuthService } from './services/jwt-auth.service';
 import { PoliciesService } from './services/policies.service';
 import { JwtStrategy } from './strategies/jwt-strategy';
-import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
-import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 
 @Module({})
 export class AuthApplicationModule extends ConfigurableModuleClass {
@@ -43,11 +44,13 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
     ];
     const providers = [];
     const exports = [];
+
     providers.push(AbilityFactory, PoliciesService, {
       provide: AUTH_RESOURCE_AUTHORIZATION_LOADERS,
       useValue: resourceAuthorization.loaders,
     });
     exports.push(AUTH_RESOURCE_AUTHORIZATION_LOADERS, PoliciesService);
+
     switch (encryption.algorithm) {
       case 'bcrypt':
         providers.push(BcryptHashService, {
@@ -64,6 +67,7 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
           `Unsupported encryption algorithm: ${encryption.algorithm}`,
         );
     }
+
     if (authStrategies.includes('jwt')) {
       imports.push(
         JwtModule.registerAsync({
@@ -79,10 +83,19 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
           }),
         }),
       );
-      providers.push(JwtAuthService, JwtStrategy, {
-        provide: AuthService,
-        useExisting: JwtAuthService,
-      });
+
+      providers.push(
+        AuthOrchestrationService,
+        JwtStrategy,
+        {
+          provide: AuthService,
+          useExisting: AuthOrchestrationService,
+        },
+        {
+          provide: JwtAuthService,
+          useExisting: AuthOrchestrationService,
+        },
+      );
       exports.push(AuthService);
     }
 

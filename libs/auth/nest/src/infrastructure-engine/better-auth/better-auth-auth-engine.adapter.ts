@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import type {
   LoginRequestDTO,
   LoginResponseDTO,
+  LogoutRequestDTO,
+  RefreshTokenRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { AUTH_APPLICATION_MODULE_OPTIONS } from '../../application/application.module-definition';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
@@ -93,6 +95,37 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
         },
       ],
     };
+  }
+
+  login(dto: LoginRequestDTO): Promise<LoginResponseDTO> {
+    return this.passwordSignIn(dto);
+  }
+
+  logout(_dto: LogoutRequestDTO): Promise<{ success: boolean }> {
+    return Promise.reject(
+      new Error(
+        'Better Auth logout via the legacy LogoutRequestDTO is unavailable in the spike adapter.',
+      ),
+    );
+  }
+
+  async refreshTokens(
+    userId: string,
+    dto: RefreshTokenRequestDTO,
+  ): Promise<LoginResponseDTO> {
+    const result = await this.signOutOrRefresh({
+      mode: 'refresh',
+      userId,
+      dto,
+    });
+
+    if (this.isLoginResponse(result)) {
+      return result;
+    }
+
+    throw new Error(
+      'Better Auth refresh-token mapping is unavailable in the spike adapter.',
+    );
   }
 
   async passwordSignIn(dto: LoginRequestDTO): Promise<LoginResponseDTO> {
@@ -223,5 +256,14 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
           ]
         : [],
     }) as unknown as BetterAuthAuthInstance;
+  }
+
+  private isLoginResponse(value: unknown): value is LoginResponseDTO {
+    return Boolean(
+      value &&
+        typeof value === 'object' &&
+        'accessToken' in value &&
+        'refreshToken' in value,
+    );
   }
 }
