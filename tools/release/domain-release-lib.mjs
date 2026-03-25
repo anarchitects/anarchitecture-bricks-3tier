@@ -17,6 +17,13 @@ const BUMP_ORDER = {
   major: 3,
 };
 
+const BUMP_TYPE_NORMALIZATION = {
+  prerelease: 'patch',
+  prepatch: 'patch',
+  preminor: 'minor',
+  premajor: 'major',
+};
+
 export function getInternalGroupsForDomain(domain) {
   const groups = DOMAIN_TO_GROUPS[domain];
   if (!groups) {
@@ -113,6 +120,108 @@ export function computeHybridReleasePlan({ releaseGroups, releaseGroupToFiltered
     const groupBump = projectEntries.reduce((highest, entry) => {
       return BUMP_ORDER[entry.bumpType] > BUMP_ORDER[highest] ? entry.bumpType : highest;
     }, 'none');
+
+    if (groupBump === 'major' || groupBump === 'minor') {
+      for (const entry of projectEntries) {
+        projectBumps[entry.projectName] = groupBump;
+      }
+      continue;
+    }
+
+    for (const entry of projectEntries) {
+      projectBumps[entry.projectName] = entry.bumpType;
+    }
+  }
+
+  return projectBumps;
+}
+
+function normalizeBumpType(bump) {
+  if (bump in BUMP_ORDER) {
+    return bump;
+  }
+
+  return BUMP_TYPE_NORMALIZATION[bump] ?? 'none';
+}
+
+export function applyDependentPatchBumps({ projectBumps, projectToDependents, projectsToProcess }) {
+  const selectedProjects = new Set(projectsToProcess);
+  const resolvedProjectBumps = Object.fromEntries(
+    Array.from(selectedProjects, (projectName) => [projectName, normalizeBumpType(projectBumps[projectName])]),
+  );
+  const queue = Array.from(selectedProjects).filter(
+    (projectName) => resolvedProjectBumps[projectName] !== 'none',
+  );
+
+  while (queue.length > 0) {
+    const projectName = queue.shift();
+    const dependents = projectToDependents.get(projectName) ?? new Set();
+
+    for (const dependentProjectName of dependents) {
+      if (!selectedProjects.has(dependentProjectName)) {
+        continue;
+      }
+
+      if (resolvedProjectBumps[dependentProjectName] !== 'none') {
+        continue;
+      }
+
+      resolvedProjectBumps[dependentProjectName] = 'patch';
+      queue.push(dependentProjectName);
+    }
+  }
+
+  return resolvedProjectBumps;
+}
+
+export function computeHybridReleasePlanFromBumps({
+  releaseGroups,
+  releaseGroupToFilteredProjects,
+  currentVersions,
+  directProjectBumps,
+  projectToDependents,
+}) {
+  const projectsToProcess = releaseGroups.flatMap((releaseGroup) =>
+    Array.from(releaseGroupToFilteredProjects.get(releaseGroup) ?? releaseGroup.projects ?? []),
+  );
+  const propagatedProjectBumps = applyDependentPatchBumps({
+    projectBumps: directProjectBumps,
+    projectToDependents,
+    projectsToProcess,
+  });
+  const projectBumps = {};
+
+  for (const releaseGroup of releaseGroups) {
+    const filteredProjects = releaseGroupToFilteredProjects.get(releaseGroup);
+    const projectNames = Array.from(filteredProjects ?? releaseGroup.projects ?? []);
+
+    const projectEntries = projectNames.map((projectName) => {
+      const currentVersion = currentVersions[projectName];
+      if (!currentVersion) {
+        throw new Error(
+          `Missing current version data for project "${projectName}" in release group "${releaseGroup.name}".`,
+        );
+      }
+
+      return {
+        projectName,
+        currentVersion,
+        bumpType: normalizeBumpType(propagatedProjectBumps[projectName]),
+      };
+    });
+
+    validateSharedMajorMinor(releaseGroup.name, projectEntries);
+
+    const groupBump = projectEntries.reduce((highest, entry) => {
+      return BUMP_ORDER[entry.bumpType] > BUMP_ORDER[highest] ? entry.bumpType : highest;
+    }, 'none');
+
+    if (releaseGroup.projectsRelationship === 'fixed' && groupBump !== 'none') {
+      for (const entry of projectEntries) {
+        projectBumps[entry.projectName] = groupBump;
+      }
+      continue;
+    }
 
     if (groupBump === 'major' || groupBump === 'minor') {
       for (const entry of projectEntries) {

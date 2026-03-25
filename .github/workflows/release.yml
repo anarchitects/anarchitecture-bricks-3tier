@@ -40,28 +40,10 @@ jobs:
           app-id: ${{ secrets.ANARCHITECTS_BOT_APP_ID }}
           private-key: ${{ secrets.ANARCHITECTS_BOT_PRIVATE_KEY }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - name: Prepare release workspace
+        uses: ./.github/actions/setup-release-env
         with:
-          token: ${{ steps.app-token.outputs.token }}
-          fetch-depth: 0
-          filter: tree:0
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: yarn
-          registry-url: https://registry.npmjs.org/
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Validate domain tags
-        run: node tools/release/validate-domain-tags.mjs
+          checkout-token: ${{ steps.app-token.outputs.token }}
 
       - name: Configure git author for release commits
         run: |
