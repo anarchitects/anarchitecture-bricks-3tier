@@ -2,12 +2,6 @@ import { join } from 'node:path';
 
 import semver from 'semver';
 
-export const DOMAIN_TO_GROUPS = {
-  forms: ['forms'],
-  auth: ['auth'],
-  common: ['common-angular', 'common-nest'],
-};
-
 export const TRANSIENT_VERSION_PLAN_PREFIX = 'domain-release-plan-';
 
 const BUMP_ORDER = {
@@ -24,15 +18,67 @@ const BUMP_TYPE_NORMALIZATION = {
   premajor: 'major',
 };
 
-export function getInternalGroupsForDomain(domain) {
-  const groups = DOMAIN_TO_GROUPS[domain];
-  if (!groups) {
-    throw new Error(
-      `Unsupported domain "${domain}". Expected one of: ${Object.keys(DOMAIN_TO_GROUPS).join(', ')}.`,
-    );
+export function inferDomainFromProjectRoot(projectRoot) {
+  if (!projectRoot.startsWith('libs/')) {
+    return null;
   }
 
-  return groups;
+  const [, domain] = projectRoot.split('/');
+  return domain || null;
+}
+
+export function resolveReleaseGroupsForDomain({ domain, releaseGroups, projectNodes }) {
+  const groups = releaseGroups.filter((releaseGroup) =>
+    releaseGroup.projects.some((projectName) => {
+      const projectNode = projectNodes[projectName];
+      return projectNode && inferDomainFromProjectRoot(projectNode.data.root) === domain;
+    }),
+  );
+
+  if (groups.length === 0) {
+    throw new Error(`Unsupported domain "${domain}". No release groups matched that domain.`);
+  }
+
+  return groups.map((group) => group.name);
+}
+
+export function expandReleaseGroupsByDependents({
+  initialGroupNames,
+  releaseGroups,
+  projectToDependents,
+  projectToReleaseGroup,
+  sortedReleaseGroups = [],
+}) {
+  const groupByName = new Map(releaseGroups.map((releaseGroup) => [releaseGroup.name, releaseGroup]));
+  const selectedGroups = new Set(initialGroupNames);
+  const queue = [...initialGroupNames];
+
+  while (queue.length > 0) {
+    const groupName = queue.shift();
+    const releaseGroup = groupByName.get(groupName);
+    if (!releaseGroup) {
+      continue;
+    }
+
+    for (const projectName of releaseGroup.projects) {
+      const dependents = projectToDependents.get(projectName) ?? new Set();
+      for (const dependentProjectName of dependents) {
+        const dependentGroupName = projectToReleaseGroup.get(dependentProjectName)?.name;
+        if (!dependentGroupName || selectedGroups.has(dependentGroupName)) {
+          continue;
+        }
+
+        selectedGroups.add(dependentGroupName);
+        queue.push(dependentGroupName);
+      }
+    }
+  }
+
+  if (sortedReleaseGroups.length === 0) {
+    return Array.from(selectedGroups);
+  }
+
+  return sortedReleaseGroups.filter((groupName) => selectedGroups.has(groupName));
 }
 
 export function detectBumpType(currentVersion, newVersion) {
