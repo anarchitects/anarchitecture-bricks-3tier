@@ -12,8 +12,9 @@ import { basename, dirname, join } from 'node:path';
 import {
   computeHybridReleasePlanFromBumps,
   createTransientVersionPlan,
-  getInternalGroupsForDomain,
+  expandReleaseGroupsByDependents,
   hasAnyVersionPlanBumps,
+  resolveReleaseGroupsForDomain,
 } from './domain-release-lib.mjs';
 
 const require = createRequire(import.meta.url);
@@ -58,17 +59,35 @@ const releaseGitConfig = rawNxJson.release?.git ?? {};
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  const internalGroups = getInternalGroupsForDomain(options.domain);
+  const releaseContext = await createReleaseContext({
+    firstRelease: options.firstRelease,
+    verbose: options.verbose,
+  });
+  const initialGroups = resolveReleaseGroupsForDomain({
+    domain: options.domain,
+    releaseGroups: releaseContext.releaseGraph.releaseGroups,
+    projectNodes: releaseContext.projectGraph.nodes,
+  });
+  const internalGroups = expandReleaseGroupsByDependents({
+    initialGroupNames: initialGroups,
+    releaseGroups: releaseContext.releaseGraph.releaseGroups,
+    projectToDependents: releaseContext.releaseGraph.projectToDependents,
+    projectToReleaseGroup: releaseContext.releaseGraph.projectToReleaseGroup,
+    sortedReleaseGroups: releaseContext.releaseGraph.sortedReleaseGroups,
+  });
 
   console.log(`Running domain release for "${options.domain}" via groups: ${internalGroups.join(', ')}`);
+  if (internalGroups.length > initialGroups.length) {
+    const cascadedGroups = internalGroups.filter((groupName) => !initialGroups.includes(groupName));
+    console.log(`Expanded release groups due to downstream workspace dependencies: ${cascadedGroups.join(', ')}`);
+  }
 
   assertNoExistingVersionPlans();
 
   const baseClient = new ReleaseClient({});
   const projectBumps = await discoverHybridReleasePlan({
-    firstRelease: options.firstRelease,
     groups: internalGroups,
-    verbose: options.verbose,
+    releaseContext,
   });
 
   logComputedPlan(projectBumps);
@@ -197,7 +216,7 @@ async function main() {
   }
 }
 
-async function discoverHybridReleasePlan({ firstRelease, groups, verbose }) {
+async function createReleaseContext({ firstRelease, verbose }) {
   const tree = new FsTree(workspaceRoot, verbose);
   const projectGraph = await createProjectGraphAsync({ exitOnError: true });
   const { error: configError, nxReleaseConfig } = await createNxReleaseConfig(
@@ -215,10 +234,20 @@ async function discoverHybridReleasePlan({ firstRelease, groups, verbose }) {
     tree,
     projectGraph,
     nxReleaseConfig,
-    filters: { groups },
+    filters: {},
     firstRelease,
     verbose,
   });
+
+  return {
+    nxReleaseConfig,
+    projectGraph,
+    releaseGraph,
+  };
+}
+
+async function discoverHybridReleasePlan({ groups, releaseContext }) {
+  const { nxReleaseConfig, projectGraph, releaseGraph } = releaseContext;
   const selectedReleaseGroups = filterReleaseGroups(releaseGraph, groups);
   const directProjectBumps = {};
   const currentVersions = {};

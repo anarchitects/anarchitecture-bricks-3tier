@@ -5,15 +5,69 @@ import {
   computeHybridReleasePlanFromBumps,
   computeHybridReleasePlan,
   createTransientVersionPlan,
-  getInternalGroupsForDomain,
+  expandReleaseGroupsByDependents,
+  inferDomainFromProjectRoot,
+  resolveReleaseGroupsForDomain,
 } from './domain-release-lib.mjs';
 
 function buildReleaseGroup(name, projects) {
   return { name, projects };
 }
 
-test('getInternalGroupsForDomain maps common to split release groups', () => {
-  assert.deepEqual(getInternalGroupsForDomain('common'), ['common-angular', 'common-nest']);
+test('inferDomainFromProjectRoot resolves library domains from project roots', () => {
+  assert.equal(inferDomainFromProjectRoot('libs/common/angular/ui-layouts'), 'common');
+  assert.equal(inferDomainFromProjectRoot('libs/auth/angular'), 'auth');
+  assert.equal(inferDomainFromProjectRoot('tools/release'), null);
+});
+
+test('resolveReleaseGroupsForDomain maps a domain to all matching release groups dynamically', () => {
+  const releaseGroups = [
+    buildReleaseGroup('forms', ['forms-angular', 'forms-nest', 'forms-ts']),
+    buildReleaseGroup('auth', ['auth-angular', 'auth-nest', 'auth-ts']),
+    buildReleaseGroup('common-angular', ['common-angular-ui-layouts']),
+    buildReleaseGroup('common-nest', ['common-nest-mailer']),
+  ];
+  const projectNodes = {
+    'forms-angular': { data: { root: 'libs/forms/angular' } },
+    'forms-nest': { data: { root: 'libs/forms/nest' } },
+    'forms-ts': { data: { root: 'libs/forms/ts' } },
+    'auth-angular': { data: { root: 'libs/auth/angular' } },
+    'auth-nest': { data: { root: 'libs/auth/nest' } },
+    'auth-ts': { data: { root: 'libs/auth/ts' } },
+    'common-angular-ui-layouts': { data: { root: 'libs/common/angular/ui-layouts' } },
+    'common-nest-mailer': { data: { root: 'libs/common/nest/mailer' } },
+  };
+
+  assert.deepEqual(
+    resolveReleaseGroupsForDomain({ domain: 'common', releaseGroups, projectNodes }),
+    ['common-angular', 'common-nest'],
+  );
+});
+
+test('expandReleaseGroupsByDependents cascades transitively through downstream release groups', () => {
+  const formsGroup = buildReleaseGroup('forms', ['forms-angular', 'forms-ts']);
+  const authGroup = buildReleaseGroup('auth', ['auth-angular']);
+  const storefrontGroup = buildReleaseGroup('storefront', ['storefront-angular']);
+
+  assert.deepEqual(
+    expandReleaseGroupsByDependents({
+      initialGroupNames: ['forms'],
+      releaseGroups: [formsGroup, authGroup, storefrontGroup],
+      projectToDependents: new Map([
+        ['forms-angular', new Set(['auth-angular'])],
+        ['forms-ts', new Set(['auth-angular'])],
+        ['auth-angular', new Set(['storefront-angular'])],
+      ]),
+      projectToReleaseGroup: new Map([
+        ['forms-angular', formsGroup],
+        ['forms-ts', formsGroup],
+        ['auth-angular', authGroup],
+        ['storefront-angular', storefrontGroup],
+      ]),
+      sortedReleaseGroups: ['forms', 'auth', 'storefront'],
+    }),
+    ['forms', 'auth', 'storefront'],
+  );
 });
 
 test('computeHybridReleasePlan promotes all peers to a shared minor bump', () => {
