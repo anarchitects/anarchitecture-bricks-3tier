@@ -1,12 +1,12 @@
 {
   "name": "@anarchitects/auth-nest",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
     "@better-auth/passkey": "^1.5.6",
-    "@anarchitects/auth-ts": "^0.4.0",
+    "@anarchitects/auth-ts": "^0.5.0",
     "@anarchitects/common-nest-mailer": "^0.3.0",
     "@casl/ability": "^6.7.3",
     "bcrypt": "^6.0.0",
