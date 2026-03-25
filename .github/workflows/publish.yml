@@ -24,6 +24,12 @@ jobs:
           echo "This recovery workflow must run from main. Current ref: ${{ github.ref }}"
           exit 1
 
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          filter: tree:0
+
       - name: Prepare publish workspace
         uses: ./.github/actions/setup-release-env
 
