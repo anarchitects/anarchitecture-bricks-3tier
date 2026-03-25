@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
@@ -108,63 +108,66 @@ Main downside:
 - It is a framework-integration product of its own, not just an app-level
   implementation choice.
 
-## Constraints That Must Hold For Either Option
+## Accepted Strategy
+
+Accept a **dual-path Better Auth persistence strategy** for this repo.
+
+Accepted modes:
+
+- `isolated`: isolated Better Auth-owned persistence
+- `typeorm-adapter`: custom Anarchitects-owned Better Auth TypeORM adapter
+
+Defaults:
+
+- Default Better Auth persistence mode: `isolated`
+- Supported isolated topologies:
+  - `same-db`
+  - `separate-db`
+- Default isolated topology: `same-db`
+
+Reasoning:
+
+- It preserves the architectural goal from `#106`: adopt Better Auth behind the
+  existing facades without forcing framework persistence details into the public
+  package surface.
+- It keeps the cleanest default boundary between current TypeORM legacy JWT
+  persistence and future Better Auth persistence concerns.
+- It still supports a TypeORM-native Better Auth path for hosts or deployments
+  that benefit from a single ORM control plane.
+- It aligns with the repo flexibility paradigm by making persistence strategy
+  application-layer-abstracted and configuration-driven rather than hardwired.
+
+## Delivery Shape
+
+- The TypeORM adapter starts as an internal implementation in this repo.
+- The isolated Better Auth path and the internal TypeORM adapter path are both
+  supported follow-on implementation tracks.
+- The TypeORM adapter is not public package surface in the first implementation
+  phase.
+- In parallel, Anarchitects should start work on a community repo path for the
+  adapter, but community packaging must follow internal contract proof rather
+  than lead it.
+
+## Constraints That Remain Non-Negotiable
 
 - No public `auth-ts` models should be changed to mirror Better Auth tables.
 - No public DTO or route contract should become Better Auth persistence-shaped.
 - Better Auth persistence must remain internal to `auth-nest`.
 - Cross-domain persistence expansion must not be introduced.
-- The current `AuthEnginePort` seam remains the runtime boundary; persistence
-  decisions must not bypass it by coupling controllers or public contracts to a
-  storage model.
-
-## Recommendation
-
-Recommend **Option A: isolated Better Auth-owned persistence** as the preferred
-path for this repo.
-
-Reasoning:
-
-- It best matches the architectural goal from `#106`: evaluate and potentially
-  adopt Better Auth behind the existing facades without forcing framework
-  internals into the public package surface.
-- It avoids turning Anarchitects into the maintainer of a Better Auth
-  infrastructure product before Better Auth has even been adopted as a runtime
-  engine in production/package behavior.
-- It preserves the cleanest boundary between:
-  current TypeORM legacy JWT persistence, and
-  future Better Auth persistence concerns.
-- It keeps the future go/no-go decision in `#123` focused on product fit, not
-  on whether Anarchitects is willing to own a long-term custom adapter.
-
-## Fallback Path
-
-Keep **Option B: custom Better Auth TypeORM adapter** as the explicit fallback.
-
-Reconsider the custom adapter path only if one or more of these become true:
-
-- isolated Better Auth persistence creates unacceptable operational complexity
-  for host applications,
-- the migration path requires strong TypeORM-native control that Better Auth’s
-  intended persistence model does not provide cleanly,
-- or a single-ORM operational model is judged more important than minimizing
-  framework-specific maintenance ownership.
-
-If that fallback is chosen later:
-
-- implement it first as an internal adapter in this repo,
-- require proof that current entities can be reused safely or document which new
-  Better Auth-specific entities are still required,
-- and treat extraction to a separate Anarchitects community adapter/plugin repo
-  as a later packaging decision, not part of `#121`.
+- The current `AuthEnginePort` seam remains the runtime boundary.
+- Follow-on work should introduce a dedicated application-layer persistence port
+  for Better Auth persistence strategy selection so controllers and public
+  contracts do not branch on persistence type.
 
 ## Consequences For Follow-On Work
 
-- `#123` should treat isolated Better Auth-owned persistence as the default
-  recommendation when finalizing the go/no-go ADR.
+- `#123` should finalize ADR 106 with `Conditional GO` and with this dual-path
+  persistence strategy as accepted direction.
+- Any future implementation issue should add configuration for:
+  - Better Auth persistence mode selection
+  - isolated topology selection
 - Any future implementation issue should add Better Auth migrations/schema as an
   internal persistence concern separate from the current legacy JWT TypeORM
   entities.
-- If the custom TypeORM adapter path is ever selected, it should be scoped as a
-  distinct implementation stream with explicit ownership and maintenance costs,
-  not folded into generic Better Auth adoption work.
+- The internal TypeORM adapter should be implemented in this repo first and
+  developed in parallel with the community-repo incubation work.
