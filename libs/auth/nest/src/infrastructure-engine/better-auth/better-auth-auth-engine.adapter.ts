@@ -6,6 +6,7 @@ import type {
   RefreshTokenRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { AUTH_APPLICATION_MODULE_OPTIONS } from '../../application/application.module-definition';
+import { AuthEnginePersistencePort } from '../../application/services/auth-engine-persistence.port';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
 import {
   AuthEngineCapabilityReport,
@@ -15,7 +16,6 @@ import {
   AuthSocialSignInInput,
 } from '../../application/services/auth-engine.port';
 import { loadBetterAuthRuntimeModules } from './better-auth.module-loader';
-import { importEsmModule } from './dynamic-import';
 
 type BetterAuthApi = {
   signInEmail?: (input: {
@@ -50,6 +50,7 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
   constructor(
     @Inject(AUTH_APPLICATION_MODULE_OPTIONS)
     private readonly options: ResolvedAuthApplicationModuleOptions,
+    private readonly authEnginePersistencePort: AuthEnginePersistencePort,
   ) {}
 
   async describeCapabilities(): Promise<AuthEngineCapabilityReport> {
@@ -223,14 +224,12 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
   private async createAuthInstance(): Promise<BetterAuthAuthInstance> {
     const { betterAuth, betterAuthPasskey } =
       await loadBetterAuthRuntimeModules();
-    const { DatabaseSync } = await importEsmModule<{
-      DatabaseSync: new (location: string) => unknown;
-    }>('node:sqlite');
+    const database = await this.authEnginePersistencePort.resolveDatabase();
 
     return betterAuth.betterAuth({
       secret: this.options.spike.secret,
       baseURL: this.options.spike.baseUrl,
-      database: new DatabaseSync(':memory:'),
+      database,
       emailAndPassword: {
         enabled: true,
       },

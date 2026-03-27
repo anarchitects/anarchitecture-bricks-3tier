@@ -9,6 +9,8 @@ import {
   resolveAuthApplicationModuleOptions,
 } from '../config';
 import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
+import { BetterAuthIsolatedPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-isolated-persistence.adapter';
+import { BetterAuthTypeormAdapterPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
 import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import {
@@ -18,6 +20,7 @@ import {
 import { AbilityFactory } from './factories/ability.factory';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
 import { AuthEnginePort } from './services/auth-engine.port';
+import { AuthEnginePersistencePort } from './services/auth-engine-persistence.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
@@ -100,10 +103,40 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
     }
 
     if (engine === 'better-auth') {
-      providers.push(BetterAuthAuthEngineAdapter, {
-        provide: AuthEnginePort,
-        useExisting: BetterAuthAuthEngineAdapter,
-      });
+      switch (resolvedOptions.engineOptions.persistence.mode) {
+        case 'isolated':
+          providers.push(
+            BetterAuthIsolatedPersistenceAdapter,
+            {
+              provide: AuthEnginePersistencePort,
+              useExisting: BetterAuthIsolatedPersistenceAdapter,
+            },
+            BetterAuthAuthEngineAdapter,
+            {
+              provide: AuthEnginePort,
+              useExisting: BetterAuthAuthEngineAdapter,
+            },
+          );
+          break;
+        case 'typeorm-adapter':
+          providers.push(
+            BetterAuthTypeormAdapterPersistenceAdapter,
+            {
+              provide: AuthEnginePersistencePort,
+              useExisting: BetterAuthTypeormAdapterPersistenceAdapter,
+            },
+            BetterAuthAuthEngineAdapter,
+            {
+              provide: AuthEnginePort,
+              useExisting: BetterAuthAuthEngineAdapter,
+            },
+          );
+          break;
+        default:
+          throw new Error(
+            `Unsupported auth engine persistence mode: ${resolvedOptions.engineOptions.persistence.mode}`,
+          );
+      }
     } else {
       providers.push(LegacyJwtAuthEngineAdapter, {
         provide: AuthEnginePort,
