@@ -1,6 +1,4 @@
-import { contactForm } from '@anarchitects/forms-ts/models';
 import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
-import { FormConfigEntity } from '../entities/form-config.entity';
 import { FORMS_SCHEMA } from '../schema';
 
 const FORM_CONFIGS_TABLE = `${FORMS_SCHEMA}.form_configs`;
@@ -111,20 +109,6 @@ export class CreateFormsTables1720300000000 implements MigrationInterface {
         }),
       );
     }
-
-    await queryRunner.manager
-      .getRepository(FormConfigEntity)
-      .createQueryBuilder()
-      .insert()
-      .values({
-        id: contactForm.id,
-        version: contactForm.version,
-        fields: contactForm.fields,
-        ...(contactForm.security ? { security: contactForm.security } : {}),
-        ...(contactForm.delivery ? { delivery: contactForm.delivery } : {}),
-      })
-      .orIgnore()
-      .execute();
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
