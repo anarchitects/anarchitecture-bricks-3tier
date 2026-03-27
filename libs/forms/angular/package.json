@@ -11,8 +11,8 @@
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
     "@angular/forms": "^21.0.0",
-    "@ngrx/operators": "^20.0.1",
-    "@ngrx/signals": "^20.0.1",
+    "@ngrx/operators": "^21.1.0",
+    "@ngrx/signals": "^21.1.0",
     "rxjs": "~7.8.0"
   },
   "publishConfig": {
