@@ -44,6 +44,12 @@ export class AuthModule {
                 ?.persistence,
               ...overrides.presentation?.application?.engineOptions
                 ?.persistence,
+              separateDatabase: {
+                ...configOptions.presentation?.application?.engineOptions
+                  ?.persistence?.separateDatabase,
+                ...overrides.presentation?.application?.engineOptions
+                  ?.persistence?.separateDatabase,
+              },
             },
           },
           persistence: {

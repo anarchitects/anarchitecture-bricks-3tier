@@ -18,6 +18,18 @@ const ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE =
   process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
 const ORIGINAL_AUTH_ENGINE_ISOLATED_TOPOLOGY =
   process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'];
+const ORIGINAL_AUTH_ENGINE_SEPARATE_DB_HOST =
+  process.env['AUTH_ENGINE_SEPARATE_DB_HOST'];
+const ORIGINAL_AUTH_ENGINE_SEPARATE_DB_PORT =
+  process.env['AUTH_ENGINE_SEPARATE_DB_PORT'];
+const ORIGINAL_AUTH_ENGINE_SEPARATE_DB_USERNAME =
+  process.env['AUTH_ENGINE_SEPARATE_DB_USERNAME'];
+const ORIGINAL_AUTH_ENGINE_SEPARATE_DB_PASSWORD =
+  process.env['AUTH_ENGINE_SEPARATE_DB_PASSWORD'];
+const ORIGINAL_AUTH_ENGINE_SEPARATE_DB_DATABASE =
+  process.env['AUTH_ENGINE_SEPARATE_DB_DATABASE'];
+const ORIGINAL_AUTH_ENGINE_SEPARATE_DB_SSL =
+  process.env['AUTH_ENGINE_SEPARATE_DB_SSL'];
 
 describe('AuthApplicationModule', () => {
   afterEach(() => {
@@ -51,6 +63,48 @@ describe('AuthApplicationModule', () => {
     } else {
       process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] =
         ORIGINAL_AUTH_ENGINE_ISOLATED_TOPOLOGY;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_SEPARATE_DB_HOST === undefined) {
+      delete process.env['AUTH_ENGINE_SEPARATE_DB_HOST'];
+    } else {
+      process.env['AUTH_ENGINE_SEPARATE_DB_HOST'] =
+        ORIGINAL_AUTH_ENGINE_SEPARATE_DB_HOST;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_SEPARATE_DB_PORT === undefined) {
+      delete process.env['AUTH_ENGINE_SEPARATE_DB_PORT'];
+    } else {
+      process.env['AUTH_ENGINE_SEPARATE_DB_PORT'] =
+        ORIGINAL_AUTH_ENGINE_SEPARATE_DB_PORT;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_SEPARATE_DB_USERNAME === undefined) {
+      delete process.env['AUTH_ENGINE_SEPARATE_DB_USERNAME'];
+    } else {
+      process.env['AUTH_ENGINE_SEPARATE_DB_USERNAME'] =
+        ORIGINAL_AUTH_ENGINE_SEPARATE_DB_USERNAME;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_SEPARATE_DB_PASSWORD === undefined) {
+      delete process.env['AUTH_ENGINE_SEPARATE_DB_PASSWORD'];
+    } else {
+      process.env['AUTH_ENGINE_SEPARATE_DB_PASSWORD'] =
+        ORIGINAL_AUTH_ENGINE_SEPARATE_DB_PASSWORD;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_SEPARATE_DB_DATABASE === undefined) {
+      delete process.env['AUTH_ENGINE_SEPARATE_DB_DATABASE'];
+    } else {
+      process.env['AUTH_ENGINE_SEPARATE_DB_DATABASE'] =
+        ORIGINAL_AUTH_ENGINE_SEPARATE_DB_DATABASE;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_SEPARATE_DB_SSL === undefined) {
+      delete process.env['AUTH_ENGINE_SEPARATE_DB_SSL'];
+    } else {
+      process.env['AUTH_ENGINE_SEPARATE_DB_SSL'] =
+        ORIGINAL_AUTH_ENGINE_SEPARATE_DB_SSL;
     }
   });
 
@@ -115,6 +169,10 @@ describe('AuthApplicationModule', () => {
     process.env['AUTH_ENGINE'] = 'better-auth';
     process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'typeorm-adapter';
     process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] = 'separate-db';
+    process.env['AUTH_ENGINE_SEPARATE_DB_HOST'] = 'db.example.test';
+    process.env['AUTH_ENGINE_SEPARATE_DB_USERNAME'] = 'auth_user';
+    process.env['AUTH_ENGINE_SEPARATE_DB_PASSWORD'] = 'auth_pass';
+    process.env['AUTH_ENGINE_SEPARATE_DB_DATABASE'] = 'auth_db';
 
     const moduleMetadata = AuthApplicationModule.forRootFromConfig({
       authStrategies: ['jwt'],

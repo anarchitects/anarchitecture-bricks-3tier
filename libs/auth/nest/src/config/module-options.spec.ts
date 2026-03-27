@@ -26,6 +26,14 @@ describe('auth module option mappers', () => {
       persistence: {
         mode: 'typeorm-adapter',
         isolatedTopology: 'separate-db',
+        separateDatabase: {
+          host: 'db.example.test',
+          port: 6543,
+          username: 'auth_user',
+          password: 'auth_pass',
+          database: 'auth_db',
+          ssl: true,
+        },
       },
     },
     features: {
@@ -72,6 +80,14 @@ describe('auth module option mappers', () => {
         persistence: {
           mode: 'typeorm-adapter',
           isolatedTopology: 'separate-db',
+          separateDatabase: {
+            host: 'db.example.test',
+            port: 6543,
+            username: 'auth_user',
+            password: 'auth_pass',
+            database: 'auth_db',
+            ssl: true,
+          },
         },
       },
       features: {
@@ -113,6 +129,14 @@ describe('auth module option mappers', () => {
           persistence: {
             mode: 'typeorm-adapter',
             isolatedTopology: 'separate-db',
+            separateDatabase: {
+              host: 'db.example.test',
+              port: 6543,
+              username: 'auth_user',
+              password: 'auth_pass',
+              database: 'auth_db',
+              ssl: true,
+            },
           },
         },
         features: {
@@ -156,6 +180,14 @@ describe('auth module option mappers', () => {
             persistence: {
               mode: 'typeorm-adapter',
               isolatedTopology: 'separate-db',
+              separateDatabase: {
+                host: 'db.example.test',
+                port: 6543,
+                username: 'auth_user',
+                password: 'auth_pass',
+                database: 'auth_db',
+                ssl: true,
+              },
             },
           },
           features: {
@@ -203,6 +235,14 @@ describe('auth module option resolvers', () => {
         persistence: {
           mode: 'isolated',
           isolatedTopology: 'same-db',
+          separateDatabase: {
+            host: undefined,
+            port: 5432,
+            username: undefined,
+            password: undefined,
+            database: undefined,
+            ssl: false,
+          },
         },
       },
       features: {
@@ -243,6 +283,14 @@ describe('auth module option resolvers', () => {
             persistence: {
               mode: 'isolated',
               isolatedTopology: 'same-db',
+              separateDatabase: {
+                host: undefined,
+                port: 5432,
+                username: undefined,
+                password: undefined,
+                database: undefined,
+                ssl: false,
+              },
             },
           },
           features: {
@@ -294,6 +342,14 @@ describe('auth module option resolvers', () => {
         persistence: {
           mode: 'isolated',
           isolatedTopology: 'same-db',
+          separateDatabase: {
+            host: undefined,
+            port: 5432,
+            username: undefined,
+            password: undefined,
+            database: undefined,
+            ssl: false,
+          },
         },
       },
       features: {
@@ -330,6 +386,14 @@ describe('auth module option resolvers', () => {
           persistence: {
             mode: 'typeorm-adapter',
             isolatedTopology: 'separate-db',
+            separateDatabase: {
+              host: 'db.example.test',
+              port: 6543,
+              username: 'auth_user',
+              password: 'auth_pass',
+              database: 'auth_db',
+              ssl: true,
+            },
           },
         },
       }),
@@ -339,9 +403,32 @@ describe('auth module option resolvers', () => {
           persistence: {
             mode: 'typeorm-adapter',
             isolatedTopology: 'separate-db',
+            separateDatabase: {
+              host: 'db.example.test',
+              port: 6543,
+              username: 'auth_user',
+              password: 'auth_pass',
+              database: 'auth_db',
+              ssl: true,
+            },
           },
         },
       }),
+    );
+  });
+
+  it('requires separate database coordinates when isolated topology is separate-db', () => {
+    expect(() =>
+      resolveAuthApplicationModuleOptions({
+        engineOptions: {
+          persistence: {
+            mode: 'isolated',
+            isolatedTopology: 'separate-db',
+          },
+        },
+      }),
+    ).toThrow(
+      'Auth engine separate database configuration is incomplete: missing host, username, password, database',
     );
   });
 });

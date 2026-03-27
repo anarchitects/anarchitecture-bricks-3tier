@@ -14,6 +14,12 @@ const AUTH_ENV_KEYS = [
   'AUTH_SESSION_MODE',
   'AUTH_ENGINE_PERSISTENCE_MODE',
   'AUTH_ENGINE_ISOLATED_TOPOLOGY',
+  'AUTH_ENGINE_SEPARATE_DB_HOST',
+  'AUTH_ENGINE_SEPARATE_DB_PORT',
+  'AUTH_ENGINE_SEPARATE_DB_USERNAME',
+  'AUTH_ENGINE_SEPARATE_DB_PASSWORD',
+  'AUTH_ENGINE_SEPARATE_DB_DATABASE',
+  'AUTH_ENGINE_SEPARATE_DB_SSL',
   'AUTH_FEATURE_PASSKEYS',
   'AUTH_FEATURE_SOCIAL',
   'AUTH_FEATURE_OIDC',
@@ -73,6 +79,14 @@ describe('authConfig', () => {
         persistence: {
           mode: 'isolated',
           isolatedTopology: 'same-db',
+          separateDatabase: {
+            host: undefined,
+            port: 5432,
+            username: undefined,
+            password: undefined,
+            database: undefined,
+            ssl: false,
+          },
         },
       },
       features: {
@@ -113,6 +127,12 @@ describe('authConfig', () => {
     process.env['AUTH_SESSION_MODE'] = 'session';
     process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'typeorm-adapter';
     process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] = 'separate-db';
+    process.env['AUTH_ENGINE_SEPARATE_DB_HOST'] = 'db.example.test';
+    process.env['AUTH_ENGINE_SEPARATE_DB_PORT'] = '6543';
+    process.env['AUTH_ENGINE_SEPARATE_DB_USERNAME'] = 'auth_user';
+    process.env['AUTH_ENGINE_SEPARATE_DB_PASSWORD'] = 'auth_pass';
+    process.env['AUTH_ENGINE_SEPARATE_DB_DATABASE'] = 'auth_db';
+    process.env['AUTH_ENGINE_SEPARATE_DB_SSL'] = 'true';
     process.env['AUTH_FEATURE_PASSKEYS'] = 'true';
     process.env['AUTH_FEATURE_SOCIAL'] = 'true';
     process.env['AUTH_FEATURE_OIDC'] = 'false';
@@ -141,6 +161,14 @@ describe('authConfig', () => {
         persistence: {
           mode: 'typeorm-adapter',
           isolatedTopology: 'separate-db',
+          separateDatabase: {
+            host: 'db.example.test',
+            port: 6543,
+            username: 'auth_user',
+            password: 'auth_pass',
+            database: 'auth_db',
+            ssl: true,
+          },
         },
       },
       features: {
@@ -193,6 +221,12 @@ describe('authConfig', () => {
     expect(() => authConfig()).toThrow(
       'Unsupported auth engine isolated topology: invalid',
     );
+  });
+
+  it('throws when AUTH_ENGINE_SEPARATE_DB_PORT is invalid', () => {
+    process.env['AUTH_ENGINE_SEPARATE_DB_PORT'] = 'invalid';
+
+    expect(() => authConfig()).toThrow('Unsupported integer value: invalid');
   });
 
   it('falls back to default strategies when AUTH_STRATEGIES is empty', () => {

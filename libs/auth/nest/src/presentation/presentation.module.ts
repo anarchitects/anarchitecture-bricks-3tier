@@ -45,6 +45,12 @@ export class AuthPresentationModule {
           persistence: {
             ...configOptions.application?.engineOptions?.persistence,
             ...overrides.application?.engineOptions?.persistence,
+            separateDatabase: {
+              ...configOptions.application?.engineOptions?.persistence
+                ?.separateDatabase,
+              ...overrides.application?.engineOptions?.persistence
+                ?.separateDatabase,
+            },
           },
         },
         persistence: {
