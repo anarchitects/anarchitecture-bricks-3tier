@@ -7,7 +7,18 @@ import {
 } from './tokens';
 
 export function provideAuthConfig(cfg: Partial<AuthConfig>): Provider[] {
-  const merged: AuthConfig = { ...AUTH_DEFAULTS, ...cfg };
+  const merged: AuthConfig = {
+    ...AUTH_DEFAULTS,
+    ...cfg,
+    plugins: {
+      ...AUTH_DEFAULTS.plugins,
+      ...cfg.plugins,
+      jwt: {
+        ...AUTH_DEFAULTS.plugins.jwt,
+        ...cfg.plugins?.jwt,
+      },
+    },
+  };
   return [
     { provide: AUTH_CONFIG, useValue: merged },
     { provide: API_RESOURCE_PATH, useValue: merged.apiResourcePath },

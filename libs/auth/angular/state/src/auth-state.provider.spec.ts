@@ -1,9 +1,11 @@
 import { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideAuthConfig } from '@anarchitects/auth-angular/config';
 import { AuthApi } from '../../data-access/src';
 import { AUTH_STATE_OPTIONS } from './auth-state.options';
 import { AuthStore } from './auth.store';
 import { provideAuthState } from './auth-state.provider';
+import { of } from 'rxjs';
 
 describe('provideAuthState', () => {
   afterEach(() => {
@@ -38,17 +40,25 @@ describe('provideAuthState', () => {
 
   it('should eagerly instantiate the store through the initializer', () => {
     const mockAuthApi = {
-      getLoggedInUserInfo: vi.fn(),
+      getLoggedInUserInfo: vi.fn(() =>
+        of({
+          user: { id: 'user-id', email: 'user@example.com' },
+          rbac: [],
+        }),
+      ),
     };
 
     TestBed.configureTestingModule({
       providers: [
+        ...provideAuthConfig({}),
         { provide: AuthApi, useValue: mockAuthApi },
         ...provideAuthState(),
       ],
     });
 
-    expect(TestBed.inject(AuthStore).initialized()).toBe(true);
+    const store = TestBed.inject(AuthStore);
+    expect(store).toBeDefined();
+    expect(mockAuthApi.getLoggedInUserInfo).toHaveBeenCalled();
   });
 
   it('should allow options overrides', () => {

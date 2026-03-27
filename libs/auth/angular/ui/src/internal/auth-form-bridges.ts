@@ -67,9 +67,9 @@ const REGISTER_FORM_CONFIG: FormConfig = {
   version: 1,
   fields: [
     {
-      name: 'userName',
+      name: 'name',
       kind: 'string',
-      ui: { label: 'Username' },
+      ui: { label: 'Name' },
       required: false,
     },
     { name: 'email', kind: 'email', ui: { label: 'Email' }, required: true },
@@ -154,22 +154,7 @@ const UPDATE_EMAIL_FORM_CONFIG: FormConfig = {
 const LOGOUT_FORM_CONFIG: FormConfig = {
   id: 'logout',
   version: 1,
-  fields: [
-    {
-      name: 'refreshToken',
-      kind: 'string',
-      required: false,
-      minLength: 1,
-      ui: { label: 'Refresh Token' },
-    },
-    {
-      name: 'accessToken',
-      kind: 'string',
-      required: false,
-      minLength: 1,
-      ui: { label: 'Access Token (optional)' },
-    },
-  ],
+  fields: [],
 };
 
 const REFRESH_TOKENS_FORM_CONFIG: FormConfig = {
@@ -202,7 +187,7 @@ export const loginFormBridge: AuthFormBridge<LoginRequestDTO> = {
 export const registerFormBridge: AuthFormBridge<RegisterRequestDTO> = {
   resolveFormConfig: () => REGISTER_FORM_CONFIG,
   mapSubmission: (input) => ({
-    userName: readPayloadString(input, 'userName'),
+    name: readPayloadString(input, 'name'),
     email: readPayloadString(input, 'email') as string,
     password: readPayloadString(input, 'password') as string,
     confirmPassword: readPayloadString(input, 'confirmPassword') as string,
@@ -337,21 +322,7 @@ export const updateEmailFormBridge: AuthFormBridge<UpdateEmailRequestDTO> = {
 
 export const logoutFormBridge: AuthFormBridge<LogoutRequestDTO> = {
   resolveFormConfig: () => LOGOUT_FORM_CONFIG,
-  mapSubmission: (input) => {
-    const refreshToken =
-      readPayloadString(input, 'refreshToken') || readStoredString('refreshToken');
-    const accessToken =
-      readPayloadString(input, 'accessToken') || readStoredString('accessToken');
-
-    if (!refreshToken) {
-      return undefined;
-    }
-
-    return {
-      refreshToken,
-      ...(accessToken ? { accessToken } : {}),
-    };
-  },
+  mapSubmission: () => ({}),
 };
 
 export const refreshTokensFormBridge: AuthFormBridge<RefreshTokenRequestDTO> = {

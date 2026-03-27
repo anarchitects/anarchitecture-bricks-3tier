@@ -47,13 +47,9 @@ class TypeOrmTestingModule {}
 const authModuleOptions = {
   presentation: {
     application: {
-      authStrategies: ['jwt'],
       encryption: {
         algorithm: 'bcrypt' as const,
         key: 'test-key',
-      },
-      persistence: {
-        persistence: 'typeorm',
       },
     },
   },
@@ -74,7 +70,7 @@ describe('AuthModule', () => {
     }
   });
 
-  it('should compile and resolve auth tokens when mailer is enabled via forRoot', async () => {
+  it('compiles and resolves auth tokens when mailer is enabled via forRoot', async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
@@ -102,7 +98,7 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should compile and resolve auth tokens when mailer is disabled via forRoot', async () => {
+  it('compiles and resolves auth tokens when mailer is disabled via forRoot', async () => {
     const postLoader = jest.fn();
     const moduleRef = await Test.createTestingModule({
       imports: [
@@ -140,7 +136,7 @@ describe('AuthModule', () => {
     });
   });
 
-  it('should keep forRoot explicit and ignore AUTH_MAILER_PROVIDER', async () => {
+  it('keeps forRoot explicit and ignores AUTH_MAILER_PROVIDER', async () => {
     process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -163,7 +159,7 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should resolve AUTH_MAILER_PROVIDER through forRootFromConfig', async () => {
+  it('resolves AUTH_MAILER_PROVIDER through forRootFromConfig', async () => {
     process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef = await Test.createTestingModule({
@@ -181,7 +177,7 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should let forRootFromConfig overrides win over AUTH_MAILER_PROVIDER', async () => {
+  it('lets forRootFromConfig overrides win over AUTH_MAILER_PROVIDER', async () => {
     process.env['AUTH_MAILER_PROVIDER'] = 'noop';
 
     const moduleRef = await Test.createTestingModule({
@@ -207,11 +203,13 @@ describe('AuthModule', () => {
     );
   });
 
-  it('should resolve AUTH_PERSISTENCE through forRootFromConfig', () => {
+  it('keeps legacy AUTH_PERSISTENCE env values inert through forRootFromConfig', () => {
     process.env['AUTH_PERSISTENCE'] = 'unsupported';
 
-    expect(() => AuthModule.forRootFromConfig()).toThrow(
-      'Unsupported persistence type: unsupported',
-    );
+    expect(() =>
+      AuthModule.forRootFromConfig({
+        presentation: authModuleOptions.presentation,
+      }),
+    ).not.toThrow();
   });
 });

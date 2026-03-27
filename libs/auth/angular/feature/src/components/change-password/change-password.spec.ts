@@ -2,12 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ComponentRef } from '@angular/core';
 import { AuthStore } from '@anarchitects/auth-angular/state';
 import { ChangePasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
-import { jwtDecode } from 'jwt-decode';
 import { AnarchitectsFeatureChangePassword } from './change-password';
-
-vi.mock('jwt-decode', () => ({
-  jwtDecode: vi.fn(),
-}));
 
 describe('AnarchitectsFeatureChangePassword', () => {
   let component: AnarchitectsFeatureChangePassword;
@@ -31,7 +26,6 @@ describe('AnarchitectsFeatureChangePassword', () => {
   });
 
   afterEach(() => {
-    localStorage.clear();
     vi.clearAllMocks();
   });
 
@@ -53,10 +47,8 @@ describe('AnarchitectsFeatureChangePassword', () => {
     });
   });
 
-  it('should fallback to decoded access token sub for userId', async () => {
-    mockAuthStore.loggedInUser.mockReturnValue(undefined);
-    localStorage.setItem('accessToken', 'access-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
+  it('should fallback to the logged-in store user for userId', async () => {
+    mockAuthStore.loggedInUser.mockReturnValue({ id: 'store-user-id' });
 
     await component.submitForm({
       currentPassword: 'old-password',
@@ -65,7 +57,7 @@ describe('AnarchitectsFeatureChangePassword', () => {
     });
 
     expect(mockAuthStore.changePassword).toHaveBeenCalledWith({
-      userId: 'decoded-user-id',
+      userId: 'store-user-id',
       dto: {
         currentPassword: 'old-password',
         newPassword: 'new-password',

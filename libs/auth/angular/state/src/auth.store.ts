@@ -1,8 +1,7 @@
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
+import { injectAuthConfig } from '@anarchitects/auth-angular/config';
 import {
-  ACCESS_TOKEN_STORAGE_KEY,
   clearStoredTokens,
-  getStoredToken,
   resolveUserIdFromAccessToken,
   storeTokens,
 } from '@anarchitects/auth-angular/data-access';
@@ -38,7 +37,7 @@ import {
   withEntities,
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, EMPTY, pipe, switchMap, tap, throwError } from 'rxjs';
+import { EMPTY, pipe, switchMap, tap } from 'rxjs';
 import { AUTH_STATE_OPTIONS } from './auth-state.options';
 
 type AuthState = {
@@ -129,23 +128,12 @@ const redirectToLogin = (router: Router | null): void => {
   }
 };
 
-const failClosedHydration = (
-  store: object,
-  error: unknown,
-  state: Partial<AuthState> = {},
-) => {
-  clearStoredTokens();
-  clearAuthenticatedSession(store, {
-    error: toErrorMessage(error),
-    ...state,
-  });
-};
-
 export const AuthStore = signalStore(
   withState(initialState),
   withEntities<AuthUser>(),
   withProps(() => ({
     _authApi: inject(AuthApi),
+    _authConfig: injectAuthConfig(),
     _authStateOptions: inject(AUTH_STATE_OPTIONS),
     _router: inject(Router, { optional: true }),
   })),
@@ -170,28 +158,6 @@ export const AuthStore = signalStore(
         }),
         switchMap(() => {
           if (!store._authStateOptions.restoreOnInit || store.initialized()) {
-            return EMPTY;
-          }
-
-          const accessToken = getStoredToken(ACCESS_TOKEN_STORAGE_KEY);
-
-          if (!accessToken) {
-            patchState(store, { initialized: true, restoring: false });
-            return EMPTY;
-          }
-
-          if (!resolveUserIdFromAccessToken(accessToken)) {
-            clearStoredTokens();
-            clearAuthenticatedSession(store, {
-              error: 'Invalid access token payload.',
-              initialized: true,
-              restoring: false,
-            });
-
-            if (store._authStateOptions.onRestoreFailure === 'redirectToLogin') {
-              redirectToLogin(store._router);
-            }
-
             return EMPTY;
           }
 
@@ -280,28 +246,13 @@ export const AuthStore = signalStore(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
           store._authApi.login(dto).pipe(
-            switchMap(({ accessToken, refreshToken }) => {
-              storeTokens({ accessToken, refreshToken });
-
-              if (!resolveUserIdFromAccessToken(accessToken)) {
-                clearStoredTokens();
-                patchState(store, { error: 'Invalid access token payload.' });
-                return EMPTY;
-              }
-
-              return store._authApi.getLoggedInUserInfo().pipe(
-                catchError((error: unknown) => {
-                  failClosedHydration(store, error, { initialized: true });
-                  return throwError(() => error);
-                }),
-              );
-            }),
             tapResponse({
               next: ({ user, rbac }) => {
+                const authenticatedUser = user as { email: string; id: string };
                 patchAuthenticatedSession(store, {
                   user: {
-                    email: user.email,
-                    id: user.id,
+                    email: authenticatedUser.email,
+                    id: authenticatedUser.id,
                   },
                   rbac,
                 });
@@ -445,11 +396,20 @@ export const AuthStore = signalStore(
         ),
       ),
     ),
-    refreshTokens: rxMethod<{ userId: string; dto: RefreshTokenRequestDTO }>(
+    refreshTokens: rxMethod<RefreshTokenRequestDTO>(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
-        switchMap(({ userId, dto }) =>
-          store._authApi.refreshTokens(userId, dto).pipe(
+        switchMap((dto) => {
+          if (!store._authConfig.plugins.jwt.enabled) {
+            patchState(store, {
+              error: 'JWT plugin is disabled.',
+              initialized: true,
+              loading: false,
+            });
+            return EMPTY;
+          }
+
+          return store._authApi.refreshTokens(dto).pipe(
             switchMap(({ accessToken, refreshToken }) => {
               storeTokens({ accessToken, refreshToken });
 
@@ -459,24 +419,11 @@ export const AuthStore = signalStore(
                 return EMPTY;
               }
 
-              return store._authApi.getLoggedInUserInfo().pipe(
-                catchError((error: unknown) => {
-                  failClosedHydration(store, error, { initialized: true });
-                  return throwError(() => error);
-                }),
-              );
+              patchState(store, { initialized: true });
+              return EMPTY;
             }),
             tapResponse({
-              next: ({ user, rbac }) => {
-                patchAuthenticatedSession(store, {
-                  user: {
-                    email: user.email,
-                    id: user.id,
-                  },
-                  rbac,
-                });
-                patchState(store, { initialized: true });
-              },
+              next: () => undefined,
               error: (error: unknown) => {
                 patchState(store, {
                   error: toErrorMessage(error),
@@ -487,8 +434,8 @@ export const AuthStore = signalStore(
                 patchState(store, { loading: false });
               },
             }),
-          ),
-        ),
+          );
+        }),
       ),
     ),
   })),

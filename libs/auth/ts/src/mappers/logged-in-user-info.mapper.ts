@@ -34,13 +34,12 @@ export const toLoggedInUserInfoResponseDTO = (
 
 export const fromLoggedInUserInfoResponseDTO = (
   dto: LoggedInUserInfoResponseDTO,
-  options: { passwordHash: string; token?: string | null },
 ): LoggedInUserInfoModel => {
   const user = assertObject(dto.user, 'user');
   const rbac = parsePolicyRuleArrayDTO(dto.rbac, 'rbac');
 
   return {
-    user: fromPublicUser(user as PublicUser, options),
+    user: fromPublicUser(user as PublicUser),
     rbac: rbac.map((rule) => fromPolicyRuleWire(rule as PolicyRuleWire)),
   };
 };

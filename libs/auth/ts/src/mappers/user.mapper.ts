@@ -6,8 +6,9 @@ import { fromPublicRole, toPublicRole } from './role.mapper';
 export const toPublicUser = (model: User): PublicUser => ({
   id: model.id,
   email: model.email,
-  userName: model.userName,
-  isActive: model.isActive,
+  name: model.name,
+  image: model.image ?? null,
+  emailVerified: model.emailVerified,
   roles: model.roles?.map(toPublicRole) ?? null,
   createdAt: toIsoDateTime(model.createdAt, 'createdAt'),
   updatedAt: toIsoDateTime(model.updatedAt, 'updatedAt'),
@@ -15,14 +16,12 @@ export const toPublicUser = (model: User): PublicUser => ({
 
 export const fromPublicUser = (
   dto: PublicUser,
-  options: { passwordHash: string; token?: string | null },
 ): User => ({
   id: dto.id,
   email: dto.email,
-  userName: dto.userName,
-  passwordHash: options.passwordHash,
-  token: options.token ?? null,
-  isActive: dto.isActive,
+  name: dto.name,
+  image: dto.image ?? null,
+  emailVerified: dto.emailVerified,
   roles: dto.roles?.map((role) => fromPublicRole(role)) ?? null,
   createdAt: fromIsoDateTime(dto.createdAt, 'createdAt'),
   updatedAt: fromIsoDateTime(dto.updatedAt, 'updatedAt'),

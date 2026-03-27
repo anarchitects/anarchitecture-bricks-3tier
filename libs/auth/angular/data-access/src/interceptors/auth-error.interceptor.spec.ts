@@ -10,6 +10,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
+import { provideAuthConfig } from '@anarchitects/auth-angular/config';
 import { authBearerTokenInterceptor } from './bearer-token.interceptor';
 import {
   authErrorInterceptor,
@@ -29,6 +30,13 @@ describe('authErrorInterceptor', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        ...provideAuthConfig({
+          plugins: {
+            jwt: {
+              enabled: true,
+            },
+          },
+        }),
         provideHttpClient(
           withInterceptors([authBearerTokenInterceptor, authErrorInterceptor])
         ),
@@ -65,9 +73,7 @@ describe('authErrorInterceptor', () => {
       { status: 403, statusText: 'Forbidden' }
     );
 
-    const refreshReq = httpController.expectOne((req) =>
-      req.url.includes('/api/auth/refresh-tokens/')
-    );
+    const refreshReq = httpController.expectOne('/api/auth/jwt/refresh');
     expect(refreshReq.request.method).toBe('POST');
     expect(refreshReq.request.body).toEqual({ refreshToken: 'refresh-token' });
     refreshReq.flush({
@@ -101,7 +107,7 @@ describe('authErrorInterceptor', () => {
     );
 
     expect(
-      httpController.match((req) => req.url.includes('/refresh-tokens/'))
+      httpController.match((req) => req.url.includes('/jwt/refresh'))
     ).toHaveLength(0);
     expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/login');
     expect(localStorage.getItem('accessToken')).toBeNull();
@@ -123,9 +129,7 @@ describe('authErrorInterceptor', () => {
       { status: 401, statusText: 'Unauthorized' }
     );
 
-    const refreshReq = httpController.expectOne((req) =>
-      req.url.includes('/api/auth/refresh-tokens/')
-    );
+    const refreshReq = httpController.expectOne('/api/auth/jwt/refresh');
     refreshReq.flush(
       { message: 'refresh denied' },
       { status: 401, statusText: 'Unauthorized' }
@@ -154,7 +158,7 @@ describe('authErrorInterceptor', () => {
     );
 
     expect(
-      httpController.match((req) => req.url.includes('/refresh-tokens/'))
+      httpController.match((req) => req.url.includes('/jwt/refresh'))
     ).toHaveLength(0);
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
     expect(errorSpy).toHaveBeenCalled();
@@ -178,9 +182,7 @@ describe('authErrorInterceptor', () => {
       { status: 401, statusText: 'Unauthorized' }
     );
 
-    const refreshReq = httpController.expectOne((req) =>
-      req.url.includes('/api/auth/refresh-tokens/')
-    );
+    const refreshReq = httpController.expectOne('/api/auth/jwt/refresh');
     refreshReq.flush(
       { message: 'refresh denied' },
       { status: 401, statusText: 'Unauthorized' }

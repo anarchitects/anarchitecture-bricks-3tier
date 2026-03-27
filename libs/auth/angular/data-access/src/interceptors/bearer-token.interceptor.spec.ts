@@ -8,6 +8,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
+import { provideAuthConfig } from '@anarchitects/auth-angular/config';
 import { authBearerTokenInterceptor } from './bearer-token.interceptor';
 
 describe('authBearerTokenInterceptor', () => {
@@ -17,6 +18,13 @@ describe('authBearerTokenInterceptor', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
+        ...provideAuthConfig({
+          plugins: {
+            jwt: {
+              enabled: true,
+            },
+          },
+        }),
         provideHttpClient(withInterceptors([authBearerTokenInterceptor])),
         provideHttpClientTesting(),
       ],

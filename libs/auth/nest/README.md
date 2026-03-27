@@ -1,6 +1,6 @@
 # @anarchitects/auth-nest
 
-NestJS services, controllers, and infrastructure for the Anarchitecture authentication domain. This package wires contract-driven DTOs from `@anarchitects/auth-ts`, orchestrates user lifecycle flows (registration, activation, login/logout, password management, email verification), and persists auth state through pluggable repositories.
+NestJS services, controllers, and infrastructure for the Anarchitecture authentication domain. This package wires contract-driven DTOs from `@anarchitects/auth-ts`, uses Better Auth as the canonical internal auth engine, keeps email/password always enabled, and layers repo-owned RBAC on top of Better Auth-backed user/session state.
 
 ## Developer + AI Agent Start Here
 
@@ -11,35 +11,35 @@ NestJS services, controllers, and infrastructure for the Anarchitecture authenti
 
 ## Features
 
-- **Application layer** – `JwtAuthService`, `BcryptHashService`, JWT Passport strategy, CASL-based `PoliciesService` and `AbilityFactory` encapsulating business rules for tokens, passwords, and fine-grained access control.
-- **Presentation layer** – `AuthController` exposing REST handlers for the full auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization.
-- **Infrastructure persistence** – `PersistenceModule` with TypeORM entities and repositories (users, roles, permissions, invalidated tokens). Configurable adapters to swap implementations while preserving the application contract.
+- **Application layer** – Better Auth-backed `AuthService`, `BcryptHashService`, CASL-based `PoliciesService`, and `AbilityFactory` encapsulating business rules for sessions, passwords, and fine-grained access control.
+- **Presentation layer** – `AuthController` exposing the core session-oriented auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization, plus internal plugin controllers such as JWT when enabled.
+- **Infrastructure persistence** – TypeORM entities and repositories for users, roles, permissions, invalidated tokens, and core Better Auth tables in the `auth` schema. Plugin-specific tables stay with their plugin modules.
 - **Infrastructure mailer** – `AuthMailerModule` wrapper over shared `CommonMailerModule.forRoot(...)` provider wiring; `NodeMailerAdapter` is re-exported for compatibility.
-- **Config** – Typed `authConfig` namespace using `@nestjs/config` with an `InjectAuthConfig()` helper decorator.
+- **Config** – Typed `authConfig` namespace using `@nestjs/config` with a Better Auth core config branch and typed plugin configuration.
 
 ## Installation
 
 ```bash
-npm install @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/passport @nestjs/platform-fastify @nestjs/typeorm typeorm
+npm install @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/platform-fastify @nestjs/typeorm typeorm
 # or
-yarn add @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/passport @nestjs/platform-fastify @nestjs/typeorm typeorm
+yarn add @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/platform-fastify @nestjs/typeorm typeorm
 ```
 
 Peer requirements:
 
-- `@nestjs/common`, `@nestjs/core`, `@nestjs/jwt`, `@nestjs/typeorm`, `@nestjs/config`, `@nestjs/passport`
+- `@nestjs/common`, `@nestjs/core`, `@nestjs/jwt`, `@nestjs/typeorm`, `@nestjs/config`
 - `@nestjs/platform-fastify`, `typeorm`
 
-The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` packages are installed transitively. Runtime utilities such as `@casl/ability`, `bcrypt`, and `passport-jwt` are direct dependencies of this package. Add `@nestjs-modules/mailer` only when your host app enables the shared/common mailer integration.
+The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` packages are installed transitively. Runtime utilities such as `@casl/ability`, `bcrypt`, `better-auth`, and `@better-auth/passkey` are direct dependencies of this package. Add `@nestjs-modules/mailer` only when your host app enables the shared/common mailer integration.
 
 ## Exports
 
 | Import path                                          | Contents                                                                                                                                                                               |
 | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                                                                |
-| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `JwtAuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, `JwtStrategy`, resource-authorization helpers/types |
+| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, resource-authorization helpers/types                                |
 | `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy`               |
-| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`, migration                                                                                                  |
+| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`                                                                                                             |
 | `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                                |
 | `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                                  |
 
@@ -47,29 +47,30 @@ The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` pack
 
 The library reads configuration through `@nestjs/config` using a namespaced `authConfig` registered under the key `auth`. Set the following environment variables to customise behaviour:
 
-| Variable                           | Description                                                                             | Default                  |
-| ---------------------------------- | --------------------------------------------------------------------------------------- | ------------------------ |
-| `AUTH_JWT_SECRET`                  | Secret key used to sign and verify JWTs. **Must** be overridden in production.          | `default_jwt_secret`     |
-| `AUTH_JWT_EXPIRATION`              | Token lifetime (e.g. `3600s`, `15m`, `1d`).                                             | `3600s`                  |
-| `AUTH_JWT_AUDIENCE`                | Expected `aud` claim in the JWT.                                                        | `your_audience`          |
-| `AUTH_JWT_ISSUER`                  | Expected `iss` claim in the JWT.                                                        | `your_issuer`            |
-| `AUTH_ENCRYPTION_ALGORITHM`        | Password hashing algorithm (`bcrypt`).                                                  | `bcrypt`                 |
-| `AUTH_ENCRYPTION_KEY`              | Symmetric key for additional encryption needs. **Must** be overridden in production.    | `default_encryption_key` |
-| `AUTH_PERSISTENCE`                 | Legacy auth persistence adapter key used by `forRootFromConfig(...)`.                   | `typeorm`                |
-| `AUTH_ENGINE_PERSISTENCE_MODE`     | Engine-side persistence mode used when `AUTH_ENGINE=better-auth`.                       | `isolated`               |
-| `AUTH_ENGINE_ISOLATED_TOPOLOGY`    | Isolated engine topology used when engine persistence mode is `isolated`.               | `same-db`                |
-| `AUTH_ENGINE_SEPARATE_DB_HOST`     | Separate isolated PostgreSQL host when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`.     | unset                    |
-| `AUTH_ENGINE_SEPARATE_DB_PORT`     | Separate isolated PostgreSQL port when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`.     | `5432`                   |
-| `AUTH_ENGINE_SEPARATE_DB_USERNAME` | Separate isolated PostgreSQL username when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`. | unset                    |
-| `AUTH_ENGINE_SEPARATE_DB_PASSWORD` | Separate isolated PostgreSQL password when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`. | unset                    |
-| `AUTH_ENGINE_SEPARATE_DB_DATABASE` | Separate isolated PostgreSQL database when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`. | unset                    |
-| `AUTH_ENGINE_SEPARATE_DB_SSL`      | Enable SSL for the separate isolated PostgreSQL connection.                             | `false`                  |
-| `AUTH_MAILER_PROVIDER`             | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).                 | `node`                   |
-| `AUTH_STRATEGIES`                  | Comma-separated auth strategies for config-driven module composition.                   | `jwt`                    |
+| Variable                                  | Description                                                                 | Default                               |
+| ----------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------- |
+| `AUTH_BETTER_AUTH_BASE_URL`               | Better Auth base URL used for internal route generation.                    | `http://localhost:3000/api/auth`      |
+| `AUTH_BETTER_AUTH_SECRET`                 | Better Auth secret. **Must** be overridden in production.                   | `better-auth-secret-32-chars-minimum` |
+| `AUTH_BETTER_AUTH_VERIFY_EMAIL_CALLBACK_URL` | App-facing callback URL embedded in verification emails.                 | `<base-url origin>/verify-email`      |
+| `AUTH_BETTER_AUTH_RESET_PASSWORD_CALLBACK_URL` | App-facing callback URL embedded in password reset emails.              | `<base-url origin>/reset-password`    |
+| `AUTH_PLUGIN_JWT_ENABLED`                 | Enables the internal JWT plugin routes.                                     | `false`                               |
+| `AUTH_PLUGIN_JWT_SECRET`                  | Secret key used by the JWT plugin. **Must** be overridden when enabled.     | `default_jwt_secret`                  |
+| `AUTH_PLUGIN_JWT_EXPIRATION`              | JWT plugin token lifetime (e.g. `3600s`, `15m`, `1d`).                      | `3600s`                               |
+| `AUTH_PLUGIN_JWT_AUDIENCE`                | Expected `aud` claim for JWT plugin tokens.                                 | `your_audience`                       |
+| `AUTH_PLUGIN_JWT_ISSUER`                  | Expected `iss` claim for JWT plugin tokens.                                 | `your_issuer`                         |
+| `AUTH_PLUGIN_PASSKEYS_ENABLED`            | Enables the passkeys plugin.                                                | `false`                               |
+| `AUTH_PLUGIN_PASSKEY_RP_ID`               | Passkey relying-party ID.                                                   | `localhost`                           |
+| `AUTH_PLUGIN_PASSKEY_RP_NAME`             | Passkey relying-party display name.                                         | `Anarchitecture Auth`                 |
+| `AUTH_PLUGIN_PASSKEY_ORIGIN`              | Explicit passkey origin when needed.                                        | unset                                 |
+| `AUTH_PLUGIN_SOCIAL_ENABLED`              | Enables social auth plugins.                                                | `false`                               |
+| `AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_ID`     | GitHub social sign-in client ID.                                            | unset                                 |
+| `AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_SECRET` | GitHub social sign-in client secret.                                        | unset                                 |
+| `AUTH_PLUGIN_OIDC_ENABLED`                | Enables future OIDC plugin wiring.                                          | `false`                               |
+| `AUTH_ENCRYPTION_ALGORITHM`               | Password hashing algorithm (`bcrypt`).                                      | `bcrypt`                              |
+| `AUTH_ENCRYPTION_KEY`                     | Symmetric key for additional encryption needs. **Must** be overridden.      | `default_encryption_key`              |
+| `AUTH_MAILER_PROVIDER`                    | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).     | `node`                                |
 
-> **Security note:** The defaults for `AUTH_JWT_SECRET` and `AUTH_ENCRYPTION_KEY` are intentionally insecure placeholders. Always provide strong, unique values in any deployed environment.
-
-`AUTH_PERSISTENCE` still selects the legacy auth persistence adapter used by the current JWT-oriented domain repositories. The neutral `AUTH_ENGINE_*` settings control the internal Better Auth engine path separately.
+> **Security note:** The defaults for `AUTH_BETTER_AUTH_SECRET`, `AUTH_PLUGIN_JWT_SECRET`, and `AUTH_ENCRYPTION_KEY` are intentionally insecure placeholders. Always provide strong, unique values in any deployed environment.
 
 ### Injecting the config
 
@@ -81,7 +82,7 @@ export class MyService {
   constructor(@InjectAuthConfig() private readonly config: AuthConfig) {}
 
   someMethod() {
-    const secret = this.config.jwtSecret;
+    const secret = this.config.betterAuth.secret;
   }
 }
 ```
@@ -119,13 +120,15 @@ import { authConfig } from '@anarchitects/auth-nest/config';
     AuthModule.forRoot({
       presentation: {
         application: {
-          authStrategies: ['jwt'],
           encryption: {
             algorithm: 'bcrypt',
             key: process.env.AUTH_ENCRYPTION_KEY!,
           },
-          persistence: {
-            persistence: 'typeorm',
+          plugins: {
+            jwt: {
+              enabled: true,
+              secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
+            },
           },
         },
       },
@@ -171,21 +174,29 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
     }),
     CommonMailerModule.forRootFromConfig(),
     AuthApplicationModule.forRoot({
-      authStrategies: ['jwt'],
       encryption: {
         algorithm: 'bcrypt',
         key: process.env.AUTH_ENCRYPTION_KEY!,
       },
-      persistence: { persistence: 'typeorm' },
+      plugins: {
+        jwt: {
+          enabled: true,
+          secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
+        },
+      },
     }),
     AuthPresentationModule.forRoot({
       application: {
-        authStrategies: ['jwt'],
         encryption: {
           algorithm: 'bcrypt',
           key: process.env.AUTH_ENCRYPTION_KEY!,
         },
-        persistence: { persistence: 'typeorm' },
+        plugins: {
+          jwt: {
+            enabled: true,
+            secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
+          },
+        },
       },
     }),
     AuthMailerModule.forRoot({
@@ -212,12 +223,12 @@ The shared mailer DI contract (`MailerPort`) and concrete `NodeMailerAdapter` no
 
 ```ts
 import { Controller, Post, Body } from '@nestjs/common';
-import { JwtAuthService } from '@anarchitects/auth-nest/application';
+import { AuthService } from '@anarchitects/auth-nest/application';
 import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: JwtAuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   login(@Body() dto: LoginRequestDTO) {

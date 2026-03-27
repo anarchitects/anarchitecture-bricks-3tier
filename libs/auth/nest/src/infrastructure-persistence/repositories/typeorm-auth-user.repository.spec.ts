@@ -2,20 +2,19 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeormAuthUserRepository } from './typeorm-auth-user.repository';
 import { User } from '@anarchitects/auth-ts/models';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { RoleEntity } from '../entities/role.entity';
 import { UserEntity } from '../entities/user.entity';
-import { InvalidatedTokenEntity } from '../entities/invalidated-token.entity';
 import { NotFoundException } from '@nestjs/common';
 
 describe('TypeormAuthUserRepository', () => {
   let provider: TypeormAuthUserRepository;
   const mockUser: User = {
     id: 'user-id-123',
-    userName: 'testuser',
+    name: 'testuser',
     email: 'testuser@example.com',
-    passwordHash: 'hashedpassword',
-    isActive: true,
+    emailVerified: true,
+    image: null,
     roles: [],
-    token: 'some-token',
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -40,13 +39,15 @@ describe('TypeormAuthUserRepository', () => {
     ),
     remove: jest.fn().mockResolvedValue(mockUser),
   };
-  const mockInvalidatedTokenRepository = {
+  const mockRoleRepository = {
+    findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
-    findOne: jest.fn(),
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TypeormAuthUserRepository,
@@ -55,8 +56,8 @@ describe('TypeormAuthUserRepository', () => {
           useValue: mockUserRepository,
         },
         {
-          provide: getRepositoryToken(InvalidatedTokenEntity),
-          useValue: mockInvalidatedTokenRepository,
+          provide: getRepositoryToken(RoleEntity),
+          useValue: mockRoleRepository,
         },
       ],
     }).compile();
@@ -94,13 +95,53 @@ describe('TypeormAuthUserRepository', () => {
   describe('create', () => {
     it('should create and save a new user', async () => {
       const newUser = await provider.create({
-        userName: 'newuser',
+        name: 'newuser',
         email: 'newuser@example.com',
-        passwordHash: 'newhashedpassword',
+        image: null,
       });
       expect(newUser).toEqual(mockUser);
       expect(mockUserRepository.create).toHaveBeenCalled();
       expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
+    });
+  });
+  describe('ensureRole', () => {
+    it('adds the role to the user when it is missing', async () => {
+      const role = {
+        id: 'role-id',
+        name: 'user',
+      };
+      mockRoleRepository.findOne.mockResolvedValueOnce(role);
+      mockUserRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        roles: [],
+      });
+
+      await provider.ensureRole('user-id-123', 'user');
+
+      expect(mockUserRepository.save).toHaveBeenCalledWith({
+        ...mockUser,
+        roles: [role],
+      });
+    });
+
+    it('creates the role when it does not exist yet', async () => {
+      const createdRole = { id: 'role-id', name: 'user' };
+      mockRoleRepository.findOne.mockResolvedValueOnce(null);
+      mockRoleRepository.create.mockReturnValue(createdRole);
+      mockRoleRepository.save.mockResolvedValueOnce(createdRole);
+      mockUserRepository.findOne.mockResolvedValueOnce({
+        ...mockUser,
+        roles: [],
+      });
+
+      await provider.ensureRole('user-id-123', 'user');
+
+      expect(mockRoleRepository.create).toHaveBeenCalledWith({
+        name: 'user',
+        description: null,
+        permissions: null,
+        users: null,
+      });
     });
   });
   describe('update', () => {
@@ -133,31 +174,6 @@ describe('TypeormAuthUserRepository', () => {
       const deletedUser = await provider.delete('user-id-123');
       expect(deletedUser).toEqual(mockUser);
       expect(mockUserRepository.remove).toHaveBeenCalledWith(mockUser);
-    });
-  });
-  describe('invalidateTokens', () => {
-    it('should invalidate tokens', async () => {
-      const tokens = ['token1', 'token2'];
-      await provider.invalidateTokens(tokens, 'user-id-123');
-      expect(mockInvalidatedTokenRepository.create).toHaveBeenCalledTimes(2);
-      expect(mockInvalidatedTokenRepository.save).toHaveBeenCalled();
-    });
-  });
-  describe('isTokenInvalidated', () => {
-    it('should return true if token is invalidated', async () => {
-      mockInvalidatedTokenRepository.findOne.mockResolvedValueOnce({
-        tokenId: 'token1',
-      });
-      const isInvalidated = await provider.isTokenInvalidated('token1');
-      expect(isInvalidated).toBe(true);
-      expect(mockInvalidatedTokenRepository.findOne).toHaveBeenCalledWith({
-        where: { tokenId: 'token1' },
-      });
-    });
-    it('should return false if token is not invalidated', async () => {
-      mockInvalidatedTokenRepository.findOne.mockResolvedValueOnce(null);
-      const isInvalidated = await provider.isTokenInvalidated('token2');
-      expect(isInvalidated).toBe(false);
     });
   });
 });

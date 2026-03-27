@@ -7,14 +7,10 @@ import {
   ForgotPasswordRequestSchema,
   LoginRequestDTO,
   LoginRequestSchema,
-  LoginResponseDTO,
-  LoginResponseSchema,
   LoggedInUserInfoResponseDTO,
   LoggedInUserInfoResponseSchema,
   LogoutRequestDTO,
   LogoutRequestSchema,
-  RefreshTokenRequestDTO,
-  RefreshTokenRequestSchema,
   RegisterRequestDTO,
   RegisterRequestSchema,
   RegisterResponseDTO,
@@ -38,6 +34,7 @@ import {
   Patch,
   Post,
   Req,
+  Res,
 } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { AuthService } from '../../application/services/auth.service';
@@ -73,10 +70,17 @@ export class AuthController {
   @Post('/login')
   @RouteSchema({
     body: LoginRequestSchema,
-    response: { 200: LoginResponseSchema },
+    response: { 200: LoggedInUserInfoResponseSchema },
   })
-  async login(@Body() dto: LoginRequestDTO): Promise<LoginResponseDTO> {
-    return this.authService.login(dto);
+  async login(
+    @Body() dto: LoginRequestDTO,
+    @Req() req: { headers: Record<string, string | string[] | undefined> },
+    @Res({ passthrough: true })
+    reply: { header(name: string, value: string | string[]): unknown },
+  ): Promise<LoggedInUserInfoResponseDTO> {
+    const result = await this.authService.login(dto, toHeaders(req.headers));
+    applyResponseHeaders(reply, result.headers);
+    return result.body;
   }
 
   @HttpCode(200)
@@ -85,8 +89,15 @@ export class AuthController {
     body: LogoutRequestSchema,
     response: { 200: SuccessResponseSchema },
   })
-  async logout(@Body() dto: LogoutRequestDTO): Promise<SuccessResponseDTO> {
-    return this.authService.logout(dto);
+  async logout(
+    @Body() dto: LogoutRequestDTO,
+    @Req() req: { headers: Record<string, string | string[] | undefined> },
+    @Res({ passthrough: true })
+    reply: { header(name: string, value: string | string[]): unknown },
+  ): Promise<SuccessResponseDTO> {
+    const result = await this.authService.logout(dto, toHeaders(req.headers));
+    applyResponseHeaders(reply, result.headers);
+    return result.body;
   }
 
   @Patch('/change-password/:userId')
@@ -151,28 +162,60 @@ export class AuthController {
     return this.authService.updateEmail(userId, dto);
   }
 
-  @HttpCode(200)
-  @Post('/refresh-tokens/:userId')
-  @RouteSchema({
-    body: RefreshTokenRequestSchema,
-    params: UserIdParamsSchema,
-    response: { 200: LoginResponseSchema },
-  })
-  async refreshTokens(
-    @Param('userId') userId: string,
-    @Body() dto: RefreshTokenRequestDTO,
-  ): Promise<LoginResponseDTO> {
-    return this.authService.refreshTokens(userId, dto);
-  }
-
   @Get('/me')
   @RouteSchema({
     response: { 200: LoggedInUserInfoResponseSchema },
   })
   async getLoggedInUserInfo(
-    @Req() req: { user: { sub: string } },
+    @Req() req: { headers: Record<string, string | string[] | undefined> },
   ): Promise<LoggedInUserInfoResponseDTO> {
-    const userId = req.user.sub; // Assuming JWT payload contains 'sub' as userId
-    return this.authService.getLoggedInUserInfo(userId);
+    const result = await this.authService.getLoggedInUserInfo(
+      toHeaders(req.headers),
+    );
+    return result.body;
   }
 }
+
+const toHeaders = (
+  input: Record<string, string | string[] | undefined>,
+): Headers => {
+  const headers = new Headers();
+
+  Object.entries(input).forEach(([key, value]) => {
+    if (value === undefined) {
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      value.forEach((entry) => headers.append(key, entry));
+      return;
+    }
+
+    headers.set(key, value);
+  });
+
+  return headers;
+};
+
+const applyResponseHeaders = (
+  reply: { header(name: string, value: string | string[]): unknown },
+  headers?: Headers,
+): void => {
+  if (!headers) {
+    return;
+  }
+
+  const setCookie =
+    'getSetCookie' in headers && typeof headers.getSetCookie === 'function'
+      ? headers.getSetCookie()
+      : headers.get('set-cookie');
+
+  if (Array.isArray(setCookie) && setCookie.length > 0) {
+    reply.header('set-cookie', setCookie);
+    return;
+  }
+
+  if (typeof setCookie === 'string' && setCookie.length > 0) {
+    reply.header('set-cookie', setCookie);
+  }
+};

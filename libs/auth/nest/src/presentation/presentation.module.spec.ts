@@ -1,36 +1,16 @@
 import { DynamicModule } from '@nestjs/common';
 import { AuthApplicationModule } from '../application';
+import { JwtAuthPluginController } from '../infrastructure-engine/better-auth/plugins/jwt/jwt-auth-plugin.controller';
 import { AuthPresentationModule } from './presentation.module';
 
-const ORIGINAL_AUTH_PERSISTENCE = process.env['AUTH_PERSISTENCE'];
-const ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE =
-  process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
-
 describe('AuthPresentationModule', () => {
-  afterEach(() => {
-    if (ORIGINAL_AUTH_PERSISTENCE === undefined) {
-      delete process.env['AUTH_PERSISTENCE'];
-    } else {
-      process.env['AUTH_PERSISTENCE'] = ORIGINAL_AUTH_PERSISTENCE;
-    }
-
-    if (ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE === undefined) {
-      delete process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
-    } else {
-      process.env['AUTH_ENGINE_PERSISTENCE_MODE'] =
-        ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE;
-    }
-  });
-
-  it('should compose application forRoot options when overrides are provided', () => {
+  it('composes application forRoot options when overrides are provided', () => {
     const moduleMetadata = AuthPresentationModule.forRoot({
       application: {
-        authStrategies: ['jwt'],
         encryption: {
           algorithm: 'bcrypt',
           key: 'presentation-key',
         },
-        persistence: { persistence: 'typeorm' },
       },
     });
 
@@ -39,23 +19,36 @@ describe('AuthPresentationModule', () => {
     expect(applicationImport.module).toBe(AuthApplicationModule);
   });
 
-  it('should resolve env-backed persistence through forRootFromConfig', () => {
-    process.env['AUTH_PERSISTENCE'] = 'unsupported';
+  it('mounts the JWT plugin controller only when the plugin is enabled', () => {
+    const enabled = AuthPresentationModule.forRoot({
+      application: {
+        plugins: {
+          jwt: { enabled: true },
+        },
+      },
+    });
+    const disabled = AuthPresentationModule.forRoot({
+      application: {
+        plugins: {
+          jwt: { enabled: false },
+        },
+      },
+    });
 
-    expect(() => AuthPresentationModule.forRootFromConfig()).toThrow(
-      'Unsupported persistence type: unsupported',
-    );
+    expect(enabled.controllers).toContain(JwtAuthPluginController);
+    expect(disabled.controllers).toEqual([]);
   });
 
-  it('should allow neutral engine persistence settings through forRootFromConfig', () => {
-    process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'isolated';
-
+  it('merges config-backed plugin overrides through forRootFromConfig', () => {
     const moduleMetadata = AuthPresentationModule.forRootFromConfig({
       application: {
-        persistence: { persistence: 'typeorm' },
+        plugins: {
+          jwt: { enabled: true },
+        },
       },
     });
 
     expect(moduleMetadata.module).toBe(AuthPresentationModule);
+    expect(moduleMetadata.controllers).toContain(JwtAuthPluginController);
   });
 });

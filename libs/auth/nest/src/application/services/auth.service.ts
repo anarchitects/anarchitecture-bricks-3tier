@@ -4,9 +4,8 @@ import {
   ChangePasswordRequestDTO,
   ForgotPasswordRequestDTO,
   LoginRequestDTO,
-  LoginResponseDTO,
+  LoggedInUserInfoResponseDTO,
   LogoutRequestDTO,
-  RefreshTokenRequestDTO,
   RegisterRequestDTO,
   RegisterResponseDTO,
   ResetPasswordRequestDTO,
@@ -15,14 +14,25 @@ import {
 } from '@anarchitects/auth-ts/dtos';
 import { Injectable } from '@nestjs/common';
 
+export type AuthHttpResult<T> = {
+  body: T;
+  headers?: Headers;
+};
+
 @Injectable()
 export abstract class AuthService {
   abstract registerUser(dto: RegisterRequestDTO): Promise<RegisterResponseDTO>;
   abstract activateUser(
     dto: ActivateUserRequestDTO,
   ): Promise<{ success: boolean }>;
-  abstract login(dto: LoginRequestDTO): Promise<LoginResponseDTO>;
-  abstract logout(dto: LogoutRequestDTO): Promise<{ success: boolean }>;
+  abstract login(
+    dto: LoginRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthHttpResult<LoggedInUserInfoResponseDTO>>;
+  abstract logout(
+    dto: LogoutRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthHttpResult<{ success: boolean }>>;
   abstract changePassword(
     userId: string,
     dto: ChangePasswordRequestDTO,
@@ -40,11 +50,7 @@ export abstract class AuthService {
     userId: string,
     dto: UpdateEmailRequestDTO,
   ): Promise<{ success: boolean }>;
-  abstract refreshTokens(
-    userId: string,
-    dto: RefreshTokenRequestDTO,
-  ): Promise<LoginResponseDTO>;
   abstract getLoggedInUserInfo(
-    userId: string,
-  ): Promise<{ user: User; rbac: PolicyRule[] }>;
+    headers?: HeadersInit,
+  ): Promise<AuthHttpResult<{ user: User; rbac: PolicyRule[] }>>;
 }

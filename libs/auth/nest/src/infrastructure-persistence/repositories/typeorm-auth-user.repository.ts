@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { RoleEntity } from '../entities/role.entity';
 import { UserEntity } from '../entities/user.entity';
 import { AuthUserRepository } from './auth-user.repository';
 import { User } from '@anarchitects/auth-ts/models';
-import { InvalidatedTokenEntity } from '../entities/invalidated-token.entity';
 
 @Injectable()
 export class TypeormAuthUserRepository implements AuthUserRepository {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(InvalidatedTokenEntity)
-    private readonly invalidatedTokenRepository: Repository<InvalidatedTokenEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
   ) {}
   async find(conditions: FindManyOptions<User> = {}): Promise<User[]> {
     return this.userRepository.find(conditions);
@@ -30,6 +30,34 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
     const newUser = this.userRepository.create(user);
     return this.userRepository.save(newUser);
   }
+  async ensureRole(userId: string, roleName: string): Promise<void> {
+    let role = await this.roleRepository.findOne({ where: { name: roleName } });
+    if (!role) {
+      role = await this.roleRepository.save(
+        this.roleRepository.create({
+          name: roleName,
+          description: null,
+          permissions: null,
+          users: null,
+        }),
+      );
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['roles'],
+    });
+    if (!user) {
+      throw new NotFoundException(`User with id #${userId} not found`);
+    }
+
+    if (user.roles?.some((existingRole) => existingRole.name === roleName)) {
+      return;
+    }
+
+    user.roles = [...(user.roles ?? []), role];
+    await this.userRepository.save(user);
+  }
   async update(user: Partial<User>): Promise<User> {
     const updatedUser = await this.userRepository.preload(user);
     if (!updatedUser) {
@@ -40,25 +68,5 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
   async delete(userId: string): Promise<UserEntity> {
     const user = await this.findOne({ where: { id: userId } });
     return this.userRepository.remove(user);
-  }
-
-  async invalidateTokens(
-    tokens: string[],
-    userId: string | null,
-  ): Promise<void> {
-    const invalidatedTokens = tokens.map((token) =>
-      this.invalidatedTokenRepository.create({
-        tokenId: token,
-        userId,
-      }),
-    );
-    await this.invalidatedTokenRepository.save(invalidatedTokens);
-  }
-
-  async isTokenInvalidated(tokenId: string): Promise<boolean> {
-    const token = await this.invalidatedTokenRepository.findOne({
-      where: { tokenId },
-    });
-    return !!token;
   }
 }

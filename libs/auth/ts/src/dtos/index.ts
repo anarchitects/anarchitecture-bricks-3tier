@@ -1,6 +1,7 @@
 export * from './activate-user-request.dto';
 export * from './change-password-request.dto';
 export * from './forgot-password-request.dto';
+export * from './jwt-logout-request.dto';
 export * from './login-request.dto';
 export * from './login-response.dto';
 export * from './logout-request.dto';

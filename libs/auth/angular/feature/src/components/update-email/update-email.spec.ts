@@ -2,12 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ComponentRef } from '@angular/core';
 import { AuthStore } from '@anarchitects/auth-angular/state';
 import { UpdateEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
-import { jwtDecode } from 'jwt-decode';
 import { AnarchitectsFeatureUpdateEmail } from './update-email';
-
-vi.mock('jwt-decode', () => ({
-  jwtDecode: vi.fn(),
-}));
 
 describe('AnarchitectsFeatureUpdateEmail', () => {
   let component: AnarchitectsFeatureUpdateEmail;
@@ -31,7 +26,6 @@ describe('AnarchitectsFeatureUpdateEmail', () => {
   });
 
   afterEach(() => {
-    localStorage.clear();
     vi.clearAllMocks();
   });
 
@@ -52,10 +46,8 @@ describe('AnarchitectsFeatureUpdateEmail', () => {
     });
   });
 
-  it('should fallback to decoded access token sub for userId', async () => {
-    mockAuthStore.loggedInUser.mockReturnValue(undefined);
-    localStorage.setItem('accessToken', 'access-token');
-    vi.mocked(jwtDecode).mockReturnValue({ sub: 'decoded-user-id' });
+  it('should fallback to the logged-in store user for userId', async () => {
+    mockAuthStore.loggedInUser.mockReturnValue({ id: 'store-user-id' });
 
     await component.submitForm({
       newEmail: 'next@example.com',
@@ -63,7 +55,7 @@ describe('AnarchitectsFeatureUpdateEmail', () => {
     });
 
     expect(mockAuthStore.updateEmail).toHaveBeenCalledWith({
-      userId: 'decoded-user-id',
+      userId: 'store-user-id',
       dto: {
         newEmail: 'next@example.com',
         password: 'secret123',
