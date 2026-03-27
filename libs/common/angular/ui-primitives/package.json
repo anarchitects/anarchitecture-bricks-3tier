@@ -1,9 +1,9 @@
 {
   "name": "@anarchitects/common-angular-ui-primitives",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
-    "@anarchitects/common-angular-design": "^0.0.1",
-    "@anarchitects/common-angular-ui-composition": "^0.0.1"
+    "@anarchitects/common-angular-design": "^0.0.2",
+    "@anarchitects/common-angular-ui-composition": "^0.0.2"
   },
   "peerDependencies": {
     "@angular/core": "^21.0.0"

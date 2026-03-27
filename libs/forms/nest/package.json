@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/forms-nest",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -12,8 +12,8 @@
     "typeorm": "^0.3.27"
   },
   "dependencies": {
-    "@anarchitects/common-nest-mailer": "^0.3.0",
-    "@anarchitects/forms-ts": "^0.5.0",
+    "@anarchitects/common-nest-mailer": "^0.3.1",
+    "@anarchitects/forms-ts": "^0.5.1",
     "tslib": "^2.3.0",
     "uuidv7": "^1.0.2"
   },
