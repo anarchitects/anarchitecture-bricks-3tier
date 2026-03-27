@@ -249,7 +249,7 @@
       }
     },
     "conventionalCommits": {
-      "useCommitScope": false,
+      "useCommitScope": true,
       "types": {
         "feat": {
           "semverBump": "minor"
