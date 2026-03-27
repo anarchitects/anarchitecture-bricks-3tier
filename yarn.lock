@@ -232,8 +232,8 @@ __metadata:
     "@nestjs/schematics": "npm:^11.0.0"
     "@nestjs/testing": "npm:^11.0.0"
     "@nestjs/typeorm": "npm:^11.0.0"
-    "@ngrx/operators": "npm:^20.0.1"
-    "@ngrx/signals": "npm:^20.0.1"
+    "@ngrx/operators": "npm:^21.1.0"
+    "@ngrx/signals": "npm:^21.1.0"
     "@nx/angular": "npm:22.6.1"
     "@nx/devkit": "npm:22.6.1"
     "@nx/eslint": "npm:22.6.1"
@@ -6472,29 +6472,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngrx/operators@npm:^20.0.1":
-  version: 20.0.1
-  resolution: "@ngrx/operators@npm:20.0.1"
+"@ngrx/operators@npm:^21.1.0":
+  version: 21.1.0
+  resolution: "@ngrx/operators@npm:21.1.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10c0/042bcbaaf1406c65bb1900c60a45597f6d0e2c0afb70fb67842d252133f96b80dc9e694c4cabdcee90d14b24d69a6a33deca2f9e30f0c4da1334f8f9947b0ff5
+  checksum: 10c0/1e91d94fba368801382be492b6a11b407f73597336557a5eb5be17ab8fb8212d5d7264436a06eb94c06f86a91d04dc6cacb8a1a3e8a5b52f93f189903e4ba7ed
   languageName: node
   linkType: hard
 
-"@ngrx/signals@npm:^20.0.1":
-  version: 20.0.1
-  resolution: "@ngrx/signals@npm:20.0.1"
+"@ngrx/signals@npm:^21.1.0":
+  version: 21.1.0
+  resolution: "@ngrx/signals@npm:21.1.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": ^20.0.0
+    "@angular/core": ^21.0.0
     rxjs: ^6.5.3 || ^7.4.0
   peerDependenciesMeta:
     rxjs:
       optional: true
-  checksum: 10c0/cfa5b5850d6809accc509ff0e3500f64816630c497194ecfb7e8c07cc3ce5e2451e95134a290780ab9275479fc16ca56f2a086a077bd01a17cb22ec59523a9df
+  checksum: 10c0/dc3f6c1ed7923c3be4cdf49f45aa63f47e9e4cb385158989f2e333bf2083d536a36d9aff13a69b79df1524d7def3d8eee27b7752be06c39cd338bf54d4b22314
   languageName: node
   linkType: hard
 
