@@ -8,7 +8,7 @@
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
-    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs-modules/mailer": "^2.3.4",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.2"
   },
