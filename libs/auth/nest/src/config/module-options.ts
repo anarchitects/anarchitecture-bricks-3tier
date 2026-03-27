@@ -1,6 +1,8 @@
 import {
   DEFAULT_AUTH_ENCRYPTION_ALGORITHM,
   DEFAULT_AUTH_ENCRYPTION_KEY,
+  DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
+  DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
   DEFAULT_AUTH_MAILER_PROVIDER,
   DEFAULT_AUTH_PERSISTENCE,
   DEFAULT_AUTH_STRATEGIES,
@@ -11,6 +13,18 @@ import type { ResourceAuthorizationOptions } from '../application/resource-autho
 
 export type AuthEngine = 'legacy-jwt' | 'better-auth';
 export type AuthSessionMode = 'jwt' | 'session';
+export type AuthEnginePersistenceMode = 'isolated' | 'typeorm-adapter';
+export type AuthEngineIsolatedTopology = 'same-db' | 'separate-db';
+
+export type AuthEnginePersistenceOptions = {
+  mode?: AuthEnginePersistenceMode;
+  isolatedTopology?: AuthEngineIsolatedTopology;
+};
+
+export type ResolvedAuthEnginePersistenceOptions = {
+  mode: AuthEnginePersistenceMode;
+  isolatedTopology: AuthEngineIsolatedTopology;
+};
 
 export type AuthSpikeSocialProviderConfig = {
   clientId?: string;
@@ -65,6 +79,9 @@ export type AuthApplicationModuleOptions = {
   authStrategies?: string[];
   engine?: AuthEngine;
   sessionMode?: AuthSessionMode;
+  engineOptions?: {
+    persistence?: AuthEnginePersistenceOptions;
+  };
   features?: {
     passkeys?: boolean;
     social?: boolean;
@@ -83,6 +100,9 @@ export type ResolvedAuthApplicationModuleOptions = {
   authStrategies: string[];
   engine: AuthEngine;
   sessionMode: AuthSessionMode;
+  engineOptions: {
+    persistence: ResolvedAuthEnginePersistenceOptions;
+  };
   features: {
     passkeys: boolean;
     social: boolean;
@@ -131,12 +151,25 @@ export const resolveAuthMailerModuleOptions = (
   provider: options.provider ?? DEFAULT_AUTH_MAILER_PROVIDER,
 });
 
+export const resolveAuthEnginePersistenceOptions = (
+  options: AuthEnginePersistenceOptions = {},
+): ResolvedAuthEnginePersistenceOptions => ({
+  mode: options.mode ?? DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
+  isolatedTopology:
+    options.isolatedTopology ?? DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
+});
+
 export const resolveAuthApplicationModuleOptions = (
   options: AuthApplicationModuleOptions = {},
 ): ResolvedAuthApplicationModuleOptions => ({
   authStrategies: options.authStrategies ?? [...DEFAULT_AUTH_STRATEGIES],
   engine: options.engine ?? 'legacy-jwt',
   sessionMode: options.sessionMode ?? 'jwt',
+  engineOptions: {
+    persistence: resolveAuthEnginePersistenceOptions(
+      options.engineOptions?.persistence,
+    ),
+  },
   features: {
     passkeys: options.features?.passkeys ?? false,
     social: options.features?.social ?? false,
@@ -204,6 +237,16 @@ export const mapAuthConfigToApplicationModuleOptions = (
   authStrategies: config.authStrategies ?? [...DEFAULT_AUTH_STRATEGIES],
   engine: config.engine ?? 'legacy-jwt',
   sessionMode: config.sessionMode ?? 'jwt',
+  engineOptions: {
+    persistence: {
+      mode:
+        config.engineOptions?.persistence?.mode ??
+        DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
+      isolatedTopology:
+        config.engineOptions?.persistence?.isolatedTopology ??
+        DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
+    },
+  },
   features: {
     passkeys: config.features?.passkeys ?? false,
     social: config.features?.social ?? false,

@@ -33,6 +33,12 @@ describe('BetterAuthSpikeHarness', () => {
       authStrategies: ['jwt'],
       engine: 'better-auth',
       sessionMode: 'session',
+      engineOptions: {
+        persistence: {
+          mode: 'isolated',
+          isolatedTopology: 'same-db',
+        },
+      },
       features: {
         passkeys: true,
         social: true,

@@ -3,15 +3,23 @@ import { AuthApplicationModule } from '../application';
 import { AuthPresentationModule } from './presentation.module';
 
 const ORIGINAL_AUTH_PERSISTENCE = process.env['AUTH_PERSISTENCE'];
+const ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE =
+  process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
 
 describe('AuthPresentationModule', () => {
   afterEach(() => {
     if (ORIGINAL_AUTH_PERSISTENCE === undefined) {
       delete process.env['AUTH_PERSISTENCE'];
-      return;
+    } else {
+      process.env['AUTH_PERSISTENCE'] = ORIGINAL_AUTH_PERSISTENCE;
     }
 
-    process.env['AUTH_PERSISTENCE'] = ORIGINAL_AUTH_PERSISTENCE;
+    if (ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE === undefined) {
+      delete process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
+    } else {
+      process.env['AUTH_ENGINE_PERSISTENCE_MODE'] =
+        ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE;
+    }
   });
 
   it('should compose application forRoot options when overrides are provided', () => {
@@ -37,5 +45,17 @@ describe('AuthPresentationModule', () => {
     expect(() => AuthPresentationModule.forRootFromConfig()).toThrow(
       'Unsupported persistence type: unsupported',
     );
+  });
+
+  it('should allow neutral engine persistence settings through forRootFromConfig', () => {
+    process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'isolated';
+
+    const moduleMetadata = AuthPresentationModule.forRootFromConfig({
+      application: {
+        persistence: { persistence: 'typeorm' },
+      },
+    });
+
+    expect(moduleMetadata.module).toBe(AuthPresentationModule);
   });
 });

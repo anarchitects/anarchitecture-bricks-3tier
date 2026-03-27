@@ -34,30 +34,32 @@ The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` pack
 
 ## Exports
 
-| Import path                                          | Contents                                                                                                                                         |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                          |
+| Import path                                          | Contents                                                                                                                                                                               |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                                                                |
 | `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `JwtAuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, `JwtStrategy`, resource-authorization helpers/types |
-| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy` |
-| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`, migration                                                            |
-| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                          |
-| `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                            |
+| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy`               |
+| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`, migration                                                                                                  |
+| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                                |
+| `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                                  |
 
 ## Configuration
 
 The library reads configuration through `@nestjs/config` using a namespaced `authConfig` registered under the key `auth`. Set the following environment variables to customise behaviour:
 
-| Variable                    | Description                                                                          | Default                  |
-| --------------------------- | ------------------------------------------------------------------------------------ | ------------------------ |
-| `AUTH_JWT_SECRET`           | Secret key used to sign and verify JWTs. **Must** be overridden in production.       | `default_jwt_secret`     |
-| `AUTH_JWT_EXPIRATION`       | Token lifetime (e.g. `3600s`, `15m`, `1d`).                                          | `3600s`                  |
-| `AUTH_JWT_AUDIENCE`         | Expected `aud` claim in the JWT.                                                     | `your_audience`          |
-| `AUTH_JWT_ISSUER`           | Expected `iss` claim in the JWT.                                                     | `your_issuer`            |
-| `AUTH_ENCRYPTION_ALGORITHM` | Password hashing algorithm (`bcrypt`).                                               | `bcrypt`                 |
-| `AUTH_ENCRYPTION_KEY`       | Symmetric key for additional encryption needs. **Must** be overridden in production. | `default_encryption_key` |
-| `AUTH_PERSISTENCE`          | Persistence adapter key used by `forRootFromConfig(...)`.                            | `typeorm`                |
-| `AUTH_MAILER_PROVIDER`      | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).              | `node`                   |
-| `AUTH_STRATEGIES`           | Comma-separated auth strategies for config-driven module composition.                | `jwt`                    |
+| Variable                        | Description                                                                          | Default                  |
+| ------------------------------- | ------------------------------------------------------------------------------------ | ------------------------ |
+| `AUTH_JWT_SECRET`               | Secret key used to sign and verify JWTs. **Must** be overridden in production.       | `default_jwt_secret`     |
+| `AUTH_JWT_EXPIRATION`           | Token lifetime (e.g. `3600s`, `15m`, `1d`).                                          | `3600s`                  |
+| `AUTH_JWT_AUDIENCE`             | Expected `aud` claim in the JWT.                                                     | `your_audience`          |
+| `AUTH_JWT_ISSUER`               | Expected `iss` claim in the JWT.                                                     | `your_issuer`            |
+| `AUTH_ENCRYPTION_ALGORITHM`     | Password hashing algorithm (`bcrypt`).                                               | `bcrypt`                 |
+| `AUTH_ENCRYPTION_KEY`           | Symmetric key for additional encryption needs. **Must** be overridden in production. | `default_encryption_key` |
+| `AUTH_PERSISTENCE`              | Legacy auth persistence adapter key used by `forRootFromConfig(...)`.                | `typeorm`                |
+| `AUTH_ENGINE_PERSISTENCE_MODE`  | Engine-side persistence mode used when `AUTH_ENGINE=better-auth`.                    | `isolated`               |
+| `AUTH_ENGINE_ISOLATED_TOPOLOGY` | Isolated engine topology used when engine persistence mode is `isolated`.            | `same-db`                |
+| `AUTH_MAILER_PROVIDER`          | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).              | `node`                   |
+| `AUTH_STRATEGIES`               | Comma-separated auth strategies for config-driven module composition.                | `jwt`                    |
 
 > **Security note:** The defaults for `AUTH_JWT_SECRET` and `AUTH_ENCRYPTION_KEY` are intentionally insecure placeholders. Always provide strong, unique values in any deployed environment.
 

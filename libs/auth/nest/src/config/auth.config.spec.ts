@@ -12,6 +12,8 @@ const AUTH_ENV_KEYS = [
   'AUTH_STRATEGIES',
   'AUTH_ENGINE',
   'AUTH_SESSION_MODE',
+  'AUTH_ENGINE_PERSISTENCE_MODE',
+  'AUTH_ENGINE_ISOLATED_TOPOLOGY',
   'AUTH_FEATURE_PASSKEYS',
   'AUTH_FEATURE_SOCIAL',
   'AUTH_FEATURE_OIDC',
@@ -67,6 +69,12 @@ describe('authConfig', () => {
       authStrategies: ['jwt'],
       engine: 'legacy-jwt',
       sessionMode: 'jwt',
+      engineOptions: {
+        persistence: {
+          mode: 'isolated',
+          isolatedTopology: 'same-db',
+        },
+      },
       features: {
         passkeys: false,
         social: false,
@@ -103,6 +111,8 @@ describe('authConfig', () => {
     process.env['AUTH_STRATEGIES'] = 'jwt, custom';
     process.env['AUTH_ENGINE'] = 'better-auth';
     process.env['AUTH_SESSION_MODE'] = 'session';
+    process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'typeorm-adapter';
+    process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] = 'separate-db';
     process.env['AUTH_FEATURE_PASSKEYS'] = 'true';
     process.env['AUTH_FEATURE_SOCIAL'] = 'true';
     process.env['AUTH_FEATURE_OIDC'] = 'false';
@@ -127,6 +137,12 @@ describe('authConfig', () => {
       authStrategies: ['jwt', 'custom'],
       engine: 'better-auth',
       sessionMode: 'session',
+      engineOptions: {
+        persistence: {
+          mode: 'typeorm-adapter',
+          isolatedTopology: 'separate-db',
+        },
+      },
       features: {
         passkeys: true,
         social: true,
@@ -161,6 +177,22 @@ describe('authConfig', () => {
     process.env['AUTH_ENGINE'] = 'invalid';
 
     expect(() => authConfig()).toThrow('Unsupported auth engine: invalid');
+  });
+
+  it('throws when AUTH_ENGINE_PERSISTENCE_MODE is unsupported', () => {
+    process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'invalid';
+
+    expect(() => authConfig()).toThrow(
+      'Unsupported auth engine persistence mode: invalid',
+    );
+  });
+
+  it('throws when AUTH_ENGINE_ISOLATED_TOPOLOGY is unsupported', () => {
+    process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] = 'invalid';
+
+    expect(() => authConfig()).toThrow(
+      'Unsupported auth engine isolated topology: invalid',
+    );
   });
 
   it('falls back to default strategies when AUTH_STRATEGIES is empty', () => {

@@ -10,6 +10,11 @@ import { JwtAuthService } from './services/jwt-auth.service';
 
 const ORIGINAL_AUTH_PERSISTENCE = process.env['AUTH_PERSISTENCE'];
 const ORIGINAL_AUTH_STRATEGIES = process.env['AUTH_STRATEGIES'];
+const ORIGINAL_AUTH_ENGINE = process.env['AUTH_ENGINE'];
+const ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE =
+  process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
+const ORIGINAL_AUTH_ENGINE_ISOLATED_TOPOLOGY =
+  process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'];
 
 describe('AuthApplicationModule', () => {
   afterEach(() => {
@@ -23,6 +28,26 @@ describe('AuthApplicationModule', () => {
       delete process.env['AUTH_STRATEGIES'];
     } else {
       process.env['AUTH_STRATEGIES'] = ORIGINAL_AUTH_STRATEGIES;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE === undefined) {
+      delete process.env['AUTH_ENGINE'];
+    } else {
+      process.env['AUTH_ENGINE'] = ORIGINAL_AUTH_ENGINE;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE === undefined) {
+      delete process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
+    } else {
+      process.env['AUTH_ENGINE_PERSISTENCE_MODE'] =
+        ORIGINAL_AUTH_ENGINE_PERSISTENCE_MODE;
+    }
+
+    if (ORIGINAL_AUTH_ENGINE_ISOLATED_TOPOLOGY === undefined) {
+      delete process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'];
+    } else {
+      process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] =
+        ORIGINAL_AUTH_ENGINE_ISOLATED_TOPOLOGY;
     }
   });
 
@@ -81,6 +106,20 @@ describe('AuthApplicationModule', () => {
     });
 
     expect(moduleMetadata.module).toBe(AuthApplicationModule);
+  });
+
+  it('should accept neutral engine persistence env settings without changing composition', () => {
+    process.env['AUTH_ENGINE'] = 'better-auth';
+    process.env['AUTH_ENGINE_PERSISTENCE_MODE'] = 'typeorm-adapter';
+    process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'] = 'separate-db';
+
+    const moduleMetadata = AuthApplicationModule.forRootFromConfig({
+      authStrategies: ['jwt'],
+      persistence: { persistence: 'typeorm' },
+    });
+
+    expect(moduleMetadata.module).toBe(AuthApplicationModule);
+    expect(moduleMetadata.exports).toContain(AuthService);
   });
 
   it('should keep forRoot explicit and ignore AUTH_STRATEGIES', () => {
