@@ -7,10 +7,9 @@ describe('User model type', () => {
     expectTypeOf<User>().toEqualTypeOf<{
       id: string;
       email: string;
-      userName: string | null;
-      passwordHash: string;
-      token: string | null;
-      isActive: boolean;
+      name: string | null;
+      image?: string | null;
+      emailVerified: boolean;
       roles: Role[] | null;
       createdAt: Date;
       updatedAt: Date;

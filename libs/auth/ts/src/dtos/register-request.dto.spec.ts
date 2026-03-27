@@ -10,7 +10,7 @@ describe('RegisterRequestSchema', () => {
     email: 'new-user@example.com',
     password: 'secure-password',
     confirmPassword: 'secure-password',
-    userName: 'New User',
+    name: 'New User',
   };
 
   it('accepts a valid registration payload', () => {
@@ -31,12 +31,12 @@ describe('RegisterRequestSchema', () => {
     expect(validate(missingConfirm)).not.toHaveLength(0);
   });
 
-  it('allows userName to be omitted but validates length when present', () => {
-    const withoutUserName = { ...validPayload } as Record<string, unknown>;
-    delete withoutUserName['userName'];
-    expect(validate(withoutUserName)).toHaveLength(0);
+  it('allows name to be omitted but validates length when present', () => {
+    const withoutName = { ...validPayload } as Record<string, unknown>;
+    delete withoutName['name'];
+    expect(validate(withoutName)).toHaveLength(0);
 
-    expect(validate({ ...validPayload, userName: 'A' })).not.toHaveLength(0);
+    expect(validate({ ...validPayload, name: 'A' })).not.toHaveLength(0);
   });
 
   it('rejects invalid email format or short passwords', () => {

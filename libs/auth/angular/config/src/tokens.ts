@@ -2,6 +2,11 @@ import { InjectionToken, inject } from '@angular/core';
 
 export type AuthConfig = {
   apiResourcePath: string;
+  plugins: {
+    jwt: {
+      enabled: boolean;
+    };
+  };
 };
 
 export const AUTH_CONFIG = new InjectionToken<AuthConfig>('AUTH_CONFIG');
@@ -12,6 +17,11 @@ export const API_RESOURCE_PATH = new InjectionToken<string>(
 /** Library-level sensible defaults */
 export const AUTH_DEFAULTS: AuthConfig = {
   apiResourcePath: 'auth',
+  plugins: {
+    jwt: {
+      enabled: false,
+    },
+  },
 };
 
 /** Safe injectors that fall back to defaults if no providers are registered */

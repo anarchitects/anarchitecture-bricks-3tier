@@ -7,7 +7,6 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { jwtDecode } from 'jwt-decode';
 import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 
 @Component({
@@ -31,21 +30,7 @@ export class AnarchitectsFeatureChangePassword {
     }
 
     const fromStore = this.authStore.loggedInUser()?.id;
-    if (fromStore) {
-      return fromStore;
-    }
-
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) {
-      return undefined;
-    }
-
-    try {
-      const decoded = jwtDecode<{ sub?: string }>(accessToken);
-      return decoded.sub;
-    } catch {
-      return undefined;
-    }
+    return fromStore;
   }
 
   async submitForm(input: ChangePasswordRequestDTO): Promise<void> {

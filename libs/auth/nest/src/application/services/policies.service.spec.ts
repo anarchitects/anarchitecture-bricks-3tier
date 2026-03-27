@@ -34,10 +34,9 @@ describe('PoliciesService', () => {
     id: 'user-1',
     roles: [mockRole],
     email: '',
-    userName: null,
-    passwordHash: '',
-    token: null,
-    isActive: false,
+    name: null,
+    emailVerified: false,
+    image: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

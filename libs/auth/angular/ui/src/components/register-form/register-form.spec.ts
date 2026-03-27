@@ -42,7 +42,7 @@ describe('AnarchitectsAuthUiRegisterForm', () => {
       formId: 'register',
       formVersion: 1,
       payload: {
-        userName: 'Jane',
+        name: 'Jane',
         email: 'jane@example.com',
         password: 'secret123',
         confirmPassword: 'secret123',
@@ -52,7 +52,7 @@ describe('AnarchitectsAuthUiRegisterForm', () => {
     component.onSubmitted(submission);
 
     expect(emitted).toEqual({
-      userName: 'Jane',
+      name: 'Jane',
       email: 'jane@example.com',
       password: 'secret123',
       confirmPassword: 'secret123',

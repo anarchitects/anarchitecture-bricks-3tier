@@ -7,16 +7,16 @@ describe('UserEntity', () => {
   it('should create a UserEntity with given properties', () => {
     const userProps = {
       id: 'user123',
-      userName: 'testuser',
+      name: 'testuser',
       email: 'testuser@example.com',
-      passwordHash: 'hashedpassword',
-      isActive: true,
+      emailVerified: true,
+      image: null,
     };
     const userEntity = new UserEntity(userProps);
     expect(userEntity.id).toBe(userProps.id);
-    expect(userEntity.userName).toBe(userProps.userName);
+    expect(userEntity.name).toBe(userProps.name);
     expect(userEntity.email).toBe(userProps.email);
-    expect(userEntity.passwordHash).toBe(userProps.passwordHash);
-    expect(userEntity.isActive).toBe(userProps.isActive);
+    expect(userEntity.emailVerified).toBe(userProps.emailVerified);
+    expect(userEntity.image).toBeNull();
   });
 });

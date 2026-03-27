@@ -24,8 +24,9 @@ export type PublicRole = {
 export type PublicUser = {
   id: string;
   email: string;
-  userName: string | null;
-  isActive: boolean;
+  name: string | null;
+  image?: string | null;
+  emailVerified: boolean;
   roles: PublicRole[] | null;
   createdAt: string;
   updatedAt: string;

@@ -4,6 +4,7 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthApplicationModule } from '../application';
 import { PoliciesGuard } from './guards/policies.guard';
 import { ResourceAuthorizationGuard } from './guards/resource-authorization.guard';
+import { JwtAuthPluginController } from '../infrastructure-engine/better-auth/plugins/jwt/jwt-auth-plugin.controller';
 import {
   authConfig,
   mapAuthConfigToPresentationModuleOptions,
@@ -17,9 +18,14 @@ import type { AuthPresentationModuleOptions } from '../config';
 })
 export class AuthPresentationModule {
   static forRoot(options: AuthPresentationModuleOptions = {}): DynamicModule {
+    const jwtPluginController = options.application?.plugins?.jwt?.enabled
+      ? [JwtAuthPluginController]
+      : [];
+
     return {
       module: AuthPresentationModule,
       imports: [AuthApplicationModule.forRoot(options.application)],
+      controllers: jwtPluginController,
       exports: [AuthApplicationModule],
     };
   }
@@ -35,27 +41,37 @@ export class AuthPresentationModule {
       application: {
         ...configOptions.application,
         ...overrides.application,
+        betterAuth: {
+          ...configOptions.application?.betterAuth,
+          ...overrides.application?.betterAuth,
+          callbackUrls: {
+            ...configOptions.application?.betterAuth?.callbackUrls,
+            ...overrides.application?.betterAuth?.callbackUrls,
+          },
+        },
         encryption: {
           ...configOptions.application?.encryption,
           ...overrides.application?.encryption,
         },
-        engineOptions: {
-          ...configOptions.application?.engineOptions,
-          ...overrides.application?.engineOptions,
-          persistence: {
-            ...configOptions.application?.engineOptions?.persistence,
-            ...overrides.application?.engineOptions?.persistence,
-            separateDatabase: {
-              ...configOptions.application?.engineOptions?.persistence
-                ?.separateDatabase,
-              ...overrides.application?.engineOptions?.persistence
-                ?.separateDatabase,
-            },
+        plugins: {
+          ...configOptions.application?.plugins,
+          ...overrides.application?.plugins,
+          jwt: {
+            ...configOptions.application?.plugins?.jwt,
+            ...overrides.application?.plugins?.jwt,
           },
-        },
-        persistence: {
-          ...configOptions.application?.persistence,
-          ...overrides.application?.persistence,
+          passkeys: {
+            ...configOptions.application?.plugins?.passkeys,
+            ...overrides.application?.plugins?.passkeys,
+          },
+          social: {
+            ...configOptions.application?.plugins?.social,
+            ...overrides.application?.plugins?.social,
+          },
+          oidc: {
+            ...configOptions.application?.plugins?.oidc,
+            ...overrides.application?.plugins?.oidc,
+          },
         },
       },
     });

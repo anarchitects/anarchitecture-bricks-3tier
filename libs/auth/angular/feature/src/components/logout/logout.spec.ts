@@ -26,19 +26,16 @@ describe('AnarchitectsFeatureLogout', () => {
   });
 
   it('should call AuthStore.logout when refresh token exists', async () => {
-    const input: LogoutRequestDTO = {
-      refreshToken: 'refresh-token',
-      accessToken: 'access-token',
-    };
+    const input: LogoutRequestDTO = {};
 
     await component.submitForm(input);
 
     expect(mockAuthStore.logout).toHaveBeenCalledWith(input);
   });
 
-  it('should skip submit when refresh token is missing', async () => {
-    await component.submitForm({ refreshToken: '' });
+  it('should forward an empty core session logout payload', async () => {
+    await component.submitForm({});
 
-    expect(mockAuthStore.logout).not.toHaveBeenCalled();
+    expect(mockAuthStore.logout).toHaveBeenCalledWith({});
   });
 });

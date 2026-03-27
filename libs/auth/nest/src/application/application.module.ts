@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Module, Type } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import type { AuthApplicationModuleOptions } from '../config';
@@ -9,9 +9,10 @@ import {
   resolveAuthApplicationModuleOptions,
 } from '../config';
 import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
-import { BetterAuthIsolatedPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-isolated-persistence.adapter';
+import { BetterAuthJwtPluginService } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-plugin.service';
+import { BetterAuthJwtTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-typeorm-support.module';
+import { BetterAuthPasskeysTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/passkeys/better-auth-passkeys-typeorm-support.module';
 import { BetterAuthTypeormAdapterPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
-import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import {
   ConfigurableModuleClass,
@@ -25,25 +26,17 @@ import { AuthOrchestrationService } from './services/auth-orchestration.service'
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
-import { JwtAuthService } from './services/jwt-auth.service';
 import { PoliciesService } from './services/policies.service';
-import { JwtStrategy } from './strategies/jwt-strategy';
 
 @Module({})
 export class AuthApplicationModule extends ConfigurableModuleClass {
   static forRoot(options: AuthApplicationModuleOptions = {}): DynamicModule {
     const resolvedOptions: typeof OPTIONS_TYPE =
       resolveAuthApplicationModuleOptions(options);
-    const {
-      authStrategies,
-      engine,
-      encryption,
-      persistence,
-      resourceAuthorization,
-    } = resolvedOptions;
-    const imports = [
+    const { encryption, resourceAuthorization } = resolvedOptions;
+    const imports: Array<DynamicModule | Type<unknown>> = [
       ConfigModule.forFeature(authConfig),
-      AuthPersistenceModule.forRoot(persistence),
+      AuthPersistenceModule.forRoot(),
     ];
     const providers = [];
     const exports = [];
@@ -71,84 +64,58 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
         );
     }
 
-    if (authStrategies.includes('jwt')) {
+    if (resolvedOptions.plugins.jwt.enabled) {
+      imports.push(BetterAuthJwtTypeormSupportModule);
       imports.push(
         JwtModule.registerAsync({
           imports: [ConfigModule.forFeature(authConfig)],
           inject: [authConfig.KEY],
-          useFactory: (authConfig: AuthConfig) => ({
-            secret: authConfig.jwtSecret,
+          useFactory: (config: AuthConfig) => ({
+            secret: config.plugins.jwt.secret,
             signOptions: {
-              expiresIn: parseInt(authConfig.jwtExpiration, 10),
-              audience: authConfig.jwtAudience,
-              issuer: authConfig.jwtIssuer,
+              expiresIn: config.plugins.jwt.expiration as never,
+              audience: config.plugins.jwt.audience,
+              issuer: config.plugins.jwt.issuer,
             },
           }),
         }),
       );
-
-      providers.push(
-        AuthOrchestrationService,
-        JwtStrategy,
-        {
-          provide: AuthService,
-          useExisting: AuthOrchestrationService,
-        },
-        {
-          provide: JwtAuthService,
-          useExisting: AuthOrchestrationService,
-        },
-      );
-      exports.push(AuthService);
     }
 
-    if (engine === 'better-auth') {
-      switch (resolvedOptions.engineOptions.persistence.mode) {
-        case 'isolated':
-          providers.push(
-            BetterAuthIsolatedPersistenceAdapter,
-            {
-              provide: AuthEnginePersistencePort,
-              useExisting: BetterAuthIsolatedPersistenceAdapter,
-            },
-            BetterAuthAuthEngineAdapter,
-            {
-              provide: AuthEnginePort,
-              useExisting: BetterAuthAuthEngineAdapter,
-            },
-          );
-          break;
-        case 'typeorm-adapter':
-          providers.push(
-            BetterAuthTypeormAdapterPersistenceAdapter,
-            {
-              provide: AuthEnginePersistencePort,
-              useExisting: BetterAuthTypeormAdapterPersistenceAdapter,
-            },
-            BetterAuthAuthEngineAdapter,
-            {
-              provide: AuthEnginePort,
-              useExisting: BetterAuthAuthEngineAdapter,
-            },
-          );
-          break;
-        default:
-          throw new Error(
-            `Unsupported auth engine persistence mode: ${resolvedOptions.engineOptions.persistence.mode}`,
-          );
-      }
-    } else {
-      providers.push(LegacyJwtAuthEngineAdapter, {
+    if (resolvedOptions.plugins.passkeys.enabled) {
+      imports.push(BetterAuthPasskeysTypeormSupportModule);
+    }
+
+    providers.push(
+      AuthOrchestrationService,
+      {
+        provide: AuthService,
+        useExisting: AuthOrchestrationService,
+      },
+      BetterAuthTypeormAdapterPersistenceAdapter,
+      {
+        provide: AuthEnginePersistencePort,
+        useExisting: BetterAuthTypeormAdapterPersistenceAdapter,
+      },
+      BetterAuthAuthEngineAdapter,
+      {
         provide: AuthEnginePort,
-        useExisting: LegacyJwtAuthEngineAdapter,
-      });
+        useExisting: BetterAuthAuthEngineAdapter,
+      },
+    );
+    exports.push(AuthService);
+
+    if (resolvedOptions.plugins.jwt.enabled) {
+      providers.push(BetterAuthJwtPluginService);
     }
+
+    const baseModule = super.forRoot(resolvedOptions);
 
     return {
-      ...super.forRoot(resolvedOptions),
-      imports,
-      providers,
-      exports,
+      ...baseModule,
+      imports: [...(baseModule.imports ?? []), ...imports],
+      providers: [...(baseModule.providers ?? []), ...providers],
+      exports: [...(baseModule.exports ?? []), ...exports],
     };
   }
 
@@ -159,25 +126,37 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
     const moduleDefinition = this.forRoot({
       ...configOptions,
       ...overrides,
+      betterAuth: {
+        ...configOptions.betterAuth,
+        ...overrides.betterAuth,
+        callbackUrls: {
+          ...configOptions.betterAuth?.callbackUrls,
+          ...overrides.betterAuth?.callbackUrls,
+        },
+      },
       encryption: {
         ...configOptions.encryption,
         ...overrides.encryption,
       },
-      engineOptions: {
-        ...configOptions.engineOptions,
-        ...overrides.engineOptions,
-        persistence: {
-          ...configOptions.engineOptions?.persistence,
-          ...overrides.engineOptions?.persistence,
-          separateDatabase: {
-            ...configOptions.engineOptions?.persistence?.separateDatabase,
-            ...overrides.engineOptions?.persistence?.separateDatabase,
-          },
+      plugins: {
+        ...configOptions.plugins,
+        ...overrides.plugins,
+        jwt: {
+          ...configOptions.plugins?.jwt,
+          ...overrides.plugins?.jwt,
         },
-      },
-      persistence: {
-        ...configOptions.persistence,
-        ...overrides.persistence,
+        passkeys: {
+          ...configOptions.plugins?.passkeys,
+          ...overrides.plugins?.passkeys,
+        },
+        social: {
+          ...configOptions.plugins?.social,
+          ...overrides.plugins?.social,
+        },
+        oidc: {
+          ...configOptions.plugins?.oidc,
+          ...overrides.plugins?.oidc,
+        },
       },
     });
 

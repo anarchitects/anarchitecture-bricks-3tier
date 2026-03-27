@@ -21,16 +21,13 @@ export class UserEntity implements User {
   email!: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  userName!: string | null;
-
-  @Column({ type: 'varchar', length: 255 })
-  passwordHash!: string;
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  token!: string | null;
+  name!: string | null;
 
   @Column({ type: 'boolean', default: false })
-  isActive!: boolean;
+  emailVerified!: boolean;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  image!: string | null;
 
   @ManyToMany('RoleEntity', 'users', { cascade: ['insert', 'update'] })
   @JoinTable({

@@ -3,10 +3,13 @@ import {
   ActivateUserRequestDTO,
   ChangePasswordRequestDTO,
   ForgotPasswordRequestDTO,
+  JwtLogoutRequestDTO,
   LoginRequestDTO,
   LoginResponseDTO,
+  LoggedInUserInfoResponseDTO,
   LogoutRequestDTO,
   RefreshTokenRequestDTO,
+  RefreshTokenResponseDTO,
   RegisterRequestDTO,
   RegisterResponseDTO,
   ResetPasswordRequestDTO,
@@ -46,12 +49,22 @@ export class AuthApi {
   }
 
   login(dto: LoginRequestDTO) {
-    return this.http.post<LoginResponseDTO>(`${this.resourceUrl}/login`, dto);
+    return this.http.post<LoggedInUserInfoResponseDTO>(
+      `${this.resourceUrl}/login`,
+      dto,
+    );
   }
 
-  logout(dto: LogoutRequestDTO) {
+  logout(dto: LogoutRequestDTO = {}) {
     return this.http.post<{ success: boolean }>(
       `${this.resourceUrl}/logout`,
+      dto,
+    );
+  }
+
+  logoutJwt(dto: JwtLogoutRequestDTO) {
+    return this.http.post<{ success: boolean }>(
+      `${this.resourceUrl}/jwt/logout`,
       dto,
     );
   }
@@ -91,9 +104,16 @@ export class AuthApi {
     );
   }
 
-  refreshTokens(userId: string, dto: RefreshTokenRequestDTO) {
+  refreshTokens(dto: RefreshTokenRequestDTO) {
+    return this.http.post<RefreshTokenResponseDTO>(
+      `${this.resourceUrl}/jwt/refresh`,
+      dto,
+    );
+  }
+
+  loginJwt(dto: LoginRequestDTO) {
     return this.http.post<LoginResponseDTO>(
-      `${this.resourceUrl}/refresh-tokens/${userId}`,
+      `${this.resourceUrl}/jwt/login`,
       dto,
     );
   }

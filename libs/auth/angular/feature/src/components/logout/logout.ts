@@ -23,10 +23,6 @@ export class AnarchitectsFeatureLogout {
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
   async submitForm(input: LogoutRequestDTO): Promise<void> {
-    if (!input.refreshToken) {
-      return;
-    }
-
     await this.authStore.logout(input);
   }
 }

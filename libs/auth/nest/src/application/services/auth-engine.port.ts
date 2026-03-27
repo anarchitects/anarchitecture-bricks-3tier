@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import {
+  ForgotPasswordRequestDTO,
   LoginRequestDTO,
-  LoginResponseDTO,
   LogoutRequestDTO,
-  RefreshTokenRequestDTO,
+  RegisterRequestDTO,
+  ResetPasswordRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 
 export type AuthEngineFlowName =
   | 'password-sign-in'
   | 'passkey-sign-in'
   | 'social-sign-in'
-  | 'sign-out-or-refresh';
+  | 'sign-out';
 
 export type AuthEngineFlowSupport = {
   flow: AuthEngineFlowName;
@@ -19,8 +20,19 @@ export type AuthEngineFlowSupport = {
 };
 
 export type AuthEngineCapabilityReport = {
-  engine: 'legacy-jwt' | 'better-auth';
+  engine: 'better-auth';
   flows: AuthEngineFlowSupport[];
+};
+
+export type AuthEngineSessionResult = {
+  userId: string;
+  headers?: Headers;
+};
+
+export type AuthEngineMutationResult = {
+  success: boolean;
+  headers?: Headers;
+  userId?: string;
 };
 
 export type AuthPasskeySignInInput = {
@@ -36,22 +48,41 @@ export type AuthSocialSignInInput = {
   headers?: HeadersInit;
 };
 
-export type AuthSignOutOrRefreshInput =
-  | { mode: 'refresh'; userId: string; dto: RefreshTokenRequestDTO }
-  | { mode: 'sign-out'; headers?: HeadersInit };
-
 @Injectable()
 export abstract class AuthEnginePort {
-  abstract login(dto: LoginRequestDTO): Promise<LoginResponseDTO>;
-  abstract logout(dto: LogoutRequestDTO): Promise<{ success: boolean }>;
-  abstract refreshTokens(
-    userId: string,
-    dto: RefreshTokenRequestDTO,
-  ): Promise<LoginResponseDTO>;
+  abstract register(
+    dto: RegisterRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthEngineMutationResult>;
+  abstract login(
+    dto: LoginRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthEngineSessionResult>;
+  abstract logout(
+    _dto: LogoutRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<{ success: boolean; headers?: Headers }>;
+  abstract getSession(
+    headers?: HeadersInit,
+  ): Promise<AuthEngineSessionResult | null>;
+  abstract requestPasswordReset(
+    dto: ForgotPasswordRequestDTO,
+  ): Promise<AuthEngineMutationResult>;
+  abstract resetPassword(
+    dto: ResetPasswordRequestDTO,
+  ): Promise<AuthEngineMutationResult>;
+  abstract verifyEmail(
+    token: string,
+    headers?: HeadersInit,
+  ): Promise<AuthEngineMutationResult>;
 
   abstract describeCapabilities(): Promise<AuthEngineCapabilityReport>;
-  abstract passwordSignIn(dto: LoginRequestDTO): Promise<LoginResponseDTO>;
-  abstract passkeySignIn(input: AuthPasskeySignInInput): Promise<unknown>;
+  abstract passwordSignIn(
+    dto: LoginRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthEngineSessionResult>;
+  abstract passkeySignIn(
+    input: AuthPasskeySignInInput,
+  ): Promise<AuthEngineSessionResult>;
   abstract socialSignIn(input: AuthSocialSignInInput): Promise<unknown>;
-  abstract signOutOrRefresh(input: AuthSignOutOrRefreshInput): Promise<unknown>;
 }

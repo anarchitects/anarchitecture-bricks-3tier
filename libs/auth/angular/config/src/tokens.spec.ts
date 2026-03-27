@@ -25,6 +25,11 @@ describe('AuthConfig', () => {
   it('should allow overriding default values', () => {
     const customConfig: AuthConfig = {
       apiResourcePath: 'custom-auth',
+      plugins: {
+        jwt: {
+          enabled: true,
+        },
+      },
     };
     TestBed.configureTestingModule({
       providers: [{ provide: AUTH_CONFIG, useValue: customConfig }],

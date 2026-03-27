@@ -20,11 +20,9 @@ import {
   throwError,
 } from 'rxjs';
 import {
-  ACCESS_TOKEN_STORAGE_KEY,
   REFRESH_TOKEN_STORAGE_KEY,
   clearStoredTokens,
   getStoredToken,
-  resolveUserIdFromAccessToken,
   storeTokens,
 } from './auth-token.utils';
 
@@ -60,7 +58,7 @@ function isAuthPublicEndpoint(url: string, authBaseUrl: string): boolean {
 }
 
 function isRefreshEndpoint(url: string, authBaseUrl: string): boolean {
-  return url.includes(`${authBaseUrl}/refresh-tokens/`);
+  return url.includes(`${authBaseUrl}/jwt/refresh`);
 }
 
 function redirectToLogin(router: Router | null): void {
@@ -126,10 +124,7 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       const refreshToken = getStoredToken(REFRESH_TOKEN_STORAGE_KEY);
-      const accessToken = getStoredToken(ACCESS_TOKEN_STORAGE_KEY);
-      const userId = resolveUserIdFromAccessToken(accessToken);
-
-      if (!refreshToken || !userId) {
+      if (!refreshToken) {
         clearStoredTokens();
         if (shouldRedirectToLogin(req)) {
           redirectToLogin(router ?? null);
@@ -137,7 +132,7 @@ export const authErrorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      const refreshUrl = `${authBaseUrl}/refresh-tokens/${userId}`;
+      const refreshUrl = `${authBaseUrl}/jwt/refresh`;
 
       return getRefreshTokensRequest(rawHttp, refreshUrl, refreshToken).pipe(
         switchMap(({ accessToken: nextAccessToken }) => {

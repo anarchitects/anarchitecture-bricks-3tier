@@ -12,25 +12,27 @@ describe('AuthPersistenceModule', () => {
     process.env['AUTH_PERSISTENCE'] = ORIGINAL_AUTH_PERSISTENCE;
   });
 
-  it('should use typeorm fallback when no options are provided to forRoot', () => {
+  it('uses the canonical TypeORM-backed persistence module for forRoot', () => {
     delete process.env['AUTH_PERSISTENCE'];
+
     const moduleMetadata = AuthPersistenceModule.forRoot();
 
     expect(moduleMetadata.module).toBe(AuthPersistenceModule);
   });
 
-  it('should keep forRoot explicit and ignore AUTH_PERSISTENCE', () => {
+  it('keeps forRoot explicit and ignores legacy AUTH_PERSISTENCE values', () => {
     process.env['AUTH_PERSISTENCE'] = 'unsupported';
+
     const moduleMetadata = AuthPersistenceModule.forRoot();
 
     expect(moduleMetadata.module).toBe(AuthPersistenceModule);
   });
 
-  it('should resolve AUTH_PERSISTENCE through forRootFromConfig', () => {
+  it('keeps forRootFromConfig compatible with legacy AUTH_PERSISTENCE env values', () => {
     process.env['AUTH_PERSISTENCE'] = 'unsupported';
 
-    expect(() => AuthPersistenceModule.forRootFromConfig()).toThrow(
-      'Unsupported persistence type: unsupported',
-    );
+    const moduleMetadata = AuthPersistenceModule.forRootFromConfig();
+
+    expect(moduleMetadata.module).toBe(AuthPersistenceModule);
   });
 });

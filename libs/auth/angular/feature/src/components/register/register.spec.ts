@@ -27,7 +27,7 @@ describe('AnarchitectsFeatureRegister', () => {
 
   it('should delegate registration to AuthStore', async () => {
     const input: RegisterRequestDTO = {
-      userName: 'Jane',
+      name: 'Jane',
       email: 'jane@example.com',
       password: 'secret123',
       confirmPassword: 'secret123',

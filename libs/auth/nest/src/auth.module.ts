@@ -32,29 +32,39 @@ export class AuthModule {
         application: {
           ...configOptions.presentation?.application,
           ...overrides.presentation?.application,
+          betterAuth: {
+            ...configOptions.presentation?.application?.betterAuth,
+            ...overrides.presentation?.application?.betterAuth,
+            callbackUrls: {
+              ...configOptions.presentation?.application?.betterAuth
+                ?.callbackUrls,
+              ...overrides.presentation?.application?.betterAuth
+                ?.callbackUrls,
+            },
+          },
           encryption: {
             ...configOptions.presentation?.application?.encryption,
             ...overrides.presentation?.application?.encryption,
           },
-          engineOptions: {
-            ...configOptions.presentation?.application?.engineOptions,
-            ...overrides.presentation?.application?.engineOptions,
-            persistence: {
-              ...configOptions.presentation?.application?.engineOptions
-                ?.persistence,
-              ...overrides.presentation?.application?.engineOptions
-                ?.persistence,
-              separateDatabase: {
-                ...configOptions.presentation?.application?.engineOptions
-                  ?.persistence?.separateDatabase,
-                ...overrides.presentation?.application?.engineOptions
-                  ?.persistence?.separateDatabase,
-              },
+          plugins: {
+            ...configOptions.presentation?.application?.plugins,
+            ...overrides.presentation?.application?.plugins,
+            jwt: {
+              ...configOptions.presentation?.application?.plugins?.jwt,
+              ...overrides.presentation?.application?.plugins?.jwt,
             },
-          },
-          persistence: {
-            ...configOptions.presentation?.application?.persistence,
-            ...overrides.presentation?.application?.persistence,
+            passkeys: {
+              ...configOptions.presentation?.application?.plugins?.passkeys,
+              ...overrides.presentation?.application?.plugins?.passkeys,
+            },
+            social: {
+              ...configOptions.presentation?.application?.plugins?.social,
+              ...overrides.presentation?.application?.plugins?.social,
+            },
+            oidc: {
+              ...configOptions.presentation?.application?.plugins?.oidc,
+              ...overrides.presentation?.application?.plugins?.oidc,
+            },
           },
         },
       },

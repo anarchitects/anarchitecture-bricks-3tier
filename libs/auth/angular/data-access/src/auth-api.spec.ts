@@ -50,14 +50,15 @@ describe('AuthApi', () => {
       const req = httpController.expectOne('/api/auth/login');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(dto);
-      req.flush({ success: true });
+      req.flush({
+        user: { id: 'user-123', email: 'user@example.com' },
+        rbac: [],
+      });
     });
   });
   describe('logout', () => {
     it('should call the logout endpoint', () => {
-      const dto = {
-        refreshToken: 'some-refresh-token',
-      };
+      const dto = {};
       service.logout(dto).subscribe();
       const req = httpController.expectOne('/api/auth/logout');
       expect(req.request.method).toBe('POST');
@@ -146,15 +147,12 @@ describe('AuthApi', () => {
     });
   });
   describe('refreshTokens', () => {
-    it('should call the refresh token endpoint', () => {
+    it('should call the JWT refresh token endpoint', () => {
       const dto = {
         refreshToken: 'some-refresh-token',
       };
-      const userId = 'user-123';
-      service.refreshTokens(userId, dto).subscribe();
-      const req = httpController.expectOne(
-        `/api/auth/refresh-tokens/${userId}`,
-      );
+      service.refreshTokens(dto).subscribe();
+      const req = httpController.expectOne('/api/auth/jwt/refresh');
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(dto);
       req.flush({

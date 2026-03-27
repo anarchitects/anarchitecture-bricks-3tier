@@ -1,93 +1,113 @@
+import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
+import type { ResourceAuthorizationOptions } from '../application/resource-authorization.types';
+import type { AuthConfig } from './auth.config';
 import {
+  DEFAULT_AUTH_BETTER_AUTH_BASE_URL,
+  DEFAULT_AUTH_BETTER_AUTH_RESET_PASSWORD_CALLBACK_URL,
+  DEFAULT_AUTH_BETTER_AUTH_SECRET,
+  DEFAULT_AUTH_BETTER_AUTH_VERIFY_EMAIL_CALLBACK_URL,
   DEFAULT_AUTH_ENCRYPTION_ALGORITHM,
   DEFAULT_AUTH_ENCRYPTION_KEY,
-  DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
-  DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
-  DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
-  DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
   DEFAULT_AUTH_MAILER_PROVIDER,
-  DEFAULT_AUTH_PERSISTENCE,
-  DEFAULT_AUTH_STRATEGIES,
+  DEFAULT_AUTH_PLUGIN_JWT_AUDIENCE,
+  DEFAULT_AUTH_PLUGIN_JWT_ENABLED,
+  DEFAULT_AUTH_PLUGIN_JWT_EXPIRATION,
+  DEFAULT_AUTH_PLUGIN_JWT_ISSUER,
+  DEFAULT_AUTH_PLUGIN_JWT_SECRET,
+  DEFAULT_AUTH_PLUGIN_OIDC_ENABLED,
+  DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
+  DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
+  DEFAULT_AUTH_PLUGIN_PASSKEYS_ENABLED,
+  DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED,
 } from './auth.config';
-import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
-import type { AuthConfig } from './auth.config';
-import type { ResourceAuthorizationOptions } from '../application/resource-authorization.types';
 
-export type AuthEngine = 'legacy-jwt' | 'better-auth';
-export type AuthSessionMode = 'jwt' | 'session';
-export type AuthEnginePersistenceMode = 'isolated' | 'typeorm-adapter';
-export type AuthEngineIsolatedTopology = 'same-db' | 'separate-db';
-
-export type AuthEngineSeparateDatabaseOptions = {
-  host?: string;
-  port?: number;
-  username?: string;
-  password?: string;
-  database?: string;
-  ssl?: boolean;
+export type AuthBetterAuthOptions = {
+  baseUrl?: string;
+  secret?: string;
+  callbackUrls?: {
+    verifyEmail?: string;
+    resetPassword?: string;
+  };
 };
 
-export type ResolvedAuthEngineSeparateDatabaseOptions = {
-  host?: string;
-  port: number;
-  username?: string;
-  password?: string;
-  database?: string;
-  ssl: boolean;
+export type ResolvedAuthBetterAuthOptions = {
+  baseUrl: string;
+  secret: string;
+  callbackUrls: {
+    verifyEmail: string;
+    resetPassword: string;
+  };
 };
 
-export type AuthEnginePersistenceOptions = {
-  mode?: AuthEnginePersistenceMode;
-  isolatedTopology?: AuthEngineIsolatedTopology;
-  separateDatabase?: AuthEngineSeparateDatabaseOptions;
+export type AuthJwtPluginOptions = {
+  enabled?: boolean;
+  secret?: string;
+  expiration?: string;
+  audience?: string;
+  issuer?: string;
 };
 
-export type ResolvedAuthEnginePersistenceOptions = {
-  mode: AuthEnginePersistenceMode;
-  isolatedTopology: AuthEngineIsolatedTopology;
-  separateDatabase: ResolvedAuthEngineSeparateDatabaseOptions;
+export type ResolvedAuthJwtPluginOptions = {
+  enabled: boolean;
+  secret: string;
+  expiration: string;
+  audience: string;
+  issuer: string;
 };
 
-export type AuthSpikeSocialProviderConfig = {
+export type AuthPasskeysPluginOptions = {
+  enabled?: boolean;
+  rpID?: string;
+  rpName?: string;
+  origin?: string;
+};
+
+export type ResolvedAuthPasskeysPluginOptions = {
+  enabled: boolean;
+  rpID: string;
+  rpName: string;
+  origin?: string;
+};
+
+export type AuthSocialProviderConfig = {
   clientId?: string;
   clientSecret?: string;
 };
 
-export type AuthSpikeOptions = {
-  baseUrl?: string;
-  secret?: string;
-  proofHarnessEnabled?: boolean;
-  socialProviders?: {
-    github?: AuthSpikeSocialProviderConfig;
-  };
-  passkeys?: {
-    rpID?: string;
-    rpName?: string;
-    origin?: string;
-  };
+export type AuthSocialPluginOptions = {
+  enabled?: boolean;
+  github?: AuthSocialProviderConfig;
 };
 
-export type ResolvedAuthSpikeOptions = {
-  baseUrl: string;
-  secret: string;
-  proofHarnessEnabled: boolean;
-  socialProviders: {
-    github?: AuthSpikeSocialProviderConfig;
-  };
-  passkeys: {
-    rpID: string;
-    rpName: string;
-    origin?: string;
-  };
+export type ResolvedAuthSocialPluginOptions = {
+  enabled: boolean;
+  github?: AuthSocialProviderConfig;
 };
 
-export type AuthPersistenceModuleOptions = {
-  persistence?: string;
+export type AuthOidcPluginOptions = {
+  enabled?: boolean;
 };
 
-export type ResolvedAuthPersistenceModuleOptions = {
-  persistence: string;
+export type ResolvedAuthOidcPluginOptions = {
+  enabled: boolean;
 };
+
+export type AuthPluginsOptions = {
+  jwt?: AuthJwtPluginOptions;
+  passkeys?: AuthPasskeysPluginOptions;
+  social?: AuthSocialPluginOptions;
+  oidc?: AuthOidcPluginOptions;
+};
+
+export type ResolvedAuthPluginsOptions = {
+  jwt: ResolvedAuthJwtPluginOptions;
+  passkeys: ResolvedAuthPasskeysPluginOptions;
+  social: ResolvedAuthSocialPluginOptions;
+  oidc: ResolvedAuthOidcPluginOptions;
+};
+
+export type AuthPersistenceModuleOptions = Record<string, never>;
+export type ResolvedAuthPersistenceModuleOptions = Record<string, never>;
 
 export type AuthMailerModuleOptions = {
   provider?: CommonMailerProvider;
@@ -98,44 +118,22 @@ export type ResolvedAuthMailerModuleOptions = {
 };
 
 export type AuthApplicationModuleOptions = {
-  authStrategies?: string[];
-  engine?: AuthEngine;
-  sessionMode?: AuthSessionMode;
-  engineOptions?: {
-    persistence?: AuthEnginePersistenceOptions;
-  };
-  features?: {
-    passkeys?: boolean;
-    social?: boolean;
-    oidc?: boolean;
-  };
-  spike?: AuthSpikeOptions;
+  betterAuth?: AuthBetterAuthOptions;
+  plugins?: AuthPluginsOptions;
   encryption?: {
     algorithm?: 'bcrypt' | 'argon2';
     key?: string;
   };
-  persistence?: AuthPersistenceModuleOptions;
   resourceAuthorization?: ResourceAuthorizationOptions;
 };
 
 export type ResolvedAuthApplicationModuleOptions = {
-  authStrategies: string[];
-  engine: AuthEngine;
-  sessionMode: AuthSessionMode;
-  engineOptions: {
-    persistence: ResolvedAuthEnginePersistenceOptions;
-  };
-  features: {
-    passkeys: boolean;
-    social: boolean;
-    oidc: boolean;
-  };
-  spike: ResolvedAuthSpikeOptions;
+  betterAuth: ResolvedAuthBetterAuthOptions;
+  plugins: ResolvedAuthPluginsOptions;
   encryption: {
     algorithm: 'bcrypt' | 'argon2';
     key: string;
   };
-  persistence: ResolvedAuthPersistenceModuleOptions;
   resourceAuthorization: Required<ResourceAuthorizationOptions>;
 };
 
@@ -163,9 +161,10 @@ export type ResolvedAuthModuleOptions = {
 
 export const resolveAuthPersistenceModuleOptions = (
   options: AuthPersistenceModuleOptions = {},
-): ResolvedAuthPersistenceModuleOptions => ({
-  persistence: options.persistence ?? DEFAULT_AUTH_PERSISTENCE,
-});
+): ResolvedAuthPersistenceModuleOptions => {
+  void options;
+  return {};
+};
 
 export const resolveAuthMailerModuleOptions = (
   options: AuthMailerModuleOptions = {},
@@ -173,80 +172,53 @@ export const resolveAuthMailerModuleOptions = (
   provider: options.provider ?? DEFAULT_AUTH_MAILER_PROVIDER,
 });
 
-export const resolveAuthEnginePersistenceOptions = (
-  options: AuthEnginePersistenceOptions = {},
-): ResolvedAuthEnginePersistenceOptions => {
-  const resolved = {
-    mode: options.mode ?? DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
-    isolatedTopology:
-      options.isolatedTopology ?? DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
-    separateDatabase: {
-      host: options.separateDatabase?.host,
-      port:
-        options.separateDatabase?.port ?? DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
-      username: options.separateDatabase?.username,
-      password: options.separateDatabase?.password,
-      database: options.separateDatabase?.database,
-      ssl: options.separateDatabase?.ssl ?? DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
-    },
-  } satisfies ResolvedAuthEnginePersistenceOptions;
-
-  if (
-    resolved.mode === 'isolated' &&
-    resolved.isolatedTopology === 'separate-db'
-  ) {
-    const missingFields = [
-      ['host', resolved.separateDatabase.host],
-      ['username', resolved.separateDatabase.username],
-      ['password', resolved.separateDatabase.password],
-      ['database', resolved.separateDatabase.database],
-    ]
-      .filter(([, value]) => !value)
-      .map(([field]) => field);
-
-    if (missingFields.length > 0) {
-      throw new Error(
-        `Auth engine separate database configuration is incomplete: missing ${missingFields.join(', ')}`,
-      );
-    }
-  }
-
-  return resolved;
-};
-
 export const resolveAuthApplicationModuleOptions = (
   options: AuthApplicationModuleOptions = {},
 ): ResolvedAuthApplicationModuleOptions => ({
-  authStrategies: options.authStrategies ?? [...DEFAULT_AUTH_STRATEGIES],
-  engine: options.engine ?? 'legacy-jwt',
-  sessionMode: options.sessionMode ?? 'jwt',
-  engineOptions: {
-    persistence: resolveAuthEnginePersistenceOptions(
-      options.engineOptions?.persistence,
-    ),
+  betterAuth: {
+    baseUrl: options.betterAuth?.baseUrl ?? DEFAULT_AUTH_BETTER_AUTH_BASE_URL,
+    secret: options.betterAuth?.secret ?? DEFAULT_AUTH_BETTER_AUTH_SECRET,
+    callbackUrls: {
+      verifyEmail:
+        options.betterAuth?.callbackUrls?.verifyEmail ??
+        DEFAULT_AUTH_BETTER_AUTH_VERIFY_EMAIL_CALLBACK_URL,
+      resetPassword:
+        options.betterAuth?.callbackUrls?.resetPassword ??
+        DEFAULT_AUTH_BETTER_AUTH_RESET_PASSWORD_CALLBACK_URL,
+    },
   },
-  features: {
-    passkeys: options.features?.passkeys ?? false,
-    social: options.features?.social ?? false,
-    oidc: options.features?.oidc ?? false,
-  },
-  spike: {
-    baseUrl: options.spike?.baseUrl ?? 'http://localhost:3000/api/auth',
-    secret:
-      options.spike?.secret ?? 'better-auth-spike-secret-32-chars-minimum',
-    proofHarnessEnabled: options.spike?.proofHarnessEnabled ?? false,
-    socialProviders: {
-      github: options.spike?.socialProviders?.github
+  plugins: {
+    jwt: {
+      enabled: options.plugins?.jwt?.enabled ?? DEFAULT_AUTH_PLUGIN_JWT_ENABLED,
+      secret: options.plugins?.jwt?.secret ?? DEFAULT_AUTH_PLUGIN_JWT_SECRET,
+      expiration:
+        options.plugins?.jwt?.expiration ?? DEFAULT_AUTH_PLUGIN_JWT_EXPIRATION,
+      audience:
+        options.plugins?.jwt?.audience ?? DEFAULT_AUTH_PLUGIN_JWT_AUDIENCE,
+      issuer: options.plugins?.jwt?.issuer ?? DEFAULT_AUTH_PLUGIN_JWT_ISSUER,
+    },
+    passkeys: {
+      enabled:
+        options.plugins?.passkeys?.enabled ??
+        DEFAULT_AUTH_PLUGIN_PASSKEYS_ENABLED,
+      rpID: options.plugins?.passkeys?.rpID ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
+      rpName:
+        options.plugins?.passkeys?.rpName ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
+      origin: options.plugins?.passkeys?.origin,
+    },
+    social: {
+      enabled:
+        options.plugins?.social?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED,
+      github: options.plugins?.social?.github
         ? {
-            clientId: options.spike.socialProviders.github.clientId,
-            clientSecret: options.spike.socialProviders.github.clientSecret,
+            clientId: options.plugins.social.github.clientId,
+            clientSecret: options.plugins.social.github.clientSecret,
           }
         : undefined,
     },
-    passkeys: {
-      rpID: options.spike?.passkeys?.rpID ?? 'localhost',
-      rpName: options.spike?.passkeys?.rpName ?? 'Anarchitecture Auth Spike',
-      origin: options.spike?.passkeys?.origin,
+    oidc: {
+      enabled:
+        options.plugins?.oidc?.enabled ?? DEFAULT_AUTH_PLUGIN_OIDC_ENABLED,
     },
   },
   encryption: {
@@ -255,7 +227,6 @@ export const resolveAuthApplicationModuleOptions = (
       (DEFAULT_AUTH_ENCRYPTION_ALGORITHM as 'bcrypt' | 'argon2'),
     key: options.encryption?.key ?? DEFAULT_AUTH_ENCRYPTION_KEY,
   },
-  persistence: resolveAuthPersistenceModuleOptions(options.persistence),
   resourceAuthorization: {
     loaders: { ...(options.resourceAuthorization?.loaders ?? {}) },
   },
@@ -276,9 +247,10 @@ export const resolveAuthModuleOptions = (
 
 export const mapAuthConfigToPersistenceModuleOptions = (
   config: AuthConfig,
-): AuthPersistenceModuleOptions => ({
-  persistence: config.persistence ?? DEFAULT_AUTH_PERSISTENCE,
-});
+): AuthPersistenceModuleOptions => {
+  void config;
+  return {};
+};
 
 export const mapAuthConfigToMailerModuleOptions = (
   config: AuthConfig,
@@ -289,59 +261,59 @@ export const mapAuthConfigToMailerModuleOptions = (
 export const mapAuthConfigToApplicationModuleOptions = (
   config: AuthConfig,
 ): AuthApplicationModuleOptions => ({
-  authStrategies: config.authStrategies ?? [...DEFAULT_AUTH_STRATEGIES],
-  engine: config.engine ?? 'legacy-jwt',
-  sessionMode: config.sessionMode ?? 'jwt',
-  engineOptions: {
-    persistence: {
-      mode:
-        config.engineOptions?.persistence?.mode ??
-        DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
-      isolatedTopology:
-        config.engineOptions?.persistence?.isolatedTopology ??
-        DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
-      separateDatabase: {
-        host: config.engineOptions?.persistence?.separateDatabase?.host,
-        port:
-          config.engineOptions?.persistence?.separateDatabase?.port ??
-          DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
-        username: config.engineOptions?.persistence?.separateDatabase?.username,
-        password: config.engineOptions?.persistence?.separateDatabase?.password,
-        database: config.engineOptions?.persistence?.separateDatabase?.database,
-        ssl:
-          config.engineOptions?.persistence?.separateDatabase?.ssl ??
-          DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
-      },
+  betterAuth: {
+    baseUrl: config.betterAuth?.baseUrl ?? DEFAULT_AUTH_BETTER_AUTH_BASE_URL,
+    secret: config.betterAuth?.secret ?? DEFAULT_AUTH_BETTER_AUTH_SECRET,
+    callbackUrls: {
+      verifyEmail:
+        config.betterAuth?.callbackUrls?.verifyEmail ??
+        DEFAULT_AUTH_BETTER_AUTH_VERIFY_EMAIL_CALLBACK_URL,
+      resetPassword:
+        config.betterAuth?.callbackUrls?.resetPassword ??
+        DEFAULT_AUTH_BETTER_AUTH_RESET_PASSWORD_CALLBACK_URL,
     },
   },
-  features: {
-    passkeys: config.features?.passkeys ?? false,
-    social: config.features?.social ?? false,
-    oidc: config.features?.oidc ?? false,
-  },
-  spike: {
-    baseUrl: config.spike?.baseUrl ?? 'http://localhost:3000/api/auth',
-    secret: config.spike?.secret ?? 'better-auth-spike-secret-32-chars-minimum',
-    proofHarnessEnabled: config.spike?.proofHarnessEnabled ?? false,
-    socialProviders: {
-      github: config.spike?.socialProviders?.github
+  plugins: {
+    jwt: {
+      enabled:
+        config.plugins?.jwt?.enabled ?? DEFAULT_AUTH_PLUGIN_JWT_ENABLED,
+      secret: config.plugins?.jwt?.secret ?? DEFAULT_AUTH_PLUGIN_JWT_SECRET,
+      expiration:
+        config.plugins?.jwt?.expiration ?? DEFAULT_AUTH_PLUGIN_JWT_EXPIRATION,
+      audience:
+        config.plugins?.jwt?.audience ?? DEFAULT_AUTH_PLUGIN_JWT_AUDIENCE,
+      issuer: config.plugins?.jwt?.issuer ?? DEFAULT_AUTH_PLUGIN_JWT_ISSUER,
+    },
+    passkeys: {
+      enabled:
+        config.plugins?.passkeys?.enabled ??
+        DEFAULT_AUTH_PLUGIN_PASSKEYS_ENABLED,
+      rpID:
+        config.plugins?.passkeys?.rpID ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
+      rpName:
+        config.plugins?.passkeys?.rpName ??
+        DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
+      origin: config.plugins?.passkeys?.origin,
+    },
+    social: {
+      enabled:
+        config.plugins?.social?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED,
+      github: config.plugins?.social?.github
         ? {
-            clientId: config.spike.socialProviders.github.clientId,
-            clientSecret: config.spike.socialProviders.github.clientSecret,
+            clientId: config.plugins.social.github.clientId,
+            clientSecret: config.plugins.social.github.clientSecret,
           }
         : undefined,
     },
-    passkeys: {
-      rpID: config.spike?.passkeys?.rpID ?? 'localhost',
-      rpName: config.spike?.passkeys?.rpName ?? 'Anarchitecture Auth Spike',
-      origin: config.spike?.passkeys?.origin,
+    oidc: {
+      enabled:
+        config.plugins?.oidc?.enabled ?? DEFAULT_AUTH_PLUGIN_OIDC_ENABLED,
     },
   },
   encryption: {
     algorithm: config.encryptionAlgorithm as 'bcrypt' | 'argon2',
     key: config.encryptionKey ?? DEFAULT_AUTH_ENCRYPTION_KEY,
   },
-  persistence: mapAuthConfigToPersistenceModuleOptions(config),
 });
 
 export const mapAuthConfigToPresentationModuleOptions = (
