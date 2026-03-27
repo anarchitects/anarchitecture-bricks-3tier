@@ -3,6 +3,8 @@ import {
   DEFAULT_AUTH_ENCRYPTION_KEY,
   DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
   DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
+  DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
+  DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
   DEFAULT_AUTH_MAILER_PROVIDER,
   DEFAULT_AUTH_PERSISTENCE,
   DEFAULT_AUTH_STRATEGIES,
@@ -16,14 +18,34 @@ export type AuthSessionMode = 'jwt' | 'session';
 export type AuthEnginePersistenceMode = 'isolated' | 'typeorm-adapter';
 export type AuthEngineIsolatedTopology = 'same-db' | 'separate-db';
 
+export type AuthEngineSeparateDatabaseOptions = {
+  host?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  database?: string;
+  ssl?: boolean;
+};
+
+export type ResolvedAuthEngineSeparateDatabaseOptions = {
+  host?: string;
+  port: number;
+  username?: string;
+  password?: string;
+  database?: string;
+  ssl: boolean;
+};
+
 export type AuthEnginePersistenceOptions = {
   mode?: AuthEnginePersistenceMode;
   isolatedTopology?: AuthEngineIsolatedTopology;
+  separateDatabase?: AuthEngineSeparateDatabaseOptions;
 };
 
 export type ResolvedAuthEnginePersistenceOptions = {
   mode: AuthEnginePersistenceMode;
   isolatedTopology: AuthEngineIsolatedTopology;
+  separateDatabase: ResolvedAuthEngineSeparateDatabaseOptions;
 };
 
 export type AuthSpikeSocialProviderConfig = {
@@ -153,11 +175,44 @@ export const resolveAuthMailerModuleOptions = (
 
 export const resolveAuthEnginePersistenceOptions = (
   options: AuthEnginePersistenceOptions = {},
-): ResolvedAuthEnginePersistenceOptions => ({
-  mode: options.mode ?? DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
-  isolatedTopology:
-    options.isolatedTopology ?? DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
-});
+): ResolvedAuthEnginePersistenceOptions => {
+  const resolved = {
+    mode: options.mode ?? DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE,
+    isolatedTopology:
+      options.isolatedTopology ?? DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
+    separateDatabase: {
+      host: options.separateDatabase?.host,
+      port:
+        options.separateDatabase?.port ?? DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
+      username: options.separateDatabase?.username,
+      password: options.separateDatabase?.password,
+      database: options.separateDatabase?.database,
+      ssl: options.separateDatabase?.ssl ?? DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
+    },
+  } satisfies ResolvedAuthEnginePersistenceOptions;
+
+  if (
+    resolved.mode === 'isolated' &&
+    resolved.isolatedTopology === 'separate-db'
+  ) {
+    const missingFields = [
+      ['host', resolved.separateDatabase.host],
+      ['username', resolved.separateDatabase.username],
+      ['password', resolved.separateDatabase.password],
+      ['database', resolved.separateDatabase.database],
+    ]
+      .filter(([, value]) => !value)
+      .map(([field]) => field);
+
+    if (missingFields.length > 0) {
+      throw new Error(
+        `Auth engine separate database configuration is incomplete: missing ${missingFields.join(', ')}`,
+      );
+    }
+  }
+
+  return resolved;
+};
 
 export const resolveAuthApplicationModuleOptions = (
   options: AuthApplicationModuleOptions = {},
@@ -245,6 +300,18 @@ export const mapAuthConfigToApplicationModuleOptions = (
       isolatedTopology:
         config.engineOptions?.persistence?.isolatedTopology ??
         DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY,
+      separateDatabase: {
+        host: config.engineOptions?.persistence?.separateDatabase?.host,
+        port:
+          config.engineOptions?.persistence?.separateDatabase?.port ??
+          DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
+        username: config.engineOptions?.persistence?.separateDatabase?.username,
+        password: config.engineOptions?.persistence?.separateDatabase?.password,
+        database: config.engineOptions?.persistence?.separateDatabase?.database,
+        ssl:
+          config.engineOptions?.persistence?.separateDatabase?.ssl ??
+          DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
+      },
     },
   },
   features: {

@@ -37,6 +37,14 @@ describe('BetterAuthSpikeHarness', () => {
         persistence: {
           mode: 'isolated',
           isolatedTopology: 'same-db',
+          separateDatabase: {
+            host: undefined,
+            port: 5432,
+            username: undefined,
+            password: undefined,
+            database: undefined,
+            ssl: false,
+          },
         },
       },
       features: {

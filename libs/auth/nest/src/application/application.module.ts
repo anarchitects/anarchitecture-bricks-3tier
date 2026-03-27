@@ -169,6 +169,10 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
         persistence: {
           ...configOptions.engineOptions?.persistence,
           ...overrides.engineOptions?.persistence,
+          separateDatabase: {
+            ...configOptions.engineOptions?.persistence?.separateDatabase,
+            ...overrides.engineOptions?.persistence?.separateDatabase,
+          },
         },
       },
       persistence: {

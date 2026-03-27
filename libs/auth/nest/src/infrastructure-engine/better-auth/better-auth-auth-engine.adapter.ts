@@ -16,6 +16,7 @@ import {
   AuthSocialSignInInput,
 } from '../../application/services/auth-engine.port';
 import { loadBetterAuthRuntimeModules } from './better-auth.module-loader';
+import { createBetterAuthOptions } from './better-auth-options';
 
 type BetterAuthApi = {
   signInEmail?: (input: {
@@ -222,39 +223,12 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
   }
 
   private async createAuthInstance(): Promise<BetterAuthAuthInstance> {
-    const { betterAuth, betterAuthPasskey } =
-      await loadBetterAuthRuntimeModules();
+    const runtimeModules = await loadBetterAuthRuntimeModules();
     const database = await this.authEnginePersistencePort.resolveDatabase();
 
-    return betterAuth.betterAuth({
-      secret: this.options.spike.secret,
-      baseURL: this.options.spike.baseUrl,
-      database,
-      emailAndPassword: {
-        enabled: true,
-      },
-      socialProviders: this.options.features.social
-        ? {
-            github: {
-              clientId:
-                this.options.spike.socialProviders.github?.clientId ??
-                'spike-client-id',
-              clientSecret:
-                this.options.spike.socialProviders.github?.clientSecret ??
-                'spike-client-secret',
-            },
-          }
-        : {},
-      plugins: this.options.features.passkeys
-        ? [
-            betterAuthPasskey.passkey({
-              rpID: this.options.spike.passkeys.rpID,
-              rpName: this.options.spike.passkeys.rpName,
-              origin: this.options.spike.passkeys.origin,
-            }),
-          ]
-        : [],
-    }) as unknown as BetterAuthAuthInstance;
+    return runtimeModules.betterAuth.betterAuth(
+      createBetterAuthOptions(this.options, database, runtimeModules),
+    ) as unknown as BetterAuthAuthInstance;
   }
 
   private isLoginResponse(value: unknown): value is LoginResponseDTO {

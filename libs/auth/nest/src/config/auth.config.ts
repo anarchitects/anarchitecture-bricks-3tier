@@ -16,6 +16,8 @@ export const DEFAULT_AUTH_ENGINE = 'legacy-jwt';
 export const DEFAULT_AUTH_SESSION_MODE = 'jwt';
 export const DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE = 'isolated';
 export const DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY = 'same-db';
+export const DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT = 5432;
+export const DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL = false;
 
 const parseBoolean = (value: string | undefined, fallback = false): boolean => {
   if (value === undefined) {
@@ -36,6 +38,19 @@ const parseBoolean = (value: string | undefined, fallback = false): boolean => {
     default:
       throw new Error(`Unsupported boolean value: ${value}`);
   }
+};
+
+const parseInteger = (value: string | undefined, fallback: number): number => {
+  if (value === undefined) {
+    return fallback;
+  }
+
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isFinite(parsed)) {
+    throw new Error(`Unsupported integer value: ${value}`);
+  }
+
+  return parsed;
 };
 
 const parseMailerProvider = (): CommonMailerProvider => {
@@ -147,6 +162,20 @@ export const authConfig = registerAs(AUTH_CONFIG_KEY, () => ({
     persistence: {
       mode: parseAuthEnginePersistenceMode(),
       isolatedTopology: parseAuthEngineIsolatedTopology(),
+      separateDatabase: {
+        host: process.env['AUTH_ENGINE_SEPARATE_DB_HOST'],
+        port: parseInteger(
+          process.env['AUTH_ENGINE_SEPARATE_DB_PORT'],
+          DEFAULT_AUTH_ENGINE_SEPARATE_DB_PORT,
+        ),
+        username: process.env['AUTH_ENGINE_SEPARATE_DB_USERNAME'],
+        password: process.env['AUTH_ENGINE_SEPARATE_DB_PASSWORD'],
+        database: process.env['AUTH_ENGINE_SEPARATE_DB_DATABASE'],
+        ssl: parseBoolean(
+          process.env['AUTH_ENGINE_SEPARATE_DB_SSL'],
+          DEFAULT_AUTH_ENGINE_SEPARATE_DB_SSL,
+        ),
+      },
     },
   },
   features: {

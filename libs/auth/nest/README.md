@@ -47,21 +47,29 @@ The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` pack
 
 The library reads configuration through `@nestjs/config` using a namespaced `authConfig` registered under the key `auth`. Set the following environment variables to customise behaviour:
 
-| Variable                        | Description                                                                          | Default                  |
-| ------------------------------- | ------------------------------------------------------------------------------------ | ------------------------ |
-| `AUTH_JWT_SECRET`               | Secret key used to sign and verify JWTs. **Must** be overridden in production.       | `default_jwt_secret`     |
-| `AUTH_JWT_EXPIRATION`           | Token lifetime (e.g. `3600s`, `15m`, `1d`).                                          | `3600s`                  |
-| `AUTH_JWT_AUDIENCE`             | Expected `aud` claim in the JWT.                                                     | `your_audience`          |
-| `AUTH_JWT_ISSUER`               | Expected `iss` claim in the JWT.                                                     | `your_issuer`            |
-| `AUTH_ENCRYPTION_ALGORITHM`     | Password hashing algorithm (`bcrypt`).                                               | `bcrypt`                 |
-| `AUTH_ENCRYPTION_KEY`           | Symmetric key for additional encryption needs. **Must** be overridden in production. | `default_encryption_key` |
-| `AUTH_PERSISTENCE`              | Legacy auth persistence adapter key used by `forRootFromConfig(...)`.                | `typeorm`                |
-| `AUTH_ENGINE_PERSISTENCE_MODE`  | Engine-side persistence mode used when `AUTH_ENGINE=better-auth`.                    | `isolated`               |
-| `AUTH_ENGINE_ISOLATED_TOPOLOGY` | Isolated engine topology used when engine persistence mode is `isolated`.            | `same-db`                |
-| `AUTH_MAILER_PROVIDER`          | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).              | `node`                   |
-| `AUTH_STRATEGIES`               | Comma-separated auth strategies for config-driven module composition.                | `jwt`                    |
+| Variable                           | Description                                                                             | Default                  |
+| ---------------------------------- | --------------------------------------------------------------------------------------- | ------------------------ |
+| `AUTH_JWT_SECRET`                  | Secret key used to sign and verify JWTs. **Must** be overridden in production.          | `default_jwt_secret`     |
+| `AUTH_JWT_EXPIRATION`              | Token lifetime (e.g. `3600s`, `15m`, `1d`).                                             | `3600s`                  |
+| `AUTH_JWT_AUDIENCE`                | Expected `aud` claim in the JWT.                                                        | `your_audience`          |
+| `AUTH_JWT_ISSUER`                  | Expected `iss` claim in the JWT.                                                        | `your_issuer`            |
+| `AUTH_ENCRYPTION_ALGORITHM`        | Password hashing algorithm (`bcrypt`).                                                  | `bcrypt`                 |
+| `AUTH_ENCRYPTION_KEY`              | Symmetric key for additional encryption needs. **Must** be overridden in production.    | `default_encryption_key` |
+| `AUTH_PERSISTENCE`                 | Legacy auth persistence adapter key used by `forRootFromConfig(...)`.                   | `typeorm`                |
+| `AUTH_ENGINE_PERSISTENCE_MODE`     | Engine-side persistence mode used when `AUTH_ENGINE=better-auth`.                       | `isolated`               |
+| `AUTH_ENGINE_ISOLATED_TOPOLOGY`    | Isolated engine topology used when engine persistence mode is `isolated`.               | `same-db`                |
+| `AUTH_ENGINE_SEPARATE_DB_HOST`     | Separate isolated PostgreSQL host when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`.     | unset                    |
+| `AUTH_ENGINE_SEPARATE_DB_PORT`     | Separate isolated PostgreSQL port when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`.     | `5432`                   |
+| `AUTH_ENGINE_SEPARATE_DB_USERNAME` | Separate isolated PostgreSQL username when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`. | unset                    |
+| `AUTH_ENGINE_SEPARATE_DB_PASSWORD` | Separate isolated PostgreSQL password when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`. | unset                    |
+| `AUTH_ENGINE_SEPARATE_DB_DATABASE` | Separate isolated PostgreSQL database when `AUTH_ENGINE_ISOLATED_TOPOLOGY=separate-db`. | unset                    |
+| `AUTH_ENGINE_SEPARATE_DB_SSL`      | Enable SSL for the separate isolated PostgreSQL connection.                             | `false`                  |
+| `AUTH_MAILER_PROVIDER`             | Domain mailer provider for `forRootFromConfig(...)` (`node` or `noop`).                 | `node`                   |
+| `AUTH_STRATEGIES`                  | Comma-separated auth strategies for config-driven module composition.                   | `jwt`                    |
 
 > **Security note:** The defaults for `AUTH_JWT_SECRET` and `AUTH_ENCRYPTION_KEY` are intentionally insecure placeholders. Always provide strong, unique values in any deployed environment.
+
+`AUTH_PERSISTENCE` still selects the legacy auth persistence adapter used by the current JWT-oriented domain repositories. The neutral `AUTH_ENGINE_*` settings control the internal Better Auth engine path separately.
 
 ### Injecting the config
 
