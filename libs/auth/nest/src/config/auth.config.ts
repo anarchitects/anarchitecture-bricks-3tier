@@ -14,6 +14,8 @@ export const DEFAULT_AUTH_MAILER_PROVIDER = 'node';
 export const DEFAULT_AUTH_STRATEGIES = ['jwt'] as const;
 export const DEFAULT_AUTH_ENGINE = 'legacy-jwt';
 export const DEFAULT_AUTH_SESSION_MODE = 'jwt';
+export const DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE = 'isolated';
+export const DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY = 'same-db';
 
 const parseBoolean = (value: string | undefined, fallback = false): boolean => {
   if (value === undefined) {
@@ -95,6 +97,36 @@ const parseSessionMode = (): 'jwt' | 'session' => {
   }
 };
 
+const parseAuthEnginePersistenceMode = (): 'isolated' | 'typeorm-adapter' => {
+  const value = process.env['AUTH_ENGINE_PERSISTENCE_MODE'];
+  if (value === undefined) {
+    return DEFAULT_AUTH_ENGINE_PERSISTENCE_MODE;
+  }
+
+  switch (value) {
+    case 'isolated':
+    case 'typeorm-adapter':
+      return value;
+    default:
+      throw new Error(`Unsupported auth engine persistence mode: ${value}`);
+  }
+};
+
+const parseAuthEngineIsolatedTopology = (): 'same-db' | 'separate-db' => {
+  const value = process.env['AUTH_ENGINE_ISOLATED_TOPOLOGY'];
+  if (value === undefined) {
+    return DEFAULT_AUTH_ENGINE_ISOLATED_TOPOLOGY;
+  }
+
+  switch (value) {
+    case 'same-db':
+    case 'separate-db':
+      return value;
+    default:
+      throw new Error(`Unsupported auth engine isolated topology: ${value}`);
+  }
+};
+
 export const authConfig = registerAs(AUTH_CONFIG_KEY, () => ({
   jwtSecret: process.env['AUTH_JWT_SECRET'] ?? DEFAULT_AUTH_JWT_SECRET,
   jwtExpiration:
@@ -111,6 +143,12 @@ export const authConfig = registerAs(AUTH_CONFIG_KEY, () => ({
   authStrategies: parseAuthStrategies(),
   engine: parseAuthEngine(),
   sessionMode: parseSessionMode(),
+  engineOptions: {
+    persistence: {
+      mode: parseAuthEnginePersistenceMode(),
+      isolatedTopology: parseAuthEngineIsolatedTopology(),
+    },
+  },
   features: {
     passkeys: parseBoolean(process.env['AUTH_FEATURE_PASSKEYS']),
     social: parseBoolean(process.env['AUTH_FEATURE_SOCIAL']),

@@ -22,6 +22,12 @@ describe('auth module option mappers', () => {
     authStrategies: ['jwt'],
     engine: 'better-auth',
     sessionMode: 'session',
+    engineOptions: {
+      persistence: {
+        mode: 'typeorm-adapter',
+        isolatedTopology: 'separate-db',
+      },
+    },
     features: {
       passkeys: true,
       social: true,
@@ -62,6 +68,12 @@ describe('auth module option mappers', () => {
       authStrategies: ['jwt'],
       engine: 'better-auth',
       sessionMode: 'session',
+      engineOptions: {
+        persistence: {
+          mode: 'typeorm-adapter',
+          isolatedTopology: 'separate-db',
+        },
+      },
       features: {
         passkeys: true,
         social: true,
@@ -97,6 +109,12 @@ describe('auth module option mappers', () => {
         authStrategies: ['jwt'],
         engine: 'better-auth',
         sessionMode: 'session',
+        engineOptions: {
+          persistence: {
+            mode: 'typeorm-adapter',
+            isolatedTopology: 'separate-db',
+          },
+        },
         features: {
           passkeys: true,
           social: true,
@@ -134,6 +152,12 @@ describe('auth module option mappers', () => {
           authStrategies: ['jwt'],
           engine: 'better-auth',
           sessionMode: 'session',
+          engineOptions: {
+            persistence: {
+              mode: 'typeorm-adapter',
+              isolatedTopology: 'separate-db',
+            },
+          },
           features: {
             passkeys: true,
             social: true,
@@ -175,6 +199,12 @@ describe('auth module option resolvers', () => {
       authStrategies: ['jwt'],
       engine: 'legacy-jwt',
       sessionMode: 'jwt',
+      engineOptions: {
+        persistence: {
+          mode: 'isolated',
+          isolatedTopology: 'same-db',
+        },
+      },
       features: {
         passkeys: false,
         social: false,
@@ -209,6 +239,12 @@ describe('auth module option resolvers', () => {
           authStrategies: ['jwt'],
           engine: 'legacy-jwt',
           sessionMode: 'jwt',
+          engineOptions: {
+            persistence: {
+              mode: 'isolated',
+              isolatedTopology: 'same-db',
+            },
+          },
           features: {
             passkeys: false,
             social: false,
@@ -254,6 +290,12 @@ describe('auth module option resolvers', () => {
       authStrategies: ['jwt'],
       engine: 'legacy-jwt',
       sessionMode: 'jwt',
+      engineOptions: {
+        persistence: {
+          mode: 'isolated',
+          isolatedTopology: 'same-db',
+        },
+      },
       features: {
         passkeys: false,
         social: false,
@@ -279,5 +321,27 @@ describe('auth module option resolvers', () => {
       persistence: { persistence: 'typeorm' },
       resourceAuthorization: { loaders },
     });
+  });
+
+  it('lets explicit engine persistence overrides win over defaults', () => {
+    expect(
+      resolveAuthApplicationModuleOptions({
+        engineOptions: {
+          persistence: {
+            mode: 'typeorm-adapter',
+            isolatedTopology: 'separate-db',
+          },
+        },
+      }),
+    ).toEqual(
+      expect.objectContaining({
+        engineOptions: {
+          persistence: {
+            mode: 'typeorm-adapter',
+            isolatedTopology: 'separate-db',
+          },
+        },
+      }),
+    );
   });
 });

@@ -39,6 +39,14 @@ export class AuthPresentationModule {
           ...configOptions.application?.encryption,
           ...overrides.application?.encryption,
         },
+        engineOptions: {
+          ...configOptions.application?.engineOptions,
+          ...overrides.application?.engineOptions,
+          persistence: {
+            ...configOptions.application?.engineOptions?.persistence,
+            ...overrides.application?.engineOptions?.persistence,
+          },
+        },
         persistence: {
           ...configOptions.application?.persistence,
           ...overrides.application?.persistence,

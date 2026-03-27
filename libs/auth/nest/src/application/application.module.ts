@@ -130,6 +130,14 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
         ...configOptions.encryption,
         ...overrides.encryption,
       },
+      engineOptions: {
+        ...configOptions.engineOptions,
+        ...overrides.engineOptions,
+        persistence: {
+          ...configOptions.engineOptions?.persistence,
+          ...overrides.engineOptions?.persistence,
+        },
+      },
       persistence: {
         ...configOptions.persistence,
         ...overrides.persistence,
