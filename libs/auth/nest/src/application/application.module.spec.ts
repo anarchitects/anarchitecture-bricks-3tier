@@ -3,10 +3,13 @@ import { AuthApplicationModule } from './application.module';
 import { LegacyJwtAuthEngineAdapter } from '../infrastructure-engine/legacy-jwt-auth-engine.adapter';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
 import { AuthEnginePort } from './services/auth-engine.port';
+import { AuthEnginePersistencePort } from './services/auth-engine-persistence.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import { AuthService } from './services/auth.service';
 import { JwtAuthService } from './services/jwt-auth.service';
+import { BetterAuthIsolatedPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-isolated-persistence.adapter';
+import { BetterAuthTypeormAdapterPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
 
 const ORIGINAL_AUTH_PERSISTENCE = process.env['AUTH_PERSISTENCE'];
 const ORIGINAL_AUTH_STRATEGIES = process.env['AUTH_STRATEGIES'];
@@ -122,6 +125,58 @@ describe('AuthApplicationModule', () => {
     expect(moduleMetadata.exports).toContain(AuthService);
   });
 
+  it('should select the isolated Better Auth persistence provider when configured', () => {
+    const moduleMetadata = AuthApplicationModule.forRoot({
+      engine: 'better-auth',
+      engineOptions: {
+        persistence: {
+          mode: 'isolated',
+          isolatedTopology: 'same-db',
+        },
+      },
+      authStrategies: ['jwt'],
+      spike: {
+        proofHarnessEnabled: true,
+      },
+    });
+
+    expect(moduleMetadata.providers).toEqual(
+      expect.arrayContaining([
+        BetterAuthIsolatedPersistenceAdapter,
+        expect.objectContaining({
+          provide: AuthEnginePersistencePort,
+          useExisting: BetterAuthIsolatedPersistenceAdapter,
+        }),
+      ]),
+    );
+  });
+
+  it('should select the TypeORM-adapter Better Auth persistence provider when configured', () => {
+    const moduleMetadata = AuthApplicationModule.forRoot({
+      engine: 'better-auth',
+      engineOptions: {
+        persistence: {
+          mode: 'typeorm-adapter',
+          isolatedTopology: 'separate-db',
+        },
+      },
+      authStrategies: ['jwt'],
+      spike: {
+        proofHarnessEnabled: true,
+      },
+    });
+
+    expect(moduleMetadata.providers).toEqual(
+      expect.arrayContaining([
+        BetterAuthTypeormAdapterPersistenceAdapter,
+        expect.objectContaining({
+          provide: AuthEnginePersistencePort,
+          useExisting: BetterAuthTypeormAdapterPersistenceAdapter,
+        }),
+      ]),
+    );
+  });
+
   it('should keep forRoot explicit and ignore AUTH_STRATEGIES', () => {
     process.env['AUTH_STRATEGIES'] = 'custom';
     const moduleMetadata = AuthApplicationModule.forRoot({
@@ -159,6 +214,13 @@ describe('AuthApplicationModule', () => {
         expect.objectContaining({
           provide: JwtAuthService,
           useExisting: AuthOrchestrationService,
+        }),
+      ]),
+    );
+    expect(moduleMetadata.providers).not.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          provide: AuthEnginePersistencePort,
         }),
       ]),
     );
