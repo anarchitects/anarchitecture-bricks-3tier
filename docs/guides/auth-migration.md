@@ -87,6 +87,10 @@ Canonical auth config now lives under:
 
 Canonical environment variable names use the `AUTH_PLUGIN_*` and `AUTH_BETTER_AUTH_*` families.
 
+The current product story does not expose a public engine-selection or
+Better Auth persistence-mode switch. Better Auth and its database integration
+remain internal implementation details of `auth-nest`.
+
 Legacy env aliases may still be tolerated for compatibility in some places, but they are no longer the documented or preferred configuration surface.
 
 ## Import Path Migration

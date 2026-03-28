@@ -160,6 +160,18 @@ describe('auth module option resolvers', () => {
     });
   });
 
+  it('keeps Better Auth as the only built-in engine story and does not expose persistence mode selection', () => {
+    const resolved = resolveAuthApplicationModuleOptions({}) as Record<
+      string,
+      unknown
+    >;
+
+    expect(resolved).not.toHaveProperty('engine');
+    expect(resolved).not.toHaveProperty('persistence');
+    expect(resolved).toHaveProperty('betterAuth');
+    expect(resolved).toHaveProperty('plugins');
+  });
+
   it('resolves default root options deterministically', () => {
     expect(resolveAuthModuleOptions({})).toEqual({
       presentation: {

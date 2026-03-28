@@ -2,156 +2,114 @@
 
 ## Status
 
-Accepted - Conditional GO.
+Accepted - Implemented.
 
 ## Context
 
-Issue `#106` asked whether Better Auth can sit behind the existing auth domain
+Issue `#106` asked whether Better Auth could sit behind the existing auth domain
 facades without leaking framework details into:
 
 - `@anarchitects/auth-ts`
 - `@anarchitects/auth-nest`
 - `@anarchitects/auth-angular`
 
-The repo entered this work with:
+The spike started as an evaluation, not as a promise to expose Better Auth
+directly. The success criteria were always:
 
-- a public auth surface that is JWT- and TypeORM-oriented,
-- Nest-owned `/auth/*` routes,
-- TypeORM-backed auth persistence,
-- and no internal seam for evaluating an alternate auth engine.
+- keep package-owned DTOs, models, and routes as the public contract
+- keep Nest route ownership in `auth-nest`
+- keep Angular consumption aligned to package-owned APIs
+- keep Better Auth internal to the auth domain
 
-The goal of the spike was not full migration. The goal was to determine whether
-Better Auth is a viable internal engine candidate behind the existing package
-facades.
+## Final Outcome
 
-## Outcomes Already Achieved
+Better Auth is a viable internal engine behind the auth facades, and the repo
+has since settled on that architecture.
 
-The spike and follow-on sub-issues established the following:
+The implemented product story is now:
 
-### Internal engine seam
+- Better Auth is the only built-in internal auth engine
+- `@anarchitects/auth-nest` remains the public route and integration surface
+- core auth is session-first
+- email/password is always enabled in core auth
+- repo-owned RBAC remains layered on top of Better Auth-backed user/session
+  state
+- JWT, passkeys, social auth, and future authn capabilities are package-owned,
+  plugin-scoped extensions
 
-- Better Auth can be evaluated behind an internal `AuthEnginePort`.
-- The application layer now depends on the internal engine seam rather than
-  binding the entire auth flow directly to the legacy JWT runtime.
-- `legacy-jwt` remains the default engine and active runtime path.
-
-### Public API containment
-
-- Public package APIs remained framework-agnostic during the spike and adapter
-  boundary work.
-- Package-owned Nest controllers remain the canonical public HTTP boundary.
-- Better Auth types, route ownership, and persistence schema were not exposed
-  through public package entry points.
-
-### Packaging/runtime constraints
-
-- Better Auth is ESM-only.
-- `@anarchitects/auth-nest` currently builds as CommonJS.
-- The repo proved that Better Auth can be hosted internally through preserved
-  native dynamic `import()` without forcing a package-format migration during
-  the spike.
-
-### Persistence strategy
-
-- Persistence fit was analyzed separately in [ADR 121](./121-better-auth-persistence-recommendation.md).
-- The accepted model is configuration-driven and abstracted behind an
-  application-layer persistence port.
-- Supported Better Auth persistence modes are:
-  - `isolated`
-  - `typeorm-adapter`
-- The default Better Auth persistence mode is `isolated`.
-- The `isolated` mode supports both:
-  - `same-db`
-  - `separate-db`
-- The default isolated topology is `same-db`.
-
-## Decision Outcome
-
-- Final outcome: `Conditional GO`
-
-Rationale for the final outcome:
-
-- Better Auth appears viable as an internal engine candidate behind
-  `AuthEnginePort`.
-- Public package APIs remained framework-agnostic through the spike and
-  boundary work.
-- The remaining concerns are implementation constraints, not spike failure:
-  configuration-driven persistence composition, session-vs-JWT mapping
-  decisions, and continued public API containment.
-
-## Finalized Conclusions
+## Conclusions That Remain Canonical
 
 ### Route ownership
 
-- Keep package-owned Nest controllers as the canonical public boundary.
-- Do not delegate package public `/auth/*` ownership directly to Better Auth.
-- Any future Better Auth runtime handling should remain wrapped behind the
-  package-owned presentation layer where practical.
+- Keep package-owned Nest controllers as the canonical public HTTP boundary
+- Do not delegate public `/auth/*` ownership directly to raw Better Auth
+  handlers
+- Better Auth runtime handling may sit behind the presentation layer, but it is
+  not the public API
 
 ### Public contract containment
 
-- Better Auth must remain internal to `auth-nest`.
-- Public DTOs, shared models, and Angular-facing APIs must remain
-  framework-agnostic.
-- Better Auth route conventions, session models, and persistence schema must
-  not become public package contract.
+- Better Auth remains internal to `auth-nest`
+- Public DTOs, shared models, and Angular-facing APIs remain package-owned
+- Better Auth types, route conventions, session models, and database concerns
+  must not become public package contract
 
-### Persistence direction
+### Package boundaries
 
-- Better Auth remains internal to `auth-nest`.
-- Better Auth persistence must remain abstracted behind an application-layer
-  port.
-- Persistence mode is configuration-driven.
-- Supported Better Auth persistence modes are:
-  - `isolated`
-  - `typeorm-adapter`
-- Default Better Auth persistence mode: `isolated`.
-- Supported isolated topologies are:
-  - `same-db`
-  - `separate-db`
-- Default isolated topology: `same-db`.
-- The custom TypeORM adapter starts as an internal repo implementation and may
-  later be extracted to an Anarchitects community repo once the contract and
-  maintenance shape are stable.
-- Current TypeORM legacy JWT persistence remains the default and should not be
-  remapped to Better Auth tables by default.
+- `auth-ts` remains the source of truth for package-owned DTOs and models
+- `auth-angular` remains the browser-facing integration surface
+- `auth-nest` owns route composition, orchestration, configuration, and
+  framework integration
 
-## Stop Conditions
+## Persistence Direction
 
-Treat the Better Auth direction as failed if any of the following become true in
-follow-on implementation:
+The current repo no longer treats Better Auth persistence as a public
+mode-selection story.
+
+The settled implementation direction is:
+
+- Better Auth persistence remains internal to `auth-nest`
+- core Better Auth-backed tables are owned by core auth persistence
+- plugin-specific tables, entities, and migrations stay with their plugin
+  modules
+- the application layer depends on internal seams rather than exposing
+  persistence strategy selection as public package API
+
+See [ADR 121](./121-better-auth-persistence-recommendation.md) for the aligned
+persistence decision record.
+
+## Historical Note
+
+The spike phase explored transitional ideas such as alternate engine defaults,
+multiple Better Auth persistence modes, and migration-window coexistence
+strategies.
+
+Those spike-era options are not the current product story anymore.
+
+They should be treated as historical exploration only, not as active
+documentation for the auth domain.
+
+## Stop Conditions That Still Matter
+
+Treat the Better Auth direction as failed if any of the following become true
+in future follow-on work:
 
 - Better Auth types, routes, or persistence concerns leak into public package
-  APIs.
-- Isolated Better Auth persistence cannot remain internal to `auth-nest`.
-- The migration path requires coupling current public/shared models to Better
-  Auth schema.
-- Route delegation prevents stable package docs or contract generation.
-- Session semantics cannot be reconciled with the package surface without
-  destabilizing the public auth contract.
+  APIs
+- package-owned route ownership is lost
+- shared/public DTOs are reshaped around Better Auth internals
+- plugin-specific persistence bleeds back into core auth ownership
+- session-first core auth becomes ambiguous again at the package surface
 
 ## Implementation Implications
 
-If the final outcome is `GO` or `Conditional GO`:
+Follow-on work should preserve the implemented architecture rather than
+reopening the spike.
 
-- Create a separate follow-on implementation parent issue/epic.
-- Create a separate parallel parent issue for Anarchitects community Better
-  Auth integrations.
-- Keep `legacy-jwt` as the default engine until that follow-on implementation
-  lands and is explicitly approved.
-- Treat passkeys, social flows, DTO additions, Better Auth persistence tables,
-  Angular integration, and docs/contract updates as follow-on work.
-- When `engine=better-auth`, default the persistence mode to `isolated`.
-- When `engine=better-auth` and `persistence.mode=isolated`, default the
-  topology to `same-db`.
-- Support the internal TypeORM adapter in parallel as a configuration-driven
-  Better Auth persistence mode, while incubating its extraction path in the
-  community repo track.
+That means:
 
-If the final outcome is `NO-GO`:
-
-- Do not proceed with Better Auth implementation beyond the completed spike and
-  seam work.
-- Keep the repo on the `legacy-jwt` engine path.
-- Treat the completed spike/boundary work as closed evaluation effort rather
-  than migration start.
+- keep Better Auth as the only built-in internal engine
+- keep session-first behavior as the default/core auth story
+- keep plugin authn capabilities explicitly optional and package-scoped
+- keep public documentation and tests aligned to package-owned contracts rather
+  than raw Better Auth behavior
