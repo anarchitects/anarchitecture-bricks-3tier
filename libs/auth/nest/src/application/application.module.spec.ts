@@ -78,6 +78,20 @@ describe('AuthApplicationModule', () => {
     );
   });
 
+  it('keeps jwt and passkey plugin wiring out of the core application module by default', () => {
+    const moduleMetadata = AuthApplicationModule.forRoot({});
+
+    expect(moduleMetadata.imports).not.toEqual(
+      expect.arrayContaining([
+        BetterAuthJwtTypeormSupportModule,
+        BetterAuthPasskeysTypeormSupportModule,
+      ]),
+    );
+    expect(moduleMetadata.providers).not.toEqual(
+      expect.arrayContaining([BetterAuthJwtPluginService]),
+    );
+  });
+
   it('enables passkey plugin support only when configured', () => {
     const moduleMetadata = AuthApplicationModule.forRoot({
       plugins: {

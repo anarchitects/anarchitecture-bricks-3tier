@@ -2,19 +2,21 @@
 
 Angular domain libraries for the Anarchitecture auth domain. The package is organized into standalone slices (config, data-access, feature, state, util, ui) that compose implementation-aligned authentication flows for Angular applications.
 
+Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
+
 ## Developer + AI Agent Start Here
 
 - Read this README before generating integration code for `@anarchitects/auth-angular`.
 - Use public entry points only (`config`, `data-access`, `feature`, `state`, `util`, `ui`, plus layer-scoped plugin subpaths like `data-access/jwt`); do not import internal files.
-- Register providers and state explicitly via `provideAuthConfig`, `provideAuthDataAccess`, and `provideAuthState`.
+- Register providers and state explicitly via `provideAuthConfig`, Angular `provideHttpClient(...)`, and `provideAuthState`.
 - Keep policy and ability behavior aligned with contracts from `@anarchitects/auth-ts`.
 - Preserve Angular layering and keep orchestration out of UI components.
 
 ## Features
 
-- `config`: DI tokens and provider helpers (API base URL, defaults)
+- `config`: DI tokens and provider helpers (API resource path, defaults)
 - `data-access`: generated OpenAPI clients plus adapters over the Nest API
-- `state`: signal-based store plus explicit provider helper for login/logout, token refresh, eager session restore, and ability hydration
+- `state`: signal-based store plus explicit provider helper for core session login/logout, eager session restore, and ability hydration
 - `feature`: coarse route guard, resource-aware route guard, and orchestration components that delegate rendering to auth UI components
 - `util`: CASL ability helpers (`createAppAbility`, `canAccessResource`, `canAccessResourceField`, `AppAbility`)
 - `ui`: presentational auth domain form components built on `AnarchitectsUiForm`
@@ -50,18 +52,17 @@ The internal `@anarchitects/auth-ts`, `@anarchitects/forms-angular`, `@anarchite
 ### Quick start
 
 ```ts
-// app.config.ts
 import { ApplicationConfig } from '@angular/core';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideAuthConfig } from '@anarchitects/auth-angular/config';
-import { provideAuthDataAccess } from '@anarchitects/auth-angular/data-access';
 import { provideAuthState } from '@anarchitects/auth-angular/state';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAuthConfig({
-      apiBaseUrl: 'https://api.anarchitects.dev',
+    provideHttpClient(withFetch()),
+    ...provideAuthConfig({
+      apiResourcePath: 'auth',
     }),
-    provideAuthDataAccess(),
     ...provideAuthState(),
   ],
 };
@@ -121,6 +122,23 @@ export const routes: Routes = [
 ```
 
 `policyGuard` is a coarse route-attempt guard. It answers "may this user attempt work on this subject at all?" by using the shared route matcher from `@anarchitects/auth-ts`. Concrete ownership checks still belong to loaded resources. Use `resourcePolicyGuard` for resolved edit/detail routes and `canAccessResource(...)` / `canAccessResourceField(...)` for UI elements such as edit buttons.
+
+### Optional JWT plugin wiring
+
+Keep the root auth surface session-first. Only wire the JWT plugin when the host app explicitly needs token-based flows:
+
+```ts
+import { provideHttpClient } from '@angular/common/http';
+import { withJwtAuthHttpInterceptors } from '@anarchitects/auth-angular/data-access/jwt';
+import { provideAuthJwtState } from '@anarchitects/auth-angular/state/jwt';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideHttpClient(withJwtAuthHttpInterceptors()),
+    ...provideAuthJwtState(),
+  ],
+};
+```
 
 Blog ownership example:
 
@@ -193,7 +211,7 @@ export class PostActionsComponent {
 
 - DTOs live in `@anarchitects/auth-ts`; regenerate OpenAPI docs when route schemas change (`nx run api-specs:generate`).
 - Data-access layer should always use the generated OpenAPI clients—no manual HTTP calls.
-- State layer uses Angular signals via `@ngrx/signals` for reactive updates, hydrates raw RBAC rules plus the derived CASL ability, and restores sessions eagerly when provided.
+- State layer uses Angular signals via `@ngrx/signals` for reactive updates, hydrates raw RBAC rules plus the derived CASL ability, and restores Better Auth-backed sessions eagerly when provided.
 - `AuthStore.initialized()` and `AuthStore.restoring()` let apps avoid auth flicker while bootstrap restore completes.
 - `/auth/me` RBAC payloads are parsed at the frontend trust boundary; malformed authorization data fails closed instead of producing a partially trusted ability.
 - Core root surfaces are session-first. JWT plugin helpers live under layer-scoped subpaths such as `@anarchitects/auth-angular/data-access/jwt`, `@anarchitects/auth-angular/state/jwt`, `@anarchitects/auth-angular/feature/jwt`, and `@anarchitects/auth-angular/ui/jwt`.

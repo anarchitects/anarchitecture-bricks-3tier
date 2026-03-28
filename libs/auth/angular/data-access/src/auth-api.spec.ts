@@ -26,6 +26,13 @@ describe('AuthApi', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('keeps jwt plugin methods off the root session-first api surface', () => {
+    expect('refreshTokens' in service).toBe(false);
+    expect('loginJwt' in service).toBe(false);
+    expect('logoutJwt' in service).toBe(false);
+  });
+
   describe('registerUser', () => {
     it('should call the register endpoint', () => {
       const dto = {
