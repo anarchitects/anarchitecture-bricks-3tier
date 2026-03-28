@@ -1,7 +1,7 @@
 import { EnvironmentProviders, Provider } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideAuthConfig } from '@anarchitects/auth-angular/config';
-import { AuthApi } from '../../data-access/src';
+import { AuthApi } from '@anarchitects/auth-angular/data-access';
 import { AUTH_STATE_OPTIONS } from './auth-state.options';
 import { AuthStore } from './auth.store';
 import { provideAuthState } from './auth-state.provider';

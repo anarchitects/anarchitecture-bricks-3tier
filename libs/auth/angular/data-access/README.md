@@ -1,15 +1,13 @@
 # @anarchitects/auth-angular/data-access
 
-HTTP adapters that bridge Angular apps to the auth Nest API using the OpenAPI-generated DTOs. Import from `@anarchitects/auth-angular/data-access` when you need to call auth endpoints directly or wire them into feature/state layers.
+HTTP adapters that bridge Angular apps to the auth Nest API using the OpenAPI-generated DTOs. Import from `@anarchitects/auth-angular/data-access` for the session-first core auth surface.
 
 ## Exports
 
 - `AuthApi`: injectable service backed by Angular `HttpClient`
-- `authBearerTokenInterceptor`: adds `Authorization: Bearer <accessToken>` when an access token is stored
-- `authErrorInterceptor`: handles `401/403`, attempts token refresh, retries request, and redirects to login on terminal auth failure
-- `withAuthHttpInterceptors()`: convenience helper for `provideHttpClient(...)`
 - Uses configuration from `@anarchitects/auth-angular/config` to resolve the `/api/{resource}` path
-- Methods map 1:1 to contract operations (`registerUser`, `login`, `logout`, `refreshTokens`, etc.)
+- Methods map to the core session-oriented auth surface (`registerUser`, `login`, `logout`, `getLoggedInUserInfo`, etc.)
+- JWT plugin helpers live under `@anarchitects/auth-angular/data-access/jwt`
 
 ## Usage
 
@@ -30,15 +28,15 @@ export class AuthFacade {
 
 Prefer consuming `AuthApi` from orchestrating feature services or signal stores so UI components remain presentation-only.
 
-## Interceptor usage
+## JWT plugin usage
 
 ```ts
 import { ApplicationConfig } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
-import { withAuthHttpInterceptors } from '@anarchitects/auth-angular/data-access';
+import { withJwtAuthHttpInterceptors } from '@anarchitects/auth-angular/data-access/jwt';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideHttpClient(withAuthHttpInterceptors())],
+  providers: [provideHttpClient(withJwtAuthHttpInterceptors())],
 };
 ```
 

@@ -7,7 +7,7 @@ import type {
 } from './better-auth.module-loader';
 import type { DataSource, EntityManager, EntityTarget, ObjectLiteral } from 'typeorm';
 import { AUTH_APPLICATION_MODULE_OPTIONS } from '../../application/application.module-definition';
-import { AuthEnginePersistencePort } from '../../application/services/auth-engine-persistence.port';
+import { BetterAuthDatabasePort } from '../../application/services/better-auth-database.port';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
 import { AccountEntity } from '../../infrastructure-persistence/entities/account.entity';
 import { SessionEntity } from '../../infrastructure-persistence/entities/session.entity';
@@ -52,8 +52,8 @@ const MODEL_ENTITY_MAP = {
 } as Record<string, EntityTarget<ObjectLiteral>>;
 
 @Injectable()
-export class BetterAuthTypeormAdapterPersistenceAdapter
-  implements AuthEnginePersistencePort
+export class BetterAuthTypeormDatabaseAdapter
+  implements BetterAuthDatabasePort
 {
   private resolvedDatabasePromise: Promise<unknown> | null = null;
 

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AccountEntity } from '../entities/account.entity';
 import {
   AuthAccountRepository,
   CredentialAccount,
-} from './auth-account.repository';
+} from '../../application/ports/auth-account.repository';
+import { AccountEntity } from '../entities/account.entity';
 
 const CREDENTIAL_PROVIDER_ID = 'credential' as const;
 

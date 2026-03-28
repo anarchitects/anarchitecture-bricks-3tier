@@ -1,6 +1,8 @@
 # @anarchitects/auth-angular/feature
 
-Feature-level orchestration for Angular auth. It ships route guards plus standalone feature components that orchestrate auth actions via `AuthStore` and delegate rendering to `@anarchitects/auth-angular/ui`.
+Feature-level orchestration for Angular auth. It ships route guards plus standalone feature components that orchestrate auth actions via state-layer entrypoints and delegate rendering to `@anarchitects/auth-angular/ui`.
+
+JWT-specific feature components live under `@anarchitects/auth-angular/feature/jwt`, not the root feature entry point. They should orchestrate through `@anarchitects/auth-angular/state/jwt`, never `data-access/jwt` directly.
 
 ## Exports
 
@@ -15,7 +17,6 @@ Feature-level orchestration for Angular auth. It ships route guards plus standal
 - `AnarchitectsFeatureChangePassword`
 - `AnarchitectsFeatureUpdateEmail`
 - `AnarchitectsFeatureLogout`
-- `AnarchitectsFeatureRefreshTokens`
 
 ## Usage
 
@@ -63,6 +64,8 @@ Do not treat `policyGuard` as a full `PolicyRule` mirror. It is intentionally co
 
 Ensure the state layer is explicitly provided in your app/route providers by wiring `...provideAuthState()` from `@anarchitects/auth-angular/state`.
 
+JWT plugin feature flows should likewise register `...provideAuthJwtState()` from `@anarchitects/auth-angular/state/jwt` when the route/page mounts JWT-specific components.
+
 ### Token-driven actions
 
 ```ts
@@ -99,13 +102,12 @@ export class ChangePasswordPageComponent {
 
 ```ts
 import { Component } from '@angular/core';
-import { AnarchitectsFeatureRefreshTokens, AnarchitectsFeatureLogout } from '@anarchitects/auth-angular/feature';
+import { AnarchitectsFeatureLogout } from '@anarchitects/auth-angular/feature';
 
 @Component({
   selector: 'app-session-page',
-  imports: [AnarchitectsFeatureRefreshTokens, AnarchitectsFeatureLogout],
+  imports: [AnarchitectsFeatureLogout],
   template: `
-    <anarchitects-auth-feature-refresh-tokens [userId]="userId" />
     <anarchitects-auth-feature-logout />
   `,
 })

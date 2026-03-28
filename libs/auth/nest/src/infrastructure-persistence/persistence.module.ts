@@ -1,6 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthAccountRepository } from '../application/ports/auth-account.repository';
+import { AuthUserRepository } from '../application/ports/auth-user.repository';
 import { AccountEntity } from './entities/account.entity';
 import { PermissionEntity } from './entities/permission.entity';
 import { RoleEntity } from './entities/role.entity';
@@ -11,8 +13,6 @@ import {
   ConfigurableModuleClass,
   OPTIONS_TYPE,
 } from './persistence.module-definition';
-import { AuthUserRepository } from './repositories/auth-user.repository';
-import { AuthAccountRepository } from './repositories/auth-account.repository';
 import { TypeormAuthAccountRepository } from './repositories/typeorm-auth-account.repository';
 import { TypeormAuthUserRepository } from './repositories/typeorm-auth-user.repository';
 import {
@@ -41,6 +41,8 @@ export class AuthPersistenceModule extends ConfigurableModuleClass {
         ]),
       ],
       providers: [
+        // Application owns the repository ports; persistence binds the
+        // TypeORM-backed implementations for those ports here.
         TypeormAuthAccountRepository,
         TypeormAuthUserRepository,
         {

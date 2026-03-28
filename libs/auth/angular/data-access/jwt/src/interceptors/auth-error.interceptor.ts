@@ -7,8 +7,11 @@ import {
   HttpStatusCode,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { injectApiResourcePath } from '@anarchitects/auth-angular/config';
-import { LoginResponseDTO } from '@anarchitects/auth-ts/dtos';
+import {
+  injectApiResourcePath,
+  SUPPRESS_AUTH_FAILURE_REDIRECT,
+} from '@anarchitects/auth-angular/config';
+import { LoginResponseDTO } from '@anarchitects/auth-ts/dtos/jwt';
 import { Router } from '@angular/router';
 import {
   catchError,
@@ -27,9 +30,6 @@ import {
 } from './auth-token.utils';
 
 const AUTH_RETRY_ATTEMPTED = new HttpContextToken<boolean>(() => false);
-export const SUPPRESS_AUTH_FAILURE_REDIRECT = new HttpContextToken<boolean>(
-  () => false,
-);
 const LOGIN_REDIRECT_PATH = '/login';
 
 let refreshTokensRequest$: Observable<LoginResponseDTO> | null = null;

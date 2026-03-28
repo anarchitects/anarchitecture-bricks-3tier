@@ -1,5 +1,5 @@
 import { Column, Entity, Index, PrimaryColumn } from 'typeorm';
-import { AUTH_SCHEMA } from '../schema';
+import { AUTH_SCHEMA } from '../../../../infrastructure-persistence/schema';
 
 @Entity({
   schema: AUTH_SCHEMA,

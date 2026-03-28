@@ -5,15 +5,10 @@ import {
   AuthConfig,
   provideAuthConfig,
 } from '@anarchitects/auth-angular/config';
-import { AuthApi } from '../../data-access/src';
+import { AuthApi } from '@anarchitects/auth-angular/data-access';
 import { PolicyRule, User } from '@anarchitects/auth-ts/models';
 import { AuthStore } from './auth.store';
 import { provideAuthState } from './auth-state.provider';
-
-const validAccessToken =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIn0.signature';
-const validRefreshToken =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLWlkIn0.signature';
 const hydratedSession: { user: User; rbac: PolicyRule[] } = {
   user: {
     id: 'user-id',
@@ -43,12 +38,6 @@ const createMockAuthApi = (overrides: Partial<AuthApi> = {}) => ({
   resetPassword: vi.fn(() => of({ success: true }).pipe(delay(100))),
   updateEmail: vi.fn(() => of({ success: true }).pipe(delay(100))),
   verifyEmail: vi.fn(() => of({ success: true }).pipe(delay(100))),
-  refreshTokens: vi.fn(() =>
-    of({
-      accessToken: validAccessToken,
-      refreshToken: validRefreshToken,
-    }).pipe(delay(100)),
-  ),
   getLoggedInUserInfo: vi.fn(() => of(hydratedSession)),
   ...overrides,
 });
@@ -129,7 +118,6 @@ describe('AuthStore', () => {
 
     await flushAsync();
 
-    expect(localStorage.getItem('accessToken')).toBeNull();
     expect(store.initialized()).toBe(true);
     expect(store.isLoggedIn()).toBe(false);
     expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
@@ -202,53 +190,5 @@ describe('AuthStore', () => {
     expect(store.loggedInUser()).toBeUndefined();
     expect(store.rbac()).toEqual([]);
     expect(store.ability()).toBeUndefined();
-  });
-
-  it('stores refreshed JWT tokens when the JWT plugin is enabled', async () => {
-    const { store } = setup({
-      authApiOverrides: {
-        getLoggedInUserInfo: vi.fn(() =>
-          throwError(() => new Error('restore failed')),
-        ),
-      },
-      authConfig: {
-        plugins: {
-          jwt: {
-            enabled: true,
-          },
-        },
-      },
-    });
-
-    await flushAsync();
-    store.refreshTokens({ refreshToken: validRefreshToken });
-
-    expect(store.loading()).toBe(true);
-    await vi.advanceTimersByTimeAsync(100);
-
-    expect(store.loading()).toBe(false);
-    expect(store.error()).toBeNull();
-    expect(store.initialized()).toBe(true);
-    expect(localStorage.getItem('accessToken')).toBe(validAccessToken);
-    expect(localStorage.getItem('refreshToken')).toBe(validRefreshToken);
-  });
-
-  it('fails fast when refreshTokens is called while the JWT plugin is disabled', async () => {
-    const { store } = setup({
-      authApiOverrides: {
-        getLoggedInUserInfo: vi.fn(() =>
-          throwError(() => new Error('restore failed')),
-        ),
-      },
-    });
-
-    await flushAsync();
-    store.refreshTokens({ refreshToken: validRefreshToken });
-    await flushAsync();
-
-    expect(store.loading()).toBe(false);
-    expect(store.error()).toBe('JWT plugin is disabled.');
-    expect(localStorage.getItem('accessToken')).toBeNull();
-    expect(localStorage.getItem('refreshToken')).toBeNull();
   });
 });

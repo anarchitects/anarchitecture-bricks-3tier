@@ -237,14 +237,6 @@ export class AuthController {
 }
 ```
 
-### Token invalidation
-
-```ts
-import { TypeormAuthUserRepository } from '@anarchitects/auth-nest/infrastructure-persistence';
-
-await authUserRepository.invalidateTokens([hashedAccessToken, hashedRefreshToken], userId);
-```
-
 ### Route-level authorization with policies
 
 ```ts
@@ -317,15 +309,22 @@ The `AuthController` exposes the following routes (all prefixed with `/auth`):
 | ------- | ------------------------------- | -------------------------------------- |
 | `POST`  | `/auth/register`                | Register a new user                    |
 | `PATCH` | `/auth/activate`                | Activate a user account                |
-| `POST`  | `/auth/login`                   | Log in and receive JWT tokens          |
-| `POST`  | `/auth/logout`                  | Log out and invalidate tokens          |
+| `POST`  | `/auth/login`                   | Log in and establish a Better Auth session |
+| `POST`  | `/auth/logout`                  | Log out and clear the Better Auth session |
 | `PATCH` | `/auth/change-password/:userId` | Change password for a user             |
 | `POST`  | `/auth/forgot-password`         | Request a password-reset email         |
 | `POST`  | `/auth/reset-password`          | Reset password with token              |
 | `POST`  | `/auth/verify-email`            | Verify an email address                |
 | `PATCH` | `/auth/update-email/:userId`    | Update email for a user                |
-| `POST`  | `/auth/refresh-tokens/:userId`  | Refresh access/refresh tokens          |
 | `GET`   | `/auth/me`                      | Get logged-in user info and RBAC rules |
+
+When the JWT plugin is enabled, these plugin-owned routes are also mounted:
+
+| Method | Path                | Description                    |
+| ------ | ------------------- | ------------------------------ |
+| `POST` | `/auth/jwt/login`   | Log in and receive JWT tokens  |
+| `POST` | `/auth/jwt/logout`  | Invalidate JWT plugin tokens   |
+| `POST` | `/auth/jwt/refresh` | Refresh JWT plugin token pairs |
 
 ## Nx scripts
 

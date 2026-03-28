@@ -1,10 +1,4 @@
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
-import { injectAuthConfig } from '@anarchitects/auth-angular/config';
-import {
-  clearStoredTokens,
-  resolveUserIdFromAccessToken,
-  storeTokens,
-} from '@anarchitects/auth-angular/data-access';
 import { createAppAbility } from '@anarchitects/auth-angular/util';
 import {
   ActivateUserRequestDTO,
@@ -12,7 +6,6 @@ import {
   ForgotPasswordRequestDTO,
   LoginRequestDTO,
   LogoutRequestDTO,
-  RefreshTokenRequestDTO,
   RegisterRequestDTO,
   ResetPasswordRequestDTO,
   UpdateEmailRequestDTO,
@@ -133,7 +126,6 @@ export const AuthStore = signalStore(
   withEntities<AuthUser>(),
   withProps(() => ({
     _authApi: inject(AuthApi),
-    _authConfig: injectAuthConfig(),
     _authStateOptions: inject(AUTH_STATE_OPTIONS),
     _router: inject(Router, { optional: true }),
   })),
@@ -182,7 +174,6 @@ export const AuthStore = signalStore(
                   });
                 },
                 error: (error: unknown) => {
-                  clearStoredTokens();
                   clearAuthenticatedSession(store, {
                     error: toErrorMessage(error),
                     initialized: true,
@@ -276,7 +267,6 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => {
           patchState(store, { error: null, loading: true, success: false });
-          clearStoredTokens();
           clearAuthenticatedSession(store, { initialized: true });
         }),
         switchMap((dto) =>
@@ -394,48 +384,6 @@ export const AuthStore = signalStore(
             }),
           ),
         ),
-      ),
-    ),
-    refreshTokens: rxMethod<RefreshTokenRequestDTO>(
-      pipe(
-        tap(() => patchState(store, { loading: true, error: null })),
-        switchMap((dto) => {
-          if (!store._authConfig.plugins.jwt.enabled) {
-            patchState(store, {
-              error: 'JWT plugin is disabled.',
-              initialized: true,
-              loading: false,
-            });
-            return EMPTY;
-          }
-
-          return store._authApi.refreshTokens(dto).pipe(
-            switchMap(({ accessToken, refreshToken }) => {
-              storeTokens({ accessToken, refreshToken });
-
-              if (!resolveUserIdFromAccessToken(accessToken)) {
-                clearStoredTokens();
-                patchState(store, { error: 'Invalid access token payload.' });
-                return EMPTY;
-              }
-
-              patchState(store, { initialized: true });
-              return EMPTY;
-            }),
-            tapResponse({
-              next: () => undefined,
-              error: (error: unknown) => {
-                patchState(store, {
-                  error: toErrorMessage(error),
-                  initialized: true,
-                });
-              },
-              finalize: () => {
-                patchState(store, { loading: false });
-              },
-            }),
-          );
-        }),
       ),
     ),
   })),

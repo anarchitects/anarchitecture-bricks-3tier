@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '@anarchitects/auth-ts/models';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { AuthUserRepository } from '../../application/ports/auth-user.repository';
 import { RoleEntity } from '../entities/role.entity';
 import { UserEntity } from '../entities/user.entity';
-import { AuthUserRepository } from './auth-user.repository';
-import { User } from '@anarchitects/auth-ts/models';
 
 @Injectable()
 export class TypeormAuthUserRepository implements AuthUserRepository {

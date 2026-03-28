@@ -1,7 +1,7 @@
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthAccountRepository } from '../../infrastructure-persistence/repositories/auth-account.repository';
-import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
+import { AuthAccountRepository } from '../ports/auth-account.repository';
+import { AuthUserRepository } from '../ports/auth-user.repository';
 import { AuthEnginePort } from './auth-engine.port';
 import { AuthOrchestrationService } from './auth-orchestration.service';
 import { HashService } from './hash.service';

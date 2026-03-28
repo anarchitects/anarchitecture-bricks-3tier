@@ -36,6 +36,7 @@ export default defineConfig(() => ({
       entry: {
         index: 'src/index.ts',
         'dtos/index': 'src/dtos/index.ts',
+        'dtos/jwt/index': 'src/dtos/jwt/index.ts',
         'models/index': 'src/models/index.ts',
         'mappers/index': 'src/mappers/index.ts',
       },

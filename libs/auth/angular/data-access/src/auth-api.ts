@@ -1,15 +1,14 @@
-import { injectApiResourcePath } from '@anarchitects/auth-angular/config';
+import {
+  injectApiResourcePath,
+  SUPPRESS_AUTH_FAILURE_REDIRECT,
+} from '@anarchitects/auth-angular/config';
 import {
   ActivateUserRequestDTO,
   ChangePasswordRequestDTO,
   ForgotPasswordRequestDTO,
-  JwtLogoutRequestDTO,
   LoginRequestDTO,
-  LoginResponseDTO,
   LoggedInUserInfoResponseDTO,
   LogoutRequestDTO,
-  RefreshTokenRequestDTO,
-  RefreshTokenResponseDTO,
   RegisterRequestDTO,
   RegisterResponseDTO,
   ResetPasswordRequestDTO,
@@ -21,8 +20,6 @@ import { PolicyRule, User } from '@anarchitects/auth-ts/models';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
-import { SUPPRESS_AUTH_FAILURE_REDIRECT } from './interceptors/auth-error.interceptor';
-
 export type AuthApiRequestOptions = {
   suppressAuthFailureRedirect?: boolean;
 };
@@ -62,13 +59,6 @@ export class AuthApi {
     );
   }
 
-  logoutJwt(dto: JwtLogoutRequestDTO) {
-    return this.http.post<{ success: boolean }>(
-      `${this.resourceUrl}/jwt/logout`,
-      dto,
-    );
-  }
-
   changePassword(userId: string, dto: ChangePasswordRequestDTO) {
     return this.http.patch<{ success: boolean }>(
       `${this.resourceUrl}/change-password/${userId}`,
@@ -100,20 +90,6 @@ export class AuthApi {
   updateEmail(userId: string, dto: UpdateEmailRequestDTO) {
     return this.http.patch<{ success: boolean }>(
       `${this.resourceUrl}/update-email/${userId}`,
-      dto,
-    );
-  }
-
-  refreshTokens(dto: RefreshTokenRequestDTO) {
-    return this.http.post<RefreshTokenResponseDTO>(
-      `${this.resourceUrl}/jwt/refresh`,
-      dto,
-    );
-  }
-
-  loginJwt(dto: LoginRequestDTO) {
-    return this.http.post<LoginResponseDTO>(
-      `${this.resourceUrl}/jwt/login`,
       dto,
     );
   }

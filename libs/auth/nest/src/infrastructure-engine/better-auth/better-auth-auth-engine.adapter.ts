@@ -8,7 +8,7 @@ import type {
   ResetPasswordRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
 import { AUTH_APPLICATION_MODULE_OPTIONS } from '../../application/application.module-definition';
-import { AuthEnginePersistencePort } from '../../application/services/auth-engine-persistence.port';
+import { BetterAuthDatabasePort } from '../../application/services/better-auth-database.port';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
 import {
   AuthEngineMutationResult,
@@ -103,7 +103,7 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
   constructor(
     @Inject(AUTH_APPLICATION_MODULE_OPTIONS)
     private readonly options: ResolvedAuthApplicationModuleOptions,
-    private readonly authEnginePersistencePort: AuthEnginePersistencePort,
+    private readonly betterAuthDatabasePort: BetterAuthDatabasePort,
     private readonly hashService: HashService,
     @Optional() @Inject(MailerPort) private readonly mailer?: MailerPort,
   ) {}
@@ -377,7 +377,7 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
 
   private async createAuthInstance(): Promise<BetterAuthAuthInstance> {
     const runtimeModules = await loadBetterAuthRuntimeModules();
-    const database = await this.authEnginePersistencePort.resolveDatabase();
+    const database = await this.betterAuthDatabasePort.resolveDatabase();
 
     return runtimeModules.betterAuth.betterAuth(
       createBetterAuthOptions(this.options, database, runtimeModules, {

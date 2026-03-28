@@ -2,15 +2,15 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
   JwtLogoutRequestDTO,
-  LoginRequestDTO,
   LoginResponseDTO,
   RefreshTokenRequestDTO,
   RefreshTokenResponseDTO,
-} from '@anarchitects/auth-ts/dtos';
+} from '@anarchitects/auth-ts/dtos/jwt';
+import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { User } from '@anarchitects/auth-ts/models';
+import { AuthAccountRepository } from '../../../../application/ports/auth-account.repository';
+import { AuthUserRepository } from '../../../../application/ports/auth-user.repository';
 import { HashService } from '../../../../application/services/hash.service';
-import { AuthAccountRepository } from '../../../../infrastructure-persistence/repositories/auth-account.repository';
-import { AuthUserRepository } from '../../../../infrastructure-persistence/repositories/auth-user.repository';
 import { JwtTokenInvalidationRepository } from './jwt-token-invalidation.repository';
 
 @Injectable()

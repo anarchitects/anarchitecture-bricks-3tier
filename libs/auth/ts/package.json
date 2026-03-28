@@ -36,6 +36,11 @@
       "import": "./dtos/index.js",
       "require": "./dtos/index.cjs"
     },
+    "./dtos/jwt": {
+      "types": "./dtos/jwt/index.d.ts",
+      "import": "./dtos/jwt/index.js",
+      "require": "./dtos/jwt/index.cjs"
+    },
     "./models": {
       "types": "./models/index.d.ts",
       "import": "./models/index.js",

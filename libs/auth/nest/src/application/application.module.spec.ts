@@ -2,13 +2,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthApplicationModule } from './application.module';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
 import { AuthEnginePort } from './services/auth-engine.port';
-import { AuthEnginePersistencePort } from './services/auth-engine-persistence.port';
+import { BetterAuthDatabasePort } from './services/better-auth-database.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import { AuthService } from './services/auth.service';
 import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
 import { BetterAuthJwtTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-typeorm-support.module';
-import { BetterAuthTypeormAdapterPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
+import { BetterAuthTypeormDatabaseAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
 import { BetterAuthJwtPluginService } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-plugin.service';
 import { BetterAuthPasskeysTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/passkeys/better-auth-passkeys-typeorm-support.module';
 
@@ -35,15 +35,15 @@ describe('AuthApplicationModule', () => {
     expect(moduleMetadata.providers).toEqual(
       expect.arrayContaining([
         AuthOrchestrationService,
-        BetterAuthTypeormAdapterPersistenceAdapter,
+        BetterAuthTypeormDatabaseAdapter,
         BetterAuthAuthEngineAdapter,
         expect.objectContaining({
           provide: AUTH_RESOURCE_AUTHORIZATION_LOADERS,
           useValue: loaders,
         }),
         expect.objectContaining({
-          provide: AuthEnginePersistencePort,
-          useExisting: BetterAuthTypeormAdapterPersistenceAdapter,
+          provide: BetterAuthDatabasePort,
+          useExisting: BetterAuthTypeormDatabaseAdapter,
         }),
         expect.objectContaining({
           provide: AuthEnginePort,
@@ -111,19 +111,8 @@ describe('AuthApplicationModule', () => {
     );
   });
 
-  it('keeps legacy AUTH_PERSISTENCE env values inert in forRootFromConfig', () => {
-    const original = process.env['AUTH_PERSISTENCE'];
-    process.env['AUTH_PERSISTENCE'] = 'unsupported';
-
-    try {
-      const moduleMetadata = AuthApplicationModule.forRootFromConfig();
-      expect(moduleMetadata.module).toBe(AuthApplicationModule);
-    } finally {
-      if (original === undefined) {
-        delete process.env['AUTH_PERSISTENCE'];
-      } else {
-        process.env['AUTH_PERSISTENCE'] = original;
-      }
-    }
+  it('keeps forRootFromConfig deterministic without legacy persistence env handling', () => {
+    const moduleMetadata = AuthApplicationModule.forRootFromConfig();
+    expect(moduleMetadata.module).toBe(AuthApplicationModule);
   });
 });

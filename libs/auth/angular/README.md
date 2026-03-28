@@ -5,7 +5,7 @@ Angular domain libraries for the Anarchitecture auth domain. The package is orga
 ## Developer + AI Agent Start Here
 
 - Read this README before generating integration code for `@anarchitects/auth-angular`.
-- Use public entry points only (`config`, `data-access`, `feature`, `state`, `util`, `ui`); do not import internal files.
+- Use public entry points only (`config`, `data-access`, `feature`, `state`, `util`, `ui`, plus layer-scoped plugin subpaths like `data-access/jwt`); do not import internal files.
 - Register providers and state explicitly via `provideAuthConfig`, `provideAuthDataAccess`, and `provideAuthState`.
 - Keep policy and ability behavior aligned with contracts from `@anarchitects/auth-ts`.
 - Preserve Angular layering and keep orchestration out of UI components.
@@ -172,12 +172,16 @@ export class PostActionsComponent {
 
 | Import path                              | Description                             |
 | ---------------------------------------- | --------------------------------------- |
-| `@anarchitects/auth-angular/config`      | DI tokens and providers                 |
-| `@anarchitects/auth-angular/data-access` | Generated API clients and HTTP adapters |
-| `@anarchitects/auth-angular/state`       | Signal store, eager restore, CASL ability sync |
-| `@anarchitects/auth-angular/feature`     | Coarse and resource-aware router guards |
-| `@anarchitects/auth-angular/ui`          | Auth domain form UI components          |
-| `@anarchitects/auth-angular/util`        | CASL ability/resource helpers and typings |
+| `@anarchitects/auth-angular/config`           | DI tokens and providers                           |
+| `@anarchitects/auth-angular/data-access`      | Generated API clients and HTTP adapters           |
+| `@anarchitects/auth-angular/data-access/jwt`  | JWT plugin APIs and interceptor helpers           |
+| `@anarchitects/auth-angular/state`            | Signal store, eager restore, CASL ability sync    |
+| `@anarchitects/auth-angular/state/jwt`        | JWT refresh-token state orchestration             |
+| `@anarchitects/auth-angular/feature`          | Coarse and resource-aware router guards           |
+| `@anarchitects/auth-angular/feature/jwt`      | JWT refresh-token orchestration components         |
+| `@anarchitects/auth-angular/ui`               | Auth domain form UI components                    |
+| `@anarchitects/auth-angular/ui/jwt`           | JWT refresh-token form components                 |
+| `@anarchitects/auth-angular/util`             | CASL ability/resource helpers and typings         |
 
 ## Nx scripts
 
@@ -192,6 +196,8 @@ export class PostActionsComponent {
 - State layer uses Angular signals via `@ngrx/signals` for reactive updates, hydrates raw RBAC rules plus the derived CASL ability, and restores sessions eagerly when provided.
 - `AuthStore.initialized()` and `AuthStore.restoring()` let apps avoid auth flicker while bootstrap restore completes.
 - `/auth/me` RBAC payloads are parsed at the frontend trust boundary; malformed authorization data fails closed instead of producing a partially trusted ability.
+- Core root surfaces are session-first. JWT plugin helpers live under layer-scoped subpaths such as `@anarchitects/auth-angular/data-access/jwt`, `@anarchitects/auth-angular/state/jwt`, `@anarchitects/auth-angular/feature/jwt`, and `@anarchitects/auth-angular/ui/jwt`.
+- Feature components must orchestrate through state entrypoints; they should not call data-access entrypoints directly.
 - Ability creation and concrete resource checks are centralised in `@anarchitects/auth-angular/util`; import the helpers instead of instantiating CASL directly.
 - `policyGuard` is coarse by design; use `resourcePolicyGuard` and backend instance checks for ownership-sensitive routes.
 - Keep UI, feature, data-access, state, and config layers decoupled per architecture guidelines.

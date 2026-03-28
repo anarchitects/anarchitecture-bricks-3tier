@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
 import { PolicyRule, User } from '@anarchitects/auth-ts/models';
 import { AppAbility, AbilityFactory } from '../factories/ability.factory';
+import { AuthUserRepository } from '../ports/auth-user.repository';
 import { toValidatedPersistedPolicyRule } from './persisted-policy-rule';
 
 @Injectable()

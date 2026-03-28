@@ -1,5 +1,5 @@
 import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
-import type { ResourceAuthorizationOptions } from '../application/resource-authorization.types';
+import type { ResourceAuthorizationOptions } from './resource-authorization.types';
 import type { AuthConfig } from './auth.config';
 import {
   DEFAULT_AUTH_BETTER_AUTH_BASE_URL,
@@ -207,14 +207,7 @@ export const resolveAuthApplicationModuleOptions = (
       origin: options.plugins?.passkeys?.origin,
     },
     social: {
-      enabled:
-        options.plugins?.social?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED,
-      github: options.plugins?.social?.github
-        ? {
-            clientId: options.plugins.social.github.clientId,
-            clientSecret: options.plugins.social.github.clientSecret,
-          }
-        : undefined,
+      ...resolveAuthSocialPluginOptions(options.plugins?.social),
     },
     oidc: {
       enabled:
@@ -296,14 +289,7 @@ export const mapAuthConfigToApplicationModuleOptions = (
       origin: config.plugins?.passkeys?.origin,
     },
     social: {
-      enabled:
-        config.plugins?.social?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED,
-      github: config.plugins?.social?.github
-        ? {
-            clientId: config.plugins.social.github.clientId,
-            clientSecret: config.plugins.social.github.clientSecret,
-          }
-        : undefined,
+      ...resolveAuthSocialPluginOptions(config.plugins?.social),
     },
     oidc: {
       enabled:
@@ -315,6 +301,30 @@ export const mapAuthConfigToApplicationModuleOptions = (
     key: config.encryptionKey ?? DEFAULT_AUTH_ENCRYPTION_KEY,
   },
 });
+
+const resolveAuthSocialPluginOptions = (
+  socialOptions?: AuthSocialPluginOptions | AuthConfig['plugins']['social'],
+): ResolvedAuthSocialPluginOptions => {
+  const enabled =
+    socialOptions?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED;
+  const github = socialOptions?.github
+    ? {
+        clientId: socialOptions.github.clientId,
+        clientSecret: socialOptions.github.clientSecret,
+      }
+    : undefined;
+
+  if (enabled && (!github?.clientId || !github.clientSecret)) {
+    throw new Error(
+      'Social auth requires AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_ID and AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_SECRET when enabled.',
+    );
+  }
+
+  return {
+    enabled,
+    github,
+  };
+};
 
 export const mapAuthConfigToPresentationModuleOptions = (
   config: AuthConfig,

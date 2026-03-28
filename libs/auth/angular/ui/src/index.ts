@@ -7,4 +7,3 @@ export * from './components/verify-email-form/verify-email-form';
 export * from './components/change-password-form/change-password-form';
 export * from './components/update-email-form/update-email-form';
 export * from './components/logout-form/logout-form';
-export * from './components/refresh-tokens-form/refresh-tokens-form';

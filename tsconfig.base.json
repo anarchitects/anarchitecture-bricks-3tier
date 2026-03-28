@@ -63,6 +63,9 @@
       ],
       "@anarchitects/auth-ts": ["libs/auth/ts/src/index.ts"],
       "@anarchitects/auth-ts/dtos": ["libs/auth/ts/src/dtos/index.ts"],
+      "@anarchitects/auth-ts/dtos/jwt": [
+        "libs/auth/ts/src/dtos/jwt/index.ts"
+      ],
       "@anarchitects/auth-ts/models": ["libs/auth/ts/src/models/index.ts"],
       "@anarchitects/auth-ts/mappers": ["libs/auth/ts/src/mappers/index.ts"],
       "@anarchitects/auth-nest": ["libs/auth/nest/src/index.ts"],
@@ -86,8 +89,20 @@
       "@anarchitects/auth-angular/data-access": [
         "libs/auth/angular/data-access/src/index.ts"
       ],
+      "@anarchitects/auth-angular/data-access/jwt": [
+        "libs/auth/angular/data-access/jwt/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/feature/jwt": [
+        "libs/auth/angular/feature/jwt/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/ui/jwt": [
+        "libs/auth/angular/ui/jwt/src/index.ts"
+      ],
       "@anarchitects/auth-angular/state": [
         "libs/auth/angular/state/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/state/jwt": [
+        "libs/auth/angular/state/jwt/src/index.ts"
       ],
       "@anarchitects/auth-angular/util": [
         "libs/auth/angular/util/src/index.ts"

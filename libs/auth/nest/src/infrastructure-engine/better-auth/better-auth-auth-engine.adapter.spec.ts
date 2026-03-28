@@ -1,5 +1,5 @@
 import { MailerPort } from '@anarchitects/common-nest-mailer';
-import { AuthEnginePersistencePort } from '../../application/services/auth-engine-persistence.port';
+import { BetterAuthDatabasePort } from '../../application/services/better-auth-database.port';
 import { HashService } from '../../application/services/hash.service';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
 import { BetterAuthAuthEngineAdapter } from './better-auth-auth-engine.adapter';
@@ -63,7 +63,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
 
   const persistencePort = {
     resolveDatabase: jest.fn(),
-  } satisfies Pick<AuthEnginePersistencePort, 'resolveDatabase'>;
+  } satisfies Pick<BetterAuthDatabasePort, 'resolveDatabase'>;
   const hashService = {
     hash: jest.fn().mockResolvedValue('hashed-password'),
     compare: jest.fn().mockResolvedValue(true),
@@ -132,7 +132,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
 
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -159,7 +159,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
     persistencePort.resolveDatabase.mockResolvedValue({ kind: 'database' });
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -179,7 +179,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
 
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -213,7 +213,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
           },
         },
       },
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -241,7 +241,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
     persistencePort.resolveDatabase.mockResolvedValue({ kind: 'database' });
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -272,7 +272,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
     persistencePort.resolveDatabase.mockResolvedValue({ kind: 'database' });
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -293,7 +293,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
     persistencePort.resolveDatabase.mockResolvedValue({ kind: 'database' });
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );
@@ -332,7 +332,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
     persistencePort.resolveDatabase.mockResolvedValue({ kind: 'database' });
     const adapter = new BetterAuthAuthEngineAdapter(
       options,
-      persistencePort as AuthEnginePersistencePort,
+      persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
       mailer as MailerPort,
     );

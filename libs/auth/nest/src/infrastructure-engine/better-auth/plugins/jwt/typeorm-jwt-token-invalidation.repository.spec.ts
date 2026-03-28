@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { InvalidatedTokenEntity } from '../../../../infrastructure-persistence/entities/invalidated-token.entity';
 import { TypeormJwtTokenInvalidationRepository } from './typeorm-jwt-token-invalidation.repository';
+import { InvalidatedTokenEntity } from './invalidated-token.entity';
 
 describe('TypeormJwtTokenInvalidationRepository', () => {
   let repository: TypeormJwtTokenInvalidationRepository;

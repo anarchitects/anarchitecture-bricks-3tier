@@ -12,7 +12,7 @@ import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-aut
 import { BetterAuthJwtPluginService } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-plugin.service';
 import { BetterAuthJwtTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-typeorm-support.module';
 import { BetterAuthPasskeysTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/passkeys/better-auth-passkeys-typeorm-support.module';
-import { BetterAuthTypeormAdapterPersistenceAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
+import { BetterAuthTypeormDatabaseAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import {
   ConfigurableModuleClass,
@@ -21,7 +21,7 @@ import {
 import { AbilityFactory } from './factories/ability.factory';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
 import { AuthEnginePort } from './services/auth-engine.port';
-import { AuthEnginePersistencePort } from './services/auth-engine-persistence.port';
+import { BetterAuthDatabasePort } from './services/better-auth-database.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
@@ -92,10 +92,10 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
         provide: AuthService,
         useExisting: AuthOrchestrationService,
       },
-      BetterAuthTypeormAdapterPersistenceAdapter,
+      BetterAuthTypeormDatabaseAdapter,
       {
-        provide: AuthEnginePersistencePort,
-        useExisting: BetterAuthTypeormAdapterPersistenceAdapter,
+        provide: BetterAuthDatabasePort,
+        useExisting: BetterAuthTypeormDatabaseAdapter,
       },
       BetterAuthAuthEngineAdapter,
       {
