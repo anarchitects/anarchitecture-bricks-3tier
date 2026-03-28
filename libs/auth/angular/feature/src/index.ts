@@ -6,7 +6,6 @@ export * from './components/verify-email/verify-email';
 export * from './components/change-password/change-password';
 export * from './components/update-email/update-email';
 export * from './components/logout/logout';
-export * from './components/refresh-tokens/refresh-tokens';
 export * from './guards/policy.guard';
 export * from './guards/resource-policy.guard';
 

@@ -62,6 +62,7 @@ pnpm add @anarchitects/auth-ts
 | ------------------------------ | ------------------------------------------------ |
 | `@anarchitects/auth-ts`        | Barrel re-export for everything in this library  |
 | `@anarchitects/auth-ts/dtos`   | Request/response schemas and DTO types (TypeBox) |
+| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas       |
 | `@anarchitects/auth-ts/models` | Persistence-facing domain models used for RBAC   |
 
 ## Usage

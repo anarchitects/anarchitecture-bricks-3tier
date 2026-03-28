@@ -1,8 +1,8 @@
 import { Action, Subject } from '@anarchitects/auth-ts/models';
 import { subject } from '@casl/ability';
 import { ForbiddenException } from '@nestjs/common';
+import { AuthorizableResource } from '../../config';
 import { AppAbility } from '../factories/ability.factory';
-import { AuthorizableResource } from '../resource-authorization.types';
 
 export const toPolicySubject = <T extends AuthorizableResource>(
   subjectType: Subject,

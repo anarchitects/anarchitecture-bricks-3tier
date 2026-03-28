@@ -113,4 +113,321 @@ export default [
       ],
     },
   },
+  // Nx project tags cannot see layer boundaries inside a single publishable
+  // package with many secondary entrypoints, so auth relies on path-based
+  // ESLint restrictions to enforce those internal layer contracts.
+  {
+    files: ['libs/auth/angular/feature/**/*.ts'],
+    ignores: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@anarchitects/auth-angular/data-access',
+                '@anarchitects/auth-angular/data-access/*',
+                '../data-access',
+                '../data-access/*',
+                '../../data-access',
+                '../../data-access/*',
+                '../../../data-access',
+                '../../../data-access/*',
+                '../../../../data-access',
+                '../../../../data-access/*',
+                '../*/src',
+                '../*/src/*',
+                '../../*/src',
+                '../../*/src/*',
+                '../../../*/src',
+                '../../../*/src/*',
+                '../../../../*/src',
+                '../../../../*/src/*',
+              ],
+              message:
+                'Auth Angular feature code must depend on state/ui/config/util entrypoints, never data-access or another entrypoint\'s internal src path.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/angular/state/**/*.ts'],
+    ignores: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@anarchitects/auth-angular/feature',
+                '@anarchitects/auth-angular/feature/*',
+                '@anarchitects/auth-angular/ui',
+                '@anarchitects/auth-angular/ui/*',
+                '../feature',
+                '../feature/*',
+                '../../feature',
+                '../../feature/*',
+                '../../../feature',
+                '../../../feature/*',
+                '../ui',
+                '../ui/*',
+                '../../ui',
+                '../../ui/*',
+                '../../../ui',
+                '../../../ui/*',
+                '../*/src',
+                '../*/src/*',
+                '../../*/src',
+                '../../*/src/*',
+                '../../../*/src',
+                '../../../*/src/*',
+                '../../../../*/src',
+                '../../../../*/src/*',
+              ],
+              message:
+                'Auth Angular state may depend on data-access/config/util, but not on feature/ui or another entrypoint\'s internal src path.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/angular/ui/**/*.ts'],
+    ignores: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@anarchitects/auth-angular/feature',
+                '@anarchitects/auth-angular/feature/*',
+                '@anarchitects/auth-angular/state',
+                '@anarchitects/auth-angular/state/*',
+                '@anarchitects/auth-angular/data-access',
+                '@anarchitects/auth-angular/data-access/*',
+                '../feature',
+                '../feature/*',
+                '../../feature',
+                '../../feature/*',
+                '../../../feature',
+                '../../../feature/*',
+                '../state',
+                '../state/*',
+                '../../state',
+                '../../state/*',
+                '../../../state',
+                '../../../state/*',
+                '../data-access',
+                '../data-access/*',
+                '../../data-access',
+                '../../data-access/*',
+                '../../../data-access',
+                '../../../data-access/*',
+                '../*/src',
+                '../*/src/*',
+                '../../*/src',
+                '../../*/src/*',
+                '../../../*/src',
+                '../../../*/src/*',
+                '../../../../*/src',
+                '../../../../*/src/*',
+              ],
+              message:
+                'Auth Angular UI must stay presentation-only and may not import feature/state/data-access layers or another entrypoint\'s internal src path.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/angular/data-access/**/*.ts'],
+    ignores: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@anarchitects/auth-angular/feature',
+                '@anarchitects/auth-angular/feature/*',
+                '@anarchitects/auth-angular/state',
+                '@anarchitects/auth-angular/state/*',
+                '@anarchitects/auth-angular/ui',
+                '@anarchitects/auth-angular/ui/*',
+                '../feature',
+                '../feature/*',
+                '../../feature',
+                '../../feature/*',
+                '../../../feature',
+                '../../../feature/*',
+                '../state',
+                '../state/*',
+                '../../state',
+                '../../state/*',
+                '../../../state',
+                '../../../state/*',
+                '../ui',
+                '../ui/*',
+                '../../ui',
+                '../../ui/*',
+                '../../../ui',
+                '../../../ui/*',
+                '../*/src',
+                '../*/src/*',
+                '../../*/src',
+                '../../*/src/*',
+                '../../../*/src',
+                '../../../*/src/*',
+                '../../../../*/src',
+                '../../../../*/src/*',
+              ],
+              message:
+                'Auth Angular data-access may only depend on config/util and shared TS contracts, never feature/state/ui or another entrypoint\'s internal src path.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/nest/src/presentation/**/*.ts'],
+    ignores: [
+      '**/*.module.ts',
+      '**/*.module-definition.ts',
+      '**/index.ts',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '../infrastructure-*',
+                '../infrastructure-*/*',
+                '../../infrastructure-*',
+                '../../infrastructure-*/*',
+                '../../../infrastructure-*',
+                '../../../infrastructure-*/*',
+              ],
+              message:
+                'Auth Nest presentation may depend on application/config/util, but not on infrastructure modules directly.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/nest/src/application/**/*.ts'],
+    ignores: [
+      '**/*.module.ts',
+      '**/*.module-definition.ts',
+      '**/index.ts',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '../presentation',
+                '../presentation/*',
+                '../../presentation',
+                '../../presentation/*',
+                '../../../presentation',
+                '../../../presentation/*',
+                '../infrastructure-*',
+                '../infrastructure-*/*',
+                '../../infrastructure-*',
+                '../../infrastructure-*/*',
+                '../../../infrastructure-*',
+                '../../../infrastructure-*/*',
+              ],
+              message:
+                'Auth Nest application code may depend on config/util and application-owned ports, but not on presentation or infrastructure.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/nest/src/infrastructure-*/**/*.ts'],
+    ignores: [
+      '**/*.module.ts',
+      '**/*.module-definition.ts',
+      '**/index.ts',
+      '**/*.spec.ts',
+      '**/*.test.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '../presentation',
+                '../presentation/*',
+                '../../presentation',
+                '../../presentation/*',
+                '../../../presentation',
+                '../../../presentation/*',
+                '../../../../presentation',
+                '../../../../presentation/*',
+              ],
+              message:
+                'Auth Nest infrastructure may implement application ports, but it must not depend on presentation.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/auth/nest/src/config/**/*.ts'],
+    ignores: ['**/*.spec.ts', '**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '../application',
+                '../application/*',
+                '../../application',
+                '../../application/*',
+                '../presentation',
+                '../presentation/*',
+                '../../presentation',
+                '../../presentation/*',
+                '../infrastructure-*',
+                '../infrastructure-*/*',
+                '../../infrastructure-*',
+                '../../infrastructure-*/*',
+              ],
+              message:
+                'Auth Nest config must stay neutral and may not depend on application, presentation, or infrastructure.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];

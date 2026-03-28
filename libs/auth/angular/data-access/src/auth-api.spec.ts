@@ -4,9 +4,9 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { SUPPRESS_AUTH_FAILURE_REDIRECT } from '@anarchitects/auth-angular/config';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth-api';
-import { SUPPRESS_AUTH_FAILURE_REDIRECT } from './interceptors/auth-error.interceptor';
 
 describe('AuthApi', () => {
   let service: AuthApi;
@@ -144,21 +144,6 @@ describe('AuthApi', () => {
       expect(req.request.method).toBe('PATCH');
       expect(req.request.body).toEqual(dto);
       req.flush({ success: true });
-    });
-  });
-  describe('refreshTokens', () => {
-    it('should call the JWT refresh token endpoint', () => {
-      const dto = {
-        refreshToken: 'some-refresh-token',
-      };
-      service.refreshTokens(dto).subscribe();
-      const req = httpController.expectOne('/api/auth/jwt/refresh');
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(dto);
-      req.flush({
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-      });
     });
   });
 

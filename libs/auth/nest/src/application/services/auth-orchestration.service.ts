@@ -17,8 +17,8 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AuthAccountRepository } from '../../infrastructure-persistence/repositories/auth-account.repository';
-import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
+import { AuthAccountRepository } from '../ports/auth-account.repository';
+import { AuthUserRepository } from '../ports/auth-user.repository';
 import { AuthEnginePort } from './auth-engine.port';
 import { AuthHttpResult, AuthService } from './auth.service';
 import { HashService } from './hash.service';

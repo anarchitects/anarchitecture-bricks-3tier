@@ -2,6 +2,8 @@
 
 Domain UI components for `@anarchitects/auth-angular`.
 
+JWT-specific form components live under `@anarchitects/auth-angular/ui/jwt`, not the root UI entry point.
+
 ## Exports
 
 - `AnarchitectsAuthUiLoginForm`
@@ -13,7 +15,6 @@ Domain UI components for `@anarchitects/auth-angular`.
 - `AnarchitectsAuthUiChangePasswordForm`
 - `AnarchitectsAuthUiUpdateEmailForm`
 - `AnarchitectsAuthUiLogoutForm`
-- `AnarchitectsAuthUiRefreshTokensForm`
 
 All components compose `AnarchitectsUiForm`, support layout passthrough, and forward canonical template/slot projection hooks.
 

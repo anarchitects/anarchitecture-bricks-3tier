@@ -1,3 +1,4 @@
+import { HttpContextToken } from '@angular/common/http';
 import { InjectionToken, inject } from '@angular/core';
 
 export type AuthConfig = {
@@ -12,6 +13,9 @@ export type AuthConfig = {
 export const AUTH_CONFIG = new InjectionToken<AuthConfig>('AUTH_CONFIG');
 export const API_RESOURCE_PATH = new InjectionToken<string>(
   'AUTH_API_RESOURCE_PATH'
+);
+export const SUPPRESS_AUTH_FAILURE_REDIRECT = new HttpContextToken<boolean>(
+  () => false,
 );
 
 /** Library-level sensible defaults */

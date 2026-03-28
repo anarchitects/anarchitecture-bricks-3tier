@@ -1,4 +1,5 @@
-import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos';
+import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos/jwt';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
@@ -8,21 +9,20 @@ import {
   input,
   output,
 } from '@angular/core';
-import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
-import { refreshTokensFormBridge } from '../../internal/auth-form-bridges';
+import { refreshTokensFormBridge } from '../../internal/refresh-tokens-form-bridge';
 
 @Component({
-  selector: 'anarchitects-auth-ui-refresh-tokens-form',
+  selector: 'anarchitects-auth-jwt-refresh-tokens-form',
   imports: [AnarchitectsUiForm],
   templateUrl: './refresh-tokens-form.html',
   styleUrl: './refresh-tokens-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-domain-component anx-auth-ui-refresh-tokens-form anx-stack',
-    'attr.data-anx-component': '"auth-ui-refresh-tokens-form"',
+    class: 'anx-domain-component anx-auth-jwt-refresh-tokens-form anx-stack',
+    'attr.data-anx-component': '"auth-jwt-refresh-tokens-form"',
   },
 })
-export class AnarchitectsAuthUiRefreshTokensForm {
+export class AnarchitectsAuthJwtRefreshTokensForm {
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<RefreshTokenRequestDTO>();

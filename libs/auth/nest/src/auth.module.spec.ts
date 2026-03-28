@@ -34,7 +34,6 @@ const dataSourceStub = {
 
 const ORIGINAL_AUTH_ENV = {
   mailerProvider: process.env['AUTH_MAILER_PROVIDER'],
-  persistence: process.env['AUTH_PERSISTENCE'],
 };
 
 @Global()
@@ -61,12 +60,6 @@ describe('AuthModule', () => {
       delete process.env['AUTH_MAILER_PROVIDER'];
     } else {
       process.env['AUTH_MAILER_PROVIDER'] = ORIGINAL_AUTH_ENV.mailerProvider;
-    }
-
-    if (ORIGINAL_AUTH_ENV.persistence === undefined) {
-      delete process.env['AUTH_PERSISTENCE'];
-    } else {
-      process.env['AUTH_PERSISTENCE'] = ORIGINAL_AUTH_ENV.persistence;
     }
   });
 
@@ -203,9 +196,7 @@ describe('AuthModule', () => {
     );
   });
 
-  it('keeps legacy AUTH_PERSISTENCE env values inert through forRootFromConfig', () => {
-    process.env['AUTH_PERSISTENCE'] = 'unsupported';
-
+  it('keeps forRootFromConfig deterministic without legacy persistence env handling', () => {
     expect(() =>
       AuthModule.forRootFromConfig({
         presentation: authModuleOptions.presentation,

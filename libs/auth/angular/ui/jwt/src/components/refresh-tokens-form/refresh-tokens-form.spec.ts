@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos';
+import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos/jwt';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { AnarchitectsAuthUiRefreshTokensForm } from './refresh-tokens-form';
+import { AnarchitectsAuthJwtRefreshTokensForm } from './refresh-tokens-form';
 
-describe('AnarchitectsAuthUiRefreshTokensForm', () => {
-  let component: AnarchitectsAuthUiRefreshTokensForm;
-  let fixture: ComponentFixture<AnarchitectsAuthUiRefreshTokensForm>;
+describe('AnarchitectsAuthJwtRefreshTokensForm', () => {
+  let component: AnarchitectsAuthJwtRefreshTokensForm;
+  let fixture: ComponentFixture<AnarchitectsAuthJwtRefreshTokensForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AnarchitectsAuthUiRefreshTokensForm],
+      imports: [AnarchitectsAuthJwtRefreshTokensForm],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AnarchitectsAuthUiRefreshTokensForm);
+    fixture = TestBed.createComponent(AnarchitectsAuthJwtRefreshTokensForm);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

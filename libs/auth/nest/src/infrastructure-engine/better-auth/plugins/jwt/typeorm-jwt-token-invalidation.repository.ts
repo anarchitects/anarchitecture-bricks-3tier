@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InvalidatedTokenEntity } from '../../../../infrastructure-persistence/entities/invalidated-token.entity';
 import { JwtTokenInvalidationRepository } from './jwt-token-invalidation.repository';
+import { InvalidatedTokenEntity } from './invalidated-token.entity';
 
 @Injectable()
 export class TypeormJwtTokenInvalidationRepository

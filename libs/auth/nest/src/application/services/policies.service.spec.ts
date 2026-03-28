@@ -1,8 +1,8 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PoliciesService } from './policies.service';
-import { AuthUserRepository } from '../../infrastructure-persistence/repositories/auth-user.repository';
 import { Permission, PolicyRule, Role, User } from '@anarchitects/auth-ts';
+import { AuthUserRepository } from '../ports/auth-user.repository';
+import { PoliciesService } from './policies.service';
 import { AbilityFactory } from '../factories/ability.factory';
 
 describe('PoliciesService', () => {

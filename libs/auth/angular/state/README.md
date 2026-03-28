@@ -1,6 +1,6 @@
 # @anarchitects/auth-angular/state
 
-Signal-based state management for the auth domain. Import from `@anarchitects/auth-angular/state` to orchestrate login, logout, password resets, token refresh, and related workflows without wiring up NgRx reducers manually.
+Signal-based state management for the auth domain. Import from `@anarchitects/auth-angular/state` to orchestrate the session-first core auth flows without wiring up NgRx reducers manually. JWT plugin state lives under `@anarchitects/auth-angular/state/jwt`.
 
 ## Exports
 
@@ -10,6 +10,7 @@ Signal-based state management for the auth domain. Import from `@anarchitects/au
   - hydrated authorization state (`rbac`, `ability`)
   - async methods for each auth use case (`login`, `logout`, `registerUser`, etc.)
 - `provideAuthState(options?)`: provider helper for explicit store registration (app/route scope) with eager bootstrap restore
+- `@anarchitects/auth-angular/state/jwt`: JWT plugin state helpers such as `AuthJwtStore` and `provideAuthJwtState()`
 - The store depends on `AuthApi` from the data-access layer and respects the configuration providers.
 
 ## Usage

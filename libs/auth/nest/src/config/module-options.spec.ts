@@ -230,4 +230,18 @@ describe('auth module option resolvers', () => {
       }),
     );
   });
+
+  it('throws when social auth is enabled without required GitHub credentials', () => {
+    expect(() =>
+      resolveAuthApplicationModuleOptions({
+        plugins: {
+          social: {
+            enabled: true,
+          },
+        },
+      }),
+    ).toThrow(
+      'Social auth requires AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_ID and AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_SECRET when enabled.',
+    );
+  });
 });

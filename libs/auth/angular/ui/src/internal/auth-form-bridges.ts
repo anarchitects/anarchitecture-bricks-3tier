@@ -4,7 +4,6 @@ import {
   ForgotPasswordRequestDTO,
   LoginRequestDTO,
   LogoutRequestDTO,
-  RefreshTokenRequestDTO,
   RegisterRequestDTO,
   ResetPasswordRequestDTO,
   UpdateEmailRequestDTO,
@@ -29,9 +28,6 @@ const readPayloadString = (
   input: SubmissionRequestDTO,
   key: string,
 ): string | undefined => input.payload[key] as string | undefined;
-
-const readStoredString = (key: string): string | undefined =>
-  localStorage.getItem(key) || undefined;
 
 const matchFieldsRule = (sourceField: string, targetField: string) => ({
   kind: 'matchFields' as const,
@@ -155,20 +151,6 @@ const LOGOUT_FORM_CONFIG: FormConfig = {
   id: 'logout',
   version: 1,
   fields: [],
-};
-
-const REFRESH_TOKENS_FORM_CONFIG: FormConfig = {
-  id: 'refresh-tokens',
-  version: 1,
-  fields: [
-    {
-      name: 'refreshToken',
-      kind: 'string',
-      required: false,
-      minLength: 1,
-      ui: { label: 'Refresh Token' },
-    },
-  ],
 };
 
 const resolveToken = (
@@ -323,18 +305,4 @@ export const updateEmailFormBridge: AuthFormBridge<UpdateEmailRequestDTO> = {
 export const logoutFormBridge: AuthFormBridge<LogoutRequestDTO> = {
   resolveFormConfig: () => LOGOUT_FORM_CONFIG,
   mapSubmission: () => ({}),
-};
-
-export const refreshTokensFormBridge: AuthFormBridge<RefreshTokenRequestDTO> = {
-  resolveFormConfig: () => REFRESH_TOKENS_FORM_CONFIG,
-  mapSubmission: (input) => {
-    const refreshToken =
-      readPayloadString(input, 'refreshToken') || readStoredString('refreshToken');
-
-    if (!refreshToken) {
-      return undefined;
-    }
-
-    return { refreshToken };
-  },
 };

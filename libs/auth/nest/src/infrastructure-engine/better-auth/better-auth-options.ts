@@ -72,12 +72,8 @@ export function createBetterAuthOptions(
     socialProviders: options.plugins.social.enabled
       ? {
           github: {
-            clientId:
-              options.plugins.social.github?.clientId ??
-              'github-client-id-placeholder',
-            clientSecret:
-              options.plugins.social.github?.clientSecret ??
-              'github-client-secret-placeholder',
+            clientId: options.plugins.social.github!.clientId!,
+            clientSecret: options.plugins.social.github!.clientSecret!,
           },
         }
       : {},

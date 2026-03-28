@@ -1,14 +1,16 @@
 import {
   JwtLogoutRequestDTO,
   JwtLogoutRequestSchema,
-  LoginRequestDTO,
-  LoginRequestSchema,
   LoginResponseDTO,
   LoginResponseSchema,
   RefreshTokenRequestDTO,
   RefreshTokenRequestSchema,
   RefreshTokenResponseDTO,
   RefreshTokenResponseSchema,
+} from '@anarchitects/auth-ts/dtos/jwt';
+import {
+  LoginRequestDTO,
+  LoginRequestSchema,
   SuccessResponseDTO,
   SuccessResponseSchema,
 } from '@anarchitects/auth-ts/dtos';
