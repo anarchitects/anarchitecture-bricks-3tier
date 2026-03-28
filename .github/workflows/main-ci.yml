@@ -45,7 +45,8 @@ jobs:
       - run: yarn nx run docs-hub:validate-content
       - run: yarn nx run api-specs:lint
       - run: yarn nx run angular-docs:generate
-      - run: yarn nx affected -t lint test --parallel=3
+      - run: yarn nx affected -t lint --parallel=3
+      - run: yarn nx affected -t test --parallel=1
       # Cap per-agent concurrency for memory-heavy distributed builds and e2e tasks.
       - run: yarn nx affected -t build --parallel=1
       # When you enable task distribution, run the e2e-ci task instead of e2e
