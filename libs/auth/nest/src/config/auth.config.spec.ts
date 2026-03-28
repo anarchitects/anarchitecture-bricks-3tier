@@ -104,6 +104,13 @@ describe('authConfig', () => {
     });
   });
 
+  it('does not expose public engine or persistence mode selection in the settled config surface', () => {
+    const config = authConfig() as Record<string, unknown>;
+
+    expect(config).not.toHaveProperty('engine');
+    expect(config).not.toHaveProperty('persistence');
+  });
+
   it('maps plugin and Better Auth environment overrides', () => {
     process.env['AUTH_ENCRYPTION_KEY'] = 'enc-key';
     process.env['AUTH_MAILER_PROVIDER'] = 'noop';
