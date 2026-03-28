@@ -2,7 +2,7 @@ export default {
   displayName: 'auth-nest',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
-  maxWorkers: 4,
+  maxWorkers: '50%',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
