@@ -7,6 +7,7 @@ const catalogFile = join(workspaceRoot, 'dist/docs-hub/data/packages.catalog.jso
 const outputRoot = join(workspaceRoot, 'dist/docs-hub');
 const angularGuidePath = join(workspaceRoot, 'docs/guides/angular.md');
 const nestGuidePath = join(workspaceRoot, 'docs/guides/nest.md');
+const authMigrationGuidePath = join(workspaceRoot, 'docs/guides/auth-migration.md');
 const aiAgentsGuidePath = join(workspaceRoot, 'docs/guides/ai-agents.md');
 const designUiSystemsGuidePath = join(workspaceRoot, 'docs/guides/design-ui-systems.md');
 const tsContractsGuidePath = join(workspaceRoot, 'docs/guides/ts-contracts.md');
@@ -39,6 +40,7 @@ function pageTemplate(title, activePath, content, generatedAt) {
     { href: '/packages/', label: 'Packages' },
     { href: '/guides/angular.html', label: 'Angular Guide' },
     { href: '/guides/nest.html', label: 'Nest Guide' },
+    { href: '/guides/auth-migration.html', label: 'Auth Migration Guide' },
     { href: '/guides/ts-contracts.html', label: 'TS Contracts Guide' },
     { href: '/guides/design-ui-systems.html', label: 'Design/UI Systems Guide' },
     { href: '/guides/ai-agents.html', label: 'AI Agents Guide' },
@@ -186,6 +188,7 @@ const catalog = JSON.parse(readFileSync(catalogFile, 'utf8'));
 const generatedAt = new Date().toISOString();
 const angularGuideMarkdown = readFileSync(angularGuidePath, 'utf8');
 const nestGuideMarkdown = readFileSync(nestGuidePath, 'utf8');
+const authMigrationGuideMarkdown = readFileSync(authMigrationGuidePath, 'utf8');
 const aiAgentsGuideMarkdown = readFileSync(aiAgentsGuidePath, 'utf8');
 const designUiSystemsGuideMarkdown = readFileSync(designUiSystemsGuidePath, 'utf8');
 const tsContractsGuideMarkdown = readFileSync(tsContractsGuidePath, 'utf8');
@@ -242,6 +245,7 @@ writeFile(
     <li><a href="/packages/">Publishable package catalog</a></li>
     <li><a href="/guides/angular.html">Angular application guide</a></li>
     <li><a href="/guides/nest.html">Nest application guide</a></li>
+    <li><a href="/guides/auth-migration.html">Auth migration guide</a></li>
     <li><a href="/guides/ts-contracts.html">TS contracts guide</a></li>
     <li><a href="/guides/design-ui-systems.html">Design/UI systems guide</a></li>
     <li><a href="/guides/ai-agents.html">AI coding agents templates</a></li>
@@ -304,6 +308,16 @@ writeFile(
 );
 
 writeFile(
+  'guides/auth-migration.html',
+  renderMarkdownPage(
+    'Auth Migration Guide',
+    '/guides/auth-migration.html',
+    authMigrationGuideMarkdown,
+    generatedAt,
+  ),
+);
+
+writeFile(
   'guides/ts-contracts.html',
   renderMarkdownPage(
     'TS Contracts Guide',
@@ -355,6 +369,7 @@ writeFile(
 writeFile('data/packages.catalog.json', `${JSON.stringify(catalog, null, 2)}\n`);
 writeFile('guides/angular.md', angularGuideMarkdown);
 writeFile('guides/nest.md', nestGuideMarkdown);
+writeFile('guides/auth-migration.md', authMigrationGuideMarkdown);
 writeFile('guides/ts-contracts.md', tsContractsGuideMarkdown);
 writeFile('guides/ai-agents.md', aiAgentsGuideMarkdown);
 writeFile('guides/design-ui-systems.md', designUiSystemsGuideMarkdown);

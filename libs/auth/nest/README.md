@@ -2,6 +2,8 @@
 
 NestJS services, controllers, and infrastructure for the Anarchitecture authentication domain. This package wires contract-driven DTOs from `@anarchitects/auth-ts`, uses Better Auth as the canonical internal auth engine, keeps email/password always enabled, and layers repo-owned RBAC on top of Better Auth-backed user/session state.
 
+Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
+
 ## Developer + AI Agent Start Here
 
 - Read this README before generating integration code for `@anarchitects/auth-nest`.
@@ -12,8 +14,8 @@ NestJS services, controllers, and infrastructure for the Anarchitecture authenti
 ## Features
 
 - **Application layer** – Better Auth-backed `AuthService`, `BcryptHashService`, CASL-based `PoliciesService`, and `AbilityFactory` encapsulating business rules for sessions, passwords, and fine-grained access control.
-- **Presentation layer** – `AuthController` exposing the core session-oriented auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization, plus internal plugin controllers such as JWT when enabled.
-- **Infrastructure persistence** – TypeORM entities and repositories for users, roles, permissions, invalidated tokens, and core Better Auth tables in the `auth` schema. Plugin-specific tables stay with their plugin modules.
+- **Presentation layer** – `AuthController` exposing the package-owned core session-oriented auth lifecycle, `PoliciesGuard` and `@Policies()` decorator for route-level authorization, plus internal plugin controllers such as JWT when enabled.
+- **Infrastructure persistence** – TypeORM entities and repositories for users, roles, permissions, and core Better Auth tables in the `auth` schema. Plugin-specific tables and plugin-owned persistence such as JWT invalidation stay with their plugin modules.
 - **Infrastructure mailer** – `AuthMailerModule` wrapper over shared `CommonMailerModule.forRoot(...)` provider wiring; `NodeMailerAdapter` is re-exported for compatibility.
 - **Config** – Typed `authConfig` namespace using `@nestjs/config` with a Better Auth core config branch and typed plugin configuration.
 
@@ -39,7 +41,7 @@ The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` pack
 | `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                                                                |
 | `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, resource-authorization helpers/types                                |
 | `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy`               |
-| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, `AuthUserRepository`, `TypeormAuthUserRepository`                                                                                                             |
+| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, compatibility export for `AuthUserRepository`, and persistence module option types                                                                             |
 | `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                                |
 | `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                                  |
 
@@ -124,12 +126,6 @@ import { authConfig } from '@anarchitects/auth-nest/config';
             algorithm: 'bcrypt',
             key: process.env.AUTH_ENCRYPTION_KEY!,
           },
-          plugins: {
-            jwt: {
-              enabled: true,
-              secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
-            },
-          },
         },
       },
       mailer: {
@@ -178,24 +174,12 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
         algorithm: 'bcrypt',
         key: process.env.AUTH_ENCRYPTION_KEY!,
       },
-      plugins: {
-        jwt: {
-          enabled: true,
-          secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
-        },
-      },
     }),
     AuthPresentationModule.forRoot({
       application: {
         encryption: {
           algorithm: 'bcrypt',
           key: process.env.AUTH_ENCRYPTION_KEY!,
-        },
-        plugins: {
-          jwt: {
-            enabled: true,
-            secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
-          },
         },
       },
     }),
@@ -208,6 +192,27 @@ export class AuthApiModule {}
 ```
 
 Use layered composition when you need to replace or selectively compose infrastructure/application concerns.
+
+### Optional JWT plugin
+
+Core auth remains session-first. Only enable the JWT plugin when the host app explicitly needs token-based routes:
+
+```ts
+AuthModule.forRoot({
+  presentation: {
+    application: {
+      plugins: {
+        jwt: {
+          enabled: true,
+          secret: process.env.AUTH_PLUGIN_JWT_SECRET!,
+        },
+      },
+    },
+  },
+});
+```
+
+That mounts the plugin-owned `/auth/jwt/login`, `/auth/jwt/logout`, and `/auth/jwt/refresh` routes alongside the package-owned core session routes.
 
 ## Mailer Migration Note
 

@@ -48,7 +48,7 @@ bootstrapApplication(AppComponent, {
 });
 ```
 
-Bootstrap restore reads stored tokens, attempts `/auth/me`, and lets the existing auth interceptor refresh expired access tokens when possible. While that happens:
+Bootstrap restore attempts `/auth/me` against the active Better Auth session and leaves JWT refresh behavior to the optional JWT plugin state layer. While that happens:
 
 - `store.restoring()` is `true`
 - `store.initialized()` stays `false`

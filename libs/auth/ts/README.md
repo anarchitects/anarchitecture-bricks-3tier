@@ -8,6 +8,8 @@ TypeScript DTOs and domain models for the Anarchitecture authentication stack. T
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
 
+Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
+
 ## Developer + AI Agent Start Here
 
 - Read this README before generating DTO/model code that depends on `@anarchitects/auth-ts`.
@@ -60,10 +62,10 @@ pnpm add @anarchitects/auth-ts
 
 | Import path                    | Description                                      |
 | ------------------------------ | ------------------------------------------------ |
-| `@anarchitects/auth-ts`        | Barrel re-export for everything in this library  |
-| `@anarchitects/auth-ts/dtos`   | Request/response schemas and DTO types (TypeBox) |
-| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas       |
-| `@anarchitects/auth-ts/models` | Persistence-facing domain models used for RBAC   |
+| `@anarchitects/auth-ts`        | Barrel re-export for core models plus the core/session DTO surface |
+| `@anarchitects/auth-ts/dtos`   | Core/session request-response schemas and DTO types (TypeBox) |
+| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas |
+| `@anarchitects/auth-ts/models` | Domain models used for user/session/RBAC composition |
 
 ## Usage
 
@@ -125,6 +127,7 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 ## Development notes
 
 - Treat this package as the source of truth for auth DTO and model contracts.
+- Keep the root DTO surface session-first. JWT token DTOs belong under `@anarchitects/auth-ts/dtos/jwt`, not `@anarchitects/auth-ts/dtos`.
 - Use `parsePolicyRuleDTO(...)` / `parsePolicyRuleArrayDTO(...)` when authorization rules cross trust boundaries and need runtime validation.
 - When changing DTO schemas, regenerate OpenAPI in the workspace (`nx run api-specs:generate`).
 - Keep framework-specific concerns out of this package; Angular/Nest behavior belongs in domain libraries.

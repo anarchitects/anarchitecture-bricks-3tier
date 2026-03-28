@@ -176,6 +176,23 @@ describe('AuthStore', () => {
     expect(store.ability()?.can('update', 'Post')).toBe(true);
   });
 
+  it('keeps core login session-first without writing jwt tokens to localStorage', async () => {
+    const { store } = setup({
+      authApiOverrides: {
+        getLoggedInUserInfo: vi.fn(() =>
+          throwError(() => new Error('restore failed')),
+        ),
+      },
+    });
+
+    await flushAsync();
+    store.login({ credential: 'testuser', password: 'password' });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(localStorage.getItem('accessToken')).toBeNull();
+    expect(localStorage.getItem('refreshToken')).toBeNull();
+  });
+
   it('clears user, rbac, and ability on core session logout', async () => {
     const { store } = setup();
 
@@ -190,5 +207,16 @@ describe('AuthStore', () => {
     expect(store.loggedInUser()).toBeUndefined();
     expect(store.rbac()).toEqual([]);
     expect(store.ability()).toBeUndefined();
+  });
+
+  it('keeps core logout session-first without writing jwt tokens to localStorage', async () => {
+    const { store } = setup();
+
+    await flushAsync();
+    store.logout({});
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(localStorage.getItem('accessToken')).toBeNull();
+    expect(localStorage.getItem('refreshToken')).toBeNull();
   });
 });
