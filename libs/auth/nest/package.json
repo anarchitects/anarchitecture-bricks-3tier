@@ -60,11 +60,9 @@
     "targets": {
       "test-published-adapter": {
         "executor": "nx:run-commands",
-        "outputs": [
-          "{workspaceRoot}/coverage/{projectRoot}/published-adapter"
-        ],
+        "dependsOn": ["build"],
         "options": {
-          "command": "yarn node ./node_modules/jest/bin/jest.js --config libs/auth/nest/jest.published-adapter.config.cjs --runInBand"
+          "command": "yarn node tools/testing/run-auth-nest-published-adapter-smoke.mjs"
         },
         "parallelism": false,
         "cache": true,
