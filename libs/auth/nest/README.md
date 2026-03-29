@@ -42,6 +42,14 @@ The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` pack
 - This repo still owns the Nest wrapper, dependency injection, TypeORM entities, migrations, and plugin model registration.
 - This internal swap does not add a new public Nest API or change the existing `AuthModule` / `AuthApplicationModule` integration surface.
 
+Maintainers can validate the published npm artifact integration path with:
+
+```bash
+yarn nx run auth-nest:test-published-adapter
+```
+
+That target boots `auth-nest` against ephemeral PostgreSQL and exercises the real published adapter package through the host repo's Nest integration path. It requires Docker or another supported local container runtime because the suite provisions PostgreSQL through `testcontainers`.
+
 ## Exports
 
 | Import path                                          | Contents                                                                                                                                                                 |
