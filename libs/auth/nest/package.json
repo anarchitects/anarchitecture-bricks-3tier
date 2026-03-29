@@ -64,7 +64,7 @@
           "{workspaceRoot}/coverage/{projectRoot}/published-adapter"
         ],
         "options": {
-          "command": "yarn node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config libs/auth/nest/jest.published-adapter.config.cjs --runInBand"
+          "command": "yarn node ./node_modules/jest/bin/jest.js --config libs/auth/nest/jest.published-adapter.config.cjs --runInBand"
         },
         "parallelism": false,
         "cache": true,
