@@ -31,6 +31,11 @@ export function createBetterAuthOptions(
     baseURL: options.betterAuth.baseUrl,
     trustedOrigins: collectTrustedOrigins(options),
     database,
+    advanced: {
+      database: {
+        generateId: 'uuid',
+      },
+    },
     user: {
       modelName: 'users',
     },

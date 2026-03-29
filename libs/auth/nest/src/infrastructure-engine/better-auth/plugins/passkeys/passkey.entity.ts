@@ -1,10 +1,12 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   Index,
   PrimaryColumn,
 } from 'typeorm';
+import { uuidv7 } from 'uuidv7';
 import { AUTH_SCHEMA } from '../../../../infrastructure-persistence/schema';
 
 @Entity({ schema: AUTH_SCHEMA, name: 'passkeys' })
@@ -43,4 +45,11 @@ export class PasskeyEntity {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   aaguid!: string | null;
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.id) {
+      this.id = uuidv7();
+    }
+  }
 }

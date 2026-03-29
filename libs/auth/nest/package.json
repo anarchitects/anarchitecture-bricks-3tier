@@ -5,10 +5,12 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
+    "@anarchitects/better-auth-typeorm-adapter": "0.1.0",
     "@better-auth/passkey": "^1.5.6",
     "@anarchitects/auth-ts": "^0.5.1",
     "@anarchitects/common-nest-mailer": "^0.3.1",
     "@casl/ability": "^6.7.3",
+    "@opentelemetry/api": "^1.9.0",
     "bcrypt": "^6.0.0",
     "better-auth": "^1.5.6",
     "tslib": "^2.3.0",
@@ -53,5 +55,23 @@
   "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/auth/nest",
   "bugs": {
     "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  },
+  "nx": {
+    "targets": {
+      "test-published-adapter": {
+        "executor": "nx:run-commands",
+        "dependsOn": ["build"],
+        "options": {
+          "command": "yarn node tools/testing/run-auth-nest-published-adapter-smoke.mjs"
+        },
+        "parallelism": false,
+        "cache": true,
+        "inputs": [
+          "default",
+          "^production",
+          "{workspaceRoot}/jest.preset.js"
+        ]
+      }
+    }
   }
 }

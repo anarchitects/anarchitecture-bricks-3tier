@@ -6,7 +6,7 @@ import { TypeormAuthAccountRepository } from './typeorm-auth-account.repository'
 describe('TypeormAuthAccountRepository', () => {
   let repository: TypeormAuthAccountRepository;
 
-  const existingAccount: AccountEntity = {
+  const existingAccount = Object.assign(new AccountEntity(), {
     id: 'user-id-credential',
     accountId: 'user-id',
     providerId: 'credential',
@@ -20,7 +20,7 @@ describe('TypeormAuthAccountRepository', () => {
     password: 'hashed-password',
     createdAt: new Date('2024-01-01T00:00:00.000Z'),
     updatedAt: new Date('2024-01-01T00:00:00.000Z'),
-  };
+  });
 
   const mockAccountRepository = {
     findOne: jest.fn(),

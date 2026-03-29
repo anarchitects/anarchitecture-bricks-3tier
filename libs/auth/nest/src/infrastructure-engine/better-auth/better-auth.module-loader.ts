@@ -5,6 +5,8 @@ export type BetterAuthAdaptersModule = typeof import('better-auth/adapters');
 export type BetterAuthPasskeyModule = typeof import('@better-auth/passkey');
 export type BetterAuthMigrationModule =
   typeof import('better-auth/db/migration');
+export type BetterAuthTypeormAdapterModule =
+  typeof import('@anarchitects/better-auth-typeorm-adapter');
 
 export type BetterAuthRuntimeModules = {
   betterAuth: BetterAuthModule;
@@ -19,13 +21,12 @@ export async function loadBetterAuthRuntimeModules(): Promise<BetterAuthRuntimeM
     betterAuthAdapters,
     betterAuthPasskey,
     betterAuthMigration,
-  ] =
-    await Promise.all([
-      importEsmModule<BetterAuthModule>('better-auth'),
-      importEsmModule<BetterAuthAdaptersModule>('better-auth/adapters'),
-      importEsmModule<BetterAuthPasskeyModule>('@better-auth/passkey'),
-      importEsmModule<BetterAuthMigrationModule>('better-auth/db/migration'),
-    ]);
+  ] = await Promise.all([
+    importEsmModule<BetterAuthModule>('better-auth'),
+    importEsmModule<BetterAuthAdaptersModule>('better-auth/adapters'),
+    importEsmModule<BetterAuthPasskeyModule>('@better-auth/passkey'),
+    importEsmModule<BetterAuthMigrationModule>('better-auth/db/migration'),
+  ]);
 
   return {
     betterAuth,
@@ -33,4 +34,10 @@ export async function loadBetterAuthRuntimeModules(): Promise<BetterAuthRuntimeM
     betterAuthPasskey,
     betterAuthMigration,
   };
+}
+
+export function loadBetterAuthTypeormAdapterModule(): Promise<BetterAuthTypeormAdapterModule> {
+  return importEsmModule<BetterAuthTypeormAdapterModule>(
+    '@anarchitects/better-auth-typeorm-adapter',
+  );
 }
