@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -6,6 +7,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { uuidv7 } from 'uuidv7';
 import { AUTH_SCHEMA } from '../schema';
 
 @Entity({ schema: AUTH_SCHEMA, name: 'accounts' })
@@ -52,4 +54,11 @@ export class AccountEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt!: Date;
+
+  @BeforeInsert()
+  generateId() {
+    if (!this.id) {
+      this.id = uuidv7();
+    }
+  }
 }
