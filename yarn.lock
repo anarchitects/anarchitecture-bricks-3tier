@@ -183,6 +183,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anarchitects/better-auth-typeorm-adapter@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@anarchitects/better-auth-typeorm-adapter@npm:0.1.0"
+  peerDependencies:
+    better-auth: ^1.0.0
+    typeorm: ^0.3.0
+  checksum: 10c0/085faae71fde7bb89913b303522093d3ce8fa46870d6e03845df63e2564c15dd0b095776c38afe88226f52c71975b3a926e49a1d2e455d7990e7b8c74f2d0864
+  languageName: node
+  linkType: hard
+
 "@anarchitects/nx-js@npm:^0.0.2":
   version: 0.0.2
   resolution: "@anarchitects/nx-js@npm:0.0.2"
@@ -199,6 +209,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@anarchitecture-bricks-3tier/source@workspace:."
   dependencies:
+    "@anarchitects/better-auth-typeorm-adapter": "npm:0.1.0"
     "@anarchitects/nx-js": "npm:^0.0.2"
     "@angular-devkit/build-angular": "npm:21.1.5"
     "@angular-devkit/core": "npm:21.1.5"
