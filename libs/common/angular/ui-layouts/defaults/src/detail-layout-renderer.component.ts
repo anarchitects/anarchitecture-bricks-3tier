@@ -18,7 +18,7 @@ import { resolveLayoutVariant, resolveTemplate } from './layout-renderer.utils';
   styleUrl: './detail-layout-renderer.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-default-layout anx-default-layout--detail anx-stack',
+    class: 'anx-default-layout anx-default-layout--detail',
     '[attr.data-layout-variant]': 'layoutVariant()',
     'attr.data-anx-component': '"layout-detail"',
   },

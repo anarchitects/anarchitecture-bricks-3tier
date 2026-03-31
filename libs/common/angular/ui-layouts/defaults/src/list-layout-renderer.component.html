@@ -5,7 +5,7 @@
 }
 
 @if (toolbarTemplate(); as templateRef) {
-  <div class="anx-default-layout__toolbar anx-inline" data-anx-slot="toolbar">
+  <div class="anx-default-layout__toolbar" data-anx-slot="toolbar">
     <ng-container *ngTemplateOutlet="templateRef"></ng-container>
   </div>
 }
@@ -14,7 +14,7 @@
   @switch (layoutVariant()) {
     @case ('grid') {
       <div
-        class="anx-default-layout__list-grid anx-grid"
+        class="anx-default-layout__list-grid"
         [style.--anx-layout-columns]="columnCount()"
       >
         @for (item of items(); track $index) {
@@ -30,7 +30,7 @@
       </div>
     }
     @case ('card') {
-      <div class="anx-default-layout__list-card anx-stack">
+      <div class="anx-default-layout__list-card">
         @for (item of items(); track $index) {
           <anarchitects-ui-card [appearance]="'outlined'">
             <ng-container
@@ -88,7 +88,7 @@
       </div>
     }
     @default {
-      <ul class="anx-default-layout__list anx-stack" role="list">
+      <ul class="anx-default-layout__list" role="list">
         @for (item of items(); track $index) {
           <li class="anx-default-layout__list-item" data-anx-slot="item">
             <ng-container
@@ -115,7 +115,7 @@
 }
 
 @if (actionsTemplate(); as templateRef) {
-  <div class="anx-default-layout__actions anx-inline" data-anx-slot="actions">
+  <div class="anx-default-layout__actions" data-anx-slot="actions">
     <ng-container *ngTemplateOutlet="templateRef"></ng-container>
   </div>
 }

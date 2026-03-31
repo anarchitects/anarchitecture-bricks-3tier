@@ -16,7 +16,7 @@ let nextFieldId = 0;
   styleUrl: './field.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-field anx-stack',
+    class: 'anx-field',
     '[attr.data-density]': 'density()',
     '[attr.data-invalid]': 'invalid() ? "true" : null',
     '[attr.data-disabled]': 'disabled() ? "true" : null',
