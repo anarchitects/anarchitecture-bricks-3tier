@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AnarchitectsUiForm } from './form';
-import { Component, ComponentRef } from '@angular/core';
-import { ValidatorFn } from '@angular/forms';
 import { FormConfig } from '@anarchitects/forms-ts/models';
+import { Component, ComponentRef } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ValidatorFn } from '@angular/forms';
+import { AnarchitectsUiForm } from './form';
 
 @Component({
   imports: [AnarchitectsUiForm],
@@ -299,7 +299,9 @@ describe('Form theme and layout integration', () => {
     expect(root.getAttribute('data-anx-layout')).toBe('grid');
 
     expect(grid).toBeTruthy();
-    expect(grid.style.getPropertyValue('--anx-layout-columns').trim()).toBe('2');
+    expect(grid.style.getPropertyValue('--anx-layout-columns').trim()).toBe(
+      '2',
+    );
     expect(
       nativeElement.querySelectorAll('anarchitects-ui-field').length,
     ).toBeGreaterThanOrEqual(2);

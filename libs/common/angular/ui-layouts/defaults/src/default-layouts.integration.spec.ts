@@ -1,13 +1,13 @@
-import { Component, signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
 import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
 import {
   ANX_LAYOUT_DEFAULTS,
   ANX_LAYOUT_DEFINITIONS,
 } from '@anarchitects/common-angular-ui-layouts/registry';
 import { AnarchitectsUiInputDirective } from '@anarchitects/common-angular-ui-primitives/form-controls';
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
-import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
+import { Component, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnxDefaultLayouts } from './default-layout.providers';
 
 @Component({
@@ -46,7 +46,9 @@ import { provideAnxDefaultLayouts } from './default-layout.providers';
         </ng-template>
 
         <ng-template anxTemplate="content" let-detail>
-          <article class="detail-content">{{ detail.title ?? 'Detail' }}</article>
+          <article class="detail-content">
+            {{ detail.title ?? 'Detail' }}
+          </article>
         </ng-template>
 
         <ng-template anxTemplate="sidebar" let-detail>
@@ -84,7 +86,9 @@ describe('default layouts integration', () => {
   it('should render form:card using card primitives', () => {
     fixture.detectChanges();
 
-    const root = fixture.nativeElement.querySelector('.anx-root') as HTMLElement;
+    const root = fixture.nativeElement.querySelector(
+      '.anx-root',
+    ) as HTMLElement;
     const cards = fixture.nativeElement.querySelectorAll(
       'anarchitects-ui-card',
     );
@@ -109,9 +113,9 @@ describe('default layouts integration', () => {
     const defaults = fixture.componentRef.injector.get(ANX_LAYOUT_DEFAULTS);
 
     expect(definitions.length).toBeGreaterThan(0);
-    expect(definitions.some((definition) => definition.id === 'form:card')).toBe(
-      true,
-    );
+    expect(
+      definitions.some((definition) => definition.id === 'form:card'),
+    ).toBe(true);
     expect(defaults['form']).toBe('form:stacked');
   });
 
