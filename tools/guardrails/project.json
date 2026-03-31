@@ -8,7 +8,7 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --test tools/guardrails/**/*.test.mjs",
+        "command": "node --test tools/guardrails/*.test.mjs",
         "cwd": "{workspaceRoot}"
       }
     }
