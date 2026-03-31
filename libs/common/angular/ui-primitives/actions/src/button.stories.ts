@@ -51,6 +51,48 @@ export const Loading: Story = {
   },
 };
 
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+};
+
+export const DisabledOutline: Story = {
+  args: {
+    disabled: true,
+    appearance: 'outline',
+  },
+};
+
+export const DisabledGhost: Story = {
+  args: {
+    disabled: true,
+    appearance: 'ghost',
+  },
+};
+
+export const DisabledVariants: Story = {
+  render: () => ({
+    template: `
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        @for (tone of ['primary','neutral','success','danger']; track tone) {
+          <div style="display:flex;gap:0.75rem;align-items:center;">
+            @for (appearance of ['solid','outline','ghost']; track appearance) {
+              <anarchitects-ui-button
+                [tone]="tone"
+                [appearance]="appearance"
+                [disabled]="true"
+              >
+                {{ tone }} / {{ appearance }}
+              </anarchitects-ui-button>
+            }
+          </div>
+        }
+      </div>
+    `,
+  }),
+};
+
 export const LegacyAliases: Story = {
   render: (args) => ({
     props: args,
