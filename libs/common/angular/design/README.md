@@ -9,6 +9,7 @@ extensible for consumer applications.
 ## Features
 
 - Typed design-system config providers for theme, density, surface, and layout defaults
+- Explicit root-host directive for syncing theme, density, and surface to DOM attributes
 - Shared semantic token contracts for cross-library visual consistency
 - Base styles and semantic hooks designed for consumer override
 
@@ -46,7 +47,7 @@ Consumers extend at the edges by:
 ### 1) Register context defaults
 
 ```ts
-import { provideDesignSystemConfig } from '@anarchitects/common-angular-design/config';
+import { provideDesignSystemConfig, provideDocumentDesignSystemDomSync } from '@anarchitects/common-angular-design/config';
 
 export const appConfig = {
   providers: [
@@ -57,6 +58,8 @@ export const appConfig = {
       layout: 'list',
       columns: 1,
     }),
+    // Optional fallback when an app cannot annotate its root shell element.
+    ...provideDocumentDesignSystemDomSync(),
   ],
 };
 ```
@@ -69,16 +72,25 @@ import { applyAnxBaseStyles } from '@anarchitects/common-angular-design/styles';
 applyAnxBaseStyles();
 ```
 
-### 3) Scope usage with semantic hooks
+### 3) Scope usage with an explicit root host
 
 ```html
-<section class="anx-root" data-anx-theme="default" data-anx-density="comfortable" data-anx-surface="plain" data-anx-layout="list" data-anx-columns="1">
+<section anarchitectsDesignRoot data-anx-layout="list" data-anx-columns="1">
   <div class="anx-region anx-stack">
     <h2 class="anx-heading">Contact</h2>
     <p class="anx-text">A neutral foundation, ready for consumer theming.</p>
   </div>
 </section>
 ```
+
+`anarchitectsDesignRoot` is the canonical setup path. It manages `data-anx-theme`,
+`data-anx-density`, and `data-anx-surface` from the injected design config.
+`data-anx-layout` and `data-anx-columns` remain explicit host attributes in this
+slice.
+
+Existing apps can keep manual `data-anx-theme`, `data-anx-density`, and
+`data-anx-surface` attributes during migration. Explicit manual attributes stay
+authoritative over provider-derived defaults.
 
 ## Usage
 

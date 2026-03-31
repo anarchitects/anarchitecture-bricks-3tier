@@ -13,5 +13,9 @@ applyAnxBaseStyles();
 Then scope design-system usage under the root class and hooks:
 
 ```html
-<section class="anx-root" data-anx-theme="default" data-anx-density="comfortable" data-anx-surface="plain" data-anx-layout="list" data-anx-columns="1"></section>
+<section anarchitectsDesignRoot data-anx-layout="list" data-anx-columns="1"></section>
 ```
+
+The `anarchitectsDesignRoot` directive is the canonical way to attach theme,
+density, and surface attributes. Existing manual `class="anx-root"` and
+`data-anx-*` attributes remain valid when an app needs explicit overrides.
