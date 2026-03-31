@@ -1,8 +1,47 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AnarchitectsUiForm } from './form';
-import { ComponentRef } from '@angular/core';
-import { ValidatorFn } from '@angular/forms';
 import { FormConfig } from '@anarchitects/forms-ts/models';
+import { Component, ComponentRef } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ValidatorFn } from '@angular/forms';
+import { AnarchitectsUiForm } from './form';
+
+@Component({
+  imports: [AnarchitectsUiForm],
+  template: `
+    <section
+      class="anx-root"
+      data-anx-theme="ocean"
+      data-anx-density="comfortable"
+      data-anx-surface="card"
+      data-anx-layout="grid"
+    >
+      <anarchitects-forms-ui-form
+        [config]="config"
+        [layout]="'form:grid'"
+        [layoutOptions]="{ columns: 2 }"
+      ></anarchitects-forms-ui-form>
+    </section>
+  `,
+})
+class ThemedFormHostComponent {
+  readonly config: FormConfig = {
+    id: 'themed-form',
+    version: 1,
+    fields: [
+      {
+        name: 'email',
+        kind: 'email',
+        required: true,
+        ui: { label: 'Email' },
+      },
+      {
+        name: 'name',
+        kind: 'string',
+        required: true,
+        ui: { label: 'Name' },
+      },
+    ],
+  };
+}
 
 describe('Form', () => {
   let component: AnarchitectsUiForm;
@@ -232,5 +271,39 @@ describe('Form', () => {
         message: 'Passwords must match.',
       },
     });
+  });
+});
+
+describe('Form theme and layout integration', () => {
+  let fixture: ComponentFixture<ThemedFormHostComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ThemedFormHostComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ThemedFormHostComponent);
+    fixture.detectChanges();
+  });
+
+  it('should preserve themed root selectors and render non-default grid layout', () => {
+    const nativeElement = fixture.nativeElement as HTMLElement;
+    const root = nativeElement.querySelector('.anx-root') as HTMLElement;
+    const grid = nativeElement.querySelector(
+      '.anx-default-layout__form-grid',
+    ) as HTMLElement;
+
+    expect(root.getAttribute('data-anx-theme')).toBe('ocean');
+    expect(root.getAttribute('data-anx-density')).toBe('comfortable');
+    expect(root.getAttribute('data-anx-surface')).toBe('card');
+    expect(root.getAttribute('data-anx-layout')).toBe('grid');
+
+    expect(grid).toBeTruthy();
+    expect(grid.style.getPropertyValue('--anx-layout-columns').trim()).toBe(
+      '2',
+    );
+    expect(
+      nativeElement.querySelectorAll('anarchitects-ui-field').length,
+    ).toBeGreaterThanOrEqual(2);
   });
 });

@@ -1,9 +1,13 @@
+import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
+import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
+import {
+  ANX_LAYOUT_DEFAULTS,
+  ANX_LAYOUT_DEFINITIONS,
+} from '@anarchitects/common-angular-ui-layouts/registry';
+import { AnarchitectsUiInputDirective } from '@anarchitects/common-angular-ui-primitives/form-controls';
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
-import { AnarchitectsUiInputDirective } from '@anarchitects/common-angular-ui-primitives/form-controls';
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
-import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
 import { provideAnxDefaultLayouts } from './default-layout.providers';
 
 @Component({
@@ -14,36 +18,46 @@ import { provideAnxDefaultLayouts } from './default-layout.providers';
   ],
   providers: [...provideAnxDefaultLayouts()],
   template: `
-    <anarchitects-ui-layout-host
-      [kind]="kind()"
-      [layout]="layout()"
-      [model]="model()"
+    <section
+      class="anx-root"
+      data-anx-theme="ocean"
+      data-anx-density="comfortable"
+      data-anx-surface="card"
+      data-anx-layout="grid"
     >
-      <ng-template anxTemplate="field" let-field>
-        <input
-          anarchitectsUiInput
-          [id]="field.id || field.key"
-          [placeholder]="field.label"
-        />
-      </ng-template>
+      <anarchitects-ui-layout-host
+        [kind]="kind()"
+        [layout]="layout()"
+        [model]="model()"
+      >
+        <ng-template anxTemplate="field" let-field>
+          <input
+            anarchitectsUiInput
+            [id]="field.id || field.key"
+            [placeholder]="field.label"
+          />
+        </ng-template>
 
-      <ng-template anxTemplate="item" let-item>{{
-        item.name ?? item
-      }}</ng-template>
-      <ng-template anxTemplate="cell" let-item>
-        <strong>{{ item.name ?? item }}</strong>
-      </ng-template>
+        <ng-template anxTemplate="item" let-item>{{
+          item.name ?? item
+        }}</ng-template>
+        <ng-template anxTemplate="cell" let-item>
+          <strong>{{ item.name ?? item }}</strong>
+        </ng-template>
 
-      <ng-template anxTemplate="content" let-detail>
-        <article class="detail-content">{{ detail.title ?? 'Detail' }}</article>
-      </ng-template>
+        <ng-template anxTemplate="content" let-detail>
+          <article class="detail-content">
+            {{ detail.title ?? 'Detail' }}
+          </article>
+        </ng-template>
 
-      <ng-template anxTemplate="sidebar" let-detail>
-        <div class="detail-sidebar">
-          Sidebar: {{ detail.title ?? 'Detail' }}
-        </div>
-      </ng-template>
-    </anarchitects-ui-layout-host>
+        <ng-template anxTemplate="sidebar" let-detail>
+          <div class="detail-sidebar">
+            Sidebar: {{ detail.title ?? 'Detail' }}
+          </div>
+        </ng-template>
+      </anarchitects-ui-layout-host>
+    </section>
   `,
 })
 class HostComponent {
@@ -72,10 +86,37 @@ describe('default layouts integration', () => {
   it('should render form:card using card primitives', () => {
     fixture.detectChanges();
 
+    const root = fixture.nativeElement.querySelector(
+      '.anx-root',
+    ) as HTMLElement;
     const cards = fixture.nativeElement.querySelectorAll(
       'anarchitects-ui-card',
     );
+    const input = fixture.nativeElement.querySelector(
+      'input[anarchitectsuiinput]',
+    ) as HTMLInputElement;
+
+    expect(root.getAttribute('data-anx-theme')).toBe('ocean');
+    expect(root.getAttribute('data-anx-density')).toBe('comfortable');
+    expect(root.getAttribute('data-anx-surface')).toBe('card');
+    expect(root.getAttribute('data-anx-layout')).toBe('grid');
     expect(cards.length).toBeGreaterThan(0);
+    expect(input.placeholder).toBe('First Name');
+  });
+
+  it('should expose layout definitions and defaults through DI', () => {
+    fixture.detectChanges();
+
+    const definitions = fixture.componentRef.injector.get(
+      ANX_LAYOUT_DEFINITIONS,
+    );
+    const defaults = fixture.componentRef.injector.get(ANX_LAYOUT_DEFAULTS);
+
+    expect(definitions.length).toBeGreaterThan(0);
+    expect(
+      definitions.some((definition) => definition.id === 'form:card'),
+    ).toBe(true);
+    expect(defaults['form']).toBe('form:stacked');
   });
 
   it('should render list:table layout with table structure', () => {
