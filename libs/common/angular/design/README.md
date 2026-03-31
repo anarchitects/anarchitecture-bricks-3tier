@@ -44,7 +44,15 @@ Consumers extend at the edges by:
 
 ## Quickstart
 
-### 1) Register context defaults
+### 1) Apply base styles before render
+
+```ts
+import { applyAnxBaseStyles } from '@anarchitects/common-angular-design/styles';
+
+applyAnxBaseStyles();
+```
+
+### 2) Register context defaults
 
 ```ts
 import { provideDesignSystemConfig } from '@anarchitects/common-angular-design/config';
@@ -62,15 +70,7 @@ export const appConfig = {
 };
 ```
 
-### 2) Apply base styles
-
-```ts
-import { applyAnxBaseStyles } from '@anarchitects/common-angular-design/styles';
-
-applyAnxBaseStyles();
-```
-
-### 3) Render content without a required root host
+### 3) Render content without a required manual root host
 
 ```html
 <section data-anx-layout="list" data-anx-columns="1">
@@ -93,6 +93,9 @@ density, or surface overrides.
 Existing apps can keep manual `data-anx-theme`, `data-anx-density`, and
 `data-anx-surface` attributes during migration. Explicit manual attributes stay
 authoritative over provider-derived defaults.
+
+For migration steps and before/after examples, see
+`docs/guides/theme-migration.md`.
 
 ## Usage
 
