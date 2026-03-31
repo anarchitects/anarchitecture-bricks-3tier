@@ -48,6 +48,10 @@
 }
 
 .anx-alert__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--anx-layout-gap-inline);
   margin-inline-start: auto;
 }
 

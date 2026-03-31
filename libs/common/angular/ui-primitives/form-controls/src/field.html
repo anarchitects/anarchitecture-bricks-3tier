@@ -1,4 +1,4 @@
-<div class="anx-field__label-row anx-inline" data-anx-slot="label">
+<div class="anx-field__label-row" data-anx-slot="label">
   <label class="anx-field__label" [attr.for]="forId()">
     <ng-content select="[anxSlot='label'], [anxLabel]"></ng-content>
   </label>
@@ -7,7 +7,7 @@
   }
 </div>
 
-<div class="anx-field__control-row anx-inline">
+<div class="anx-field__control-row">
   <span class="anx-field__slot anx-field__slot--start" data-anx-slot="start">
     <ng-content
       select="[anxSlot='start'], [anxSlot='prefix'], [anxStart]"

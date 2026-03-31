@@ -9,8 +9,11 @@
 }
 
 .anx-field__label-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-start;
-  gap: var(--anx-sys-space-xs);
+  gap: var(--anx-layout-gap-inline);
 }
 
 .anx-field__label {
@@ -23,12 +26,15 @@
 }
 
 .anx-field__control-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   border: 1px solid var(--anx-cmp-field-border);
   border-radius: var(--anx-cmp-field-radius);
   background: var(--anx-cmp-field-bg);
   color: var(--anx-cmp-field-fg);
   padding-inline: var(--anx-sys-space-sm);
-  gap: var(--anx-sys-space-xs);
+  gap: var(--anx-layout-gap-inline);
 }
 
 .anx-field__control {

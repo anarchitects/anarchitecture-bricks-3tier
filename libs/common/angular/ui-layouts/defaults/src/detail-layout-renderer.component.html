@@ -5,7 +5,7 @@
 }
 
 @if (toolbarTemplate(); as templateRef) {
-  <div class="anx-default-layout__toolbar anx-inline" data-anx-slot="toolbar">
+  <div class="anx-default-layout__toolbar" data-anx-slot="toolbar">
     <ng-container *ngTemplateOutlet="templateRef"></ng-container>
   </div>
 }
@@ -23,7 +23,7 @@
   }
   @case ('sidebar') {
     <div
-      class="anx-default-layout__detail-sidebar anx-grid"
+      class="anx-default-layout__detail-sidebar"
       [style.--anx-layout-columns]="2"
     >
       <section data-anx-slot="content" class="anx-default-layout__detail-main">
@@ -52,10 +52,7 @@
     </div>
   }
   @default {
-    <section
-      data-anx-slot="content"
-      class="anx-default-layout__detail-page anx-stack"
-    >
+    <section data-anx-slot="content" class="anx-default-layout__detail-page">
       <ng-container
         *ngTemplateOutlet="
           requiredContentTemplate();
@@ -67,7 +64,7 @@
 }
 
 @if (actionsTemplate(); as templateRef) {
-  <div class="anx-default-layout__actions anx-inline" data-anx-slot="actions">
+  <div class="anx-default-layout__actions" data-anx-slot="actions">
     <ng-container *ngTemplateOutlet="templateRef"></ng-container>
   </div>
 }

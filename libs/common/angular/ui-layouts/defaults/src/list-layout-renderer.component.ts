@@ -18,7 +18,7 @@ import { resolveLayoutVariant, resolveTemplate } from './layout-renderer.utils';
   styleUrl: './list-layout-renderer.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-default-layout anx-default-layout--list anx-stack',
+    class: 'anx-default-layout anx-default-layout--list',
     '[attr.data-layout-variant]': 'layoutVariant()',
     'attr.data-anx-component': '"layout-list"',
   },

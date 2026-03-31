@@ -18,7 +18,7 @@ import {
   styleUrl: './alert.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-alert anx-inline',
+    class: 'anx-alert',
     '[attr.data-tone]': 'tone()',
     '[attr.data-appearance]': 'appearance()',
     '[attr.data-density]': 'density()',

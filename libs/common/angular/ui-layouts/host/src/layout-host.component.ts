@@ -35,7 +35,7 @@ import { startWith } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [AnxLayoutRegistryService],
   host: {
-    class: 'anx-layout-host anx-region anx-stack',
+    class: 'anx-layout-host',
     '[attr.data-anx-layout-kind]': 'kind()',
     '[attr.data-anx-layout-id]': 'resolvedLayout().definition.id',
     '[attr.data-anx-layout-source]': 'resolvedLayout().source',

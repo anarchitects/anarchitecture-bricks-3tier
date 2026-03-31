@@ -26,7 +26,7 @@ import { resolveLayoutVariant, resolveTemplate } from './layout-renderer.utils';
   styleUrl: './form-layout-renderer.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-default-layout anx-default-layout--form anx-stack',
+    class: 'anx-default-layout anx-default-layout--form',
     '[attr.data-layout-variant]': 'layoutVariant()',
     'attr.data-anx-component': '"layout-form"',
   },

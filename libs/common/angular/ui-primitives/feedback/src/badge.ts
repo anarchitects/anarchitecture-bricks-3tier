@@ -17,7 +17,7 @@ import {
   styleUrl: './badge.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-badge anx-inline',
+    class: 'anx-badge',
     '[attr.data-tone]': 'tone()',
     '[attr.data-appearance]': 'appearance()',
     '[attr.data-size]': 'size()',

@@ -1,8 +1,12 @@
 :host {
-  display: block;
+  display: grid;
+  gap: var(--anx-layout-gap-stack);
+  padding-block: var(--anx-layout-block-padding-current);
+  padding-inline: var(--anx-sys-space-lg);
 }
 
 .anx-layout-host__surface {
+  display: grid;
   padding: var(--anx-layout-block-padding-current);
   gap: var(--anx-layout-gap-stack);
 }

@@ -16,7 +16,7 @@ import {
   styleUrl: './spinner.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-spinner anx-inline',
+    class: 'anx-spinner',
     '[attr.data-size]': 'size()',
     '[attr.data-tone]': 'tone()',
     'attr.data-anx-component': '"spinner"',

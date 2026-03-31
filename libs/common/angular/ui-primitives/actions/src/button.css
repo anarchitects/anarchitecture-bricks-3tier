@@ -10,8 +10,11 @@
 }
 
 .anx-button__control {
+  display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: var(--anx-layout-gap-inline);
   width: 100%;
   border-radius: var(--anx-cmp-button-radius);
   border: 1px solid var(--anx-cmp-button-border);

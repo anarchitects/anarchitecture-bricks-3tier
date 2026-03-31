@@ -1,11 +1,25 @@
 :host {
-  display: block;
+  display: grid;
+  gap: var(--anx-layout-gap-stack);
 }
 
 .anx-default-layout__list,
 .anx-default-layout__list-grid,
 .anx-default-layout__list-card {
+  display: grid;
   gap: var(--anx-layout-gap-stack);
+}
+
+.anx-default-layout__toolbar,
+.anx-default-layout__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--anx-layout-gap-inline);
+}
+
+.anx-default-layout__actions {
+  justify-content: flex-end;
 }
 
 .anx-default-layout__list {

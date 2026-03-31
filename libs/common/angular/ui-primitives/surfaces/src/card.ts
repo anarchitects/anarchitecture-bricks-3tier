@@ -16,7 +16,7 @@ import {
   styleUrl: './card.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: 'anx-card anx-surface anx-stack',
+    class: 'anx-card anx-surface',
     '[attr.data-appearance]': 'appearance()',
     '[attr.data-density]': 'density()',
     'attr.data-anx-component': '"card"',
