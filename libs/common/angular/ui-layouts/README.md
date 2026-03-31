@@ -2,15 +2,16 @@
 
 Pluggable layout runtime infrastructure for Angular bricks.
 
-This package provides the Phase 3 layout system contracts, registry,
-runtime host, and built-in default layouts. It is shared infrastructure
-only and does not migrate domain `forms`/`auth` components in this phase.
+This package provides layout contracts, registry, runtime host, and built-in
+default layouts. It is shared infrastructure only and does not embed
+domain-specific behavior.
 
 ## Features
 
 - Layout contracts and runtime host components for pluggable rendering
 - Registry-based layout resolution with explicit defaults
 - Default implementations for form/list/detail layout kinds
+- Contract-safe host styling aligned with shell utility collision prevention
 
 ## Installation
 
@@ -39,6 +40,34 @@ yarn add @anarchitects/common-angular-ui-layouts
 2. provider default from `ANX_LAYOUT_DEFAULTS[kind]`
 3. built-in fallback for the kind
 
+## Shell Utility Boundary
+
+Shell utility classes (`anx-region`, `anx-stack`, `anx-inline`, `anx-grid`) are
+consumer shell layout classes and must not be used by package host bindings or
+internal templates.
+
+Use explicit component CSS for spacing and flow in layout renderers.
+
+Incorrect:
+
+```ts
+host: { class: 'anx-default-layout anx-stack' }
+```
+
+Correct:
+
+```ts
+host: { class: 'anx-default-layout' }
+```
+
+```css
+:host {
+  display: grid;
+  gap: var(--anx-layout-gap-stack);
+  padding: var(--anx-layout-block-padding-current);
+}
+```
+
 ## Consumer extension
 
 Consumer apps can add layouts without modifying core by:
@@ -49,7 +78,21 @@ Consumer apps can add layouts without modifying core by:
 
 ## Usage
 
-Use this package when you need runtime-selectable layouts with deterministic fallback behavior across UI feature surfaces.
+Use this package when runtime-selectable layout behavior is required. Keep
+layout resolution in shared infrastructure and keep shell utility class usage in
+consumer route/page wrappers.
+
+## Validation workflow
+
+Contract and downstream validation references:
+
+1. `yarn nx run guardrails:test`
+2. `yarn nx run forms-angular-ui:test --testFile=libs/forms/angular/ui/src/form.spec.ts`
+
+## Documentation
+
+- System guide: `docs/guides/design-ui-systems.md`
+- Migration guide: `docs/guides/theme-migration.md`
 
 ## Development notes
 

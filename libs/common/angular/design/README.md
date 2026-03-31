@@ -2,9 +2,9 @@
 
 Reusable Angular design foundations for Anarchitecture bricks.
 
-This package provides the **Phase 1 design contract**: tokens, semantic hook conventions,
-base scoped styles, and typed configuration providers. It is intentionally unbranded and
-extensible for consumer applications.
+This package provides the design contract foundation: tokens, semantic hook
+conventions, base scoped styles, and typed configuration providers. It is
+intentionally unbranded and extensible for consumer applications.
 
 ## Features
 
@@ -12,6 +12,7 @@ extensible for consumer applications.
 - Explicit root-host directive for syncing theme, density, and surface to DOM attributes
 - Shared semantic token contracts for cross-library visual consistency
 - Base styles and semantic hooks designed for consumer override
+- Package-author rules for shell utility class boundaries
 
 ## Installation
 
@@ -30,7 +31,24 @@ yarn add @anarchitects/common-angular-design
 - `@anarchitects/common-angular-design/contracts`
   - Stable data-attribute and semantic-class contracts
 - `@anarchitects/common-angular-design/styles`
-  - Base stylesheet contract and import conventions
+  - Base stylesheet contract and package-author class rules
+
+## Shell Utility Class Contract
+
+Source-of-truth symbols in `contracts`:
+
+- `ANX_SHELL_UTILITY_CLASSNAMES`
+- `ANX_DESIGN_HOOK_CLASSNAMES`
+- `ANX_SEMANTIC_CLASSNAMES` (backward-compatible union)
+- `isAnxShellUtilityClass(...)`
+
+Package-author rule in `styles`:
+
+- `ANX_PACKAGE_AUTHOR_RULES.forbiddenOnComponentHost`
+
+Shell utility classes (`anx-region`, `anx-stack`, `anx-inline`, `anx-grid`) are
+consumer shell layout classes and must not be applied to shared package
+component hosts. Use explicit `:host` CSS for component-internal spacing.
 
 ## Consumer extensibility model
 
@@ -70,22 +88,21 @@ export const appConfig = {
 };
 ```
 
-### 3) Render content without a required manual root host
+### 3) Keep shell classes in consumer wrappers
 
 ```html
-<section data-anx-layout="list" data-anx-columns="1">
-  <div class="anx-region anx-stack">
-    <h2 class="anx-heading">Contact</h2>
-    <p class="anx-text">A neutral foundation, ready for consumer theming.</p>
-  </div>
+<section class="anx-region anx-stack" data-anx-layout="list" data-anx-columns="1">
+  <h2 class="anx-heading">Contact</h2>
+  <p class="anx-text">A neutral foundation, ready for consumer theming.</p>
 </section>
 ```
 
-`provideDesignSystemConfig(...)` now applies `anx-root`,
-`data-anx-theme`, `data-anx-density`, and `data-anx-surface` to
-`document.documentElement` automatically during bootstrap.
-`data-anx-layout` and `data-anx-columns` remain explicit where layout scoping is
-needed.
+`provideDesignSystemConfig(...)` applies `anx-root`, `data-anx-theme`,
+`data-anx-density`, and `data-anx-surface` to `document.documentElement`
+automatically during bootstrap.
+
+`data-anx-layout` and `data-anx-columns` remain explicit where local layout
+scoping is needed.
 
 Use `anarchitectsDesignRoot` only when a subtree needs explicit local theme,
 density, or surface overrides.
@@ -94,18 +111,26 @@ Existing apps can keep manual `data-anx-theme`, `data-anx-density`, and
 `data-anx-surface` attributes during migration. Explicit manual attributes stay
 authoritative over provider-derived defaults.
 
-For migration steps and before/after examples, see
-`docs/guides/theme-migration.md`.
-
 ## Usage
 
-Use this package as the design contract foundation in app bootstrap, then layer `ui-primitives`, `ui-composition`, and domain UI libraries on top of the same token/context model.
+Use this package as the root design contract for shared Angular UI libraries.
+Apply base styles once, configure provider defaults at app bootstrap, and keep
+shell utility classes in consumer wrappers rather than shared package hosts.
 
-## Phase 1 boundaries
+## Validation workflow
 
-- No integration into existing `forms` or `auth` Angular UI yet
-- No primitive catalog rollout yet
-- No full layout engine yet
+For shell/layout contract migration checks:
+
+1. `yarn nx run guardrails:test`
+2. `yarn nx run forms-angular-ui:test --testFile=libs/forms/angular/ui/src/form.spec.ts`
+3. `yarn nx run docs-hub:validate-content`
+4. `yarn nx run docs-hub:build`
+5. `yarn nx run docs-hub:verify`
+
+## Documentation
+
+- System guide: `docs/guides/design-ui-systems.md`
+- Migration guide: `docs/guides/theme-migration.md`
 
 ## Development notes
 
