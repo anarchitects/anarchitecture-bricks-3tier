@@ -5,9 +5,9 @@
 >
   <anarchitects-ui-layout-host
     [kind]="'form'"
-    [layout]="layout()"
+    [layout]="resolvedLayout().layout"
     [model]="layoutModel()"
-    [layoutOptions]="layoutOptions()"
+    [layoutOptions]="resolvedLayout().layoutOptions"
   >
     <ng-content select="ng-template[anxTemplate]"></ng-content>
     <ng-content select="[anxSlot]"></ng-content>
@@ -20,66 +20,57 @@
       >
         <span anxSlot="label">{{ field.ui?.label ?? field.name }}</span>
 
-        @switch (field.kind) {
-          @case ('textarea') {
-            <textarea
-              anxSlot="content"
-              anarchitectsUiTextarea
-              [id]="fieldId(field.name)"
-              [formControlName]="field.name"
-              [rows]="field.ui?.rows ?? 4"
-              [placeholder]="field.ui?.placeholder ?? ''"
-              [invalid]="isFieldInvalid(field.name)"
-            ></textarea>
+        @switch (field.kind) { @case ('textarea') {
+        <textarea
+          anxSlot="content"
+          anarchitectsUiTextarea
+          [id]="fieldId(field.name)"
+          [formControlName]="field.name"
+          [rows]="field.ui?.rows ?? 4"
+          [placeholder]="field.ui?.placeholder ?? ''"
+          [invalid]="isFieldInvalid(field.name)"
+        ></textarea>
+        } @case ('select') {
+        <select
+          anxSlot="content"
+          anarchitectsUiSelect
+          [id]="fieldId(field.name)"
+          [formControlName]="field.name"
+          [invalid]="isFieldInvalid(field.name)"
+        >
+          @for (option of field.options ?? []; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
           }
-          @case ('select') {
-            <select
-              anxSlot="content"
-              anarchitectsUiSelect
-              [id]="fieldId(field.name)"
-              [formControlName]="field.name"
-              [invalid]="isFieldInvalid(field.name)"
-            >
-              @for (option of field.options ?? []; track option.value) {
-                <option [value]="option.value">{{ option.label }}</option>
-              }
-            </select>
-          }
-          @case ('boolean') {
-            <label anxSlot="content" class="anx-forms-ui-form__checkbox">
-              <input
-                type="checkbox"
-                [id]="fieldId(field.name)"
-                [formControlName]="field.name"
-              />
-              <span>{{ field.ui?.placeholder ?? 'Enabled' }}</span>
-            </label>
-          }
-          @default {
-            <input
-              anxSlot="content"
-              anarchitectsUiInput
-              [attr.type]="
+        </select>
+        } @case ('boolean') {
+        <label anxSlot="content" class="anx-forms-ui-form__checkbox">
+          <input
+            type="checkbox"
+            [id]="fieldId(field.name)"
+            [formControlName]="field.name"
+          />
+          <span>{{ field.ui?.placeholder ?? 'Enabled' }}</span>
+        </label>
+        } @default {
+        <input
+          anxSlot="content"
+          anarchitectsUiInput
+          [attr.type]="
                 field.kind === 'email'
                   ? 'email'
                   : field.kind === 'password'
                     ? 'password'
                     : 'text'
               "
-              [id]="fieldId(field.name)"
-              [formControlName]="field.name"
-              [placeholder]="field.ui?.placeholder ?? ''"
-              [invalid]="isFieldInvalid(field.name)"
-            />
-          }
-        }
-
-        @if (field.ui?.help; as helpText) {
-          <span anxSlot="hint">{{ helpText }}</span>
-        }
-
-        @if (fieldErrorMessage(field.name); as errorText) {
-          <span anxSlot="error">{{ errorText }}</span>
+          [id]="fieldId(field.name)"
+          [formControlName]="field.name"
+          [placeholder]="field.ui?.placeholder ?? ''"
+          [invalid]="isFieldInvalid(field.name)"
+        />
+        } } @if (field.ui?.help; as helpText) {
+        <span anxSlot="hint">{{ helpText }}</span>
+        } @if (fieldErrorMessage(field.name); as errorText) {
+        <span anxSlot="error">{{ errorText }}</span>
         }
       </anarchitects-ui-field>
     </ng-template>
@@ -92,12 +83,12 @@
   </anarchitects-ui-layout-host>
 
   @if (config().security?.honeypot) {
-    <input
-      class="anx-forms-ui-form__honeypot"
-      type="text"
-      [name]="config().security!.honeypot"
-      autocomplete="off"
-      tabindex="-1"
-    />
+  <input
+    class="anx-forms-ui-form__honeypot"
+    type="text"
+    [name]="config().security!.honeypot"
+    autocomplete="off"
+    tabindex="-1"
+  />
   }
 </form>

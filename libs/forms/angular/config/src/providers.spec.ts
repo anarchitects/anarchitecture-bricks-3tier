@@ -1,5 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { provideFormsConfig, provideFormsDefaults } from './providers';
+import { FORMS_PAGE_PRESET } from './page-preset';
+import {
+  provideFormsConfig,
+  provideFormsDefaults,
+  provideFormsPagePreset,
+} from './providers';
 import { API_RESOURCE_PATH, FORMS_CONFIG, FormsConfig } from './tokens';
 
 describe('FormsConfig Providers', () => {
@@ -24,5 +29,22 @@ describe('FormsConfig Providers', () => {
     const apiResourcePath = TestBed.inject(API_RESOURCE_PATH);
     expect(config.apiResourcePath).toBe('custom-path');
     expect(apiResourcePath).toBe('custom-path');
+  });
+
+  it('should provide normalized page preset using provideFormsPagePreset', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        ...provideFormsPagePreset({
+          layoutVariant: 'grid',
+          columns: 0,
+          actionAlignment: 'center',
+        }),
+      ],
+    });
+
+    const preset = TestBed.inject(FORMS_PAGE_PRESET);
+    expect(preset.layoutVariant).toBe('grid');
+    expect(preset.columns).toBe(1);
+    expect(preset.actionAlignment).toBe('center');
   });
 });

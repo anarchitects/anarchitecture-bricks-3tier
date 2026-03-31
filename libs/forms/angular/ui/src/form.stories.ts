@@ -1,8 +1,8 @@
-import { FormConfig } from '@anarchitects/forms-ts';
 import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
-import { moduleMetadata } from '@storybook/angular';
-import type { Meta, StoryObj } from '@storybook/angular';
+import { FormConfig } from '@anarchitects/forms-ts';
 import { ValidatorFn } from '@angular/forms';
+import type { Meta, StoryObj } from '@storybook/angular';
+import { moduleMetadata } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { AnarchitectsUiForm } from './form';
 
@@ -123,6 +123,31 @@ export const GridLayout: Story = {
     config: mockFormConfig,
     layout: 'form:grid',
     layoutOptions: { columns: 2 },
+  },
+};
+
+export const ContactPreset: Story = {
+  args: {
+    config: mockFormConfig,
+    pagePreset: {
+      layoutVariant: 'stacked',
+      maxInlineSize: '42rem',
+      spacing: 'comfortable',
+      actionAlignment: 'end',
+    },
+  },
+};
+
+export const PresetGridCompact: Story = {
+  args: {
+    config: mockFormConfig,
+    pagePreset: {
+      layoutVariant: 'grid',
+      columns: 2,
+      maxInlineSize: '56rem',
+      spacing: 'compact',
+      actionAlignment: 'center',
+    },
   },
 };
 

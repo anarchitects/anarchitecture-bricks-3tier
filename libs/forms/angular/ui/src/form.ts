@@ -1,10 +1,26 @@
+import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
+import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
+import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { provideAnxDefaultLayouts } from '@anarchitects/common-angular-ui-layouts/defaults';
+import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
+import { AnarchitectsUiButton } from '@anarchitects/common-angular-ui-primitives/actions';
+import {
+  AnarchitectsUiField,
+  AnarchitectsUiInputDirective,
+  AnarchitectsUiSelectDirective,
+  AnarchitectsUiTextareaDirective,
+} from '@anarchitects/common-angular-ui-primitives/form-controls';
+import {
+  FORMS_PAGE_PRESET,
+  FormsPagePresetInput,
+  normalizeFormsPagePreset,
+} from '@anarchitects/forms-angular/config';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
   FormConfig,
   FormField,
   FormValidationRule,
 } from '@anarchitects/forms-ts/models';
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,18 +38,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { AnarchitectsUiButton } from '@anarchitects/common-angular-ui-primitives/actions';
-import {
-  AnarchitectsUiField,
-  AnarchitectsUiInputDirective,
-  AnarchitectsUiSelectDirective,
-  AnarchitectsUiTextareaDirective,
-} from '@anarchitects/common-angular-ui-primitives/form-controls';
-import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
-import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
-import { provideAnxDefaultLayouts } from '@anarchitects/common-angular-ui-layouts/defaults';
-import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
+import { resolveFormsPageLayout } from './page-preset';
 
 type CrossFieldError = {
   kind: string;
@@ -100,7 +105,6 @@ function buildConfigValidator(
   selector: 'anarchitects-forms-ui-form',
   imports: [
     ReactiveFormsModule,
-    NgTemplateOutlet,
     AnarchitectsUiLayoutHost,
     AnarchitectsUiField,
     AnarchitectsUiButton,
@@ -117,16 +121,42 @@ function buildConfigValidator(
   host: {
     class: 'anx-domain-component anx-forms-ui-form anx-stack',
     'attr.data-anx-component': '"forms-ui-form"',
+    '[style.--anx-forms-ui-max-inline-size]': 'formMaxInlineSize() ?? null',
   },
 })
 export class AnarchitectsUiForm {
   private readonly fb = inject(FormBuilder);
+  private readonly injectedPagePreset = inject(FORMS_PAGE_PRESET, {
+    optional: true,
+  });
   readonly formGroup = this.fb.group({});
   readonly config = input.required<FormConfig>();
   readonly runtimeValidators = input<readonly ValidatorFn[]>([]);
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
+  readonly pagePreset = input<FormsPagePresetInput | null>(null);
   readonly submitted = output<SubmissionRequestDTO>();
+
+  readonly resolvedPagePreset = computed(() => {
+    const inputPreset = this.pagePreset();
+    if (inputPreset) {
+      return normalizeFormsPagePreset(inputPreset);
+    }
+
+    return this.injectedPagePreset ?? null;
+  });
+
+  readonly resolvedLayout = computed(() =>
+    resolveFormsPageLayout(
+      this.layout(),
+      this.layoutOptions(),
+      this.resolvedPagePreset(),
+    ),
+  );
+
+  readonly formMaxInlineSize = computed(
+    () => this.resolvedLayout().maxInlineSize,
+  );
 
   readonly layoutModel = computed(() => ({
     title: this.config().id,
@@ -179,8 +209,8 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       control &&
-        this.crossFieldError(fieldName) &&
-        (control.touched || control.dirty),
+      this.crossFieldError(fieldName) &&
+      (control.touched || control.dirty),
     );
   }
 
@@ -226,7 +256,7 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       (control && control.touched && control.invalid) ||
-        this.shouldShowCrossFieldError(fieldName),
+      this.shouldShowCrossFieldError(fieldName),
     );
   }
 
