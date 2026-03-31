@@ -10,12 +10,14 @@ import { applyAnxBaseStyles } from '@anarchitects/common-angular-design/styles';
 applyAnxBaseStyles();
 ```
 
-Then scope design-system usage under the root class and hooks:
+With provider-driven sync, the root class and managed theme attributes are
+applied to `document.documentElement` automatically. Render content normally and
+set explicit layout attributes only where needed:
 
 ```html
-<section anarchitectsDesignRoot data-anx-layout="list" data-anx-columns="1"></section>
+<section data-anx-layout="list" data-anx-columns="1"></section>
 ```
 
-The `anarchitectsDesignRoot` directive is the canonical way to attach theme,
-density, and surface attributes. Existing manual `class="anx-root"` and
-`data-anx-*` attributes remain valid when an app needs explicit overrides.
+Use `anarchitectsDesignRoot` only when a subtree needs explicit local theme,
+density, or surface overrides. Existing manual `class="anx-root"` and
+`data-anx-*` attributes remain valid when an app needs explicit control.
