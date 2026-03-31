@@ -95,7 +95,19 @@
   --anx-cmp-button-padding-block: var(--anx-sys-space-xs);
 }
 
+:host([data-disabled='true']) {
+  --anx-cmp-button-fg: var(--anx-sys-color-disabled-fg);
+}
+
+:host([data-appearance='solid'][data-disabled='true']) {
+  --anx-cmp-button-bg: var(--anx-sys-color-disabled-surface);
+  --anx-cmp-button-border: var(--anx-sys-color-disabled-border);
+}
+
+:host([data-appearance='outline'][data-disabled='true']) {
+  --anx-cmp-button-border: var(--anx-sys-color-disabled-border);
+}
+
 :host([data-disabled='true']) .anx-button__control {
-  opacity: 0.65;
   cursor: not-allowed;
 }

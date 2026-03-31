@@ -11,6 +11,7 @@ import { AnarchitectsUiButton } from './button';
       [size]="size()"
       [density]="density()"
       [loading]="loading()"
+      [disabled]="disabled()"
       (pressed)="onPressed()"
     >
       <span anxSlot="start">start</span>
@@ -29,6 +30,7 @@ class HostComponent {
   readonly size = signal<'sm' | 'md' | 'lg'>('md');
   readonly density = signal<'compact' | 'comfortable'>('comfortable');
   readonly loading = signal(false);
+  readonly disabled = signal(false);
 
   pressedCount = 0;
 
@@ -76,6 +78,37 @@ describe('AnarchitectsUiButton', () => {
     ) as HTMLButtonElement;
     button.click();
     expect(fixture.componentInstance.pressedCount).toBe(0);
+  });
+
+  it('should set data-disabled attribute on host when disabled', () => {
+    fixture.componentInstance.disabled.set(true);
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement.querySelector(
+      'anarchitects-ui-button',
+    ) as HTMLElement;
+    expect(host.getAttribute('data-disabled')).toBe('true');
+  });
+
+  it('should not emit pressed when disabled', () => {
+    fixture.componentInstance.disabled.set(true);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
+    button.click();
+    expect(fixture.componentInstance.pressedCount).toBe(0);
+  });
+
+  it('should set disabled attribute on native button when disabled', () => {
+    fixture.componentInstance.disabled.set(true);
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
   });
 
   it('should render canonical and legacy projected slots', () => {
