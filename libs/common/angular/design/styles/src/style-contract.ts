@@ -9,6 +9,23 @@ export const ANX_STYLE_CONVENTIONS = {
   dataAttributePrefix: 'data-anx-',
 } as const;
 
+/**
+ * CSS class rules for package authors.
+ *
+ * Defines which semantic classes are forbidden on component host elements
+ * and the recommended alternative for component-internal spacing.
+ */
+export const ANX_PACKAGE_AUTHOR_RULES = {
+  forbiddenOnComponentHost: [
+    'anx-region',
+    'anx-stack',
+    'anx-inline',
+    'anx-grid',
+  ] as const,
+  recommendation:
+    'Use `:host { padding: ...; gap: ...; }` CSS for component-internal spacing instead of applying shell utility classes to the component host.',
+} as const;
+
 function resolveDocument(documentRef?: Document): Document | null {
   if (documentRef) {
     return documentRef;
