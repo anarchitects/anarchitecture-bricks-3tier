@@ -2,6 +2,7 @@
   "name": "@anarchitects/common-angular-design",
   "version": "0.0.3",
   "peerDependencies": {
+    "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0"
   },
   "sideEffects": false,
