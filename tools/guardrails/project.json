@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "guardrails",
+  "projectType": "library",
+  "sourceRoot": "tools/guardrails",
+  "tags": ["type:tool", "team:workspace"],
+  "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --test tools/guardrails/*.test.mjs",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}
