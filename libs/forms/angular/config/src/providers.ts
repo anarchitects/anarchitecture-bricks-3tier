@@ -1,10 +1,15 @@
 import { Provider } from '@angular/core';
 import {
-  FORMS_CONFIG,
+  FORMS_PAGE_PRESET,
+  FormsPagePresetInput,
+  normalizeFormsPagePreset,
+} from './page-preset';
+import {
   API_BASE_URL,
   API_RESOURCE_PATH,
-  FormsConfig,
+  FORMS_CONFIG,
   FORMS_DEFAULTS,
+  FormsConfig,
 } from './tokens';
 
 /** Explicit config from the app (merges with library defaults) */
@@ -20,4 +25,16 @@ export function provideFormsConfig(cfg: Partial<FormsConfig>): Provider[] {
 /** Zero-config convenience: register only defaults */
 export function provideFormsDefaults(): Provider[] {
   return provideFormsConfig({});
+}
+
+/** Provide a normalized forms page preset for form layout rendering. */
+export function provideFormsPagePreset(
+  preset: FormsPagePresetInput,
+): Provider[] {
+  return [
+    {
+      provide: FORMS_PAGE_PRESET,
+      useValue: normalizeFormsPagePreset(preset),
+    },
+  ];
 }

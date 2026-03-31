@@ -13,7 +13,7 @@
 .anx-default-layout__form-stacked,
 .anx-default-layout__form-card {
   display: grid;
-  gap: var(--anx-layout-gap-stack);
+  gap: var(--anx-layout-form-gap, var(--anx-layout-gap-stack));
 }
 
 .anx-default-layout__form-grid {
@@ -26,14 +26,14 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--anx-layout-gap-inline);
+  gap: var(--anx-layout-form-inline-gap, var(--anx-layout-gap-inline));
 }
 
 .anx-default-layout__form-inline {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--anx-layout-gap-inline);
+  gap: var(--anx-layout-form-inline-gap, var(--anx-layout-gap-inline));
 }
 
 .anx-default-layout__form-inline > * {
@@ -41,5 +41,5 @@
 }
 
 .anx-default-layout__actions {
-  justify-content: flex-end;
+  justify-content: var(--anx-layout-form-actions-justify, flex-end);
 }

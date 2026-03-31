@@ -3,7 +3,8 @@
 }
 
 .anx-forms-ui-form__surface {
-  width: 100%;
+  inline-size: min(100%, var(--anx-forms-ui-max-inline-size, 100%));
+  margin-inline: auto;
 }
 
 .anx-forms-ui-form__checkbox {

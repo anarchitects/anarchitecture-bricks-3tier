@@ -1,8 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AnarchitectsFeatureForm } from './form';
-import { ComponentRef, signal } from '@angular/core';
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import { FormsStore } from '@anarchitects/forms-angular/state';
+import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
+import { FormConfig } from '@anarchitects/forms-ts/models';
+import { ComponentRef, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { AnarchitectsFeatureForm } from './form';
 
 describe('AnarchitectsFeatureForm', () => {
   let component: AnarchitectsFeatureForm;
@@ -74,5 +76,23 @@ describe('AnarchitectsFeatureForm', () => {
     };
     await component.submitForm(submissionDto);
     expect(mockFormsStore.submitForm).toHaveBeenCalledWith(submissionDto);
+  });
+
+  it('should forward pagePreset to forms ui form', () => {
+    ref.setInput('pagePreset', {
+      layoutVariant: 'card',
+      actionAlignment: 'center',
+    });
+    fixture.detectChanges();
+
+    const formUiDebug = fixture.debugElement.query(
+      By.directive(AnarchitectsUiForm),
+    );
+    const formUi = formUiDebug.componentInstance as AnarchitectsUiForm;
+
+    expect(formUi.pagePreset()).toEqual({
+      layoutVariant: 'card',
+      actionAlignment: 'center',
+    });
   });
 });

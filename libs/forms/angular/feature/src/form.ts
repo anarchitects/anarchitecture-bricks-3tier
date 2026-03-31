@@ -1,3 +1,5 @@
+import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { FormsPagePresetInput } from '@anarchitects/forms-angular/config';
 import {
   FormsStore,
   provideFormsState,
@@ -8,7 +10,6 @@ import {
 } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import { FormConfig } from '@anarchitects/forms-ts/models';
-import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -34,6 +35,7 @@ export class AnarchitectsFeatureForm {
   formVersion = input<number>();
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
+  readonly pagePreset = input<FormsPagePresetInput | null>(null);
 
   constructor() {
     effect(() => {

@@ -275,6 +275,77 @@ describe('Form', () => {
       },
     });
   });
+
+  it('should resolve layout and renderer options from page preset', () => {
+    ref.setInput('pagePreset', {
+      layoutVariant: 'grid',
+      spacing: 'compact',
+      actionAlignment: 'center',
+      columns: 3,
+      maxInlineSize: '56rem',
+    });
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const layoutHost = host.querySelector(
+      'anarchitects-ui-layout-host',
+    ) as HTMLElement;
+    const renderer = host.querySelector(
+      'anarchitects-ui-default-form-layout-renderer',
+    ) as HTMLElement;
+    const grid = host.querySelector(
+      '.anx-default-layout__form-grid',
+    ) as HTMLElement;
+
+    expect(layoutHost.getAttribute('data-anx-layout-id')).toBe('form:grid');
+    expect(
+      host.style.getPropertyValue('--anx-forms-ui-max-inline-size').trim(),
+    ).toBe('56rem');
+    expect(
+      renderer.style
+        .getPropertyValue('--anx-layout-form-actions-justify')
+        .trim(),
+    ).toBe('center');
+    expect(
+      renderer.style.getPropertyValue('--anx-layout-form-gap').trim(),
+    ).toBe('var(--anx-sys-space-sm)');
+    expect(grid.style.getPropertyValue('--anx-layout-columns').trim()).toBe(
+      '3',
+    );
+  });
+
+  it('should prefer explicit layout inputs over page preset defaults', () => {
+    ref.setInput('pagePreset', {
+      layoutVariant: 'grid',
+      spacing: 'relaxed',
+      actionAlignment: 'end',
+      columns: 2,
+      maxInlineSize: '48rem',
+    });
+    ref.setInput('layout', 'form:inline');
+    ref.setInput('layoutOptions', {
+      actionAlignment: 'start',
+    });
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const layoutHost = host.querySelector(
+      'anarchitects-ui-layout-host',
+    ) as HTMLElement;
+    const renderer = host.querySelector(
+      'anarchitects-ui-default-form-layout-renderer',
+    ) as HTMLElement;
+
+    expect(layoutHost.getAttribute('data-anx-layout-id')).toBe('form:inline');
+    expect(
+      renderer.style
+        .getPropertyValue('--anx-layout-form-actions-justify')
+        .trim(),
+    ).toBe('flex-start');
+    expect(
+      host.style.getPropertyValue('--anx-forms-ui-max-inline-size').trim(),
+    ).toBe('48rem');
+  });
 });
 
 describe('Form theme and layout integration', () => {

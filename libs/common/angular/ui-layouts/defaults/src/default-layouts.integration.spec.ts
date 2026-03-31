@@ -29,6 +29,7 @@ import { provideAnxDefaultLayouts } from './default-layout.providers';
         [kind]="kind()"
         [layout]="layout()"
         [model]="model()"
+        [layoutOptions]="layoutOptions()"
       >
         <ng-template anxTemplate="field" let-field>
           <input
@@ -63,6 +64,7 @@ import { provideAnxDefaultLayouts } from './default-layout.providers';
 class HostComponent {
   readonly kind = signal<'form' | 'list' | 'detail'>('form');
   readonly layout = signal<AnxLayoutId | null>('form:card');
+  readonly layoutOptions = signal<Readonly<Record<string, unknown>>>({});
   readonly model = signal<unknown>({
     title: 'Form',
     fields: [
@@ -119,9 +121,40 @@ describe('default layouts integration', () => {
     expect(defaults['form']).toBe('form:stacked');
   });
 
+  it('should map form layout options for spacing and action alignment', () => {
+    fixture.componentInstance.kind.set('form');
+    fixture.componentInstance.layout.set('form:grid');
+    fixture.componentInstance.layoutOptions.set({
+      spacing: 'compact',
+      actionAlignment: 'center',
+      columns: 3,
+    });
+    fixture.detectChanges();
+
+    const renderer = fixture.nativeElement.querySelector(
+      'anarchitects-ui-default-form-layout-renderer',
+    ) as HTMLElement;
+    const grid = fixture.nativeElement.querySelector(
+      '.anx-default-layout__form-grid',
+    ) as HTMLElement;
+
+    expect(
+      renderer.style.getPropertyValue('--anx-layout-form-gap').trim(),
+    ).toBe('var(--anx-sys-space-sm)');
+    expect(
+      renderer.style
+        .getPropertyValue('--anx-layout-form-actions-justify')
+        .trim(),
+    ).toBe('center');
+    expect(grid.style.getPropertyValue('--anx-layout-columns').trim()).toBe(
+      '3',
+    );
+  });
+
   it('should render list:table layout with table structure', () => {
     fixture.componentInstance.kind.set('list');
     fixture.componentInstance.layout.set('list:table');
+    fixture.componentInstance.layoutOptions.set({});
     fixture.componentInstance.model.set({
       title: 'List',
       items: [{ name: 'Alpha' }, { name: 'Beta' }],

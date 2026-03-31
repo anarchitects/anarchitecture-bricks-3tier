@@ -1,3 +1,8 @@
+import { AnxResolvedLayoutContext } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { AnarchitectsUiButton } from '@anarchitects/common-angular-ui-primitives/actions';
+import { AnarchitectsUiAlert } from '@anarchitects/common-angular-ui-primitives/feedback';
+import { AnarchitectsUiField } from '@anarchitects/common-angular-ui-primitives/form-controls';
+import { AnarchitectsUiCard } from '@anarchitects/common-angular-ui-primitives/surfaces';
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -5,11 +10,6 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { AnarchitectsUiButton } from '@anarchitects/common-angular-ui-primitives/actions';
-import { AnarchitectsUiAlert } from '@anarchitects/common-angular-ui-primitives/feedback';
-import { AnarchitectsUiField } from '@anarchitects/common-angular-ui-primitives/form-controls';
-import { AnarchitectsUiCard } from '@anarchitects/common-angular-ui-primitives/surfaces';
-import { AnxResolvedLayoutContext } from '@anarchitects/common-angular-ui-layouts/contracts';
 import { AnxFormLayoutField, toAnxFormLayoutModel } from './layout-models';
 import { resolveLayoutVariant, resolveTemplate } from './layout-renderer.utils';
 
@@ -29,6 +29,9 @@ import { resolveLayoutVariant, resolveTemplate } from './layout-renderer.utils';
     class: 'anx-default-layout anx-default-layout--form',
     '[attr.data-layout-variant]': 'layoutVariant()',
     'attr.data-anx-component': '"layout-form"',
+    '[style.--anx-layout-form-gap]': 'formGap()',
+    '[style.--anx-layout-form-inline-gap]': 'formInlineGap()',
+    '[style.--anx-layout-form-actions-justify]': 'actionsJustifyContent()',
   },
 })
 export class AnarchitectsUiDefaultFormLayoutRenderer {
@@ -84,6 +87,62 @@ export class AnarchitectsUiDefaultFormLayoutRenderer {
         : 2;
 
     return Math.max(1, Math.floor(resolvedColumns));
+  });
+
+  readonly formGap = computed(() => {
+    const spacingOption = String(
+      this.context().options['spacing'] ?? '',
+    ).trim();
+
+    switch (spacingOption) {
+      case 'compact':
+        return 'var(--anx-sys-space-sm)';
+      case 'relaxed':
+        return 'var(--anx-sys-space-lg)';
+      case 'comfortable':
+      case '':
+        return 'var(--anx-layout-gap-stack)';
+      default:
+        return spacingOption;
+    }
+  });
+
+  readonly formInlineGap = computed(() => {
+    const spacingOption = String(
+      this.context().options['spacing'] ?? '',
+    ).trim();
+
+    switch (spacingOption) {
+      case 'compact':
+        return 'var(--anx-sys-space-xs)';
+      case 'relaxed':
+        return 'var(--anx-sys-space-md)';
+      case 'comfortable':
+      case '':
+        return 'var(--anx-layout-gap-inline)';
+      default:
+        return spacingOption;
+    }
+  });
+
+  readonly actionsJustifyContent = computed(() => {
+    const actionAlignment = String(
+      this.context().options['actionAlignment'] ?? '',
+    ).trim();
+
+    switch (actionAlignment) {
+      case 'start':
+        return 'flex-start';
+      case 'center':
+        return 'center';
+      case 'between':
+        return 'space-between';
+      case 'end':
+      case '':
+        return 'flex-end';
+      default:
+        return actionAlignment;
+    }
   });
 
   fieldId(field: AnxFormLayoutField, index: number): string {
