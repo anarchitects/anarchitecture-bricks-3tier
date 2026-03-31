@@ -52,7 +52,7 @@ describe('document design-system DOM sync providers', () => {
     }
   });
 
-  it('should mark the document root and fill missing managed attributes from config', async () => {
+  it('should remain idempotent when the compat helper is combined with provider auto-sync', async () => {
     await TestBed.configureTestingModule({
       providers: [
         ...provideDesignSystemConfig({
@@ -86,7 +86,7 @@ describe('document design-system DOM sync providers', () => {
     );
   });
 
-  it('should preserve explicit document attributes over provider values', async () => {
+  it('should preserve explicit document attributes when both sync paths are registered', async () => {
     document.documentElement.setAttribute('data-anx-theme', 'manual-theme');
 
     await TestBed.configureTestingModule({

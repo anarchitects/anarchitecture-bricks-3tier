@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideDesignSystemConfig } from './config.providers';
 import { AnxDesignRootDirective } from './design-root.directive';
@@ -37,6 +37,23 @@ class ManualAttributeDesignRootHostComponent {}
   `,
 })
 class InputOverrideDesignRootHostComponent {}
+
+@Component({
+  imports: [AnxDesignRootDirective],
+  template: `
+    <section
+      anarchitectsDesignRoot
+      [designTheme]="theme()"
+      [designDensity]="density()"
+      [designSurface]="surface()"
+    ></section>
+  `,
+})
+class RuntimeInputUpdateDesignRootHostComponent {
+  readonly theme = signal('input-theme');
+  readonly density = signal('compact');
+  readonly surface = signal('card');
+}
 
 describe('AnxDesignRootDirective', () => {
   it('should require an explicit host element for root ownership', async () => {
@@ -119,5 +136,39 @@ describe('AnxDesignRootDirective', () => {
     expect(host.getAttribute('data-anx-theme')).toBe('input-theme');
     expect(host.getAttribute('data-anx-density')).toBe('compact');
     expect(host.getAttribute('data-anx-surface')).toBe('card');
+  });
+
+  it('should update host attributes when directive inputs change at runtime', async () => {
+    await TestBed.configureTestingModule({
+      imports: [RuntimeInputUpdateDesignRootHostComponent],
+      providers: [
+        ...provideDesignSystemConfig({
+          theme: 'provider-theme',
+          density: 'comfortable',
+          surface: 'plain',
+          layout: 'list',
+          columns: 1,
+        }),
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(
+      RuntimeInputUpdateDesignRootHostComponent,
+    );
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement.querySelector('section') as HTMLElement;
+    expect(host.getAttribute('data-anx-theme')).toBe('input-theme');
+    expect(host.getAttribute('data-anx-density')).toBe('compact');
+    expect(host.getAttribute('data-anx-surface')).toBe('card');
+
+    fixture.componentInstance.theme.set('updated-theme');
+    fixture.componentInstance.density.set('comfortable');
+    fixture.componentInstance.surface.set('plain');
+    fixture.detectChanges();
+
+    expect(host.getAttribute('data-anx-theme')).toBe('updated-theme');
+    expect(host.getAttribute('data-anx-density')).toBe('comfortable');
+    expect(host.getAttribute('data-anx-surface')).toBe('plain');
   });
 });

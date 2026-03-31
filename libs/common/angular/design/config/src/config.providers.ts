@@ -9,6 +9,7 @@ import {
   DESIGN_SYSTEM_THEME,
   DesignSystemConfig,
 } from './config.tokens';
+import { provideDocumentDesignSystemDomSync } from './document-dom-sync.providers';
 
 export function provideDesignSystemConfig(
   overrides: Partial<DesignSystemConfig>,
@@ -25,6 +26,7 @@ export function provideDesignSystemConfig(
     { provide: DESIGN_SYSTEM_SURFACE, useValue: merged.surface },
     { provide: DESIGN_SYSTEM_LAYOUT, useValue: merged.layout },
     { provide: DESIGN_SYSTEM_COLUMNS, useValue: merged.columns },
+    ...provideDocumentDesignSystemDomSync(),
   ];
 }
 
