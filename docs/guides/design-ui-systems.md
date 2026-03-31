@@ -40,6 +40,57 @@ Example:
 }
 ```
 
+## Single-Source Theme Setup
+
+Use one canonical app-bootstrap path for shared design context:
+
+1. Apply base styles once before rendering.
+2. Register `provideDesignSystemConfig(...)` at app root.
+3. Avoid manual `data-anx-theme`, `data-anx-density`, and `data-anx-surface`
+   on the root in new setups.
+
+Example:
+
+```ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideDesignSystemConfig } from '@anarchitects/common-angular-design/config';
+import { applyAnxBaseStyles } from '@anarchitects/common-angular-design/styles';
+
+applyAnxBaseStyles();
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    ...provideDesignSystemConfig({
+      theme: 'default',
+      density: 'comfortable',
+      surface: 'plain',
+      layout: 'list',
+      columns: 1,
+    }),
+  ],
+});
+```
+
+The provider applies `anx-root`, `data-anx-theme`, `data-anx-density`, and
+`data-anx-surface` on `document.documentElement` during bootstrap.
+
+`data-anx-layout` and `data-anx-columns` remain explicit where local layout
+scope is required.
+
+For migrations from manual attributes, use the
+[Theme Migration Guide](/guides/theme-migration.html).
+
+### Precedence Rules
+
+For managed root values (`theme`, `density`, `surface`) the resolution order is:
+
+1. Directive input (`designTheme`, `designDensity`, `designSurface`)
+2. Explicit host/root attribute value (`data-anx-*`)
+3. Provider configuration (`provideDesignSystemConfig`)
+
+This keeps migration safe because existing explicit attributes remain
+authoritative.
+
 ## Composition Contracts
 
 Use `@anarchitects/common-angular-ui-composition` for stable projection contracts:
@@ -78,17 +129,17 @@ Use `@anarchitects/common-angular-ui-layouts` when runtime layout selection is r
 
 ## Domain Integration Matrix
 
-| Domain Package | Role | Design/UI System Integration |
-| --- | --- | --- |
-| `@anarchitects/forms-angular` | Dynamic form/list/detail flows | Consumes shared composition, primitives, and layout runtime contracts |
-| `@anarchitects/auth-angular` | Auth feature orchestration and domain UI | Uses shared design tokens/primitives and contract-safe state composition |
-| `@anarchitects/forms-nest` | Forms API/service backend | Must preserve contract stability used by frontend layouts and form rendering |
-| `@anarchitects/auth-nest` | Auth lifecycle backend | Must preserve contract stability used by frontend state/feature and policy flows |
+| Domain Package                | Role                                     | Design/UI System Integration                                                     |
+| ----------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
+| `@anarchitects/forms-angular` | Dynamic form/list/detail flows           | Consumes shared composition, primitives, and layout runtime contracts            |
+| `@anarchitects/auth-angular`  | Auth feature orchestration and domain UI | Uses shared design tokens/primitives and contract-safe state composition         |
+| `@anarchitects/forms-nest`    | Forms API/service backend                | Must preserve contract stability used by frontend layouts and form rendering     |
+| `@anarchitects/auth-nest`     | Auth lifecycle backend                   | Must preserve contract stability used by frontend state/feature and policy flows |
 
 ## Cookbook Patterns
 
 - Pattern: baseline app setup
-  register design config and base styles before rendering domain UI.
+  apply base styles first, then register provider config before rendering domain UI.
 - Pattern: product theming
   apply token/theme overrides in app shell, not shared packages.
 - Pattern: projection stability
@@ -108,11 +159,12 @@ Use `@anarchitects/common-angular-ui-layouts` when runtime layout selection is r
 
 ## Adoption Checklist
 
-- Add `@anarchitects/common-angular-design` and apply base style bootstrap.
+- Add `@anarchitects/common-angular-design`, call `applyAnxBaseStyles()`, and register `provideDesignSystemConfig(...)` in app providers.
 - Adopt `@anarchitects/common-angular-ui-composition` slot/template contracts in shared and domain UI.
 - Use `@anarchitects/common-angular-ui-primitives` as base visual building blocks.
 - Add `@anarchitects/common-angular-ui-layouts` only when runtime-selectable layout behavior is required.
 - Keep forms and auth frontend packages aligned with backend contracts (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`, `@anarchitects/forms-nest`, `@anarchitects/auth-nest`).
+- Use [Theme Migration Guide](/guides/theme-migration.html) when moving existing apps away from manual root `data-anx-*` setup.
 - Validate docs and generated outputs:
   `yarn nx run docs-hub:validate-content`,
   `yarn nx run docs-hub:build`,
