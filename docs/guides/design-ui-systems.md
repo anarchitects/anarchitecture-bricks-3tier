@@ -40,6 +40,54 @@ Example:
 }
 ```
 
+## Package Author CSS Class Rules
+
+When building UI package components, understand the two categories of semantic classes.
+
+### Shell Utility Classes (Consumer Use Only)
+
+These classes control layout and spacing in consumer app shells and **must not be applied to package component host elements**:
+
+- `anx-region` — block padding wrapper
+- `anx-stack` — vertical grid flow (gap-based)
+- `anx-inline` — flex inline row
+- `anx-grid` — multi-column grid layout
+
+**Critical Rule:** Applying these to package component hosts causes unintended double-spacing when the component is nested inside a consumer's layout container using the same utilities.
+
+### Design Hook Classes (Component-Safe)
+
+These classes define visual treatment safe for component styling:
+
+- `anx-surface` — border, shadow, and background treatment
+- `anx-heading` — heading typography sizing
+- `anx-text` — muted secondary text
+- `anx-action` — button-like action styling
+
+### Correct Package Component Spacing
+
+Use `:host` CSS for component-internal spacing instead:
+
+```ts
+@Component({
+  selector: 'anarchitects-ui-card',
+  host: {
+    class: 'anx-card anx-surface', // Design hooks OK; no shell utilities
+    '[class.anx-card--interactive]': 'interactive()',
+  },
+  styles: `
+    :host {
+      padding: var(--anx-layout-block-padding-current);
+      gap: var(--anx-layout-gap-stack);
+    }
+  `,
+})
+export class AnarchitectsCard {}
+```
+
+For details, see the [CSS Class Rules](/contracts) in the contracts documentation and the
+migration target in [Phase 2: #221](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/221).
+
 ## Single-Source Theme Setup
 
 Use one canonical app-bootstrap path for shared design context:
