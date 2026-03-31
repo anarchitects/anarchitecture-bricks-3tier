@@ -4,7 +4,7 @@ Typed configuration and provider helpers for the shared Angular design-system co
 
 ## Usage
 
-Canonical setup uses an explicit app-shell host element:
+Canonical setup is provider-only:
 
 ```ts
 import { provideDesignSystemConfig } from '@anarchitects/common-angular-design/config';
@@ -20,15 +20,25 @@ providers: [
 ];
 ```
 
+`provideDesignSystemConfig(...)` now applies `anx-root`,
+`data-anx-theme`, `data-anx-density`, and `data-anx-surface` to
+`document.documentElement` during bootstrap.
+
+`layout` and `columns` remain explicit in v1. Set those attributes where layout
+scoping is required.
+
+Use the directive when a subtree needs its own scoped root:
+
 ```html
 <section anarchitectsDesignRoot data-anx-layout="grid" data-anx-columns="3"></section>
 ```
 
-`anarchitectsDesignRoot` manages `theme`, `density`, and `surface` on that
-explicit host.
-`layout` and `columns` remain explicit in v1.
+`anarchitectsDesignRoot` still resolves precedence as directive input, then
+explicit host attributes, then provider config.
 
-When a host app cannot annotate its shell template, use the document fallback:
+`provideDocumentDesignSystemDomSync()` remains available as a low-level compat
+helper. Using it alongside `provideDesignSystemConfig(...)` is harmless and
+idempotent:
 
 ```ts
 import { provideDesignSystemConfig, provideDocumentDesignSystemDomSync } from '@anarchitects/common-angular-design/config';
