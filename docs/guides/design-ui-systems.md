@@ -40,7 +40,26 @@ Example:
 }
 ```
 
-## Package Author CSS Class Rules
+## Shell/Layout Contract Hardening (Phase 2)
+
+Shell and layout contracts are intentionally separated to prevent collisions.
+
+Source-of-truth symbols:
+
+- `ANX_SHELL_UTILITY_CLASSNAMES`
+- `ANX_DESIGN_HOOK_CLASSNAMES`
+- `ANX_SEMANTIC_CLASSNAMES` (backward-compatibility union)
+- `isAnxShellUtilityClass(...)`
+
+Package author rule source:
+
+- `ANX_PACKAGE_AUTHOR_RULES` in `@anarchitects/common-angular-design/styles`
+
+Enforcement source:
+
+- `tools/guardrails/shell-utility-collision.test.mjs`
+
+### Package Author CSS Class Rules
 
 When building UI package components, understand the two categories of semantic classes.
 
@@ -85,8 +104,7 @@ Use `:host` CSS for component-internal spacing instead:
 export class AnarchitectsCard {}
 ```
 
-For details, see the [CSS Class Rules](/contracts) in the contracts documentation and the
-migration target in [Phase 2: #221](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/221).
+For details, see the [CSS Class Rules](/contracts) in the contracts documentation.
 
 ## Single-Source Theme Setup
 
@@ -125,9 +143,6 @@ The provider applies `anx-root`, `data-anx-theme`, `data-anx-density`, and
 `data-anx-layout` and `data-anx-columns` remain explicit where local layout
 scope is required.
 
-For migrations from manual attributes, use the
-[Theme Migration Guide](/guides/theme-migration.html).
-
 ### Precedence Rules
 
 For managed root values (`theme`, `density`, `surface`) the resolution order is:
@@ -138,6 +153,23 @@ For managed root values (`theme`, `density`, `surface`) the resolution order is:
 
 This keeps migration safe because existing explicit attributes remain
 authoritative.
+
+## Migration and Validation Workflow
+
+When migrating existing consumers to hardened shell/layout contracts:
+
+1. Keep shell utility classes only in consumer shell wrappers.
+2. Remove shell utility classes from shared package component hosts and internal templates.
+3. Move component spacing to explicit component CSS (`:host`, component-scoped selectors).
+4. Validate contract enforcement and downstream behavior:
+   - `yarn nx run guardrails:test`
+   - `yarn nx run forms-angular-ui:test --testFile=libs/forms/angular/ui/src/form.spec.ts`
+5. Run docs verification:
+   - `yarn nx run docs-hub:validate-content`
+   - `yarn nx run docs-hub:build`
+   - `yarn nx run docs-hub:verify`
+
+For full migration sequence examples, see the [Theme Migration Guide](/guides/theme-migration.html).
 
 ## Composition Contracts
 
@@ -190,6 +222,8 @@ Use `@anarchitects/common-angular-ui-layouts` when runtime layout selection is r
   apply base styles first, then register provider config before rendering domain UI.
 - Pattern: product theming
   apply token/theme overrides in app shell, not shared packages.
+- Pattern: shell utility ownership
+  keep shell utility classes in consumer layout wrappers only.
 - Pattern: projection stability
   publish canonical slot/template names and avoid breaking renames.
 - Pattern: backend-safe evolution
@@ -203,6 +237,7 @@ Use `@anarchitects/common-angular-ui-layouts` when runtime layout selection is r
 - Hardcoding brand styles inside shared primitives.
 - Embedding orchestration/state logic in primitive components.
 - Breaking slot or template names without migration path.
+- Applying shell utility classes to shared package component hosts.
 - Shipping backend schema changes without OpenAPI and frontend consumer verification.
 
 ## Adoption Checklist
@@ -212,7 +247,10 @@ Use `@anarchitects/common-angular-ui-layouts` when runtime layout selection is r
 - Use `@anarchitects/common-angular-ui-primitives` as base visual building blocks.
 - Add `@anarchitects/common-angular-ui-layouts` only when runtime-selectable layout behavior is required.
 - Keep forms and auth frontend packages aligned with backend contracts (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`, `@anarchitects/forms-nest`, `@anarchitects/auth-nest`).
-- Use [Theme Migration Guide](/guides/theme-migration.html) when moving existing apps away from manual root `data-anx-*` setup.
+- Keep shell utility classes in consumer layout wrappers and out of shared package hosts.
+- Validate guardrails and downstream integration:
+  `yarn nx run guardrails:test` and
+  `yarn nx run forms-angular-ui:test --testFile=libs/forms/angular/ui/src/form.spec.ts`.
 - Validate docs and generated outputs:
   `yarn nx run docs-hub:validate-content`,
   `yarn nx run docs-hub:build`,
