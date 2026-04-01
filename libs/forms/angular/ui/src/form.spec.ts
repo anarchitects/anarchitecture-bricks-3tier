@@ -167,6 +167,15 @@ describe('Form', () => {
     expect(component.formGroup.contains('password')).toBe(true);
   });
 
+  it('should render one field wrapper per configured field', () => {
+    const nativeElement = fixture.nativeElement as HTMLElement;
+    const renderedFields = nativeElement.querySelectorAll(
+      'anarchitects-ui-field',
+    );
+
+    expect(renderedFields.length).toBe(mockFormConfig.fields.length);
+  });
+
   it('should render password fields with type password', () => {
     const nativeElement = fixture.nativeElement as HTMLElement;
     const passwordInput = nativeElement.querySelector(
