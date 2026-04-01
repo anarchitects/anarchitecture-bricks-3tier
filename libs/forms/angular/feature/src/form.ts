@@ -36,6 +36,9 @@ export class AnarchitectsFeatureForm {
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly pagePreset = input<FormsPagePresetInput | null>(null);
+  readonly pageTitle = input<string | null>(null);
+  readonly pageSubtitle = input<string | null>(null);
+  readonly pageCaption = input<string | null>(null);
 
   constructor() {
     effect(() => {

@@ -95,4 +95,22 @@ describe('AnarchitectsFeatureForm', () => {
       actionAlignment: 'center',
     });
   });
+
+  it('should forward page header inputs to forms ui form', () => {
+    ref.setInput('pageTitle', 'Contact us');
+    ref.setInput('pageSubtitle', 'Tell us what you need');
+    ref.setInput('pageCaption', 'We usually respond within one business day.');
+    fixture.detectChanges();
+
+    const formUiDebug = fixture.debugElement.query(
+      By.directive(AnarchitectsUiForm),
+    );
+    const formUi = formUiDebug.componentInstance as AnarchitectsUiForm;
+
+    expect(formUi.pageTitle()).toBe('Contact us');
+    expect(formUi.pageSubtitle()).toBe('Tell us what you need');
+    expect(formUi.pageCaption()).toBe(
+      'We usually respond within one business day.',
+    );
+  });
 });

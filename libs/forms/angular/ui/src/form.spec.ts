@@ -1,3 +1,4 @@
+import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
 import { FormConfig } from '@anarchitects/forms-ts/models';
 import { Component, ComponentRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -44,6 +45,47 @@ class ThemedFormHostComponent {
       },
     ],
   };
+}
+
+@Component({
+  imports: [AnarchitectsUiForm, AnxSlotDirective],
+  template: `
+    <anarchitects-forms-ui-form
+      [config]="config"
+      [pageTitle]="pageTitle"
+      [pageSubtitle]="pageSubtitle"
+      [pageCaption]="pageCaption"
+      [pagePreset]="pagePreset"
+    >
+      <p anxSlot="app-forms-caption-top">Top caption A</p>
+      <p anxSlot="app-forms-caption-top">Top caption B</p>
+
+      <div anxSlot="app-forms-page-header">
+        <h1>Projected header title</h1>
+      </div>
+
+      <p anxSlot="app-forms-caption-bottom">Bottom caption A</p>
+      <p anxSlot="app-forms-caption-bottom">Bottom caption B</p>
+    </anarchitects-forms-ui-form>
+  `,
+})
+class HeaderCompositionHostComponent {
+  readonly config: FormConfig = {
+    id: 'header-form',
+    version: 1,
+    fields: [
+      {
+        name: 'email',
+        kind: 'email',
+        required: true,
+        ui: { label: 'Email' },
+      },
+    ],
+  };
+  pageTitle: string | null = null;
+  pageSubtitle: string | null = null;
+  pageCaption: string | null = null;
+  pagePreset: Record<string, unknown> | null = null;
 }
 
 describe('Form', () => {
@@ -369,6 +411,92 @@ describe('Form', () => {
     expect(
       host.style.getPropertyValue('--anx-forms-ui-max-inline-size').trim(),
     ).toBe('48rem');
+  });
+
+  it('should render semantic header elements from explicit header inputs', () => {
+    ref.setInput('pageTitle', 'Contact us');
+    ref.setInput('pageSubtitle', 'We usually respond within one day');
+    ref.setInput('pageCaption', 'Send your request and our team will reply.');
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    expect(
+      host.querySelector('.anx-forms-ui-form__title')?.textContent?.trim(),
+    ).toBe('Contact us');
+    expect(
+      host.querySelector('.anx-forms-ui-form__subtitle')?.textContent?.trim(),
+    ).toBe('We usually respond within one day');
+    expect(
+      host.querySelector('.anx-forms-ui-form__caption')?.textContent?.trim(),
+    ).toBe('Send your request and our team will reply.');
+  });
+
+  it('should resolve header text from page preset defaults', () => {
+    ref.setInput('pagePreset', {
+      pageTitle: 'Preset title',
+      pageCaption: 'Preset caption',
+    });
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    expect(
+      host.querySelector('.anx-forms-ui-form__title')?.textContent?.trim(),
+    ).toBe('Preset title');
+    expect(
+      host.querySelector('.anx-forms-ui-form__caption')?.textContent?.trim(),
+    ).toBe('Preset caption');
+  });
+
+  it('should prefer explicit header inputs over preset header defaults', () => {
+    ref.setInput('pagePreset', {
+      pageTitle: 'Preset title',
+      pageCaption: 'Preset caption',
+    });
+    ref.setInput('pageTitle', 'Input title');
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    expect(
+      host.querySelector('.anx-forms-ui-form__title')?.textContent?.trim(),
+    ).toBe('Input title');
+  });
+});
+
+describe('Form header composition slots', () => {
+  let fixture: ComponentFixture<HeaderCompositionHostComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HeaderCompositionHostComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(HeaderCompositionHostComponent);
+  });
+
+  it('should render multiple top and bottom caption slots in order', () => {
+    fixture.detectChanges();
+    const host = fixture.nativeElement as HTMLElement;
+    const topRegion = host.querySelectorAll(
+      ".anx-forms-ui-form__caption-region p[data-anx-slot='app-forms-caption-top']",
+    );
+    const bottomRegion = host.querySelectorAll(
+      ".anx-forms-ui-form__caption-region p[data-anx-slot='app-forms-caption-bottom']",
+    );
+
+    expect(topRegion.length).toBe(2);
+    expect(topRegion[0]?.textContent?.trim()).toBe('Top caption A');
+    expect(topRegion[1]?.textContent?.trim()).toBe('Top caption B');
+
+    expect(bottomRegion.length).toBe(2);
+    expect(bottomRegion[0]?.textContent?.trim()).toBe('Bottom caption A');
+    expect(bottomRegion[1]?.textContent?.trim()).toBe('Bottom caption B');
+  });
+
+  it('should render projected page header slot content', () => {
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.textContent).toContain('Projected header title');
   });
 });
 
