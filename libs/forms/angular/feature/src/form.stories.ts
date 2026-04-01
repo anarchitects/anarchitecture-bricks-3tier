@@ -63,7 +63,9 @@ const getFormDefinitionHandler = http.get(
   '/api/forms/:requestedFormId',
   ({ params, request }) => {
     const requestedFormId = params['requestedFormId'];
-    const requestedVersion = new URL(request.url).searchParams.get('formVersion');
+    const requestedVersion = new URL(request.url).searchParams.get(
+      'formVersion',
+    );
 
     if (
       requestedFormId !== formId ||
@@ -126,6 +128,43 @@ export const CardLayout: Story = {
     formId,
     formVersion,
     layout: 'form:card',
+  },
+  parameters: {
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
+  },
+};
+
+export const ContactPreset: Story = {
+  args: {
+    formId,
+    formVersion,
+    pagePreset: {
+      layoutVariant: 'stacked',
+      maxInlineSize: '42rem',
+      spacing: 'comfortable',
+      actionAlignment: 'end',
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
+  },
+};
+
+export const PresetGridCompact: Story = {
+  args: {
+    formId,
+    formVersion,
+    pagePreset: {
+      layoutVariant: 'grid',
+      columns: 2,
+      maxInlineSize: '56rem',
+      spacing: 'compact',
+      actionAlignment: 'center',
+    },
   },
   parameters: {
     msw: {

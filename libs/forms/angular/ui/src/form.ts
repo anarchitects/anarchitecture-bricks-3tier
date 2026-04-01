@@ -11,8 +11,8 @@ import {
   AnarchitectsUiTextareaDirective,
 } from '@anarchitects/common-angular-ui-primitives/form-controls';
 import {
-  FORMS_PAGE_PRESET,
   FormsPagePresetInput,
+  injectFormsPagePreset,
   normalizeFormsPagePreset,
 } from '@anarchitects/forms-angular/config';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
@@ -126,9 +126,7 @@ function buildConfigValidator(
 })
 export class AnarchitectsUiForm {
   private readonly fb = inject(FormBuilder);
-  private readonly injectedPagePreset = inject(FORMS_PAGE_PRESET, {
-    optional: true,
-  });
+  private readonly injectedPagePreset = injectFormsPagePreset();
   readonly formGroup = this.fb.group({});
   readonly config = input.required<FormConfig>();
   readonly runtimeValidators = input<readonly ValidatorFn[]>([]);
@@ -143,7 +141,7 @@ export class AnarchitectsUiForm {
       return normalizeFormsPagePreset(inputPreset);
     }
 
-    return this.injectedPagePreset ?? null;
+    return normalizeFormsPagePreset(this.injectedPagePreset);
   });
 
   readonly resolvedLayout = computed(() =>
