@@ -151,6 +151,29 @@ describe('default layouts integration', () => {
     );
   });
 
+  it('should support relaxed spacing and between action alignment', () => {
+    fixture.componentInstance.kind.set('form');
+    fixture.componentInstance.layout.set('form:stacked');
+    fixture.componentInstance.layoutOptions.set({
+      spacing: 'relaxed',
+      actionAlignment: 'between',
+    });
+    fixture.detectChanges();
+
+    const renderer = fixture.nativeElement.querySelector(
+      'anarchitects-ui-default-form-layout-renderer',
+    ) as HTMLElement;
+
+    expect(
+      renderer.style.getPropertyValue('--anx-layout-form-gap').trim(),
+    ).toBe('var(--anx-sys-space-lg)');
+    expect(
+      renderer.style
+        .getPropertyValue('--anx-layout-form-actions-justify')
+        .trim(),
+    ).toBe('space-between');
+  });
+
   it('should render list:table layout with table structure', () => {
     fixture.componentInstance.kind.set('list');
     fixture.componentInstance.layout.set('list:table');

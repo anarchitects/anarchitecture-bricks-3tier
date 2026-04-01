@@ -31,6 +31,17 @@ describe('Forms page preset', () => {
     });
   });
 
+  it('should floor positive fractional columns', () => {
+    expect(
+      normalizeFormsPagePreset({
+        columns: 2.9,
+      }),
+    ).toEqual({
+      ...FORMS_PAGE_PRESET_DEFAULTS,
+      columns: 2,
+    });
+  });
+
   it('should inject defaults when no provider is registered', () => {
     TestBed.runInInjectionContext(() => {
       expect(injectFormsPagePreset()).toEqual(FORMS_PAGE_PRESET_DEFAULTS);

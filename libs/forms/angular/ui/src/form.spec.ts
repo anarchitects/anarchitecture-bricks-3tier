@@ -95,6 +95,30 @@ describe('Form', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should apply batteries-included defaults when no page preset is provided', () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const layoutHost = host.querySelector(
+      'anarchitects-ui-layout-host',
+    ) as HTMLElement;
+    const renderer = host.querySelector(
+      'anarchitects-ui-default-form-layout-renderer',
+    ) as HTMLElement;
+
+    expect(layoutHost.getAttribute('data-anx-layout-id')).toBe('form:stacked');
+    expect(
+      host.style.getPropertyValue('--anx-forms-ui-max-inline-size').trim(),
+    ).toBe('42rem');
+    expect(
+      renderer.style
+        .getPropertyValue('--anx-layout-form-actions-justify')
+        .trim(),
+    ).toBe('flex-end');
+    expect(
+      renderer.style.getPropertyValue('--anx-layout-form-gap').trim(),
+    ).toBe('var(--anx-layout-gap-stack)');
+  });
+
   it('should build form controls based on config', () => {
     expect(component.formGroup.contains('email')).toBe(true);
     expect(component.formGroup.contains('name')).toBe(true);
