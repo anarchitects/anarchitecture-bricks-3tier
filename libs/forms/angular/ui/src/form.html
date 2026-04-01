@@ -36,66 +36,58 @@
       ></ng-content>
 
       <ng-template anxTemplate="field" let-field let-index="index">
-        <anarchitects-ui-field
-          [forId]="fieldId(field.name)"
-          [required]="!!field.required"
+        @switch (field.kind) { @case ('textarea') {
+        <textarea
+          anxSlot="content"
+          anarchitectsUiTextarea
+          [id]="fieldId(field.name)"
+          [formControlName]="field.name"
+          [rows]="field.ui?.rows ?? 4"
+          [placeholder]="field.ui?.placeholder ?? ''"
+          [invalid]="isFieldInvalid(field.name)"
+        ></textarea>
+        } @case ('select') {
+        <select
+          anxSlot="content"
+          anarchitectsUiSelect
+          [id]="fieldId(field.name)"
+          [formControlName]="field.name"
           [invalid]="isFieldInvalid(field.name)"
         >
-          <span anxSlot="label">{{ field.ui?.label ?? field.name }}</span>
-
-          @switch (field.kind) { @case ('textarea') {
-          <textarea
-            anxSlot="content"
-            anarchitectsUiTextarea
-            [id]="fieldId(field.name)"
-            [formControlName]="field.name"
-            [rows]="field.ui?.rows ?? 4"
-            [placeholder]="field.ui?.placeholder ?? ''"
-            [invalid]="isFieldInvalid(field.name)"
-          ></textarea>
-          } @case ('select') {
-          <select
-            anxSlot="content"
-            anarchitectsUiSelect
-            [id]="fieldId(field.name)"
-            [formControlName]="field.name"
-            [invalid]="isFieldInvalid(field.name)"
-          >
-            @for (option of field.options ?? []; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-            }
-          </select>
-          } @case ('boolean') {
-          <label anxSlot="content" class="anx-forms-ui-form__checkbox">
-            <input
-              type="checkbox"
-              [id]="fieldId(field.name)"
-              [formControlName]="field.name"
-            />
-            <span>{{ field.ui?.placeholder ?? 'Enabled' }}</span>
-          </label>
-          } @default {
-          <input
-            anxSlot="content"
-            anarchitectsUiInput
-            [attr.type]="
-                field.kind === 'email'
-                  ? 'email'
-                  : field.kind === 'password'
-                    ? 'password'
-                    : 'text'
-              "
-            [id]="fieldId(field.name)"
-            [formControlName]="field.name"
-            [placeholder]="field.ui?.placeholder ?? ''"
-            [invalid]="isFieldInvalid(field.name)"
-          />
-          } } @if (field.ui?.help; as helpText) {
-          <span anxSlot="hint">{{ helpText }}</span>
-          } @if (fieldErrorMessage(field.name); as errorText) {
-          <span anxSlot="error">{{ errorText }}</span>
+          @for (option of field.options ?? []; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
           }
-        </anarchitects-ui-field>
+        </select>
+        } @case ('boolean') {
+        <label anxSlot="content" class="anx-forms-ui-form__checkbox">
+          <input
+            type="checkbox"
+            [id]="fieldId(field.name)"
+            [formControlName]="field.name"
+          />
+          <span>{{ field.ui?.placeholder ?? 'Enabled' }}</span>
+        </label>
+        } @default {
+        <input
+          anxSlot="content"
+          anarchitectsUiInput
+          [attr.type]="
+              field.kind === 'email'
+                ? 'email'
+                : field.kind === 'password'
+                  ? 'password'
+                  : 'text'
+            "
+          [id]="fieldId(field.name)"
+          [formControlName]="field.name"
+          [placeholder]="field.ui?.placeholder ?? ''"
+          [invalid]="isFieldInvalid(field.name)"
+        />
+        } } @if (field.ui?.help; as helpText) {
+        <span anxSlot="hint">{{ helpText }}</span>
+        } @if (fieldErrorMessage(field.name); as errorText) {
+        <span anxSlot="error">{{ errorText }}</span>
+        }
       </ng-template>
 
       <ng-template anxTemplate="actions">

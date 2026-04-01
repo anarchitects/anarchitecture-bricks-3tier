@@ -5,7 +5,6 @@ import { provideAnxDefaultLayouts } from '@anarchitects/common-angular-ui-layout
 import { AnarchitectsUiLayoutHost } from '@anarchitects/common-angular-ui-layouts/host';
 import { AnarchitectsUiButton } from '@anarchitects/common-angular-ui-primitives/actions';
 import {
-  AnarchitectsUiField,
   AnarchitectsUiInputDirective,
   AnarchitectsUiSelectDirective,
   AnarchitectsUiTextareaDirective,
@@ -106,7 +105,6 @@ function buildConfigValidator(
   imports: [
     ReactiveFormsModule,
     AnarchitectsUiLayoutHost,
-    AnarchitectsUiField,
     AnarchitectsUiButton,
     AnarchitectsUiInputDirective,
     AnarchitectsUiTextareaDirective,
@@ -180,7 +178,10 @@ export class AnarchitectsUiForm {
 
   readonly layoutModel = computed(() => ({
     title: this.config().id,
-    fields: this.config().fields,
+    fields: this.config().fields.map((field) => ({
+      ...field,
+      label: field.ui?.label ?? field.name,
+    })),
   }));
 
   constructor() {
@@ -229,8 +230,8 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       control &&
-      this.crossFieldError(fieldName) &&
-      (control.touched || control.dirty),
+        this.crossFieldError(fieldName) &&
+        (control.touched || control.dirty),
     );
   }
 
@@ -281,7 +282,7 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       (control && control.touched && control.invalid) ||
-      this.shouldShowCrossFieldError(fieldName),
+        this.shouldShowCrossFieldError(fieldName),
     );
   }
 
