@@ -68,7 +68,13 @@ import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
 @Component({
   selector: 'app-contact-form',
   imports: [AnarchitectsFeatureForm],
-  template: ` <anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" (submitted)="onSubmitted()" /> `,
+  template: `
+    <anarchitects-forms-feature-form
+      [formId]="'contact_default'"
+      [formVersion]="1"
+      (submitted)="onSubmitted()"
+    />
+  `,
 })
 export class ContactFormRoute {
   onSubmitted(): void {
@@ -104,7 +110,9 @@ import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
         actionAlignment: 'end',
       }"
       [pageTitle]="'Contact us'"
-      [pageCaption]="'Get in touch and we will get back to you as soon as possible.'"
+      [pageCaption]="
+        'Get in touch and we will get back to you as soon as possible.'
+      "
     />
   `,
 })
@@ -130,12 +138,24 @@ Available slot names:
 - `app-forms-caption-bottom`: render one or more caption blocks below the form
 
 ```html
-<anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" [pageTitle]="'Support request'">
-  <p anxSlot="app-forms-caption-top">Top caption A: Product support and onboarding</p>
-  <p anxSlot="app-forms-caption-top">Top caption B: Billing and enterprise help</p>
+<anarchitects-forms-feature-form
+  [formId]="'contact_default'"
+  [formVersion]="1"
+  [pageTitle]="'Support request'"
+>
+  <p anxSlot="app-forms-caption-top">
+    Top caption A: Product support and onboarding
+  </p>
+  <p anxSlot="app-forms-caption-top">
+    Top caption B: Billing and enterprise help
+  </p>
 
-  <p anxSlot="app-forms-caption-bottom">Bottom caption A: Typical response in one business day</p>
-  <p anxSlot="app-forms-caption-bottom">Bottom caption B: Priority requests are triaged continuously</p>
+  <p anxSlot="app-forms-caption-bottom">
+    Bottom caption A: Typical response in one business day
+  </p>
+  <p anxSlot="app-forms-caption-bottom">
+    Bottom caption B: Priority requests are triaged continuously
+  </p>
 </anarchitects-forms-feature-form>
 ```
 

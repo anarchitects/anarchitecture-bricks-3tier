@@ -24,7 +24,11 @@ import { provideFormsFeature } from '@anarchitects/forms-angular';
 import { provideAuthFeature } from '@anarchitects/auth-angular';
 
 export const appConfig = {
-  providers: [provideHttpClient(withFetch()), ...provideFormsFeature(), ...provideAuthFeature()],
+  providers: [
+    provideHttpClient(withFetch()),
+    ...provideFormsFeature(),
+    ...provideAuthFeature(),
+  ],
 };
 ```
 
@@ -113,12 +117,18 @@ When you need richer page copy, project custom regions into the form component.
 - `app-forms-caption-bottom`: renders one or more caption blocks below the form
 
 ```html
-<anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" [pageTitle]="'Support request'">
+<anarchitects-forms-feature-form
+  [formId]="'contact_default'"
+  [formVersion]="1"
+  [pageTitle]="'Support request'"
+>
   <p anxSlot="app-forms-caption-top">Product support and onboarding</p>
   <p anxSlot="app-forms-caption-top">Billing and enterprise assistance</p>
 
   <p anxSlot="app-forms-caption-bottom">Typical response in one business day</p>
-  <p anxSlot="app-forms-caption-bottom">Priority requests are triaged continuously</p>
+  <p anxSlot="app-forms-caption-bottom">
+    Priority requests are triaged continuously
+  </p>
 </anarchitects-forms-feature-form>
 ```
 
