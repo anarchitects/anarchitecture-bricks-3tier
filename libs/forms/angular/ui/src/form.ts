@@ -230,8 +230,8 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       control &&
-        this.crossFieldError(fieldName) &&
-        (control.touched || control.dirty),
+      this.crossFieldError(fieldName) &&
+      (control.touched || control.dirty),
     );
   }
 
@@ -282,7 +282,7 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       (control && control.touched && control.invalid) ||
-        this.shouldShowCrossFieldError(fieldName),
+      this.shouldShowCrossFieldError(fieldName),
     );
   }
 
