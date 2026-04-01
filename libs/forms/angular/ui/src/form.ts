@@ -240,6 +240,10 @@ export class AnarchitectsUiForm {
     return normalized ? normalized : null;
   }
 
+  fieldHelpText(field: FormField): string | null {
+    return this.normalizeHeaderText(field.ui?.help);
+  }
+
   fieldId(fieldName: string): string {
     return fieldName;
   }

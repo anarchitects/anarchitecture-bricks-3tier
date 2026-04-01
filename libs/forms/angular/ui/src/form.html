@@ -83,7 +83,7 @@
           [placeholder]="field.ui?.placeholder ?? ''"
           [invalid]="isFieldInvalid(field.name)"
         />
-        } } @if (field.ui?.help; as helpText) {
+        } } @if (fieldHelpText(field); as helpText) {
         <span anxSlot="hint">{{ helpText }}</span>
         } @if (fieldErrorMessage(field.name); as errorText) {
         <span anxSlot="error">{{ errorText }}</span>

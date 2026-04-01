@@ -176,6 +176,34 @@ describe('Form', () => {
     expect(renderedFields.length).toBe(mockFormConfig.fields.length);
   });
 
+  it('should not project whitespace-only help text into the hint slot', () => {
+    const config: FormConfig = {
+      id: 'help-text-form',
+      version: 1,
+      fields: [
+        {
+          name: 'email',
+          kind: 'email',
+          required: true,
+          ui: {
+            label: 'Email',
+            help: '   ',
+          },
+        },
+      ],
+    };
+
+    ref.setInput('config', config);
+    fixture.detectChanges();
+
+    const nativeElement = fixture.nativeElement as HTMLElement;
+    const hint = nativeElement.querySelector(
+      "[data-anx-slot='hint']",
+    ) as HTMLElement | null;
+
+    expect(hint?.textContent?.trim()).toBe('');
+  });
+
   it('should render password fields with type password', () => {
     const nativeElement = fixture.nativeElement as HTMLElement;
     const passwordInput = nativeElement.querySelector(
