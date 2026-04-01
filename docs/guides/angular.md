@@ -24,7 +24,11 @@ import { provideFormsFeature } from '@anarchitects/forms-angular';
 import { provideAuthFeature } from '@anarchitects/auth-angular';
 
 export const appConfig = {
-  providers: [provideHttpClient(withFetch()), ...provideFormsFeature(), ...provideAuthFeature()],
+  providers: [
+    provideHttpClient(withFetch()),
+    ...provideFormsFeature(),
+    ...provideAuthFeature(),
+  ],
 };
 ```
 
@@ -65,6 +69,71 @@ Angular consumers (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`) 
 - Set defaults with `provideAnxLayoutDefaults(...)`.
 - Register custom layout renderers with `provideAnxLayouts([...])`.
 - Keep design/runtime layout contract definitions centralized in [Design/UI Systems Guide](/guides/design-ui-systems.html).
+
+## Batteries-Included Forms Pages
+
+The preferred route-based forms page path uses `AnarchitectsFeatureForm` with a forms page preset and
+optional header inputs. This gives a production-ready contact-form style page with no required
+consumer CSS patching for the primary use case.
+
+```ts
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
+
+@Component({
+  selector: 'app-contact-form-route',
+  imports: [AnarchitectsFeatureForm],
+  template: `
+    <anarchitects-forms-feature-form
+      [formId]="'contact_default'"
+      [formVersion]="1"
+      [pagePreset]="{
+        layoutVariant: 'stacked',
+        maxInlineSize: '42rem',
+        spacing: 'comfortable',
+        actionAlignment: 'end',
+      }"
+      [pageTitle]="'Contact us'"
+      [pageCaption]="'Get in touch and we will respond as soon as possible.'"
+    />
+  `,
+})
+export class ContactFormRoute {}
+```
+
+This easy-mode path covers the common scenario:
+
+- semantic page title/caption rendering
+- readable centered max width
+- spacing and action layout defaults from the forms preset contract
+- no wrapper component required
+
+### Advanced Composition With Slots
+
+When you need richer page copy, project custom regions into the form component.
+
+- `app-forms-page-header`: replaces the built-in title/subtitle/caption header
+- `app-forms-caption-top`: renders one or more caption blocks above the form
+- `app-forms-caption-bottom`: renders one or more caption blocks below the form
+
+```html
+<anarchitects-forms-feature-form
+  [formId]="'contact_default'"
+  [formVersion]="1"
+  [pageTitle]="'Support request'"
+>
+  <p anxSlot="app-forms-caption-top">Product support and onboarding</p>
+  <p anxSlot="app-forms-caption-top">Billing and enterprise assistance</p>
+
+  <p anxSlot="app-forms-caption-bottom">Typical response in one business day</p>
+  <p anxSlot="app-forms-caption-bottom">
+    Priority requests are triaged continuously
+  </p>
+</anarchitects-forms-feature-form>
+```
+
+Use inputs and presets for routine cases. Use slot projection when you need multiple caption blocks or
+fully custom introductory content.
 
 ## State/Data Access
 

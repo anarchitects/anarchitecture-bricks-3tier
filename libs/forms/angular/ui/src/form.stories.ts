@@ -160,6 +160,20 @@ export const ContactHeaderInputs: Story = {
   },
 };
 
+export const BatteriesIncludedContactPage: Story = {
+  args: {
+    config: mockFormConfig,
+    pagePreset: {
+      layoutVariant: 'stacked',
+      maxInlineSize: '42rem',
+      spacing: 'comfortable',
+      actionAlignment: 'end',
+    },
+    pageTitle: 'Contact us',
+    pageCaption: 'Get in touch and we will respond as soon as possible.',
+  },
+};
+
 export const SubtitleOnly: Story = {
   args: {
     config: mockFormConfig,

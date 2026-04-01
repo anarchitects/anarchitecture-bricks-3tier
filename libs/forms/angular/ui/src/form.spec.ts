@@ -460,6 +460,41 @@ describe('Form', () => {
       host.querySelector('.anx-forms-ui-form__title')?.textContent?.trim(),
     ).toBe('Input title');
   });
+
+  it('should render the canonical batteries-included page composition without custom CSS', () => {
+    ref.setInput('pagePreset', {
+      layoutVariant: 'stacked',
+      maxInlineSize: '42rem',
+      spacing: 'comfortable',
+      actionAlignment: 'end',
+    });
+    ref.setInput('pageTitle', 'Contact us');
+    ref.setInput(
+      'pageCaption',
+      'Get in touch and we will respond as soon as possible.',
+    );
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const surface = host.querySelector(
+      '.anx-forms-ui-form__surface',
+    ) as HTMLElement;
+    const layoutHost = host.querySelector(
+      'anarchitects-ui-layout-host',
+    ) as HTMLElement;
+
+    expect(surface).toBeTruthy();
+    expect(layoutHost.getAttribute('data-anx-layout-id')).toBe('form:stacked');
+    expect(
+      host.style.getPropertyValue('--anx-forms-ui-max-inline-size').trim(),
+    ).toBe('42rem');
+    expect(
+      host.querySelector('.anx-forms-ui-form__title')?.textContent?.trim(),
+    ).toBe('Contact us');
+    expect(
+      host.querySelector('.anx-forms-ui-form__caption')?.textContent?.trim(),
+    ).toBe('Get in touch and we will respond as soon as possible.');
+  });
 });
 
 describe('Form header composition slots', () => {
