@@ -113,4 +113,35 @@ describe('AnarchitectsFeatureForm', () => {
       'We usually respond within one business day.',
     );
   });
+
+  it('should support the documented no-wrapper contact page configuration', () => {
+    ref.setInput('pagePreset', {
+      layoutVariant: 'stacked',
+      maxInlineSize: '42rem',
+      spacing: 'comfortable',
+      actionAlignment: 'end',
+    });
+    ref.setInput('pageTitle', 'Contact us');
+    ref.setInput(
+      'pageCaption',
+      'Get in touch and we will respond as soon as possible.',
+    );
+    fixture.detectChanges();
+
+    const formUiDebug = fixture.debugElement.query(
+      By.directive(AnarchitectsUiForm),
+    );
+    const formUi = formUiDebug.componentInstance as AnarchitectsUiForm;
+
+    expect(formUi.pagePreset()).toEqual({
+      layoutVariant: 'stacked',
+      maxInlineSize: '42rem',
+      spacing: 'comfortable',
+      actionAlignment: 'end',
+    });
+    expect(formUi.pageTitle()).toBe('Contact us');
+    expect(formUi.pageCaption()).toBe(
+      'Get in touch and we will respond as soon as possible.',
+    );
+  });
 });

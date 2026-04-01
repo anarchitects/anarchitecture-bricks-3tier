@@ -68,13 +68,7 @@ import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
 @Component({
   selector: 'app-contact-form',
   imports: [AnarchitectsFeatureForm],
-  template: `
-    <anarchitects-forms-feature-form
-      [formId]="'contact_default'"
-      [formVersion]="1"
-      (submitted)="onSubmitted()"
-    />
-  `,
+  template: ` <anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" (submitted)="onSubmitted()" /> `,
 })
 export class ContactFormRoute {
   onSubmitted(): void {
@@ -85,6 +79,68 @@ export class ContactFormRoute {
 
 Behind the scenes the feature component uses the signal store to request the form definition, renders
 it with the UI layer, and posts submissions via the data-access service.
+
+### Batteries-Included Contact Form
+
+The primary forms-page flow is designed to work with near-zero custom CSS. Use `pagePreset` for
+layout/spacing/width defaults and header inputs for standalone page rendering.
+
+```typescript
+// contact-form.route.ts
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
+
+@Component({
+  selector: 'app-contact-form-route',
+  imports: [AnarchitectsFeatureForm],
+  template: `
+    <anarchitects-forms-feature-form
+      [formId]="'contact_default'"
+      [formVersion]="1"
+      [pagePreset]="{
+        layoutVariant: 'stacked',
+        maxInlineSize: '42rem',
+        spacing: 'comfortable',
+        actionAlignment: 'end',
+      }"
+      [pageTitle]="'Contact us'"
+      [pageCaption]="'Get in touch and we will get back to you as soon as possible.'"
+    />
+  `,
+})
+export class ContactFormRoute {}
+```
+
+This route uses the default forms-page experience:
+
+- stacked form layout with comfortable spacing
+- centered max width for readable page composition
+- end-aligned submit actions
+- semantic title/caption rendering above the form
+
+### Advanced Header And Caption Composition
+
+When a single title/caption pair is not enough, project additional composition regions directly into
+the feature or UI form component. These slots are additive and do not require a wrapper component.
+
+Available slot names:
+
+- `app-forms-page-header`: replace the built-in title/subtitle/caption header with a custom header region
+- `app-forms-caption-top`: render one or more caption blocks above the form/header area
+- `app-forms-caption-bottom`: render one or more caption blocks below the form
+
+```html
+<anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" [pageTitle]="'Support request'">
+  <p anxSlot="app-forms-caption-top">Top caption A: Product support and onboarding</p>
+  <p anxSlot="app-forms-caption-top">Top caption B: Billing and enterprise help</p>
+
+  <p anxSlot="app-forms-caption-bottom">Bottom caption A: Typical response in one business day</p>
+  <p anxSlot="app-forms-caption-bottom">Bottom caption B: Priority requests are triaged continuously</p>
+</anarchitects-forms-feature-form>
+```
+
+Use `pageTitle`, `pageSubtitle`, and `pageCaption` for the easy path. Use slots when you need
+multiple caption blocks or a fully custom page intro.
 
 ## Working with individual layers
 
