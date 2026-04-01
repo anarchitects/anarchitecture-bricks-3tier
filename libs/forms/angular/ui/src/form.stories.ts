@@ -1,4 +1,5 @@
 import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
+import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
 import { FormConfig } from '@anarchitects/forms-ts';
 import { ValidatorFn } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
@@ -11,7 +12,7 @@ const meta: Meta<AnarchitectsUiForm> = {
   title: 'Forms UI/Form',
   decorators: [
     moduleMetadata({
-      imports: [AnxTemplateDirective],
+      imports: [AnxTemplateDirective, AnxSlotDirective],
     }),
   ],
 };
@@ -149,6 +150,66 @@ export const PresetGridCompact: Story = {
       actionAlignment: 'center',
     },
   },
+};
+
+export const ContactHeaderInputs: Story = {
+  args: {
+    config: mockFormConfig,
+    pageTitle: 'Contact us!',
+    pageCaption: 'Get in touch with us and we will get back to you ASAP.',
+  },
+};
+
+export const SubtitleOnly: Story = {
+  args: {
+    config: mockFormConfig,
+    pageSubtitle: 'Share your request and context in a few lines.',
+  },
+};
+
+export const CaptionOnlyMultiline: Story = {
+  args: {
+    config: mockFormConfig,
+    pageCaption:
+      'Our team reviews every request carefully.\nPlease include expected timeline and contact preferences.',
+  },
+};
+
+export const MultipleCaptionsTopAndBottom: Story = {
+  args: {
+    config: mockFormConfig,
+    pageTitle: 'Contact support',
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-forms-ui-form [config]="config" [pageTitle]="pageTitle">
+        <p anxSlot="app-forms-caption-top">Top caption 1: Product support</p>
+        <p anxSlot="app-forms-caption-top">Top caption 2: Billing and accounts</p>
+
+        <p anxSlot="app-forms-caption-bottom">Bottom caption 1: Mon-Fri, 08:00-18:00 CET</p>
+        <p anxSlot="app-forms-caption-bottom">Bottom caption 2: Emergency channels are monitored 24/7</p>
+      </anarchitects-forms-ui-form>
+    `,
+  }),
+};
+
+export const CustomHeaderSlotOverride: Story = {
+  args: {
+    config: mockFormConfig,
+    pageTitle: 'This title should be replaced',
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-forms-ui-form [config]="config" [pageTitle]="pageTitle">
+        <header anxSlot="app-forms-page-header" class="anx-stack" style="gap: .25rem;">
+          <h1>Custom projected header</h1>
+          <p>Use this region for fully bespoke page-intro composition.</p>
+        </header>
+      </anarchitects-forms-ui-form>
+    `,
+  }),
 };
 
 export const TemplateOverride: Story = {

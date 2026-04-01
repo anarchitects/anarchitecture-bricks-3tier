@@ -42,6 +42,36 @@ describe('Forms page preset', () => {
     });
   });
 
+  it('should trim and keep optional header text fields', () => {
+    expect(
+      normalizeFormsPagePreset({
+        pageTitle: ' Contact us ',
+        pageSubtitle: ' We usually reply in one business day ',
+        pageCaption: '  Send your request and we will get back to you.  ',
+      }),
+    ).toEqual({
+      ...FORMS_PAGE_PRESET_DEFAULTS,
+      pageTitle: 'Contact us',
+      pageSubtitle: 'We usually reply in one business day',
+      pageCaption: 'Send your request and we will get back to you.',
+    });
+  });
+
+  it('should drop blank optional header text fields', () => {
+    expect(
+      normalizeFormsPagePreset({
+        pageTitle: '   ',
+        pageSubtitle: '',
+        pageCaption: '  ',
+      }),
+    ).toEqual({
+      ...FORMS_PAGE_PRESET_DEFAULTS,
+      pageTitle: undefined,
+      pageSubtitle: undefined,
+      pageCaption: undefined,
+    });
+  });
+
   it('should inject defaults when no provider is registered', () => {
     TestBed.runInInjectionContext(() => {
       expect(injectFormsPagePreset()).toEqual(FORMS_PAGE_PRESET_DEFAULTS);

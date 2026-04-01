@@ -7,6 +7,35 @@
   margin-inline: auto;
 }
 
+.anx-forms-ui-form__header,
+.anx-forms-ui-form__caption-region {
+  gap: var(--anx-sys-space-xs);
+}
+
+.anx-forms-ui-form__header:empty,
+.anx-forms-ui-form__caption-region:empty {
+  display: none;
+}
+
+.anx-forms-ui-form__title,
+.anx-forms-ui-form__subtitle,
+.anx-forms-ui-form__caption {
+  margin: 0;
+}
+
+.anx-forms-ui-form__title {
+  color: var(--anx-sys-color-text-primary);
+}
+
+.anx-forms-ui-form__subtitle {
+  color: var(--anx-sys-color-text-secondary);
+}
+
+.anx-forms-ui-form__caption,
+.anx-forms-ui-form__caption-region {
+  color: var(--anx-sys-color-text-secondary);
+}
+
 .anx-forms-ui-form__checkbox {
   display: inline-flex;
   align-items: center;

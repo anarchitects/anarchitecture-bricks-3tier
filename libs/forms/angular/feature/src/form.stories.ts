@@ -1,5 +1,7 @@
 import { FormConfig } from '@anarchitects/forms-ts';
+import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
 import type { Meta, StoryObj } from '@storybook/angular';
+import { moduleMetadata } from '@storybook/angular';
 import { HttpResponse, http } from 'msw';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { AnarchitectsFeatureForm } from './form';
@@ -7,6 +9,11 @@ import { AnarchitectsFeatureForm } from './form';
 const meta: Meta<AnarchitectsFeatureForm> = {
   component: AnarchitectsFeatureForm,
   title: 'AnarchitectsFeatureForm',
+  decorators: [
+    moduleMetadata({
+      imports: [AnxSlotDirective],
+    }),
+  ],
 };
 export default meta;
 
@@ -171,6 +178,83 @@ export const PresetGridCompact: Story = {
       handlers: [getFormDefinitionHandler],
     },
   },
+};
+
+export const ContactHeaderInputs: Story = {
+  args: {
+    formId,
+    formVersion,
+    pageTitle: 'Contact us!',
+    pageCaption: 'Get in touch with us and we will get back to you ASAP.',
+  },
+  parameters: {
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
+  },
+};
+
+export const CaptionOnly: Story = {
+  args: {
+    formId,
+    formVersion,
+    pageCaption:
+      'Our team reviews every request carefully before routing it to the best specialist.',
+  },
+  parameters: {
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
+  },
+};
+
+export const MultipleCaptionsTopAndBottom: Story = {
+  args: {
+    formId,
+    formVersion,
+    pageTitle: 'Support request',
+  },
+  parameters: {
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-forms-feature-form [formId]="formId" [formVersion]="formVersion" [pageTitle]="pageTitle">
+        <p anxSlot="app-forms-caption-top">Top caption A: Product support and onboarding</p>
+        <p anxSlot="app-forms-caption-top">Top caption B: Billing and enterprise assistance</p>
+
+        <p anxSlot="app-forms-caption-bottom">Bottom caption A: Typical response in 1 business day</p>
+        <p anxSlot="app-forms-caption-bottom">Bottom caption B: Priority requests are triaged continuously</p>
+      </anarchitects-forms-feature-form>
+    `,
+  }),
+};
+
+export const CustomHeaderSlotOverride: Story = {
+  args: {
+    formId,
+    formVersion,
+    pageTitle: 'Fallback title',
+  },
+  parameters: {
+    msw: {
+      handlers: [getFormDefinitionHandler],
+    },
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <anarchitects-forms-feature-form [formId]="formId" [formVersion]="formVersion" [pageTitle]="pageTitle">
+        <header anxSlot="app-forms-page-header" class="anx-stack" style="gap: .25rem;">
+          <h1>Custom projected feature header</h1>
+          <p>This replaces pageTitle/pageSubtitle/pageCaption rendering.</p>
+        </header>
+      </anarchitects-forms-feature-form>
+    `,
+  }),
 };
 
 export const InvalidEmailKeepsFormInvalid: Story = {

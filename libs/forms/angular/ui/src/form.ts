@@ -127,12 +127,16 @@ function buildConfigValidator(
 export class AnarchitectsUiForm {
   private readonly fb = inject(FormBuilder);
   private readonly injectedPagePreset = injectFormsPagePreset();
+
   readonly formGroup = this.fb.group({});
   readonly config = input.required<FormConfig>();
   readonly runtimeValidators = input<readonly ValidatorFn[]>([]);
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly pagePreset = input<FormsPagePresetInput | null>(null);
+  readonly pageTitle = input<string | null>(null);
+  readonly pageSubtitle = input<string | null>(null);
+  readonly pageCaption = input<string | null>(null);
   readonly submitted = output<SubmissionRequestDTO>();
 
   readonly resolvedPagePreset = computed(() => {
@@ -155,6 +159,24 @@ export class AnarchitectsUiForm {
   readonly formMaxInlineSize = computed(
     () => this.resolvedLayout().maxInlineSize,
   );
+
+  readonly resolvedPageTitle = computed(() => {
+    return this.normalizeHeaderText(
+      this.pageTitle() ?? this.resolvedPagePreset().pageTitle,
+    );
+  });
+
+  readonly resolvedPageSubtitle = computed(() => {
+    return this.normalizeHeaderText(
+      this.pageSubtitle() ?? this.resolvedPagePreset().pageSubtitle,
+    );
+  });
+
+  readonly resolvedPageCaption = computed(() => {
+    return this.normalizeHeaderText(
+      this.pageCaption() ?? this.resolvedPagePreset().pageCaption,
+    );
+  });
 
   readonly layoutModel = computed(() => ({
     title: this.config().id,
@@ -207,9 +229,14 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       control &&
-      this.crossFieldError(fieldName) &&
-      (control.touched || control.dirty),
+        this.crossFieldError(fieldName) &&
+        (control.touched || control.dirty),
     );
+  }
+
+  private normalizeHeaderText(value: string | null | undefined): string | null {
+    const normalized = value?.trim();
+    return normalized ? normalized : null;
   }
 
   fieldId(fieldName: string): string {
@@ -254,7 +281,7 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       (control && control.touched && control.invalid) ||
-      this.shouldShowCrossFieldError(fieldName),
+        this.shouldShowCrossFieldError(fieldName),
     );
   }
 

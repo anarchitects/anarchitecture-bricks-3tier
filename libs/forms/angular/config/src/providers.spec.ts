@@ -38,6 +38,7 @@ describe('FormsConfig Providers', () => {
           layoutVariant: 'grid',
           columns: 0,
           actionAlignment: 'center',
+          pageTitle: ' Contact us ',
         }),
       ],
     });
@@ -46,5 +47,6 @@ describe('FormsConfig Providers', () => {
     expect(preset.layoutVariant).toBe('grid');
     expect(preset.columns).toBe(1);
     expect(preset.actionAlignment).toBe('center');
+    expect(preset.pageTitle).toBe('Contact us');
   });
 });

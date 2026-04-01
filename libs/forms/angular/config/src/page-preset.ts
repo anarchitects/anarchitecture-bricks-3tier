@@ -10,6 +10,9 @@ export type FormsPagePreset = {
   spacing: FormsPageSpacing;
   actionAlignment: FormsPageActionAlignment;
   columns?: number;
+  pageTitle?: string;
+  pageSubtitle?: string;
+  pageCaption?: string;
 };
 
 export type FormsPagePresetInput = Partial<FormsPagePreset>;
@@ -25,12 +28,24 @@ export const FORMS_PAGE_PRESET_DEFAULTS: FormsPagePreset = {
   actionAlignment: 'end',
 };
 
+function normalizeOptionalText(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export function normalizeFormsPagePreset(
   preset: FormsPagePresetInput | null | undefined,
 ): FormsPagePreset {
   const merged: FormsPagePreset = {
     ...FORMS_PAGE_PRESET_DEFAULTS,
     ...(preset ?? {}),
+    pageTitle: normalizeOptionalText((preset ?? {}).pageTitle),
+    pageSubtitle: normalizeOptionalText((preset ?? {}).pageSubtitle),
+    pageCaption: normalizeOptionalText((preset ?? {}).pageCaption),
   };
 
   if (merged.columns === undefined || merged.columns === null) {
