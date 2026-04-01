@@ -52,14 +52,64 @@ That target boots `auth-nest` against ephemeral PostgreSQL and exercises the rea
 
 ## Exports
 
-| Import path                                          | Contents                                                                                                                                                                 |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                                                  |
-| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, resource-authorization helpers/types                    |
-| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy` |
-| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, compatibility export for `AuthUserRepository`, and persistence module option types                                                              |
-| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                  |
-| `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                    |
+| Import path                                          | Contents                                                                                                                                                                     |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                                                      |
+| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `HashService`, `BcryptHashService`, `PoliciesService`, `AbilityFactory`, resource-authorization helpers/types                        |
+| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@Policies()`, `@AuthorizeResource()`, `@AuthorizedResource()`, `RoutePolicy`     |
+| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, core auth persistence entities, `CreateAuthSchema1720200000000`, `AuthAccountRepository`, `AuthUserRepository`, and persistence module option types |
+| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                      |
+| `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                        |
+
+## Wiring Migrations And Entities
+
+Prefer symbol imports from `@anarchitects/auth-nest/infrastructure-persistence` when wiring TypeORM `DataSource` migrations or host-level entity registration. This gives consumers a stable public contract instead of depending on package-internal file paths.
+
+Recommended:
+
+```ts
+import {
+  AccountEntity,
+  CreateAuthSchema1720200000000,
+  PermissionEntity,
+  RoleEntity,
+  SessionEntity,
+  UserEntity,
+  VerificationEntity,
+} from '@anarchitects/auth-nest/infrastructure-persistence';
+import { DataSource } from 'typeorm';
+
+export const AppDataSource = new DataSource({
+  type: 'postgres',
+  migrations: [CreateAuthSchema1720200000000],
+  entities: [
+    AccountEntity,
+    PermissionEntity,
+    RoleEntity,
+    SessionEntity,
+    UserEntity,
+    VerificationEntity,
+  ],
+});
+```
+
+Legacy glob-based wiring still works, but it depends on package internals and is not the recommended integration path:
+
+```ts
+import { join } from 'node:path';
+
+export const AppDataSource = new DataSource({
+  type: 'postgres',
+  migrations: [
+    join(
+      process.cwd(),
+      'node_modules/@anarchitects/auth-nest/src/infrastructure-persistence/migrations/*.js',
+    ),
+  ],
+});
+```
+
+Use the symbol-based approach for production apps and reusable templates. Keep plugin-specific migrations with their owning plugin modules; the `infrastructure-persistence` entry point only exposes the core auth schema migration.
 
 ## Configuration
 
@@ -124,7 +174,10 @@ export class AppModule {}
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { AuthModule } from '@anarchitects/auth-nest';
 import { authConfig } from '@anarchitects/auth-nest/config';
 
@@ -172,7 +225,10 @@ AuthModule.forRoot({
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
 import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
@@ -262,7 +318,12 @@ export class AuthController {
 
 ```ts
 import { Controller, Patch, UseGuards } from '@nestjs/common';
-import { AuthorizedResource, AuthorizeResource, Policies, PoliciesGuard } from '@anarchitects/auth-nest/presentation';
+import {
+  AuthorizedResource,
+  AuthorizeResource,
+  Policies,
+  PoliciesGuard,
+} from '@anarchitects/auth-nest/presentation';
 
 @Controller('posts')
 @UseGuards(PoliciesGuard)
