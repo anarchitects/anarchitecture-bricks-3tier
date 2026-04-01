@@ -1,5 +1,5 @@
-import { FormConfig } from '@anarchitects/forms-ts/models';
 import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
+import { FormConfig } from '@anarchitects/forms-ts/models';
 import { Component, ComponentRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ValidatorFn } from '@angular/forms';

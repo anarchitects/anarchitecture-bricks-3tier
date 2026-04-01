@@ -1,5 +1,5 @@
-import { FormConfig } from '@anarchitects/forms-ts';
 import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
+import { FormConfig } from '@anarchitects/forms-ts';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { HttpResponse, http } from 'msw';

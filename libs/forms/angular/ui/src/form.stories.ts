@@ -1,5 +1,5 @@
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
 import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
+import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
 import { FormConfig } from '@anarchitects/forms-ts';
 import { ValidatorFn } from '@angular/forms';
 import type { Meta, StoryObj } from '@storybook/angular';
