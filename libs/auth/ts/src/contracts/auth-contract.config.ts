@@ -42,6 +42,7 @@ export interface ChangePasswordFieldConfig {
 export type LogoutFieldConfig = Record<string, never>;
 
 export interface AuthContractConfig {
+  version: string | number;
   register: RegisterFieldConfig;
   login: LoginFieldConfig;
   forgotPassword: ForgotPasswordFieldConfig;
@@ -52,6 +53,7 @@ export interface AuthContractConfig {
 }
 
 export const DefaultAuthContractConfig = {
+  version: '1.0.0',
   register: {
     email: {
       required: true,
