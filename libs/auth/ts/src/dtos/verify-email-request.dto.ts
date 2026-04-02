@@ -1,7 +1,8 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static } from '@sinclair/typebox';
 
-export const VerifyEmailRequestSchema = Type.Object({
-  token: Type.String({ minLength: 1 }),
-});
+import { defaultAuthContracts } from '../contracts/default-auth-contracts';
+
+export const VerifyEmailRequestSchema =
+  defaultAuthContracts.verifyEmailRequestSchema;
 
 export type VerifyEmailRequestDTO = Static<typeof VerifyEmailRequestSchema>;

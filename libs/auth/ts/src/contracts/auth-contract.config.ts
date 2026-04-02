@@ -51,7 +51,7 @@ export interface AuthContractConfig {
   logout: LogoutFieldConfig;
 }
 
-export const DefaultAuthContractConfig: AuthContractConfig = {
+export const DefaultAuthContractConfig = {
   register: {
     email: {
       required: true,
@@ -135,4 +135,4 @@ export const DefaultAuthContractConfig: AuthContractConfig = {
     },
   },
   logout: {},
-};
+} satisfies AuthContractConfig;

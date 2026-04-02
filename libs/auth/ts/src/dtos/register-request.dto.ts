@@ -1,10 +1,8 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static } from '@sinclair/typebox';
 
-export const RegisterRequestSchema = Type.Object({
-  email: Type.String({ format: 'email' }),
-  password: Type.String({ minLength: 6 }),
-  confirmPassword: Type.String({ minLength: 6 }),
-  name: Type.Optional(Type.String({ minLength: 2, maxLength: 100 })),
-});
+import { defaultAuthContracts } from '../contracts/default-auth-contracts';
+
+export const RegisterRequestSchema =
+  defaultAuthContracts.registerRequestSchema;
 
 export type RegisterRequestDTO = Static<typeof RegisterRequestSchema>;

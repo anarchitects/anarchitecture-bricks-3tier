@@ -1,8 +1,9 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static } from '@sinclair/typebox';
 
-export const ForgotPasswordRequestSchema = Type.Object({
-  email: Type.String({ format: 'email' }),
-});
+import { defaultAuthContracts } from '../contracts/default-auth-contracts';
+
+export const ForgotPasswordRequestSchema =
+  defaultAuthContracts.forgotPasswordRequestSchema;
 
 export type ForgotPasswordRequestDTO = Static<
   typeof ForgotPasswordRequestSchema
