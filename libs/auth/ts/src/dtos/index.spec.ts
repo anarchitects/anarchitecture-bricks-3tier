@@ -26,5 +26,7 @@ describe('DTO entrypoints', () => {
   it('exports contract config from root and contracts entrypoints', () => {
     expect(rootExports).toHaveProperty('DefaultAuthContractConfig');
     expect(contractExports).toHaveProperty('DefaultAuthContractConfig');
+    expect(rootExports).toHaveProperty('assertContractCompatibility');
+    expect(contractExports).toHaveProperty('assertContractCompatibility');
   });
 });

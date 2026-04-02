@@ -8,6 +8,11 @@ describe('DefaultAuthContractConfig', () => {
     expect(config).toBeDefined();
   });
 
+  it('defines a required profile version', () => {
+    expect(DefaultAuthContractConfig.version).toBe('1.0.0');
+    expect(typeof DefaultAuthContractConfig.version).toBe('string');
+  });
+
   it('matches register defaults', () => {
     expect(DefaultAuthContractConfig.register.email).toEqual({
       required: true,

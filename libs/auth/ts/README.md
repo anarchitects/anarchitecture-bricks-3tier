@@ -140,6 +140,13 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 - Update snapshots intentionally with `yarn nx run auth-ts:test -- -u`.
 - Treat snapshot diffs as contract changes: review them in pull requests and confirm every schema diff is expected.
 
+### Contract profile versioning
+
+- `AuthContractConfig` includes a required `version` field.
+- Use `assertContractCompatibility(config, expectedVersion)` from `@anarchitects/auth-ts` (or `/contracts`) to fail fast on profile mismatches.
+- The default profile version follows semver.
+- Bump the major version when any default profile constraint becomes stricter (for example, higher minLength, lower maxLength, or turning an optional field into required).
+
 ## Contributing
 
 Auth DTOs are maintained in this package and consumed by Nest presentation routes. Update these schemas first, then regenerate OpenAPI via `nx run api-specs:generate` so every stack stays in sync.
