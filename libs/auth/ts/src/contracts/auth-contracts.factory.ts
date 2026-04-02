@@ -101,6 +101,8 @@ type ChangePasswordRequestSchema<C extends AuthContractConfig> = TObject<{
   confirmPassword: FieldSchema<C['changePassword']['confirmPassword']>;
 }>;
 
+type EmptySchemaProperties = Record<never, never>;
+
 export type AuthContracts<C extends AuthContractConfig = AuthContractConfig> = {
   registerRequestSchema: RegisterRequestSchema<C>;
   registerFormMeta: RegisterFormMeta;
@@ -114,7 +116,7 @@ export type AuthContracts<C extends AuthContractConfig = AuthContractConfig> = {
   verifyEmailFormMeta: VerifyEmailFormMeta;
   changePasswordRequestSchema: ChangePasswordRequestSchema<C>;
   changePasswordFormMeta: ChangePasswordFormMeta;
-  logoutRequestSchema: TObject<{}>;
+  logoutRequestSchema: TObject<EmptySchemaProperties>;
 };
 
 function strField<C extends AuthFieldConfig>(
