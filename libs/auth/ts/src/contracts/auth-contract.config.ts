@@ -135,4 +135,4 @@ export const DefaultAuthContractConfig = {
     },
   },
   logout: {},
-} satisfies AuthContractConfig;
+} as const satisfies AuthContractConfig;
