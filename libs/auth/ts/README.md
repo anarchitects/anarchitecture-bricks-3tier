@@ -60,12 +60,12 @@ pnpm add @anarchitects/auth-ts
 
 ## Entry points
 
-| Import path                    | Description                                      |
-| ------------------------------ | ------------------------------------------------ |
-| `@anarchitects/auth-ts`        | Barrel re-export for core models plus the core/session DTO surface |
-| `@anarchitects/auth-ts/dtos`   | Core/session request-response schemas and DTO types (TypeBox) |
-| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas |
-| `@anarchitects/auth-ts/models` | Domain models used for user/session/RBAC composition |
+| Import path                      | Description                                                        |
+| -------------------------------- | ------------------------------------------------------------------ |
+| `@anarchitects/auth-ts`          | Barrel re-export for core models plus the core/session DTO surface |
+| `@anarchitects/auth-ts/dtos`     | Core/session request-response schemas and DTO types (TypeBox)      |
+| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas                          |
+| `@anarchitects/auth-ts/models`   | Domain models used for user/session/RBAC composition               |
 
 ## Usage
 
