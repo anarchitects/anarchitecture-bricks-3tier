@@ -33,6 +33,10 @@ function expectInvalid(schema: unknown, payload: unknown): void {
   expect(countErrors(schema, payload)).toBeGreaterThan(0);
 }
 
+function toStableSchemaSnapshotValue(schema: unknown): unknown {
+  return JSON.parse(JSON.stringify(schema));
+}
+
 describe('createAuthContracts', () => {
   describe('with DefaultAuthContractConfig', () => {
     const contracts = createAuthContracts(DefaultAuthContractConfig);
@@ -364,6 +368,27 @@ describe('createAuthContracts', () => {
       expect(contracts.loginFormMeta.credential.minLength).toBe(2);
       expect(contracts.loginFormMeta.credential.maxLength).toBe(100);
       expect(contracts.loginFormMeta.password.minLength).toBe(6);
+    });
+
+    it('matches default schema snapshots for all required auth flows', () => {
+      expect(
+        toStableSchemaSnapshotValue(contracts.registerRequestSchema),
+      ).toMatchSnapshot('default-register-schema');
+      expect(
+        toStableSchemaSnapshotValue(contracts.loginRequestSchema),
+      ).toMatchSnapshot('default-login-schema');
+      expect(
+        toStableSchemaSnapshotValue(contracts.forgotPasswordRequestSchema),
+      ).toMatchSnapshot('default-forgot-password-schema');
+      expect(
+        toStableSchemaSnapshotValue(contracts.resetPasswordRequestSchema),
+      ).toMatchSnapshot('default-reset-password-schema');
+      expect(
+        toStableSchemaSnapshotValue(contracts.verifyEmailRequestSchema),
+      ).toMatchSnapshot('default-verify-email-schema');
+      expect(
+        toStableSchemaSnapshotValue(contracts.changePasswordRequestSchema),
+      ).toMatchSnapshot('default-change-password-schema');
     });
   });
 

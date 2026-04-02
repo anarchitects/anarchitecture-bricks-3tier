@@ -60,12 +60,12 @@ pnpm add @anarchitects/auth-ts
 
 ## Entry points
 
-| Import path                    | Description                                      |
-| ------------------------------ | ------------------------------------------------ |
-| `@anarchitects/auth-ts`        | Barrel re-export for core models plus the core/session DTO surface |
-| `@anarchitects/auth-ts/dtos`   | Core/session request-response schemas and DTO types (TypeBox) |
-| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas |
-| `@anarchitects/auth-ts/models` | Domain models used for user/session/RBAC composition |
+| Import path                      | Description                                                        |
+| -------------------------------- | ------------------------------------------------------------------ |
+| `@anarchitects/auth-ts`          | Barrel re-export for core models plus the core/session DTO surface |
+| `@anarchitects/auth-ts/dtos`     | Core/session request-response schemas and DTO types (TypeBox)      |
+| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas                          |
+| `@anarchitects/auth-ts/models`   | Domain models used for user/session/RBAC composition               |
 
 ## Usage
 
@@ -131,6 +131,14 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 - Use `parsePolicyRuleDTO(...)` / `parsePolicyRuleArrayDTO(...)` when authorization rules cross trust boundaries and need runtime validation.
 - When changing DTO schemas, regenerate OpenAPI in the workspace (`nx run api-specs:generate`).
 - Keep framework-specific concerns out of this package; Angular/Nest behavior belongs in domain libraries.
+
+### Snapshot test workflow
+
+- Default-profile auth contract schemas are snapshotted in `src/contracts/auth-contracts.factory.spec.ts`.
+- Snapshot artifacts are stored next to the spec in `src/contracts/__snapshots__/auth-contracts.factory.spec.ts.snap`.
+- Run snapshot checks with `yarn nx run auth-ts:test`.
+- Update snapshots intentionally with `yarn nx run auth-ts:test -- -u`.
+- Treat snapshot diffs as contract changes: review them in pull requests and confirm every schema diff is expected.
 
 ## Contributing
 

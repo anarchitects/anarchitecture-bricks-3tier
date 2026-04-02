@@ -1,0 +1,132 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createAuthContracts > with DefaultAuthContractConfig > matches default schema snapshots for all required auth flows > default-change-password-schema 1`] = `
+{
+  "properties": {
+    "confirmPassword": {
+      "minLength": 6,
+      "type": "string",
+    },
+    "currentPassword": {
+      "minLength": 6,
+      "type": "string",
+    },
+    "newPassword": {
+      "minLength": 6,
+      "type": "string",
+    },
+  },
+  "required": [
+    "currentPassword",
+    "newPassword",
+    "confirmPassword",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`createAuthContracts > with DefaultAuthContractConfig > matches default schema snapshots for all required auth flows > default-forgot-password-schema 1`] = `
+{
+  "properties": {
+    "email": {
+      "format": "email",
+      "type": "string",
+    },
+  },
+  "required": [
+    "email",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`createAuthContracts > with DefaultAuthContractConfig > matches default schema snapshots for all required auth flows > default-login-schema 1`] = `
+{
+  "properties": {
+    "credential": {
+      "maxLength": 100,
+      "minLength": 2,
+      "type": "string",
+    },
+    "password": {
+      "minLength": 6,
+      "type": "string",
+    },
+  },
+  "required": [
+    "credential",
+    "password",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`createAuthContracts > with DefaultAuthContractConfig > matches default schema snapshots for all required auth flows > default-register-schema 1`] = `
+{
+  "properties": {
+    "confirmPassword": {
+      "minLength": 6,
+      "type": "string",
+    },
+    "email": {
+      "format": "email",
+      "type": "string",
+    },
+    "name": {
+      "maxLength": 100,
+      "minLength": 2,
+      "type": "string",
+    },
+    "password": {
+      "minLength": 6,
+      "type": "string",
+    },
+  },
+  "required": [
+    "email",
+    "password",
+    "confirmPassword",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`createAuthContracts > with DefaultAuthContractConfig > matches default schema snapshots for all required auth flows > default-reset-password-schema 1`] = `
+{
+  "properties": {
+    "confirmPassword": {
+      "minLength": 6,
+      "type": "string",
+    },
+    "password": {
+      "minLength": 6,
+      "type": "string",
+    },
+    "token": {
+      "minLength": 1,
+      "type": "string",
+    },
+  },
+  "required": [
+    "token",
+    "password",
+    "confirmPassword",
+  ],
+  "type": "object",
+}
+`;
+
+exports[`createAuthContracts > with DefaultAuthContractConfig > matches default schema snapshots for all required auth flows > default-verify-email-schema 1`] = `
+{
+  "properties": {
+    "token": {
+      "minLength": 1,
+      "type": "string",
+    },
+  },
+  "required": [
+    "token",
+  ],
+  "type": "object",
+}
+`;
