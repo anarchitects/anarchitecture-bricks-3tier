@@ -152,10 +152,7 @@ export function createAuthContracts<C extends AuthContractConfig>(config: C) {
   };
 
   // Logout (no configurable fields - fixed empty schema)
-  const logoutRequestSchema = Type.Object(
-    {},
-    { additionalProperties: false },
-  );
+  const logoutRequestSchema = Type.Object({}, { additionalProperties: false });
 
   return {
     registerRequestSchema,

@@ -5,6 +5,4 @@ import { defaultAuthContracts } from '../contracts/default-auth-contracts';
 export const ResetPasswordRequestSchema =
   defaultAuthContracts.resetPasswordRequestSchema;
 
-export type ResetPasswordRequestDTO = Static<
-  typeof ResetPasswordRequestSchema
->;
+export type ResetPasswordRequestDTO = Static<typeof ResetPasswordRequestSchema>;

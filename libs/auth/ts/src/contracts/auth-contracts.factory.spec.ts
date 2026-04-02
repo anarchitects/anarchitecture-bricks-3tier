@@ -15,27 +15,33 @@ describe('createAuthContracts', () => {
         password: 'secure12',
         confirmPassword: 'secure12',
       };
-      expect([...Value.Errors(contracts.registerRequestSchema, valid)]).toHaveLength(0);
+      expect([
+        ...Value.Errors(contracts.registerRequestSchema, valid),
+      ]).toHaveLength(0);
     });
 
     it('rejects register payload with invalid email', () => {
-      expect([
-        ...Value.Errors(contracts.registerRequestSchema, {
-          email: 'not-an-email',
-          password: 'secure12',
-          confirmPassword: 'secure12',
-        }),
-      ].length).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.registerRequestSchema, {
+            email: 'not-an-email',
+            password: 'secure12',
+            confirmPassword: 'secure12',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('rejects register payload with short password', () => {
-      expect([
-        ...Value.Errors(contracts.registerRequestSchema, {
-          email: 'user@example.com',
-          password: '12345',
-          confirmPassword: 'secure12',
-        }),
-      ].length).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.registerRequestSchema, {
+            email: 'user@example.com',
+            password: '12345',
+            confirmPassword: 'secure12',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('allows register without name (optional field)', () => {
@@ -49,61 +55,108 @@ describe('createAuthContracts', () => {
     });
 
     it('rejects register name shorter than minLength 2', () => {
-      expect([
-        ...Value.Errors(contracts.registerRequestSchema, {
-          email: 'user@example.com',
-          password: 'secure12',
-          confirmPassword: 'secure12',
-          name: 'A',
-        }),
-      ].length).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.registerRequestSchema, {
+            email: 'user@example.com',
+            password: 'secure12',
+            confirmPassword: 'secure12',
+            name: 'A',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('produces loginRequestSchema identical to the hard-coded baseline', () => {
       const valid = { credential: 'user@example.com', password: 'secret12' };
-      expect([...Value.Errors(contracts.loginRequestSchema, valid)]).toHaveLength(0);
       expect([
-        ...Value.Errors(contracts.loginRequestSchema, { credential: 'a', password: 'secret12' }),
-      ].length).toBeGreaterThan(0);
-      expect([
-        ...Value.Errors(contracts.loginRequestSchema, { credential: 'user@example.com', password: 'short' }),
-      ].length).toBeGreaterThan(0);
+        ...Value.Errors(contracts.loginRequestSchema, valid),
+      ]).toHaveLength(0);
+      expect(
+        [
+          ...Value.Errors(contracts.loginRequestSchema, {
+            credential: 'a',
+            password: 'secret12',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.loginRequestSchema, {
+            credential: 'user@example.com',
+            password: 'short',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('produces forgotPasswordRequestSchema identical to baseline', () => {
       expect([
-        ...Value.Errors(contracts.forgotPasswordRequestSchema, { email: 'user@example.com' }),
+        ...Value.Errors(contracts.forgotPasswordRequestSchema, {
+          email: 'user@example.com',
+        }),
       ]).toHaveLength(0);
-      expect([
-        ...Value.Errors(contracts.forgotPasswordRequestSchema, { email: 'bad' }),
-      ].length).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.forgotPasswordRequestSchema, {
+            email: 'bad',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('produces resetPasswordRequestSchema identical to baseline', () => {
-      const valid = { token: 'tok', password: 'secure12', confirmPassword: 'secure12' };
-      expect([...Value.Errors(contracts.resetPasswordRequestSchema, valid)]).toHaveLength(0);
+      const valid = {
+        token: 'tok',
+        password: 'secure12',
+        confirmPassword: 'secure12',
+      };
       expect([
-        ...Value.Errors(contracts.resetPasswordRequestSchema, { ...valid, password: 'hi' }),
-      ].length).toBeGreaterThan(0);
+        ...Value.Errors(contracts.resetPasswordRequestSchema, valid),
+      ]).toHaveLength(0);
+      expect(
+        [
+          ...Value.Errors(contracts.resetPasswordRequestSchema, {
+            ...valid,
+            password: 'hi',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('produces verifyEmailRequestSchema identical to baseline', () => {
-      expect([...Value.Errors(contracts.verifyEmailRequestSchema, { token: 't' })]).toHaveLength(0);
       expect([
-        ...Value.Errors(contracts.verifyEmailRequestSchema, { token: '' }),
-      ].length).toBeGreaterThan(0);
+        ...Value.Errors(contracts.verifyEmailRequestSchema, { token: 't' }),
+      ]).toHaveLength(0);
+      expect(
+        [...Value.Errors(contracts.verifyEmailRequestSchema, { token: '' })]
+          .length,
+      ).toBeGreaterThan(0);
     });
 
     it('produces changePasswordRequestSchema identical to baseline', () => {
-      const valid = { currentPassword: 'secure12', newPassword: 'newpass1', confirmPassword: 'newpass1' };
-      expect([...Value.Errors(contracts.changePasswordRequestSchema, valid)]).toHaveLength(0);
+      const valid = {
+        currentPassword: 'secure12',
+        newPassword: 'newpass1',
+        confirmPassword: 'newpass1',
+      };
       expect([
-        ...Value.Errors(contracts.changePasswordRequestSchema, { ...valid, newPassword: '12345' }),
-      ].length).toBeGreaterThan(0);
+        ...Value.Errors(contracts.changePasswordRequestSchema, valid),
+      ]).toHaveLength(0);
+      expect(
+        [
+          ...Value.Errors(contracts.changePasswordRequestSchema, {
+            ...valid,
+            newPassword: '12345',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('produces logoutRequestSchema (empty body, no extra properties)', () => {
-      expect([...Value.Errors(contracts.logoutRequestSchema, {})]).toHaveLength(0);
+      expect([...Value.Errors(contracts.logoutRequestSchema, {})]).toHaveLength(
+        0,
+      );
     });
 
     it('returns registerFormMeta reflecting config values', () => {
@@ -135,13 +188,15 @@ describe('createAuthContracts', () => {
         },
       };
       const contracts = createAuthContracts(customConfig);
-      expect([
-        ...Value.Errors(contracts.registerRequestSchema, {
-          email: 'user@example.com',
-          password: 'secure12',
-          confirmPassword: 'secure12',
-        }),
-      ].length).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.registerRequestSchema, {
+            email: 'user@example.com',
+            password: 'secure12',
+            confirmPassword: 'secure12',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
     });
 
     it('accepts a longer minimum password when minLength is raised', () => {
@@ -157,12 +212,14 @@ describe('createAuthContracts', () => {
       };
       const contracts = createAuthContracts(customConfig);
       // 9 chars – below custom threshold
-      expect([
-        ...Value.Errors(contracts.loginRequestSchema, {
-          credential: 'user@example.com',
-          password: '123456789',
-        }),
-      ].length).toBeGreaterThan(0);
+      expect(
+        [
+          ...Value.Errors(contracts.loginRequestSchema, {
+            credential: 'user@example.com',
+            password: '123456789',
+          }),
+        ].length,
+      ).toBeGreaterThan(0);
       // 10 chars – at custom threshold
       expect([
         ...Value.Errors(contracts.loginRequestSchema, {
