@@ -132,6 +132,14 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 - When changing DTO schemas, regenerate OpenAPI in the workspace (`nx run api-specs:generate`).
 - Keep framework-specific concerns out of this package; Angular/Nest behavior belongs in domain libraries.
 
+### Snapshot test workflow
+
+- Default-profile auth contract schemas are snapshotted in `src/contracts/auth-contracts.factory.spec.ts`.
+- Snapshot artifacts are stored next to the spec in `src/contracts/__snapshots__/auth-contracts.factory.spec.ts.snap`.
+- Run snapshot checks with `yarn nx run auth-ts:test`.
+- Update snapshots intentionally with `yarn nx run auth-ts:test -- -u`.
+- Treat snapshot diffs as contract changes: review them in pull requests and confirm every schema diff is expected.
+
 ## Contributing
 
 Auth DTOs are maintained in this package and consumed by Nest presentation routes. Update these schemas first, then regenerate OpenAPI via `nx run api-specs:generate` so every stack stays in sync.
