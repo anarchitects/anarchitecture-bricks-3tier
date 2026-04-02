@@ -1,4 +1,9 @@
-import { type TOptional, type TString, Type } from '@sinclair/typebox';
+import {
+  type TObject,
+  type TOptional,
+  type TString,
+  Type,
+} from '@sinclair/typebox';
 
 import type {
   AuthContractConfig,
@@ -60,10 +65,62 @@ function toMeta(config: AuthFieldConfig): AuthFieldMeta {
 
 type StrOpts = { minLength?: number; maxLength?: number; format?: string };
 
+type FieldSchema<F extends AuthFieldConfig> = F['required'] extends true
+  ? TString
+  : TOptional<TString>;
+
+type RegisterRequestSchema<C extends AuthContractConfig> = TObject<{
+  email: FieldSchema<C['register']['email']>;
+  password: FieldSchema<C['register']['password']>;
+  confirmPassword: FieldSchema<C['register']['confirmPassword']>;
+  name: FieldSchema<C['register']['name']>;
+}>;
+
+type LoginRequestSchema<C extends AuthContractConfig> = TObject<{
+  credential: FieldSchema<C['login']['credential']>;
+  password: FieldSchema<C['login']['password']>;
+}>;
+
+type ForgotPasswordRequestSchema<C extends AuthContractConfig> = TObject<{
+  email: FieldSchema<C['forgotPassword']['email']>;
+}>;
+
+type ResetPasswordRequestSchema<C extends AuthContractConfig> = TObject<{
+  token: FieldSchema<C['resetPassword']['token']>;
+  password: FieldSchema<C['resetPassword']['password']>;
+  confirmPassword: FieldSchema<C['resetPassword']['confirmPassword']>;
+}>;
+
+type VerifyEmailRequestSchema<C extends AuthContractConfig> = TObject<{
+  token: FieldSchema<C['verifyEmail']['token']>;
+}>;
+
+type ChangePasswordRequestSchema<C extends AuthContractConfig> = TObject<{
+  currentPassword: FieldSchema<C['changePassword']['currentPassword']>;
+  newPassword: FieldSchema<C['changePassword']['newPassword']>;
+  confirmPassword: FieldSchema<C['changePassword']['confirmPassword']>;
+}>;
+
+export type AuthContracts<C extends AuthContractConfig = AuthContractConfig> = {
+  registerRequestSchema: RegisterRequestSchema<C>;
+  registerFormMeta: RegisterFormMeta;
+  loginRequestSchema: LoginRequestSchema<C>;
+  loginFormMeta: LoginFormMeta;
+  forgotPasswordRequestSchema: ForgotPasswordRequestSchema<C>;
+  forgotPasswordFormMeta: ForgotPasswordFormMeta;
+  resetPasswordRequestSchema: ResetPasswordRequestSchema<C>;
+  resetPasswordFormMeta: ResetPasswordFormMeta;
+  verifyEmailRequestSchema: VerifyEmailRequestSchema<C>;
+  verifyEmailFormMeta: VerifyEmailFormMeta;
+  changePasswordRequestSchema: ChangePasswordRequestSchema<C>;
+  changePasswordFormMeta: ChangePasswordFormMeta;
+  logoutRequestSchema: TObject<{}>;
+};
+
 function strField<C extends AuthFieldConfig>(
   config: C,
   extra?: StrOpts,
-): C extends { required: true } ? TString : TOptional<TString>;
+): FieldSchema<C>;
 function strField(
   config: AuthFieldConfig,
   extra: StrOpts = {},
@@ -160,7 +217,5 @@ export function createAuthContracts<C extends AuthContractConfig>(config: C) {
     changePasswordRequestSchema,
     changePasswordFormMeta,
     logoutRequestSchema,
-  };
+  } as AuthContracts<C>;
 }
-
-export type AuthContracts = ReturnType<typeof createAuthContracts>;

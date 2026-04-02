@@ -1,6 +1,9 @@
 import { DefaultAuthContractConfig } from './auth-contract.config';
-import { createAuthContracts } from './auth-contracts.factory';
+import {
+  type AuthContracts,
+  createAuthContracts,
+} from './auth-contracts.factory';
 
-export const defaultAuthContracts = createAuthContracts(
-  DefaultAuthContractConfig,
-);
+export const defaultAuthContracts: AuthContracts<
+  typeof DefaultAuthContractConfig
+> = createAuthContracts(DefaultAuthContractConfig);
