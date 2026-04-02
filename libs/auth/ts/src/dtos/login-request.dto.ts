@@ -1,8 +1,7 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static } from '@sinclair/typebox';
 
-export const LoginRequestSchema = Type.Object({
-  credential: Type.String({ minLength: 2, maxLength: 100 }),
-  password: Type.String({ minLength: 6 }),
-});
+import { defaultAuthContracts } from '../contracts/default-auth-contracts';
+
+export const LoginRequestSchema = defaultAuthContracts.loginRequestSchema;
 
 export type LoginRequestDTO = Static<typeof LoginRequestSchema>;

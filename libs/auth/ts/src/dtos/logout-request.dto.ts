@@ -1,5 +1,7 @@
-import { Static, Type } from '@sinclair/typebox';
+import { Static } from '@sinclair/typebox';
 
-export const LogoutRequestSchema = Type.Object({}, { additionalProperties: false });
+import { defaultAuthContracts } from '../contracts/default-auth-contracts';
+
+export const LogoutRequestSchema = defaultAuthContracts.logoutRequestSchema;
 
 export type LogoutRequestDTO = Static<typeof LogoutRequestSchema>;
