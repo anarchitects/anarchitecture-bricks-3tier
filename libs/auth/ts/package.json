@@ -46,6 +46,11 @@
       "import": "./models/index.js",
       "require": "./models/index.cjs"
     },
+    "./contracts": {
+      "types": "./contracts/index.d.ts",
+      "import": "./contracts/index.js",
+      "require": "./contracts/index.cjs"
+    },
     "./mappers": {
       "types": "./mappers/index.d.ts",
       "import": "./mappers/index.js",

@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import * as contractExports from '../contracts';
+import * as rootExports from '../index';
 import * as coreDtos from './index';
 import * as jwtDtos from './jwt/index';
 
@@ -19,5 +21,10 @@ describe('DTO entrypoints', () => {
     expect(jwtDtos).toHaveProperty('RefreshTokenRequestSchema');
     expect(jwtDtos).toHaveProperty('RefreshTokenResponseSchema');
     expect(jwtDtos).toHaveProperty('JwtLogoutRequestSchema');
+  });
+
+  it('exports contract config from root and contracts entrypoints', () => {
+    expect(rootExports).toHaveProperty('DefaultAuthContractConfig');
+    expect(contractExports).toHaveProperty('DefaultAuthContractConfig');
   });
 });
