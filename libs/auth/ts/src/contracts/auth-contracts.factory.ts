@@ -60,18 +60,10 @@ function toMeta(config: AuthFieldConfig): AuthFieldMeta {
 
 type StrOpts = { minLength?: number; maxLength?: number; format?: string };
 
-function strField(
-  config: AuthFieldConfig & { required: true },
+function strField<C extends AuthFieldConfig>(
+  config: C,
   extra?: StrOpts,
-): TString;
-function strField(
-  config: AuthFieldConfig & { required: false },
-  extra?: StrOpts,
-): TOptional<TString>;
-function strField(
-  config: AuthFieldConfig,
-  extra?: StrOpts,
-): TString | TOptional<TString>;
+): C extends { required: true } ? TString : TOptional<TString>;
 function strField(
   config: AuthFieldConfig,
   extra: StrOpts = {},
