@@ -20,6 +20,12 @@ import {
   toRouteKey,
 } from './route-metadata';
 import { AuthService } from '../../libs/auth/nest/src/application/services/auth.service';
+import {
+  applyAuthControllerContractRouteSchemas,
+} from '../../libs/auth/nest/src/presentation/auth-controller-route-schemas';
+import {
+  createDefaultAuthContracts,
+} from '../../libs/auth/nest/src/presentation/auth-contracts';
 import { AuthController } from '../../libs/auth/nest/src/presentation/controllers/auth.controller';
 import { FormsService } from '../../libs/forms/nest/src/application/services/forms.service';
 import { SubmissionsService } from '../../libs/forms/nest/src/application/services/submissions.service';
@@ -84,6 +90,11 @@ const submissionsServiceStub: Pick<SubmissionsService, 'submit'> = {
     updatedAt: new Date('2020-01-01T00:00:00.000Z'),
   }),
 };
+
+applyAuthControllerContractRouteSchemas(
+  AuthController,
+  createDefaultAuthContracts(),
+);
 
 @Module({
   controllers: [AuthController, FormsController, SubmissionsController],
