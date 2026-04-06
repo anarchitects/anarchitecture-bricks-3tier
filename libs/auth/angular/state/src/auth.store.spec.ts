@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { delay, of, throwError } from 'rxjs';
 import {
   AuthConfig,
+  AuthContractConfigOverrides,
   provideAuthConfig,
+  provideAuthContracts,
 } from '@anarchitects/auth-angular/config';
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
 import { PolicyRule, User } from '@anarchitects/auth-ts/models';
@@ -51,10 +53,12 @@ const setup = ({
   authApiOverrides,
   stateOptions,
   authConfig,
+  contractOverrides,
 }: {
   authApiOverrides?: Partial<AuthApi>;
   stateOptions?: Parameters<typeof provideAuthState>[0];
   authConfig?: Partial<AuthConfig>;
+  contractOverrides?: AuthContractConfigOverrides;
 } = {}) => {
   const mockAuthApi = createMockAuthApi(authApiOverrides);
   const mockRouter = {
@@ -66,6 +70,7 @@ const setup = ({
       { provide: AuthApi, useValue: mockAuthApi },
       { provide: Router, useValue: mockRouter },
       ...provideAuthConfig(authConfig ?? {}),
+      ...provideAuthContracts(contractOverrides),
       ...provideAuthState(stateOptions),
     ],
   });
@@ -218,5 +223,172 @@ describe('AuthStore', () => {
 
     expect(localStorage.getItem('accessToken')).toBeNull();
     expect(localStorage.getItem('refreshToken')).toBeNull();
+  });
+
+  it('strips optional register name before calling AuthApi.registerUser', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        register: {
+          name: {
+            emptyStringPolicy: 'strip',
+          },
+        },
+      },
+    });
+
+    store.registerUser({
+      name: '',
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.registerUser).toHaveBeenCalledWith({
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+  });
+
+  it('rejects empty optional login password before calling AuthApi.login', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        login: {
+          password: {
+            required: false,
+            emptyStringPolicy: 'reject',
+          },
+        },
+      },
+    });
+
+    store.login({
+      credential: 'user@example.com',
+      password: '',
+    });
+    await flushAsync();
+
+    expect(mockAuthApi.login).not.toHaveBeenCalled();
+    expect(store.error()).toContain('password');
+    expect(store.loading()).toBe(false);
+    expect(store.initialized()).toBe(true);
+  });
+
+  it('allows empty optional forgot-password email through to AuthApi.forgotPassword', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        forgotPassword: {
+          email: {
+            required: false,
+            emptyStringPolicy: 'allow',
+          },
+        },
+      },
+    });
+
+    store.forgotPassword({
+      email: '',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.forgotPassword).toHaveBeenCalledWith({
+      email: '',
+    });
+  });
+
+  it('strips optional reset token before calling AuthApi.resetPassword', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        resetPassword: {
+          token: {
+            required: false,
+            emptyStringPolicy: 'strip',
+          },
+        },
+      },
+    });
+
+    store.resetPassword({
+      dto: {
+        token: '',
+        password: 'secret123',
+        confirmPassword: 'secret123',
+      },
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.resetPassword).toHaveBeenCalledWith({
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+  });
+
+  it('rejects empty optional verify-email token before calling AuthApi.verifyEmail', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        verifyEmail: {
+          token: {
+            required: false,
+            emptyStringPolicy: 'reject',
+          },
+        },
+      },
+    });
+
+    store.verifyEmail({
+      token: '',
+    });
+    await flushAsync();
+
+    expect(mockAuthApi.verifyEmail).not.toHaveBeenCalled();
+    expect(store.error()).toContain('token');
+    expect(store.loading()).toBe(false);
+  });
+
+  it('strips optional confirmPassword before calling AuthApi.changePassword', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        changePassword: {
+          confirmPassword: {
+            required: false,
+            emptyStringPolicy: 'strip',
+          },
+        },
+      },
+    });
+
+    store.changePassword({
+      userId: 'user-id',
+      dto: {
+        currentPassword: 'old-password',
+        newPassword: 'new-password',
+        confirmPassword: '',
+      },
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.changePassword).toHaveBeenCalledWith('user-id', {
+      currentPassword: 'old-password',
+      newPassword: 'new-password',
+    });
   });
 });
