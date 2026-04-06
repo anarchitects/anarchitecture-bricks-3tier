@@ -331,6 +331,43 @@ describe('Form', () => {
     expect(component.fieldErrorMessage('confirmPassword')).toBeNull();
   });
 
+  it('should allow an optional matchFields target to remain empty', () => {
+    const config: FormConfig = {
+      id: 'change-password',
+      version: 1,
+      fields: [
+        { name: 'newPassword', kind: 'password', minLength: 6, required: true },
+        {
+          name: 'confirmPassword',
+          kind: 'password',
+          minLength: 6,
+          required: false,
+        },
+      ],
+      validationRules: [
+        {
+          kind: 'matchFields',
+          sourceField: 'newPassword',
+          targetField: 'confirmPassword',
+          message: 'Passwords must match.',
+        },
+      ],
+    };
+
+    ref.setInput('config', config);
+    fixture.detectChanges();
+
+    component.formGroup.setValue({
+      newPassword: 'secret123',
+      confirmPassword: '',
+    });
+    component.formGroup.get('confirmPassword')?.markAsTouched();
+    fixture.detectChanges();
+
+    expect(component.formGroup.valid).toBe(true);
+    expect(component.fieldErrorMessage('confirmPassword')).toBeNull();
+  });
+
   it('should compose runtime validators with declarative validation rules', () => {
     const config: FormConfig = {
       id: 'register',

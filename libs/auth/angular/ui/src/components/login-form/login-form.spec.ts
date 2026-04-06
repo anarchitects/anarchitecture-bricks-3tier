@@ -25,6 +25,27 @@ describe('AnarchitectsAuthUiLoginForm', () => {
     await setup();
   });
 
+  const getLoginControls = () => {
+    fixture.detectChanges();
+
+    const nativeElement = fixture.nativeElement as HTMLElement;
+    const credentialInput = nativeElement.querySelector(
+      'input#credential',
+    ) as HTMLInputElement | null;
+    const passwordInput = nativeElement.querySelector(
+      'input#password',
+    ) as HTMLInputElement | null;
+    const submitButton = nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement | null;
+
+    if (!credentialInput || !passwordInput || !submitButton) {
+      throw new Error('Expected login form controls to be rendered.');
+    }
+
+    return { nativeElement, credentialInput, passwordInput, submitButton };
+  };
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -49,6 +70,66 @@ describe('AnarchitectsAuthUiLoginForm', () => {
       component.formConfig().fields.find((field) => field.name === 'password')
         ?.minLength,
     ).toBe(10);
+  });
+
+  it('should keep submit disabled when required login fields are missing by default', async () => {
+    const { credentialInput, submitButton } = getLoginControls();
+
+    credentialInput.value = 'user@example.com';
+    credentialInput.dispatchEvent(new Event('input'));
+    credentialInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(submitButton.disabled).toBe(true);
+  });
+
+  it('should allow submit when password is optional under a custom profile', async () => {
+    await setup(
+      provideAuthContracts({
+        login: {
+          password: {
+            required: false,
+          },
+        },
+      }),
+    );
+
+    const { credentialInput, submitButton } = getLoginControls();
+
+    credentialInput.value = 'user@example.com';
+    credentialInput.dispatchEvent(new Event('input'));
+    credentialInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(submitButton.disabled).toBe(false);
+  });
+
+  it('should show the contract-driven password minLength validation message', async () => {
+    await setup(
+      provideAuthContracts({
+        login: {
+          password: {
+            minLength: 10,
+          },
+        },
+      }),
+    );
+
+    const { nativeElement, credentialInput, passwordInput, submitButton } =
+      getLoginControls();
+
+    credentialInput.value = 'user@example.com';
+    credentialInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'short';
+    passwordInput.dispatchEvent(new Event('input'));
+    passwordInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(nativeElement.textContent).toContain('Minimum length is 10.');
+    expect(submitButton.disabled).toBe(true);
   });
 
   it('should map submission payload to LoginRequestDTO', () => {
