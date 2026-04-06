@@ -5,14 +5,19 @@ import { AuthPresentationModule } from './presentation';
 import { authConfig, mapAuthConfigToAuthModuleOptions } from './config';
 import type { AuthModuleOptions } from './config';
 
-export type { AuthModuleFeatures, AuthModuleOptions } from './config';
+export type {
+  AuthContractConfigOverrides,
+  AuthModuleFeatures,
+  AuthModuleOptions,
+} from './config';
 
 @Module({})
 export class AuthModule {
   static forRoot(options: AuthModuleOptions = {}): DynamicModule {
-    const presentationModule = AuthPresentationModule.forRoot(
-      options.presentation,
-    );
+    const presentationModule = AuthPresentationModule.forRoot({
+      ...options.presentation,
+      contracts: options.contracts,
+    });
     const mailerModule = AuthMailerModule.forRoot(options.mailer);
     return {
       module: AuthModule,
@@ -38,8 +43,7 @@ export class AuthModule {
             callbackUrls: {
               ...configOptions.presentation?.application?.betterAuth
                 ?.callbackUrls,
-              ...overrides.presentation?.application?.betterAuth
-                ?.callbackUrls,
+              ...overrides.presentation?.application?.betterAuth?.callbackUrls,
             },
           },
           encryption: {

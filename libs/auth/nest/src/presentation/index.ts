@@ -6,4 +6,7 @@ export * from './decorators/policies.decorator';
 export * from './decorators/authorize-resource.decorator';
 export * from './decorators/authorized-resource.decorator';
 export * from './route-policy';
-export type { AuthPresentationModuleOptions } from '../config';
+export type {
+  AuthContractConfigOverrides,
+  AuthPresentationModuleOptions,
+} from '../config';

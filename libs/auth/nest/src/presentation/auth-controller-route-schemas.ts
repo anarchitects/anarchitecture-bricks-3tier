@@ -1,6 +1,5 @@
 import { Type } from '@sinclair/typebox';
 import { FASTIFY_ROUTE_SCHEMA_METADATA } from '@nestjs/platform-fastify/constants';
-import type { DefaultAuthContracts } from './auth-contracts';
 
 type ContractSchemaKey =
   | 'changePasswordRequestSchema'
@@ -11,7 +10,7 @@ type ContractSchemaKey =
   | 'resetPasswordRequestSchema'
   | 'verifyEmailRequestSchema';
 
-type AuthContractRouteSchemas = Pick<DefaultAuthContracts, ContractSchemaKey>;
+type AuthContractRouteSchemas = Record<ContractSchemaKey, unknown>;
 
 type RouteSchemaMetadata = {
   body?: unknown;

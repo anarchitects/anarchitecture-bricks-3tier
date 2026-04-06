@@ -68,28 +68,13 @@ Prefer symbol imports from `@anarchitects/auth-nest/infrastructure-persistence` 
 Recommended:
 
 ```ts
-import {
-  AccountEntity,
-  CreateAuthSchema1720200000000,
-  PermissionEntity,
-  RoleEntity,
-  SessionEntity,
-  UserEntity,
-  VerificationEntity,
-} from '@anarchitects/auth-nest/infrastructure-persistence';
+import { AccountEntity, CreateAuthSchema1720200000000, PermissionEntity, RoleEntity, SessionEntity, UserEntity, VerificationEntity } from '@anarchitects/auth-nest/infrastructure-persistence';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   migrations: [CreateAuthSchema1720200000000],
-  entities: [
-    AccountEntity,
-    PermissionEntity,
-    RoleEntity,
-    SessionEntity,
-    UserEntity,
-    VerificationEntity,
-  ],
+  entities: [AccountEntity, PermissionEntity, RoleEntity, SessionEntity, UserEntity, VerificationEntity],
 });
 ```
 
@@ -100,12 +85,7 @@ import { join } from 'node:path';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  migrations: [
-    join(
-      process.cwd(),
-      'node_modules/@anarchitects/auth-nest/src/infrastructure-persistence/migrations/*.js',
-    ),
-  ],
+  migrations: [join(process.cwd(), 'node_modules/@anarchitects/auth-nest/src/infrastructure-persistence/migrations/*.js')],
 });
 ```
 
@@ -174,10 +154,7 @@ export class AppModule {}
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  CommonMailerModule,
-  mailerConfig,
-} from '@anarchitects/common-nest-mailer';
+import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { AuthModule } from '@anarchitects/auth-nest';
 import { authConfig } from '@anarchitects/auth-nest/config';
 
@@ -189,6 +166,13 @@ import { authConfig } from '@anarchitects/auth-nest/config';
     }),
     CommonMailerModule.forRootFromConfig(),
     AuthModule.forRoot({
+      contracts: {
+        register: {
+          name: {
+            required: true,
+          },
+        },
+      },
       presentation: {
         application: {
           encryption: {
@@ -211,6 +195,20 @@ export class AuthApiModule {}
 Use `AuthModule.forRootFromConfig()` when you want module composition fully driven by `AUTH_*`
 variables exposed via `authConfig`.
 
+Apply contract-profile overrides without adding new `AUTH_*` variables:
+
+```ts
+AuthModule.forRootFromConfig({
+  contracts: {
+    register: {
+      name: {
+        required: true,
+      },
+    },
+  },
+});
+```
+
 Disable domain mailer wiring when not needed:
 
 ```ts
@@ -225,10 +223,7 @@ AuthModule.forRoot({
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  CommonMailerModule,
-  mailerConfig,
-} from '@anarchitects/common-nest-mailer';
+import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
 import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
@@ -248,6 +243,13 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
       },
     }),
     AuthPresentationModule.forRoot({
+      contracts: {
+        register: {
+          name: {
+            required: true,
+          },
+        },
+      },
       application: {
         encryption: {
           algorithm: 'bcrypt',
@@ -318,12 +320,7 @@ export class AuthController {
 
 ```ts
 import { Controller, Patch, UseGuards } from '@nestjs/common';
-import {
-  AuthorizedResource,
-  AuthorizeResource,
-  Policies,
-  PoliciesGuard,
-} from '@anarchitects/auth-nest/presentation';
+import { AuthorizedResource, AuthorizeResource, Policies, PoliciesGuard } from '@anarchitects/auth-nest/presentation';
 
 @Controller('posts')
 @UseGuards(PoliciesGuard)
