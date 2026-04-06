@@ -5,6 +5,19 @@ import { join } from 'node:path';
 import OpenApiDiff from 'openapi-diff';
 
 const SPEC_PATH = join(process.cwd(), 'docs/openapi/openapi.yaml');
+const OPENAPI_31_REGEX = /^openapi:\s*["']?3\.1\.\d+["']?\s*$/m;
+
+function normalizeSpecForDiff(content: string, label: string): string {
+  if (!OPENAPI_31_REGEX.test(content)) {
+    return content;
+  }
+
+  console.log(
+    `Normalizing ${label} OpenAPI version from 3.1.x to 3.0.3 for openapi-diff compatibility.`,
+  );
+
+  return content.replace(OPENAPI_31_REGEX, 'openapi: 3.0.3');
+}
 
 function loadCurrentSpec(): string {
   return readFileSync(SPEC_PATH, 'utf8');
@@ -40,15 +53,20 @@ async function run() {
   }
 
   const destination = loadCurrentSpec();
+  const normalizedSource = normalizeSpecForDiff(source, `${baseRef} spec`);
+  const normalizedDestination = normalizeSpecForDiff(
+    destination,
+    'workspace spec',
+  );
 
   const result = await OpenApiDiff.diffSpecs({
     sourceSpec: {
-      content: source,
+      content: normalizedSource,
       location: `${baseRef}:docs/openapi/openapi.yaml`,
       format: 'openapi3',
     },
     destinationSpec: {
-      content: destination,
+      content: normalizedDestination,
       location: 'workspace/docs/openapi/openapi.yaml',
       format: 'openapi3',
     },
