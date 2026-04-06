@@ -27,6 +27,24 @@ describe('AnarchitectsAuthUiVerifyEmailForm', () => {
     await setup();
   });
 
+  const getVerifyEmailControls = () => {
+    fixture.detectChanges();
+
+    const nativeElement = fixture.nativeElement as HTMLElement;
+    const tokenInput = nativeElement.querySelector(
+      'input#token',
+    ) as HTMLInputElement | null;
+    const submitButton = nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement | null;
+
+    if (!tokenInput || !submitButton) {
+      throw new Error('Expected verify-email form controls to be rendered.');
+    }
+
+    return { nativeElement, tokenInput, submitButton };
+  };
+
   it('should read contract-driven token minLength', async () => {
     await setup(
       provideAuthContracts({
@@ -39,6 +57,60 @@ describe('AnarchitectsAuthUiVerifyEmailForm', () => {
     );
 
     expect(component.formConfig().fields[0]?.minLength).toBe(8);
+  });
+
+  it('should keep submit disabled when token is missing by default', async () => {
+    const { tokenInput, submitButton } = getVerifyEmailControls();
+
+    tokenInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(submitButton.disabled).toBe(true);
+  });
+
+  it('should allow submit without token when the custom profile makes it optional', async () => {
+    await setup(
+      provideAuthContracts({
+        verifyEmail: {
+          token: {
+            required: false,
+          },
+        },
+      }),
+    );
+
+    const { submitButton } = getVerifyEmailControls();
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(submitButton.disabled).toBe(false);
+  });
+
+  it('should show the contract-driven token minLength validation message', async () => {
+    await setup(
+      provideAuthContracts({
+        verifyEmail: {
+          token: {
+            required: false,
+            minLength: 8,
+          },
+        },
+      }),
+    );
+
+    const { nativeElement, tokenInput, submitButton } =
+      getVerifyEmailControls();
+
+    tokenInput.value = 'short';
+    tokenInput.dispatchEvent(new Event('input'));
+    tokenInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(nativeElement.textContent).toContain('Minimum length is 8.');
+    expect(submitButton.disabled).toBe(true);
   });
 
   it('should use token input fallback when payload token is missing', () => {

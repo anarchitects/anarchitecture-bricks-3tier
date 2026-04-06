@@ -25,6 +25,46 @@ describe('AnarchitectsAuthUiRegisterForm', () => {
     await setup();
   });
 
+  const getRegisterControls = () => {
+    fixture.detectChanges();
+
+    const nativeElement = fixture.nativeElement as HTMLElement;
+    const nameInput = nativeElement.querySelector(
+      'input#name',
+    ) as HTMLInputElement | null;
+    const emailInput = nativeElement.querySelector(
+      'input#email',
+    ) as HTMLInputElement | null;
+    const passwordInput = nativeElement.querySelector(
+      'input#password',
+    ) as HTMLInputElement | null;
+    const confirmPasswordInput = nativeElement.querySelector(
+      'input#confirmPassword',
+    ) as HTMLInputElement | null;
+    const submitButton = nativeElement.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement | null;
+
+    if (
+      !nameInput ||
+      !emailInput ||
+      !passwordInput ||
+      !confirmPasswordInput ||
+      !submitButton
+    ) {
+      throw new Error('Expected register form controls to be rendered.');
+    }
+
+    return {
+      nativeElement,
+      nameInput,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      submitButton,
+    };
+  };
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
@@ -55,6 +95,92 @@ describe('AnarchitectsAuthUiRegisterForm', () => {
       component.formConfig().fields.find((field) => field.name === 'name')
         ?.required,
     ).toBe(true);
+  });
+
+  it('should allow submit without name by default', async () => {
+    const { emailInput, passwordInput, confirmPasswordInput, submitButton } =
+      getRegisterControls();
+
+    emailInput.value = 'jane@example.com';
+    emailInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'secret123';
+    passwordInput.dispatchEvent(new Event('input'));
+    confirmPasswordInput.value = 'secret123';
+    confirmPasswordInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(submitButton.disabled).toBe(false);
+  });
+
+  it('should require name when the custom profile marks it required', async () => {
+    await setup(
+      provideAuthContracts({
+        register: {
+          name: {
+            required: true,
+          },
+        },
+      }),
+    );
+
+    const {
+      nativeElement,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      nameInput,
+      submitButton,
+    } = getRegisterControls();
+
+    emailInput.value = 'jane@example.com';
+    emailInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'secret123';
+    passwordInput.dispatchEvent(new Event('input'));
+    confirmPasswordInput.value = 'secret123';
+    confirmPasswordInput.dispatchEvent(new Event('input'));
+    nameInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(nativeElement.textContent).toContain('This field is required.');
+    expect(submitButton.disabled).toBe(true);
+  });
+
+  it('should show the contract-driven name minLength validation message', async () => {
+    await setup(
+      provideAuthContracts({
+        register: {
+          name: {
+            minLength: 5,
+          },
+        },
+      }),
+    );
+
+    const {
+      nativeElement,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      nameInput,
+      submitButton,
+    } = getRegisterControls();
+
+    emailInput.value = 'jane@example.com';
+    emailInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'secret123';
+    passwordInput.dispatchEvent(new Event('input'));
+    confirmPasswordInput.value = 'secret123';
+    confirmPasswordInput.dispatchEvent(new Event('input'));
+    nameInput.value = 'Joe';
+    nameInput.dispatchEvent(new Event('input'));
+    nameInput.dispatchEvent(new Event('blur'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(nativeElement.textContent).toContain('Minimum length is 5.');
+    expect(submitButton.disabled).toBe(true);
   });
 
   it('should map submission payload to RegisterRequestDTO', () => {
@@ -90,35 +216,13 @@ describe('AnarchitectsAuthUiRegisterForm', () => {
       emitted = value;
     });
 
-    fixture.detectChanges();
-
-    const nativeElement = fixture.nativeElement as HTMLElement;
-    const emailInput = nativeElement.querySelector(
-      'input#email',
-    ) as HTMLInputElement | null;
-    const passwordInput = nativeElement.querySelector(
-      'input#password',
-    ) as HTMLInputElement | null;
-    const confirmPasswordInput = nativeElement.querySelector(
-      'input#confirmPassword',
-    ) as HTMLInputElement | null;
-    const submitButton = nativeElement.querySelector(
-      'button[type="submit"]',
-    ) as HTMLButtonElement | null;
-
-    expect(emailInput).toBeTruthy();
-    expect(passwordInput).toBeTruthy();
-    expect(confirmPasswordInput).toBeTruthy();
-    expect(submitButton).toBeTruthy();
-
-    if (
-      !emailInput ||
-      !passwordInput ||
-      !confirmPasswordInput ||
-      !submitButton
-    ) {
-      throw new Error('Expected register form inputs to be rendered.');
-    }
+    const {
+      nativeElement,
+      emailInput,
+      passwordInput,
+      confirmPasswordInput,
+      submitButton,
+    } = getRegisterControls();
 
     emailInput.value = 'jane@example.com';
     emailInput.dispatchEvent(new Event('input'));

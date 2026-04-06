@@ -86,6 +86,17 @@ function buildConfigValidator(
         continue;
       }
 
+      if (targetControl.value === null || targetControl.value === undefined) {
+        continue;
+      }
+
+      if (
+        typeof targetControl.value === 'string' &&
+        targetControl.value === ''
+      ) {
+        continue;
+      }
+
       if (sourceControl.value === targetControl.value) {
         continue;
       }
@@ -230,8 +241,8 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       control &&
-      this.crossFieldError(fieldName) &&
-      (control.touched || control.dirty),
+        this.crossFieldError(fieldName) &&
+        (control.touched || control.dirty),
     );
   }
 
@@ -286,7 +297,7 @@ export class AnarchitectsUiForm {
 
     return Boolean(
       (control && control.touched && control.invalid) ||
-      this.shouldShowCrossFieldError(fieldName),
+        this.shouldShowCrossFieldError(fieldName),
     );
   }
 

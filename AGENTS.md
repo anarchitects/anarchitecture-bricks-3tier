@@ -122,8 +122,9 @@ When executing work tied to GitHub issues in this repository, keep the planning 
 - If work is intentionally queued or deferred, set Status to Backlog.
 - If work is ready and selected for active execution but not started, set Status to Todo.
 - If blocked by dependency, environment, or decision gate, set Status to Blocked.
-- When a PR is opened for the issue, set Status to In Review.
-- When work is fully completed and validated, set Status to Done.
+- When implementation is complete and awaiting human review, approval, or PR handling, set Status to In Review.
+- When a PR is opened for the issue, keep or move Status to In Review.
+- Set Status to Done only after human acceptance, explicit signoff, or merge confirms the work is complete.
 
 ### Scope Rules
 
@@ -142,6 +143,7 @@ For all implementation work, keep humans as the control point for code acceptanc
 - Human developers review all code changes.
 - Human developers perform git commit, pull request creation, and pull request merge.
 - AI coding agents must never finalize commits or merge PRs as a replacement for human review.
+- AI coding agents must not mark issue work as Done based only on local implementation and validation; the correct handoff state is In Review until a human accepts the work.
 
 ### Breaking Change And Deprecation Disclosure
 

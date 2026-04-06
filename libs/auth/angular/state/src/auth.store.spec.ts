@@ -225,6 +225,161 @@ describe('AuthStore', () => {
     expect(localStorage.getItem('refreshToken')).toBeNull();
   });
 
+  it('passes the default register payload through unchanged on success', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.registerUser({
+      name: 'Jane',
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.registerUser).toHaveBeenCalledWith({
+      name: 'Jane',
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+    expect(store.error()).toBeNull();
+    expect(store.success()).toBe(true);
+  });
+
+  it('rejects the default optional register name when submitted as an empty string', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.registerUser({
+      name: '',
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+    await flushAsync();
+
+    expect(mockAuthApi.registerUser).not.toHaveBeenCalled();
+    expect(store.error()).toContain('name');
+    expect(store.loading()).toBe(false);
+  });
+
+  it('passes the default login payload through unchanged on success', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.login({
+      credential: 'user@example.com',
+      password: 'secret123',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.login).toHaveBeenCalledWith({
+      credential: 'user@example.com',
+      password: 'secret123',
+    });
+    expect(store.error()).toBeNull();
+    expect(store.isLoggedIn()).toBe(true);
+  });
+
+  it('passes the default forgot-password payload through unchanged on success', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.forgotPassword({
+      email: 'user@example.com',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.forgotPassword).toHaveBeenCalledWith({
+      email: 'user@example.com',
+    });
+    expect(store.error()).toBeNull();
+    expect(store.success()).toBe(true);
+  });
+
+  it('passes the default reset-password payload through unchanged on success', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.resetPassword({
+      dto: {
+        token: 'reset-token',
+        password: 'secret123',
+        confirmPassword: 'secret123',
+      },
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.resetPassword).toHaveBeenCalledWith({
+      token: 'reset-token',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+    expect(store.error()).toBeNull();
+    expect(store.success()).toBe(true);
+  });
+
+  it('passes the default verify-email payload through unchanged on success', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.verifyEmail({
+      token: 'verify-token',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.verifyEmail).toHaveBeenCalledWith({
+      token: 'verify-token',
+    });
+    expect(store.error()).toBeNull();
+    expect(store.success()).toBe(true);
+  });
+
+  it('passes the default change-password payload through unchanged on success', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+    });
+
+    store.changePassword({
+      userId: 'user-id',
+      dto: {
+        currentPassword: 'old-password',
+        newPassword: 'new-password',
+        confirmPassword: 'new-password',
+      },
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.changePassword).toHaveBeenCalledWith('user-id', {
+      currentPassword: 'old-password',
+      newPassword: 'new-password',
+      confirmPassword: 'new-password',
+    });
+    expect(store.error()).toBeNull();
+    expect(store.success()).toBe(true);
+  });
+
   it('strips optional register name before calling AuthApi.registerUser', async () => {
     const { store, mockAuthApi } = setup({
       stateOptions: {

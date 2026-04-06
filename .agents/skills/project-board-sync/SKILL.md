@@ -30,11 +30,12 @@ Use this skill during issue-driven implementation to keep the planning board ali
 
 3. Review handoff:
 
-- Set issue to In Review when implementation is complete and review is requested or a PR is opened.
+- Set issue to In Review when implementation is complete and awaiting human review, approval, or PR handling.
+- If a PR is opened, keep the issue in In Review unless a human explicitly accepts or closes the work.
 
 4. Completion:
 
-- Set Done only after completion criteria are met.
+- Set Done only after a human accepts the implementation, explicitly signs off, or merges the corresponding PR.
 
 ## Common Board Operations
 
@@ -59,9 +60,9 @@ Use this skill during issue-driven implementation to keep the planning board ali
 - Backlog: prioritized but not selected for active execution.
 - Todo: selected for active sprint but not started.
 - In Progress: currently being implemented.
-- In Review: implementation ready for review or PR stage.
+- In Review: implementation is finished by the agent and is awaiting human review, approval, or PR completion.
 - Blocked: waiting for dependency, decision, or environment fix.
-- Done: accepted and complete.
+- Done: human-accepted and complete.
 
 ## Safety Rules
 
@@ -75,5 +76,6 @@ Use this skill during issue-driven implementation to keep the planning board ali
 - Treat board updates as AI-assisted planning operations under human supervision.
 - Human developers review code, perform commits, create PRs, and merge PRs.
 - AI coding agents may suggest commit messages, but commit execution remains human-owned.
+- AI coding agents must not move an issue directly from active development to Done without explicit human acceptance.
 - When implementation changes may be breaking, explicitly call that out in updates and summaries.
 - When bug-fix impact suggests package deprecation on npm, explicitly call this out and require explicit human approval before any deprecation execution.
