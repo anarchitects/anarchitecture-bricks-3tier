@@ -1,5 +1,10 @@
+import { injectAuthContracts } from '@anarchitects/auth-angular/config';
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
 import { createAppAbility } from '@anarchitects/auth-angular/util';
+import {
+  type AuthPayloadFieldBehaviorMap,
+  shapeAuthPayload,
+} from '@anarchitects/auth-ts';
 import {
   ActivateUserRequestDTO,
   ChangePasswordRequestDTO,
@@ -30,7 +35,7 @@ import {
   withEntities,
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { EMPTY, pipe, switchMap, tap } from 'rxjs';
+import { EMPTY, defer, pipe, switchMap, tap } from 'rxjs';
 import { AUTH_STATE_OPTIONS } from './auth-state.options';
 
 type AuthState = {
@@ -82,32 +87,24 @@ const patchAuthenticatedSession = (
   store: object,
   session: { user: AuthUser; rbac: PolicyRule[] },
 ) => {
-  patchState(
-    store as never,
-    setAllEntities([session.user]),
-    {
-      ability: createAppAbility(session.rbac),
-      error: null,
-      rbac: session.rbac,
-      success: true,
-    },
-  );
+  patchState(store as never, setAllEntities([session.user]), {
+    ability: createAppAbility(session.rbac),
+    error: null,
+    rbac: session.rbac,
+    success: true,
+  });
 };
 
 const clearAuthenticatedSession = (
   store: object,
   state: Partial<AuthState> = {},
 ) => {
-  patchState(
-    store as never,
-    removeAllEntities(),
-    {
-      ability: undefined,
-      rbac: [],
-      success: false,
-      ...state,
-    },
-  );
+  patchState(store as never, removeAllEntities(), {
+    ability: undefined,
+    rbac: [],
+    success: false,
+    ...state,
+  });
 };
 
 const redirectToLogin = (router: Router | null): void => {
@@ -121,11 +118,17 @@ const redirectToLogin = (router: Router | null): void => {
   }
 };
 
+const shapePayloadForSubmit = <TPayload extends Record<string, unknown>>(
+  payload: TPayload,
+  fieldMap: AuthPayloadFieldBehaviorMap,
+): TPayload => shapeAuthPayload(payload, fieldMap);
+
 export const AuthStore = signalStore(
   withState(initialState),
   withEntities<AuthUser>(),
   withProps(() => ({
     _authApi: inject(AuthApi),
+    _authContracts: injectAuthContracts(),
     _authStateOptions: inject(AUTH_STATE_OPTIONS),
     _router: inject(Router, { optional: true }),
   })),
@@ -196,7 +199,14 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
-          store._authApi.registerUser(dto).pipe(
+          defer(() => {
+            const shapedDto = shapePayloadForSubmit(
+              dto,
+              store._authContracts.registerFormMeta,
+            ) as RegisterRequestDTO;
+
+            return store._authApi.registerUser(shapedDto);
+          }).pipe(
             tapResponse({
               next: ({ success }) => {
                 patchState(store, { success });
@@ -236,7 +246,14 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
-          store._authApi.login(dto).pipe(
+          defer(() => {
+            const shapedDto = shapePayloadForSubmit(
+              dto,
+              store._authContracts.loginFormMeta,
+            ) as LoginRequestDTO;
+
+            return store._authApi.login(shapedDto);
+          }).pipe(
             tapResponse({
               next: ({ user, rbac }) => {
                 const authenticatedUser = user as { email: string; id: string };
@@ -276,7 +293,9 @@ export const AuthStore = signalStore(
                 patchState(store, { success });
               },
               error: (error: unknown) => {
-                patchState(store, { error: toErrorMessage(error) });
+                patchState(store, {
+                  error: toErrorMessage(error),
+                });
               },
               finalize: () => {
                 patchState(store, { loading: false });
@@ -290,7 +309,14 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap(({ userId, dto }) =>
-          store._authApi.changePassword(userId, dto).pipe(
+          defer(() => {
+            const shapedDto = shapePayloadForSubmit(
+              dto,
+              store._authContracts.changePasswordFormMeta,
+            ) as ChangePasswordRequestDTO;
+
+            return store._authApi.changePassword(userId, shapedDto);
+          }).pipe(
             tapResponse({
               next: ({ success }) => {
                 patchState(store, { success });
@@ -310,7 +336,14 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
-          store._authApi.forgotPassword(dto).pipe(
+          defer(() => {
+            const shapedDto = shapePayloadForSubmit(
+              dto,
+              store._authContracts.forgotPasswordFormMeta,
+            ) as ForgotPasswordRequestDTO;
+
+            return store._authApi.forgotPassword(shapedDto);
+          }).pipe(
             tapResponse({
               next: ({ success }) => {
                 patchState(store, { success });
@@ -330,7 +363,14 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap(({ dto }) =>
-          store._authApi.resetPassword(dto).pipe(
+          defer(() => {
+            const shapedDto = shapePayloadForSubmit(
+              dto,
+              store._authContracts.resetPasswordFormMeta,
+            ) as ResetPasswordRequestDTO;
+
+            return store._authApi.resetPassword(shapedDto);
+          }).pipe(
             tapResponse({
               next: ({ success }) => {
                 patchState(store, { success });
@@ -350,7 +390,14 @@ export const AuthStore = signalStore(
       pipe(
         tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
-          store._authApi.verifyEmail(dto).pipe(
+          defer(() => {
+            const shapedDto = shapePayloadForSubmit(
+              dto,
+              store._authContracts.verifyEmailFormMeta,
+            ) as VerifyEmailRequestDTO;
+
+            return store._authApi.verifyEmail(shapedDto);
+          }).pipe(
             tapResponse({
               next: ({ success }) => {
                 patchState(store, { success });
