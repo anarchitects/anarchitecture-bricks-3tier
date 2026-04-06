@@ -2,28 +2,21 @@ import {
   ActivateUserRequestDTO,
   ActivateUserRequestSchema,
   ChangePasswordRequestDTO,
-  ChangePasswordRequestSchema,
   ForgotPasswordRequestDTO,
-  ForgotPasswordRequestSchema,
   LoginRequestDTO,
-  LoginRequestSchema,
   LoggedInUserInfoResponseDTO,
   LoggedInUserInfoResponseSchema,
   LogoutRequestDTO,
-  LogoutRequestSchema,
   RegisterRequestDTO,
-  RegisterRequestSchema,
   RegisterResponseDTO,
   RegisterResponseSchema,
   ResetPasswordRequestDTO,
-  ResetPasswordRequestSchema,
   SuccessResponseDTO,
   SuccessResponseSchema,
   UpdateEmailRequestDTO,
   UpdateEmailRequestSchema,
   UserIdParamsSchema,
   VerifyEmailRequestDTO,
-  VerifyEmailRequestSchema,
 } from '@anarchitects/auth-ts/dtos';
 import {
   Body,
@@ -38,6 +31,7 @@ import {
 } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { AuthService } from '../../application/services/auth.service';
+import { AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER } from '../auth-controller-route-schemas';
 
 @Controller('auth')
 export class AuthController {
@@ -46,7 +40,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('/register')
   @RouteSchema({
-    body: RegisterRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: RegisterResponseSchema },
   })
   async registerUser(
@@ -69,7 +63,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('/login')
   @RouteSchema({
-    body: LoginRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: LoggedInUserInfoResponseSchema },
   })
   async login(
@@ -86,7 +80,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('/logout')
   @RouteSchema({
-    body: LogoutRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
   })
   async logout(
@@ -102,7 +96,7 @@ export class AuthController {
 
   @Patch('/change-password/:userId')
   @RouteSchema({
-    body: ChangePasswordRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     params: UserIdParamsSchema,
     response: { 200: SuccessResponseSchema },
   })
@@ -116,7 +110,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('/forgot-password')
   @RouteSchema({
-    body: ForgotPasswordRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
   })
   async forgotPassword(
@@ -128,7 +122,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('/reset-password')
   @RouteSchema({
-    body: ResetPasswordRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
   })
   async resetPassword(
@@ -140,7 +134,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('/verify-email')
   @RouteSchema({
-    body: VerifyEmailRequestSchema,
+    body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
   })
   async verifyEmail(

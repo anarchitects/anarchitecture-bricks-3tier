@@ -1,5 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import {
+  applyAuthControllerContractRouteSchemas,
+} from './auth-controller-route-schemas';
+import {
+  createAuthContractsProvider,
+  createDefaultAuthContracts,
+} from './auth-contracts';
 import { AuthController } from './controllers/auth.controller';
 import { AuthApplicationModule } from '../application';
 import { PoliciesGuard } from './guards/policies.guard';
@@ -18,14 +25,18 @@ import type { AuthPresentationModuleOptions } from '../config';
 })
 export class AuthPresentationModule {
   static forRoot(options: AuthPresentationModuleOptions = {}): DynamicModule {
+    const authContracts = createDefaultAuthContracts();
     const jwtPluginController = options.application?.plugins?.jwt?.enabled
       ? [JwtAuthPluginController]
       : [];
+
+    applyAuthControllerContractRouteSchemas(AuthController, authContracts);
 
     return {
       module: AuthPresentationModule,
       imports: [AuthApplicationModule.forRoot(options.application)],
       controllers: jwtPluginController,
+      providers: [createAuthContractsProvider(authContracts)],
       exports: [AuthApplicationModule],
     };
   }
