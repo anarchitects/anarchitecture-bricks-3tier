@@ -5,10 +5,12 @@ TypeScript DTOs and domain models for the Anarchitecture authentication stack. T
 - Implementation-driven request/response schemas authored with [TypeBox](https://github.com/sinclairzx81/typebox)
 - Type-safe DTO aliases consumed by Angular and Nest libraries and reflected in generated OpenAPI docs
 - Domain models (`User`, `Role`, `Permission`) for composing dynamic RBAC logic across services
+- Contract-driven auth profile factories that generate backend request schemas and frontend form metadata from one config
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
 
 Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
+Migration guidance for the contract-driven auth profile model lives in the [auth contract migration guide](../../../docs/guides/auth-contracts-migration.md).
 
 ## Developer + AI Agent Start Here
 
@@ -22,6 +24,7 @@ Migration guidance for the Better Auth realignment lives in the [auth migration 
 - Centralized TypeBox DTO schemas shared by Angular and Nest stacks
 - Domain model contracts for users, roles, and permissions
 - Reusable validation + type-inference building blocks for auth flows
+- Contract profile config, compatibility checks, and schema factories for runtime/frontend alignment
 
 ## Authorization Contract
 
@@ -60,12 +63,67 @@ pnpm add @anarchitects/auth-ts
 
 ## Entry points
 
-| Import path                      | Description                                                        |
-| -------------------------------- | ------------------------------------------------------------------ |
-| `@anarchitects/auth-ts`          | Barrel re-export for core models plus the core/session DTO surface |
-| `@anarchitects/auth-ts/dtos`     | Core/session request-response schemas and DTO types (TypeBox)      |
-| `@anarchitects/auth-ts/dtos/jwt` | JWT plugin-specific DTO types and schemas                          |
-| `@anarchitects/auth-ts/models`   | Domain models used for user/session/RBAC composition               |
+| Import path                       | Description                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------- |
+| `@anarchitects/auth-ts`           | Barrel re-export for core models plus the core/session DTO surface                    |
+| `@anarchitects/auth-ts/contracts` | Contract profile config, schema factories, compatibility helpers, and payload shaping |
+| `@anarchitects/auth-ts/dtos`      | Core/session request-response schemas and DTO types (TypeBox)                         |
+| `@anarchitects/auth-ts/dtos/jwt`  | JWT plugin-specific DTO types and schemas                                             |
+| `@anarchitects/auth-ts/models`    | Domain models used for user/session/RBAC composition                                  |
+
+## Contract Profiles
+
+`@anarchitects/auth-ts` is the source of truth for contract-driven auth behavior across Nest and Angular.
+
+- `AuthContractConfig` defines the profile shape for register, login, forgot-password, reset-password, verify-email, change-password, and logout.
+- `DefaultAuthContractConfig` is the published default profile.
+- `createAuthContracts(config)` derives request schemas and form metadata from one profile.
+- `assertContractCompatibility(config, expectedVersion)` fails fast when a consumer expects a different profile version.
+
+Use the factory whenever you need a custom auth profile or want one object that drives both runtime validation and UI behavior:
+
+```ts
+import { DefaultAuthContractConfig, assertContractCompatibility, createAuthContracts } from '@anarchitects/auth-ts';
+
+assertContractCompatibility(DefaultAuthContractConfig, '1.0.0');
+
+const contracts = createAuthContracts(DefaultAuthContractConfig);
+
+contracts.registerRequestSchema;
+contracts.registerFormMeta.name.required;
+contracts.changePasswordFormMeta.newPassword.minLength;
+```
+
+Custom profiles are built by copying the default profile and overriding only the fields you want to change:
+
+```ts
+import { type AuthContractConfig, DefaultAuthContractConfig, createAuthContracts } from '@anarchitects/auth-ts';
+
+const productProfile: AuthContractConfig = {
+  ...DefaultAuthContractConfig,
+  version: '1.0.0',
+  register: {
+    ...DefaultAuthContractConfig.register,
+    name: {
+      ...DefaultAuthContractConfig.register.name,
+      required: true,
+      minLength: 3,
+      emptyStringPolicy: 'strip',
+    },
+  },
+  login: {
+    ...DefaultAuthContractConfig.login,
+    password: {
+      ...DefaultAuthContractConfig.login.password,
+      minLength: 10,
+    },
+  },
+};
+
+const contracts = createAuthContracts(productProfile);
+```
+
+The static DTO schema exports such as `RegisterRequestSchema` and `LoginRequestSchema` remain available as default-profile convenience helpers. When a consumer needs profile customization, switch from those fixed exports to `createAuthContracts(...)`.
 
 ## Usage
 
@@ -73,10 +131,7 @@ pnpm add @anarchitects/auth-ts
 
 ```ts
 import { Value } from '@sinclair/typebox/value';
-import {
-  LoginRequestSchema,
-  LoginRequestDTO,
-} from '@anarchitects/auth-ts/dtos';
+import { LoginRequestSchema, LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
 
 const payload: LoginRequestDTO = {
   credential: 'user@example.com',
@@ -95,9 +150,7 @@ if (errors.length > 0) {
 > import { FormatRegistry } from '@sinclair/typebox';
 >
 > FormatRegistry.Set('email', (value: unknown): value is string => {
->   return (
->     typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
->   );
+>   return typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 > });
 > ```
 
@@ -108,16 +161,18 @@ import { User, Role, Permission } from '@anarchitects/auth-ts/models';
 
 function can(user: User, action: string, subject: string): boolean {
   const roles: Role[] = user.roles ?? [];
-  return roles.some((role) =>
-    (role.permissions ?? []).some(
-      (permission: Permission) =>
-        permission.action === action && permission.subject === subject,
-    ),
-  );
+  return roles.some((role) => (role.permissions ?? []).some((permission: Permission) => permission.action === action && permission.subject === subject));
 }
 ```
 
 The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relationships to support dynamic RBAC composition in persistence layers.
+
+### Contract profile versioning
+
+- Contract profiles carry their own `version` field.
+- Compatibility checks are exact today: `assertContractCompatibility(...)` compares the expected and actual version strings directly.
+- Treat stricter default-profile changes as breaking changes. Examples: raising `minLength`, lowering `maxLength`, or changing a field from optional to required.
+- Consumers should pin the profile version they expect and update intentionally when contract constraints change.
 
 ## Scripts
 

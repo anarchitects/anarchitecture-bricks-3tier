@@ -3,6 +3,7 @@
 NestJS services, controllers, and infrastructure for the Anarchitecture authentication domain. This package wires contract-driven DTOs from `@anarchitects/auth-ts`, uses Better Auth as the canonical internal auth engine, keeps email/password always enabled, and layers repo-owned RBAC on top of Better Auth-backed user/session state.
 
 Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
+Migration guidance for the contract-driven auth profile model lives in the [auth contract migration guide](../../../docs/guides/auth-contracts-migration.md).
 
 ## Developer + AI Agent Start Here
 
@@ -149,6 +150,15 @@ export class AppModule {}
 
 ## Usage
 
+### Contract-driven route validation
+
+`@anarchitects/auth-nest` now resolves request-body validation from an auth contract profile at module bootstrap.
+
+- If you omit `contracts`, the module uses `DefaultAuthContractConfig`.
+- Pass explicit overrides with `AuthModule.forRoot({ contracts: ... })` for deterministic app-local configuration.
+- Pass explicit overrides with `AuthModule.forRootFromConfig({ contracts: ... })` when the rest of the module is config-driven but the contract profile still needs code-level control.
+- `forRootFromConfig(...)` intentionally overlays explicit `contracts` overrides onto the default profile today; there is no dedicated `AUTH_*` contract env tree yet.
+
 ### Easy mode (single facade import)
 
 ```ts
@@ -208,6 +218,16 @@ AuthModule.forRootFromConfig({
   },
 });
 ```
+
+The same contract profile drives Fastify request validation for the core auth routes:
+
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/logout`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
+- `POST /auth/verify-email`
+- `PATCH /auth/change-password/:userId`
 
 Disable domain mailer wiring when not needed:
 

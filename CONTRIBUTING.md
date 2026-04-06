@@ -13,6 +13,7 @@
 
 - Define DTOs and models under `libs/*/ts`.
 - Angular and Nest libraries consume these shared types.
+- When contract-driven behavior changes, update the affected package READMEs and any relevant migration guide under `docs/guides/`.
 
 3. Library-first architecture
 
@@ -45,6 +46,7 @@ yarn install
 # API docs pipeline
 nx run api-specs:generate
 nx run api-specs:lint
+nx run api-specs:diff
 nx run api-specs:verify
 
 # If you add/change a route, update:
