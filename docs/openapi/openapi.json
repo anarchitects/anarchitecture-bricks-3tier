@@ -209,18 +209,50 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "accessToken": {
-                      "minLength": 1,
-                      "type": "string"
+                    "rbac": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "action": {
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "conditions": {
+                            "additionalProperties": {},
+                            "type": "object"
+                          },
+                          "fields": {
+                            "items": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "inverted": {
+                            "type": "boolean"
+                          },
+                          "reason": {
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "subject": {
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "action",
+                          "subject"
+                        ],
+                        "type": "object"
+                      },
+                      "type": "array"
                     },
-                    "refreshToken": {
-                      "minLength": 1,
-                      "type": "string"
-                    }
+                    "user": {}
                   },
                   "required": [
-                    "accessToken",
-                    "refreshToken"
+                    "user",
+                    "rbac"
                   ],
                   "type": "object"
                 }
@@ -241,19 +273,8 @@
           "content": {
             "application/json": {
               "schema": {
-                "properties": {
-                  "accessToken": {
-                    "minLength": 1,
-                    "type": "string"
-                  },
-                  "refreshToken": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "refreshToken"
-                ],
+                "additionalProperties": false,
+                "properties": {},
                 "type": "object"
               }
             }
@@ -351,69 +372,6 @@
         ]
       }
     },
-    "/auth/refresh-tokens/{userId}": {
-      "post": {
-        "operationId": "refreshTokens",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "userId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "properties": {
-                  "refreshToken": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "refreshToken"
-                ],
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "properties": {
-                    "accessToken": {
-                      "minLength": 1,
-                      "type": "string"
-                    },
-                    "refreshToken": {
-                      "minLength": 1,
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "accessToken",
-                    "refreshToken"
-                  ],
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Default Response"
-          }
-        },
-        "tags": [
-          "Auth"
-        ]
-      }
-    },
     "/auth/register": {
       "post": {
         "operationId": "registerUser",
@@ -430,13 +388,13 @@
                     "format": "email",
                     "type": "string"
                   },
-                  "password": {
-                    "minLength": 6,
-                    "type": "string"
-                  },
-                  "userName": {
+                  "name": {
                     "maxLength": 100,
                     "minLength": 2,
+                    "type": "string"
+                  },
+                  "password": {
+                    "minLength": 6,
                     "type": "string"
                   }
                 },

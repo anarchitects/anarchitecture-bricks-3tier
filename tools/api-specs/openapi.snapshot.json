@@ -21,9 +21,6 @@
     "/auth/me": {
       "get": "getLoggedInUserInfo"
     },
-    "/auth/refresh-tokens/{userId}": {
-      "post": "refreshTokens"
-    },
     "/auth/register": {
       "post": "registerUser"
     },
