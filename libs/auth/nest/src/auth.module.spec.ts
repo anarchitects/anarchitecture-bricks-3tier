@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { FASTIFY_ROUTE_SCHEMA_METADATA } from '@nestjs/platform-fastify/constants';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 import {
@@ -13,6 +14,12 @@ import {
   AuthService,
 } from './application';
 import { AuthModule } from './auth.module';
+import { applyAuthControllerContractRouteSchemas } from './presentation/auth-controller-route-schemas';
+import {
+  AUTH_CONTRACTS,
+  createDefaultAuthContracts,
+  type ResolvedAuthContracts,
+} from './presentation/auth-contracts';
 import { AuthController } from './presentation';
 
 const repositoryStub = {
@@ -54,7 +61,26 @@ const authModuleOptions = {
   },
 };
 
+type RouteBodySchema = {
+  required?: string[];
+};
+
+const getRegisterBodySchema = (): RouteBodySchema =>
+  (
+    Reflect.getMetadata(
+      FASTIFY_ROUTE_SCHEMA_METADATA,
+      AuthController.prototype.registerUser,
+    ) as { body?: RouteBodySchema }
+  ).body ?? {};
+
 describe('AuthModule', () => {
+  beforeEach(() => {
+    applyAuthControllerContractRouteSchemas(
+      AuthController,
+      createDefaultAuthContracts(),
+    );
+  });
+
   afterEach(() => {
     if (ORIGINAL_AUTH_ENV.mailerProvider === undefined) {
       delete process.env['AUTH_MAILER_PROVIDER'];
@@ -86,9 +112,38 @@ describe('AuthModule', () => {
 
     expect(moduleRef.get(AuthController, { strict: false })).toBeDefined();
     expect(moduleRef.get(AuthService, { strict: false })).toBeDefined();
+    expect(
+      moduleRef.get<ResolvedAuthContracts>(AUTH_CONTRACTS, { strict: false }),
+    ).toBeDefined();
+    expect(getRegisterBodySchema().required).not.toContain('name');
     expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
       NodeMailerAdapter,
     );
+  });
+
+  it('applies top-level contract overrides through forRoot', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        AuthModule.forRoot({
+          ...authModuleOptions,
+          contracts: {
+            register: {
+              name: {
+                required: true,
+              },
+            },
+          },
+          mailer: {
+            provider: 'noop',
+          },
+        }),
+      ],
+    }).compile();
+
+    expect(moduleRef.get(AuthController, { strict: false })).toBeDefined();
+    expect(getRegisterBodySchema().required).toContain('name');
   });
 
   it('compiles and resolves auth tokens when mailer is disabled via forRoot', async () => {
@@ -168,6 +223,31 @@ describe('AuthModule', () => {
     expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
       NoopMailerAdapter,
     );
+  });
+
+  it('applies top-level contract overrides through forRootFromConfig', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        AuthModule.forRootFromConfig({
+          presentation: authModuleOptions.presentation,
+          contracts: {
+            register: {
+              name: {
+                required: true,
+              },
+            },
+          },
+          mailer: {
+            provider: 'noop',
+          },
+        }),
+      ],
+    }).compile();
+
+    expect(moduleRef.get(AuthController, { strict: false })).toBeDefined();
+    expect(getRegisterBodySchema().required).toContain('name');
   });
 
   it('lets forRootFromConfig overrides win over AUTH_MAILER_PROVIDER', async () => {

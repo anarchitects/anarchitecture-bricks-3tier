@@ -1,3 +1,4 @@
+import { DefaultAuthContractConfig } from '@anarchitects/auth-ts';
 import {
   mapAuthConfigToApplicationModuleOptions,
   mapAuthConfigToAuthModuleOptions,
@@ -5,6 +6,7 @@ import {
   mapAuthConfigToPersistenceModuleOptions,
   mapAuthConfigToPresentationModuleOptions,
   resolveAuthApplicationModuleOptions,
+  resolveAuthContractConfig,
   resolveAuthModuleOptions,
 } from './module-options';
 import type { AuthConfig } from './auth.config';
@@ -176,11 +178,63 @@ describe('auth module option resolvers', () => {
     expect(resolveAuthModuleOptions({})).toEqual({
       presentation: {
         application: resolveAuthApplicationModuleOptions({}),
+        contracts: DefaultAuthContractConfig,
       },
       mailer: {
         provider: 'node',
       },
     });
+  });
+
+  it('preserves the default auth contract profile when no overrides are supplied', () => {
+    expect(resolveAuthContractConfig()).toEqual(DefaultAuthContractConfig);
+  });
+
+  it('merges nested contract overrides without clobbering sibling fields', () => {
+    expect(
+      resolveAuthContractConfig({
+        register: {
+          name: {
+            required: true,
+          },
+        },
+        login: {
+          password: {
+            minLength: 10,
+          },
+        },
+      }),
+    ).toEqual({
+      ...DefaultAuthContractConfig,
+      register: {
+        ...DefaultAuthContractConfig.register,
+        name: {
+          ...DefaultAuthContractConfig.register.name,
+          required: true,
+        },
+      },
+      login: {
+        ...DefaultAuthContractConfig.login,
+        password: {
+          ...DefaultAuthContractConfig.login.password,
+          minLength: 10,
+        },
+      },
+    });
+  });
+
+  it('lets explicit root contract overrides win deterministically', () => {
+    expect(
+      resolveAuthModuleOptions({
+        contracts: {
+          register: {
+            name: {
+              required: true,
+            },
+          },
+        },
+      }).presentation.contracts.register.name.required,
+    ).toBe(true);
   });
 
   it('lets explicit plugin and Better Auth overrides win over defaults', () => {

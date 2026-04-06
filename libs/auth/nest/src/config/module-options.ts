@@ -1,4 +1,9 @@
 import type { CommonMailerProvider } from '@anarchitects/common-nest-mailer';
+import type {
+  AuthContractConfig,
+  AuthFieldConfig,
+} from '@anarchitects/auth-ts';
+import { DefaultAuthContractConfig } from '@anarchitects/auth-ts';
 import type { ResourceAuthorizationOptions } from './resource-authorization.types';
 import type { AuthConfig } from './auth.config';
 import {
@@ -109,6 +114,14 @@ export type ResolvedAuthPluginsOptions = {
 export type AuthPersistenceModuleOptions = Record<string, never>;
 export type ResolvedAuthPersistenceModuleOptions = Record<string, never>;
 
+type DeepPartial<T> = T extends object
+  ? {
+      [K in keyof T]?: DeepPartial<T[K]>;
+    }
+  : T;
+
+export type AuthContractConfigOverrides = DeepPartial<AuthContractConfig>;
+
 export type AuthMailerModuleOptions = {
   provider?: CommonMailerProvider;
 };
@@ -139,18 +152,26 @@ export type ResolvedAuthApplicationModuleOptions = {
 
 export type AuthPresentationModuleOptions = {
   application?: AuthApplicationModuleOptions;
+  contracts?: AuthContractConfigOverrides;
 };
 
 export type ResolvedAuthPresentationModuleOptions = {
   application: ResolvedAuthApplicationModuleOptions;
+  contracts: AuthContractConfig;
 };
+
+export type AuthModulePresentationOptions = Omit<
+  AuthPresentationModuleOptions,
+  'contracts'
+>;
 
 export type AuthModuleFeatures = {
   provider?: CommonMailerProvider;
 };
 
 export type AuthModuleOptions = {
-  presentation?: AuthPresentationModuleOptions;
+  presentation?: AuthModulePresentationOptions;
+  contracts?: AuthContractConfigOverrides;
   mailer?: AuthMailerModuleOptions;
 };
 
@@ -201,9 +222,11 @@ export const resolveAuthApplicationModuleOptions = (
       enabled:
         options.plugins?.passkeys?.enabled ??
         DEFAULT_AUTH_PLUGIN_PASSKEYS_ENABLED,
-      rpID: options.plugins?.passkeys?.rpID ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
+      rpID:
+        options.plugins?.passkeys?.rpID ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
       rpName:
-        options.plugins?.passkeys?.rpName ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
+        options.plugins?.passkeys?.rpName ??
+        DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
       origin: options.plugins?.passkeys?.origin,
     },
     social: {
@@ -225,16 +248,115 @@ export const resolveAuthApplicationModuleOptions = (
   },
 });
 
+const hasOwn = <K extends PropertyKey>(
+  value: object | undefined,
+  key: K,
+): value is Record<K, unknown> =>
+  value !== undefined && Object.prototype.hasOwnProperty.call(value, key);
+
+const resolveAuthFieldConfig = (
+  defaults: AuthFieldConfig,
+  overrides?: DeepPartial<AuthFieldConfig>,
+): AuthFieldConfig => ({
+  required: overrides?.required ?? defaults.required,
+  minLength: hasOwn(overrides, 'minLength')
+    ? (overrides.minLength as AuthFieldConfig['minLength'])
+    : defaults.minLength,
+  maxLength: hasOwn(overrides, 'maxLength')
+    ? (overrides.maxLength as AuthFieldConfig['maxLength'])
+    : defaults.maxLength,
+  emptyStringPolicy: overrides?.emptyStringPolicy ?? defaults.emptyStringPolicy,
+});
+
+export const resolveAuthContractConfig = (
+  overrides: AuthContractConfigOverrides = {},
+): AuthContractConfig => ({
+  version: overrides.version ?? DefaultAuthContractConfig.version,
+  register: {
+    email: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.register.email,
+      overrides.register?.email,
+    ),
+    password: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.register.password,
+      overrides.register?.password,
+    ),
+    confirmPassword: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.register.confirmPassword,
+      overrides.register?.confirmPassword,
+    ),
+    name: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.register.name,
+      overrides.register?.name,
+    ),
+  },
+  login: {
+    credential: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.login.credential,
+      overrides.login?.credential,
+    ),
+    password: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.login.password,
+      overrides.login?.password,
+    ),
+  },
+  forgotPassword: {
+    email: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.forgotPassword.email,
+      overrides.forgotPassword?.email,
+    ),
+  },
+  resetPassword: {
+    token: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.resetPassword.token,
+      overrides.resetPassword?.token,
+    ),
+    password: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.resetPassword.password,
+      overrides.resetPassword?.password,
+    ),
+    confirmPassword: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.resetPassword.confirmPassword,
+      overrides.resetPassword?.confirmPassword,
+    ),
+  },
+  verifyEmail: {
+    token: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.verifyEmail.token,
+      overrides.verifyEmail?.token,
+    ),
+  },
+  changePassword: {
+    currentPassword: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.changePassword.currentPassword,
+      overrides.changePassword?.currentPassword,
+    ),
+    newPassword: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.changePassword.newPassword,
+      overrides.changePassword?.newPassword,
+    ),
+    confirmPassword: resolveAuthFieldConfig(
+      DefaultAuthContractConfig.changePassword.confirmPassword,
+      overrides.changePassword?.confirmPassword,
+    ),
+  },
+  logout: {},
+});
+
 export const resolveAuthPresentationModuleOptions = (
   options: AuthPresentationModuleOptions = {},
 ): ResolvedAuthPresentationModuleOptions => ({
   application: resolveAuthApplicationModuleOptions(options.application),
+  contracts: resolveAuthContractConfig(options.contracts),
 });
 
 export const resolveAuthModuleOptions = (
   options: AuthModuleOptions = {},
 ): ResolvedAuthModuleOptions => ({
-  presentation: resolveAuthPresentationModuleOptions(options.presentation),
+  presentation: resolveAuthPresentationModuleOptions({
+    ...options.presentation,
+    contracts: options.contracts,
+  }),
   mailer: resolveAuthMailerModuleOptions(options.mailer),
 });
 
@@ -268,8 +390,7 @@ export const mapAuthConfigToApplicationModuleOptions = (
   },
   plugins: {
     jwt: {
-      enabled:
-        config.plugins?.jwt?.enabled ?? DEFAULT_AUTH_PLUGIN_JWT_ENABLED,
+      enabled: config.plugins?.jwt?.enabled ?? DEFAULT_AUTH_PLUGIN_JWT_ENABLED,
       secret: config.plugins?.jwt?.secret ?? DEFAULT_AUTH_PLUGIN_JWT_SECRET,
       expiration:
         config.plugins?.jwt?.expiration ?? DEFAULT_AUTH_PLUGIN_JWT_EXPIRATION,
@@ -281,11 +402,9 @@ export const mapAuthConfigToApplicationModuleOptions = (
       enabled:
         config.plugins?.passkeys?.enabled ??
         DEFAULT_AUTH_PLUGIN_PASSKEYS_ENABLED,
-      rpID:
-        config.plugins?.passkeys?.rpID ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
+      rpID: config.plugins?.passkeys?.rpID ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_ID,
       rpName:
-        config.plugins?.passkeys?.rpName ??
-        DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
+        config.plugins?.passkeys?.rpName ?? DEFAULT_AUTH_PLUGIN_PASSKEY_RP_NAME,
       origin: config.plugins?.passkeys?.origin,
     },
     social: {
@@ -305,8 +424,7 @@ export const mapAuthConfigToApplicationModuleOptions = (
 const resolveAuthSocialPluginOptions = (
   socialOptions?: AuthSocialPluginOptions | AuthConfig['plugins']['social'],
 ): ResolvedAuthSocialPluginOptions => {
-  const enabled =
-    socialOptions?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED;
+  const enabled = socialOptions?.enabled ?? DEFAULT_AUTH_PLUGIN_SOCIAL_ENABLED;
   const github = socialOptions?.github
     ? {
         clientId: socialOptions.github.clientId,

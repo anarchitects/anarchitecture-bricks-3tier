@@ -2,15 +2,21 @@ import { DynamicModule } from '@nestjs/common';
 import { FASTIFY_ROUTE_SCHEMA_METADATA } from '@nestjs/platform-fastify/constants';
 import { AuthApplicationModule } from '../application';
 import { JwtAuthPluginController } from '../infrastructure-engine/better-auth/plugins/jwt/jwt-auth-plugin.controller';
+import { applyAuthControllerContractRouteSchemas } from './auth-controller-route-schemas';
 import { AuthController } from './controllers/auth.controller';
 import {
   AUTH_CONTRACTS,
-  type DefaultAuthContracts,
+  createDefaultAuthContracts,
+  type ResolvedAuthContracts,
 } from './auth-contracts';
 import { AuthPresentationModule } from './presentation.module';
 
 type RouteSchemaMetadata = {
   body?: unknown;
+};
+
+type RouteBodySchema = {
+  required?: string[];
 };
 
 const getRouteSchemaBody = (methodName: keyof AuthController): unknown =>
@@ -23,20 +29,31 @@ const getRouteSchemaBody = (methodName: keyof AuthController): unknown =>
 
 const getAuthContracts = (
   moduleMetadata: DynamicModule,
-): DefaultAuthContracts => {
+): ResolvedAuthContracts => {
   const provider = moduleMetadata.providers?.find(
     (entry) =>
       typeof entry === 'object' &&
       entry !== null &&
       'provide' in entry &&
       entry.provide === AUTH_CONTRACTS,
-  ) as { useValue: DefaultAuthContracts } | undefined;
+  ) as { useValue: ResolvedAuthContracts } | undefined;
 
   expect(provider).toBeDefined();
-  return provider!.useValue;
+  if (!provider) {
+    throw new Error('AUTH_CONTRACTS provider missing from module metadata.');
+  }
+
+  return provider.useValue;
 };
 
 describe('AuthPresentationModule', () => {
+  beforeEach(() => {
+    applyAuthControllerContractRouteSchemas(
+      AuthController,
+      createDefaultAuthContracts(),
+    );
+  });
+
   it('composes application forRoot options when overrides are provided', () => {
     const moduleMetadata = AuthPresentationModule.forRoot({
       application: {
@@ -55,6 +72,27 @@ describe('AuthPresentationModule', () => {
     expect(getRouteSchemaBody('registerUser')).toBe(
       contracts.registerRequestSchema,
     );
+  });
+
+  it('applies contract overrides to generated route metadata', () => {
+    const moduleMetadata = AuthPresentationModule.forRoot({
+      contracts: {
+        register: {
+          name: {
+            required: true,
+          },
+        },
+      },
+    });
+
+    const contracts = getAuthContracts(moduleMetadata);
+
+    expect(getRouteSchemaBody('registerUser')).toBe(
+      contracts.registerRequestSchema,
+    );
+    expect(
+      (contracts.registerRequestSchema as RouteBodySchema).required,
+    ).toContain('name');
   });
 
   it('mounts the JWT plugin controller only when the plugin is enabled', () => {

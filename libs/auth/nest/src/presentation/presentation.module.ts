@@ -1,11 +1,9 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import {
-  applyAuthControllerContractRouteSchemas,
-} from './auth-controller-route-schemas';
+import { applyAuthControllerContractRouteSchemas } from './auth-controller-route-schemas';
 import {
   createAuthContractsProvider,
-  createDefaultAuthContracts,
+  createAuthContractsFromConfig,
 } from './auth-contracts';
 import { AuthController } from './controllers/auth.controller';
 import { AuthApplicationModule } from '../application';
@@ -15,6 +13,7 @@ import { JwtAuthPluginController } from '../infrastructure-engine/better-auth/pl
 import {
   authConfig,
   mapAuthConfigToPresentationModuleOptions,
+  resolveAuthPresentationModuleOptions,
 } from '../config';
 import type { AuthPresentationModuleOptions } from '../config';
 
@@ -25,7 +24,10 @@ import type { AuthPresentationModuleOptions } from '../config';
 })
 export class AuthPresentationModule {
   static forRoot(options: AuthPresentationModuleOptions = {}): DynamicModule {
-    const authContracts = createDefaultAuthContracts();
+    const resolvedOptions = resolveAuthPresentationModuleOptions(options);
+    const authContracts = createAuthContractsFromConfig(
+      resolvedOptions.contracts,
+    );
     const jwtPluginController = options.application?.plugins?.jwt?.enabled
       ? [JwtAuthPluginController]
       : [];
