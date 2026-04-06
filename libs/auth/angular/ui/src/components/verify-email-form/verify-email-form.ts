@@ -1,4 +1,5 @@
 import { VerifyEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
+import { injectAuthContracts } from '@anarchitects/auth-angular/config';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
@@ -23,17 +24,21 @@ import { verifyEmailFormBridge } from '../../internal/auth-form-bridges';
   },
 })
 export class AnarchitectsAuthUiVerifyEmailForm {
+  private readonly authContracts = injectAuthContracts();
+
   readonly token = input<string>();
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<VerifyEmailRequestDTO>();
 
   readonly formConfig = computed(() =>
-    verifyEmailFormBridge.resolveFormConfig({ token: this.token() }),
+    verifyEmailFormBridge.resolveFormConfig(this.authContracts, {
+      token: this.token(),
+    }),
   );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const dto = verifyEmailFormBridge.mapSubmission(input, {
+    const dto = verifyEmailFormBridge.mapSubmission(input, this.authContracts, {
       token: this.token(),
     });
     if (dto) {

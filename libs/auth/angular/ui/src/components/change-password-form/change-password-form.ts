@@ -1,4 +1,5 @@
 import { ChangePasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
+import { injectAuthContracts } from '@anarchitects/auth-angular/config';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
@@ -23,16 +24,21 @@ import { changePasswordFormBridge } from '../../internal/auth-form-bridges';
   },
 })
 export class AnarchitectsAuthUiChangePasswordForm {
+  private readonly authContracts = injectAuthContracts();
+
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<ChangePasswordRequestDTO>();
 
   readonly formConfig = computed(() =>
-    changePasswordFormBridge.resolveFormConfig(),
+    changePasswordFormBridge.resolveFormConfig(this.authContracts),
   );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const dto = changePasswordFormBridge.mapSubmission(input);
+    const dto = changePasswordFormBridge.mapSubmission(
+      input,
+      this.authContracts,
+    );
     if (dto) {
       this.submitted.emit(dto);
     }

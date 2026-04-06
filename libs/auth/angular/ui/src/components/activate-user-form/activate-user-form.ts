@@ -29,11 +29,13 @@ export class AnarchitectsAuthUiActivateUserForm {
   readonly submitted = output<ActivateUserRequestDTO>();
 
   readonly formConfig = computed(() =>
-    activateUserFormBridge.resolveFormConfig({ token: this.token() }),
+    activateUserFormBridge.resolveFormConfig(undefined, {
+      token: this.token(),
+    }),
   );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const dto = activateUserFormBridge.mapSubmission(input, {
+    const dto = activateUserFormBridge.mapSubmission(input, undefined, {
       token: this.token(),
     });
     if (dto) {

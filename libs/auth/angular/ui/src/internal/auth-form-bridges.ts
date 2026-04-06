@@ -9,17 +9,22 @@ import {
   UpdateEmailRequestDTO,
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
+import { type ResolvedAuthContracts } from '@anarchitects/auth-angular/config';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
-import { FormConfig } from '@anarchitects/forms-ts/models';
+import { FormConfig, type FormField } from '@anarchitects/forms-ts/models';
 
 type TokenContext = Readonly<{
   token?: string;
 }>;
 
 interface AuthFormBridge<TDto, TContext = undefined> {
-  resolveFormConfig(context?: TContext): FormConfig;
+  resolveFormConfig(
+    contracts?: ResolvedAuthContracts,
+    context?: TContext,
+  ): FormConfig;
   mapSubmission(
     input: SubmissionRequestDTO,
+    contracts?: ResolvedAuthContracts,
     context?: TContext,
   ): TDto | undefined;
 }
@@ -35,97 +40,6 @@ const matchFieldsRule = (sourceField: string, targetField: string) => ({
   targetField,
   message: 'Passwords must match.',
 });
-
-const LOGIN_FORM_CONFIG: FormConfig = {
-  id: 'login',
-  version: 1,
-  fields: [
-    {
-      name: 'credential',
-      kind: 'string',
-      required: true,
-      minLength: 2,
-      maxLength: 100,
-      ui: { label: 'Email or Username' },
-    },
-    {
-      name: 'password',
-      kind: 'password',
-      required: true,
-      minLength: 6,
-      ui: { label: 'Password' },
-    },
-  ],
-};
-
-const REGISTER_FORM_CONFIG: FormConfig = {
-  id: 'register',
-  version: 1,
-  fields: [
-    {
-      name: 'name',
-      kind: 'string',
-      ui: { label: 'Name' },
-      required: false,
-    },
-    { name: 'email', kind: 'email', ui: { label: 'Email' }, required: true },
-    {
-      name: 'password',
-      kind: 'password',
-      ui: { label: 'Password' },
-      required: true,
-    },
-    {
-      name: 'confirmPassword',
-      kind: 'password',
-      ui: { label: 'Confirm Password' },
-      required: true,
-    },
-  ],
-  validationRules: [matchFieldsRule('password', 'confirmPassword')],
-};
-
-const CHANGE_PASSWORD_FORM_CONFIG: FormConfig = {
-  id: 'change-password',
-  version: 1,
-  fields: [
-    {
-      name: 'currentPassword',
-      kind: 'password',
-      required: true,
-      minLength: 6,
-      ui: { label: 'Current Password' },
-    },
-    {
-      name: 'newPassword',
-      kind: 'password',
-      required: true,
-      minLength: 6,
-      ui: { label: 'New Password' },
-    },
-    {
-      name: 'confirmPassword',
-      kind: 'password',
-      required: true,
-      minLength: 6,
-      ui: { label: 'Confirm Password' },
-    },
-  ],
-  validationRules: [matchFieldsRule('newPassword', 'confirmPassword')],
-};
-
-const FORGOT_PASSWORD_FORM_CONFIG: FormConfig = {
-  id: 'forgot-password',
-  version: 1,
-  fields: [
-    {
-      name: 'email',
-      kind: 'email',
-      required: true,
-      ui: { label: 'Email' },
-    },
-  ],
-};
 
 const UPDATE_EMAIL_FORM_CONFIG: FormConfig = {
   id: 'update-email',
@@ -158,8 +72,57 @@ const resolveToken = (
   fallbackToken?: string,
 ): string | undefined => readPayloadString(input, 'token') || fallbackToken;
 
+type AuthFieldMeta = ResolvedAuthContracts['registerFormMeta']['email'];
+
+const requireContracts = (
+  contracts?: ResolvedAuthContracts,
+): ResolvedAuthContracts => {
+  if (!contracts) {
+    throw new Error('Auth contracts are required to resolve auth form config.');
+  }
+
+  return contracts;
+};
+
+const toFormField = (
+  name: string,
+  kind: FormField['kind'],
+  label: string,
+  meta: AuthFieldMeta,
+  overrides: Partial<FormField> = {},
+): FormField => ({
+  name,
+  kind,
+  required: meta.required,
+  minLength: meta.minLength,
+  maxLength: meta.maxLength,
+  ui: { label },
+  ...overrides,
+});
+
 export const loginFormBridge: AuthFormBridge<LoginRequestDTO> = {
-  resolveFormConfig: () => LOGIN_FORM_CONFIG,
+  resolveFormConfig: (contracts) => {
+    const resolvedContracts = requireContracts(contracts);
+
+    return {
+      id: 'login',
+      version: 1,
+      fields: [
+        toFormField(
+          'credential',
+          'string',
+          'Email or Username',
+          resolvedContracts.loginFormMeta.credential,
+        ),
+        toFormField(
+          'password',
+          'password',
+          'Password',
+          resolvedContracts.loginFormMeta.password,
+        ),
+      ],
+    };
+  },
   mapSubmission: (input) => ({
     credential: readPayloadString(input, 'credential') as string,
     password: readPayloadString(input, 'password') as string,
@@ -167,7 +130,41 @@ export const loginFormBridge: AuthFormBridge<LoginRequestDTO> = {
 };
 
 export const registerFormBridge: AuthFormBridge<RegisterRequestDTO> = {
-  resolveFormConfig: () => REGISTER_FORM_CONFIG,
+  resolveFormConfig: (contracts) => {
+    const resolvedContracts = requireContracts(contracts);
+
+    return {
+      id: 'register',
+      version: 1,
+      fields: [
+        toFormField(
+          'name',
+          'string',
+          'Name',
+          resolvedContracts.registerFormMeta.name,
+        ),
+        toFormField(
+          'email',
+          'email',
+          'Email',
+          resolvedContracts.registerFormMeta.email,
+        ),
+        toFormField(
+          'password',
+          'password',
+          'Password',
+          resolvedContracts.registerFormMeta.password,
+        ),
+        toFormField(
+          'confirmPassword',
+          'password',
+          'Confirm Password',
+          resolvedContracts.registerFormMeta.confirmPassword,
+        ),
+      ],
+      validationRules: [matchFieldsRule('password', 'confirmPassword')],
+    };
+  },
   mapSubmission: (input) => ({
     name: readPayloadString(input, 'name'),
     email: readPayloadString(input, 'email') as string,
@@ -180,7 +177,7 @@ export const activateUserFormBridge: AuthFormBridge<
   ActivateUserRequestDTO,
   TokenContext
 > = {
-  resolveFormConfig: (context) => ({
+  resolveFormConfig: (_contracts, context) => ({
     id: 'activate-user',
     version: 1,
     fields: [
@@ -193,7 +190,7 @@ export const activateUserFormBridge: AuthFormBridge<
       },
     ],
   }),
-  mapSubmission: (input, context) => {
+  mapSubmission: (input, _contracts, context) => {
     const token = resolveToken(input, context?.token);
     if (!token) {
       return undefined;
@@ -205,7 +202,22 @@ export const activateUserFormBridge: AuthFormBridge<
 
 export const forgotPasswordFormBridge: AuthFormBridge<ForgotPasswordRequestDTO> =
   {
-    resolveFormConfig: () => FORGOT_PASSWORD_FORM_CONFIG,
+    resolveFormConfig: (contracts) => {
+      const resolvedContracts = requireContracts(contracts);
+
+      return {
+        id: 'forgot-password',
+        version: 1,
+        fields: [
+          toFormField(
+            'email',
+            'email',
+            'Email',
+            resolvedContracts.forgotPasswordFormMeta.email,
+          ),
+        ],
+      };
+    },
     mapSubmission: (input) => ({
       email: readPayloadString(input, 'email') as string,
     }),
@@ -215,35 +227,41 @@ export const resetPasswordFormBridge: AuthFormBridge<
   ResetPasswordRequestDTO,
   TokenContext
 > = {
-  resolveFormConfig: (context) => ({
-    id: 'reset-password',
-    version: 1,
-    fields: [
-      {
-        name: 'token',
-        kind: 'string',
-        required: !context?.token,
-        minLength: 1,
-        ui: { label: 'Reset Token' },
-      },
-      {
-        name: 'password',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Password' },
-      },
-      {
-        name: 'confirmPassword',
-        kind: 'password',
-        required: true,
-        minLength: 6,
-        ui: { label: 'Confirm Password' },
-      },
-    ],
-    validationRules: [matchFieldsRule('password', 'confirmPassword')],
-  }),
-  mapSubmission: (input, context) => {
+  resolveFormConfig: (contracts, context) => {
+    const resolvedContracts = requireContracts(contracts);
+
+    return {
+      id: 'reset-password',
+      version: 1,
+      fields: [
+        toFormField(
+          'token',
+          'string',
+          'Reset Token',
+          resolvedContracts.resetPasswordFormMeta.token,
+          {
+            required: context?.token
+              ? false
+              : resolvedContracts.resetPasswordFormMeta.token.required,
+          },
+        ),
+        toFormField(
+          'password',
+          'password',
+          'Password',
+          resolvedContracts.resetPasswordFormMeta.password,
+        ),
+        toFormField(
+          'confirmPassword',
+          'password',
+          'Confirm Password',
+          resolvedContracts.resetPasswordFormMeta.confirmPassword,
+        ),
+      ],
+      validationRules: [matchFieldsRule('password', 'confirmPassword')],
+    };
+  },
+  mapSubmission: (input, _contracts, context) => {
     const token = resolveToken(input, context?.token);
     if (!token) {
       return undefined;
@@ -261,20 +279,28 @@ export const verifyEmailFormBridge: AuthFormBridge<
   VerifyEmailRequestDTO,
   TokenContext
 > = {
-  resolveFormConfig: (context) => ({
-    id: 'verify-email',
-    version: 1,
-    fields: [
-      {
-        name: 'token',
-        kind: 'string',
-        required: !context?.token,
-        minLength: 1,
-        ui: { label: 'Verification Token' },
-      },
-    ],
-  }),
-  mapSubmission: (input, context) => {
+  resolveFormConfig: (contracts, context) => {
+    const resolvedContracts = requireContracts(contracts);
+
+    return {
+      id: 'verify-email',
+      version: 1,
+      fields: [
+        toFormField(
+          'token',
+          'string',
+          'Verification Token',
+          resolvedContracts.verifyEmailFormMeta.token,
+          {
+            required: context?.token
+              ? false
+              : resolvedContracts.verifyEmailFormMeta.token.required,
+          },
+        ),
+      ],
+    };
+  },
+  mapSubmission: (input, _contracts, context) => {
     const token = resolveToken(input, context?.token);
     if (!token) {
       return undefined;
@@ -286,7 +312,35 @@ export const verifyEmailFormBridge: AuthFormBridge<
 
 export const changePasswordFormBridge: AuthFormBridge<ChangePasswordRequestDTO> =
   {
-    resolveFormConfig: () => CHANGE_PASSWORD_FORM_CONFIG,
+    resolveFormConfig: (contracts) => {
+      const resolvedContracts = requireContracts(contracts);
+
+      return {
+        id: 'change-password',
+        version: 1,
+        fields: [
+          toFormField(
+            'currentPassword',
+            'password',
+            'Current Password',
+            resolvedContracts.changePasswordFormMeta.currentPassword,
+          ),
+          toFormField(
+            'newPassword',
+            'password',
+            'New Password',
+            resolvedContracts.changePasswordFormMeta.newPassword,
+          ),
+          toFormField(
+            'confirmPassword',
+            'password',
+            'Confirm Password',
+            resolvedContracts.changePasswordFormMeta.confirmPassword,
+          ),
+        ],
+        validationRules: [matchFieldsRule('newPassword', 'confirmPassword')],
+      };
+    },
     mapSubmission: (input) => ({
       currentPassword: readPayloadString(input, 'currentPassword') as string,
       newPassword: readPayloadString(input, 'newPassword') as string,
