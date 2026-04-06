@@ -1,4 +1,5 @@
 import { ForgotPasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
+import { injectAuthContracts } from '@anarchitects/auth-angular/config';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
@@ -23,16 +24,21 @@ import { forgotPasswordFormBridge } from '../../internal/auth-form-bridges';
   },
 })
 export class AnarchitectsAuthUiForgotPasswordForm {
+  private readonly authContracts = injectAuthContracts();
+
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<ForgotPasswordRequestDTO>();
 
   readonly formConfig = computed(() =>
-    forgotPasswordFormBridge.resolveFormConfig(),
+    forgotPasswordFormBridge.resolveFormConfig(this.authContracts),
   );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const dto = forgotPasswordFormBridge.mapSubmission(input);
+    const dto = forgotPasswordFormBridge.mapSubmission(
+      input,
+      this.authContracts,
+    );
     if (dto) {
       this.submitted.emit(dto);
     }

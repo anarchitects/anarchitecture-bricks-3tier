@@ -1,4 +1,5 @@
 import { ResetPasswordRequestDTO } from '@anarchitects/auth-ts/dtos';
+import { injectAuthContracts } from '@anarchitects/auth-angular/config';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
@@ -23,19 +24,27 @@ import { resetPasswordFormBridge } from '../../internal/auth-form-bridges';
   },
 })
 export class AnarchitectsAuthUiResetPasswordForm {
+  private readonly authContracts = injectAuthContracts();
+
   readonly token = input<string>();
   readonly layout = input<AnxLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<ResetPasswordRequestDTO>();
 
   readonly formConfig = computed(() =>
-    resetPasswordFormBridge.resolveFormConfig({ token: this.token() }),
+    resetPasswordFormBridge.resolveFormConfig(this.authContracts, {
+      token: this.token(),
+    }),
   );
 
   onSubmitted(input: SubmissionRequestDTO): void {
-    const dto = resetPasswordFormBridge.mapSubmission(input, {
-      token: this.token(),
-    });
+    const dto = resetPasswordFormBridge.mapSubmission(
+      input,
+      this.authContracts,
+      {
+        token: this.token(),
+      },
+    );
     if (dto) {
       this.submitted.emit(dto);
     }
