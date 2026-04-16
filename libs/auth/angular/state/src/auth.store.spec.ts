@@ -409,6 +409,35 @@ describe('AuthStore', () => {
     });
   });
 
+  it('strips null optional register name before calling AuthApi.registerUser', async () => {
+    const { store, mockAuthApi } = setup({
+      stateOptions: {
+        restoreOnInit: false,
+      },
+      contractOverrides: {
+        register: {
+          name: {
+            emptyStringPolicy: 'strip',
+          },
+        },
+      },
+    });
+
+    store.registerUser({
+      name: null as unknown as string,
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(mockAuthApi.registerUser).toHaveBeenCalledWith({
+      email: 'jane@example.com',
+      password: 'secret123',
+      confirmPassword: 'secret123',
+    });
+  });
+
   it('rejects empty optional login password before calling AuthApi.login', async () => {
     const { store, mockAuthApi } = setup({
       stateOptions: {

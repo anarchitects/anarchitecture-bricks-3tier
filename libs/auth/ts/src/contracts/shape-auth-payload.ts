@@ -16,14 +16,19 @@ export function shapeAuthPayload<
 >(payload: TPayload, fieldMap: TFieldMap): TPayload {
   const shapedEntries = Object.entries(payload).flatMap(([key, value]) => {
     const fieldBehavior = fieldMap[key];
+    const isEmptyOptionalValue = value === '' || value === null;
 
-    if (!fieldBehavior || fieldBehavior.required || value !== '') {
+    if (
+      !fieldBehavior ||
+      fieldBehavior.required ||
+      !isEmptyOptionalValue
+    ) {
       return [[key, value] as const];
     }
 
     switch (fieldBehavior.emptyStringPolicy) {
       case 'allow':
-        return [[key, value] as const];
+        return [[key, '' as unknown] as const];
       case 'strip':
         return [];
       case 'reject':
