@@ -13,6 +13,7 @@ Before changing code, inspect these repo files when relevant:
 - domain package `README.md` files
 - `docs/guides/alignment-with-bricks-ddd.md`
 - `docs/guides/migration-to-bricks-ddd.md`
+- `docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md`
 
 ## Core implementation rules
 - Keep shared schemas, dto definitions, builders, and typed models in `libs/*/ts`.
@@ -23,6 +24,8 @@ Before changing code, inspect these repo files when relevant:
 - Keep examples as validation surfaces, not product packages.
 - Do not create or modify anything under `apps/`.
 - Do not manually edit generated OpenAPI artifacts under `docs/openapi/`.
+- Do not split libraries by audience (`admin`, `public`, `backoffice`, etc.) as a default rule; package by capability first and introduce audience-specific libraries only when workflow divergence is real.
+- If the difference is mainly route location, route guard, layout shell, or host-app composition, keep the reusable capability in the domain library and let the consuming app compose the audience-specific page.
 
 ## Required workflow
 1. Identify the target domain under `libs/<domain>`.
@@ -41,6 +44,7 @@ Before changing code, inspect these repo files when relevant:
 - Keep state intentionally scoped.
 - Do not introduce implicit root-scoped domain state.
 - Keep presentational concerns in `ui`, smart orchestration in `feature`, state in `state`, and transport in `data-access`.
+- Treat audience and access policy as composition concerns unless the admin or staff surface has become a genuinely different workflow.
 
 ## Cross-repo alignment check
 When the change affects domain meaning, public capability, package naming, or migration expectations, also inspect:
@@ -48,5 +52,6 @@ When the change affects domain meaning, public capability, package naming, or mi
 - `docs/guides/alignment-with-bricks-ddd.md`
 - `docs/guides/migration-to-bricks-ddd.md`
 - `docs/adr/0001-align-with-bricks-ddd-and-support-migration.md`
+- `docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md`
 
 If the requested change would make future migration to the DDD repo harder, say so explicitly.
