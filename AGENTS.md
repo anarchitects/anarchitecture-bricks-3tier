@@ -69,6 +69,8 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 13. Prefer documenting and using root facade modules (`@anarchitects/<domain>-nest`) in quick starts; use secondary entry points for advanced composition/overrides.
 14. Configure shared infrastructure transports once at app root (for example mail transport via `CommonMailerModule`) and keep domain infrastructure modules adapter-only wrappers over shared implementations (for example `CommonNodeMailerModule`).
 15. When domain infrastructure is optional, expose facade-level feature flags (for example `features.mailer`) and provide safe no-op behavior for disabled features.
+16. Keep this repo aligned with `anarchitects/anarchitecture-bricks-ddd` at the domain and capability level, while preserving the 3-tier implementation style in this repo.
+17. Treat migration from 3-tier structure to DDD structure as a supported evolution path.
 
 ## Library API Paradigm (Maximum Flexibility + Ease of Use)
 
@@ -89,6 +91,14 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
   - quick start via facade/easy mode.
   - advanced composition via secondary entry points.
   - deterministic behavior checks for both `forRoot` and `forRootFromConfig`.
+
+## Cross-Repo Alignment Standards
+
+For alignment with the DDD companion repo and migration expectations, follow:
+
+- `docs/guides/alignment-with-bricks-ddd.md`
+- `docs/guides/migration-to-bricks-ddd.md`
+- `docs/adr/0001-align-with-bricks-ddd-and-support-migration.md`
 
 ## Preferred Commands
 
