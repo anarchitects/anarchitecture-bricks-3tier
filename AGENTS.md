@@ -71,6 +71,7 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 15. When domain infrastructure is optional, expose facade-level feature flags (for example `features.mailer`) and provide safe no-op behavior for disabled features.
 16. Keep this repo aligned with `anarchitects/anarchitecture-bricks-ddd` at the domain and capability level, while preserving the 3-tier implementation style in this repo.
 17. Treat migration from 3-tier structure to DDD structure as a supported evolution path.
+18. Do not split libraries by audience (`admin`, `public`, `backoffice`, etc.) as a default rule; package by capability first and introduce audience-specific libraries only when workflow divergence is real.
 
 ## Library API Paradigm (Maximum Flexibility + Ease of Use)
 
@@ -99,6 +100,7 @@ For alignment with the DDD companion repo and migration expectations, follow:
 - `docs/guides/alignment-with-bricks-ddd.md`
 - `docs/guides/migration-to-bricks-ddd.md`
 - `docs/adr/0001-align-with-bricks-ddd-and-support-migration.md`
+- `docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md`
 
 ## Preferred Commands
 
@@ -457,3 +459,39 @@ Domain libraries **must never implicitly create global singleton state**.
 | Store registration | Use provider helpers                   |
 | App-wide state     | Register in app providers              |
 | Feature state      | Register in route or feature providers |
+
+## Audience vs Capability Packaging Convention
+
+Libraries should be split by audience only when workflow divergence is real.
+
+### Core Rule
+
+Do **not** create separate libraries such as `*-admin`, `*-public`, or `*-backoffice` merely because a consuming app places a feature behind a different route, layout, or guard.
+
+Prefer packaging by:
+
+- domain capability
+- layer responsibility
+- orchestration/workflow surface
+- reusable technical concern
+
+### Use Audience-Specific Libraries Only When
+
+A separate audience-specific library becomes justified when the workflow surface is genuinely different, for example because it introduces:
+
+- bulk operations
+- moderation or review workflows
+- audit/governance workflows
+- materially different state, data-access, or orchestration
+- operational dashboards that are more than guarded variants of the same reusable features
+
+### Default Approach
+
+Keep reusable capability artifacts in the domain library and let consuming apps decide whether they are public, authenticated, staff-only, or admin-only through:
+
+- route composition
+- guards and policies
+- page-level orchestration
+- backend authorization
+
+Reference: `docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md`

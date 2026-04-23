@@ -155,6 +155,7 @@ If local dry-runs are needed, use the repo runner, for example `yarn nx run rele
 - Angular: `ui <- feature -> state -> data-access` | `config`, `util`: available to all layers
 - Nest: `presentation -> application <- infrastructure` | `config`, `util`: available to all layers
 - Shared TS: framework-agnostic DTOs/models/builders/utilities
+- Do not split libraries by audience (`admin`, `public`, `backoffice`, etc.) as a default rule; package by capability first and introduce audience-specific libraries only when workflow divergence is real.
 
 ## Library Consumption Conventions
 
@@ -167,6 +168,7 @@ If local dry-runs are needed, use the repo runner, for example `yarn nx run rele
 - Keep precedence consistent when both inputs exist: explicit overrides > config-derived values > hardcoded defaults.
 - Mail transport setup should be centralized once at app root via `@anarchitects/common-nest-mailer` (`CommonMailerModule.forRootFromConfig()` or `forRootAsync(...)`), while domain infrastructure-mailer entry points remain thin wrappers over shared provider wiring via `CommonMailerModule.forRoot(...)`.
 - Domain facade modules should expose mailer provider controls (for example `mailer.provider`) so infrastructure adapters can be composed per domain without changing root mail transport setup.
+- Audience and access policy are usually host-app composition concerns; prefer neutral, capability-focused library names and let consuming apps apply route guards, layouts, and page-level orchestration.
 
 ## Cross-Repo Alignment Position
 
@@ -189,6 +191,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 ## Architecture Decision Records
 
 - [ADR-0001: Align With `anarchitecture-bricks-ddd` And Support Migration](docs/adr/0001-align-with-bricks-ddd-and-support-migration.md)
+- [ADR-0002: Do Not Split Libraries By Audience Until Workflow Divergence Is Real](docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md)
 
 ## Documentation Tooling
 
