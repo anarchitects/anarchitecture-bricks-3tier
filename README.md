@@ -10,6 +10,14 @@ Modular, reusable libraries and showcase applications for scalable software arch
 - Technical docs generated with Compodoc and surfaced through Storybook.
 - Nx-managed example applications in `examples/` for integration and contract validation.
 
+## Companion Repo Position
+
+This repository is the 3-tier companion to:
+
+- `anarchitects/anarchitecture-bricks-ddd`
+
+The two repos should align on domain intent and public capability surface, while differing in internal architectural style.
+
 ## Source of Truth
 
 1. Shared model and DTO schemas: `libs/*/ts`.
@@ -65,6 +73,8 @@ examples/
 
 docs/
   openapi/
+  guides/
+  adr/
 
 tools/
   api-specs/
@@ -157,6 +167,28 @@ If local dry-runs are needed, use the repo runner, for example `yarn nx run rele
 - Keep precedence consistent when both inputs exist: explicit overrides > config-derived values > hardcoded defaults.
 - Mail transport setup should be centralized once at app root via `@anarchitects/common-nest-mailer` (`CommonMailerModule.forRootFromConfig()` or `forRootAsync(...)`), while domain infrastructure-mailer entry points remain thin wrappers over shared provider wiring via `CommonMailerModule.forRoot(...)`.
 - Domain facade modules should expose mailer provider controls (for example `mailer.provider`) so infrastructure adapters can be composed per domain without changing root mail transport setup.
+
+## Cross-Repo Alignment Position
+
+This repository should stay aligned with `anarchitecture-bricks-ddd` at the domain/capability level.
+
+Alignment means:
+
+- comparable domain intent
+- comparable public capability surface
+- traceable mapping between 3-tier packages and DDD package families
+- documented migration paths from 3-tier structure to DDD structure
+
+Alignment does **not** mean identical file structure or forced architectural sameness.
+
+## Architecture Guides
+
+- [Guide: Alignment With `anarchitecture-bricks-ddd`](docs/guides/alignment-with-bricks-ddd.md)
+- [Guide: Migration To `anarchitecture-bricks-ddd`](docs/guides/migration-to-bricks-ddd.md)
+
+## Architecture Decision Records
+
+- [ADR-0001: Align With `anarchitecture-bricks-ddd` And Support Migration](docs/adr/0001-align-with-bricks-ddd-and-support-migration.md)
 
 ## Documentation Tooling
 
