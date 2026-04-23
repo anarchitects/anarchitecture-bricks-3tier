@@ -1,0 +1,3 @@
+interface:
+  display_name: 3-Tier Monitor CI
+  short_description: Diagnose and fix CI, Nx, docs, and release failures in the 3-tier bricks repo.
