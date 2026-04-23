@@ -12,6 +12,7 @@ Inspect these sources first when relevant:
 - `AGENTS.md`
 - `README.md`
 - the affected package `README.md`
+- `docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md` when the failure is tied to package boundaries or library placement
 
 ## Required workflow
 1. Identify the failing workflow, job, and Nx target.
@@ -25,6 +26,7 @@ Inspect these sources first when relevant:
 - Respect the docs-surface and release workflow rules already documented in the repo.
 - Do not “fix” OpenAPI or docs failures by editing generated artifacts directly.
 - Do not bypass module boundaries or simplify architecture just to make CI green.
+- Do not move features into audience-specific libraries (`admin`, `public`, `backoffice`, etc.) as a quick fix unless there is genuine workflow divergence that justifies the split.
 - If a failure is tied to cross-repo alignment with `anarchitecture-bricks-ddd`, mention that explicitly.
 
 ## Output expectations
