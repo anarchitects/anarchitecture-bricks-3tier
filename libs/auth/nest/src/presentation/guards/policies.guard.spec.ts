@@ -14,6 +14,7 @@ describe('PoliciesGuard', () => {
   const mockPoliciesService = {
     rulesForUser: jest.fn(),
     buildAbilityForUser: jest.fn(),
+    assertCanAttemptRoutePolicies: jest.fn(),
   };
 
   const mockReflector = {
@@ -68,74 +69,31 @@ describe('PoliciesGuard', () => {
     );
   });
 
-  it('allows unconditional subject-level rules', async () => {
+  it('delegates route pass checks to PoliciesService', async () => {
+    const policies = [{ action: 'update', subject: 'Post' }];
+    const user = { id: 'user-1' };
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
     ]);
-    mockPoliciesService.rulesForUser.mockResolvedValue([
-      { action: 'update', subject: 'Post' },
-    ]);
+    mockPoliciesService.assertCanAttemptRoutePolicies.mockResolvedValue(
+      undefined,
+    );
 
-    await expect(
-      guard.canActivate(createExecutionContext({ id: 'user-1' })),
-    ).resolves.toBe(true);
+    await expect(guard.canActivate(createExecutionContext(user))).resolves.toBe(
+      true,
+    );
+    expect(
+      mockPoliciesService.assertCanAttemptRoutePolicies,
+    ).toHaveBeenCalledWith(user, policies);
   });
 
-  it('forbids unconditional inverted rules', async () => {
+  it('bubbles failed route pass checks', async () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
     ]);
-    mockPoliciesService.rulesForUser.mockResolvedValue([
-      { action: 'update', subject: 'Post', inverted: true },
-    ]);
-
-    await expect(
-      guard.canActivate(createExecutionContext({ id: 'user-1' })),
-    ).rejects.toThrow(ForbiddenException);
-  });
-
-  it('allows conditional rules as coarse pre-checks', async () => {
-    mockReflector.getAllAndOverride.mockReturnValue([
-      { action: 'update', subject: 'Post' },
-    ]);
-    mockPoliciesService.rulesForUser.mockResolvedValue([
-      {
-        action: 'update',
-        subject: 'Post',
-        conditions: { authorId: 'user-1' },
-      },
-    ]);
-
-    await expect(
-      guard.canActivate(createExecutionContext({ id: 'user-1' })),
-    ).resolves.toBe(true);
-  });
-
-  it('allows field-scoped rules as coarse pre-checks', async () => {
-    mockReflector.getAllAndOverride.mockReturnValue([
-      { action: 'update', subject: 'Post' },
-    ]);
-    mockPoliciesService.rulesForUser.mockResolvedValue([
-      {
-        action: 'update',
-        subject: 'Post',
-        fields: ['title'],
-      },
-    ]);
-
-    await expect(
-      guard.canActivate(createExecutionContext({ id: 'user-1' })),
-    ).resolves.toBe(true);
-  });
-
-  it('still forbids when an unconditional deny exists alongside an allow', async () => {
-    mockReflector.getAllAndOverride.mockReturnValue([
-      { action: 'update', subject: 'Post' },
-    ]);
-    mockPoliciesService.rulesForUser.mockResolvedValue([
-      { action: 'update', subject: 'Post' },
-      { action: 'update', subject: 'Post', inverted: true },
-    ]);
+    mockPoliciesService.assertCanAttemptRoutePolicies.mockRejectedValue(
+      new ForbiddenException(),
+    );
 
     await expect(
       guard.canActivate(createExecutionContext({ id: 'user-1' })),
@@ -146,7 +104,7 @@ describe('PoliciesGuard', () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
     ]);
-    mockPoliciesService.rulesForUser.mockRejectedValue(
+    mockPoliciesService.assertCanAttemptRoutePolicies.mockRejectedValue(
       new Error('Malformed persisted policy rule payload'),
     );
 

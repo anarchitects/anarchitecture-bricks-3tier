@@ -4,6 +4,7 @@ import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.to
 import { AuthEnginePort } from './services/auth-engine.port';
 import { BetterAuthDatabasePort } from './services/better-auth-database.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
+import { AuthPrincipalResolver } from './services/auth-principal.resolver';
 import { AuthPersistenceModule } from '../infrastructure-persistence';
 import { AuthService } from './services/auth.service';
 import { BetterAuthAuthEngineAdapter } from '../infrastructure-engine/better-auth/better-auth-auth-engine.adapter';
@@ -11,6 +12,8 @@ import { BetterAuthJwtTypeormSupportModule } from '../infrastructure-engine/bett
 import { BetterAuthTypeormDatabaseAdapter } from '../infrastructure-engine/better-auth/better-auth-typeorm-adapter-persistence.adapter';
 import { BetterAuthJwtPluginService } from '../infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-plugin.service';
 import { BetterAuthPasskeysTypeormSupportModule } from '../infrastructure-engine/better-auth/plugins/passkeys/better-auth-passkeys-typeorm-support.module';
+import { PoliciesService } from './services/policies.service';
+import { ResourceAuthorizationService } from './services/resource-authorization.service';
 
 describe('AuthApplicationModule', () => {
   it('composes the Better Auth core application module', () => {
@@ -35,6 +38,9 @@ describe('AuthApplicationModule', () => {
     expect(moduleMetadata.providers).toEqual(
       expect.arrayContaining([
         AuthOrchestrationService,
+        AuthPrincipalResolver,
+        PoliciesService,
+        ResourceAuthorizationService,
         BetterAuthTypeormDatabaseAdapter,
         BetterAuthAuthEngineAdapter,
         expect.objectContaining({
@@ -101,7 +107,9 @@ describe('AuthApplicationModule', () => {
       },
     });
 
-    expect(moduleMetadata.imports).toContain(BetterAuthPasskeysTypeormSupportModule);
+    expect(moduleMetadata.imports).toContain(
+      BetterAuthPasskeysTypeormSupportModule,
+    );
   });
 
   it('lets explicit forRootFromConfig overrides win over config defaults', () => {
@@ -119,9 +127,7 @@ describe('AuthApplicationModule', () => {
 
     expect(moduleMetadata.module).toBe(AuthApplicationModule);
     expect(moduleMetadata.imports).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ module: JwtModule }),
-      ]),
+      expect.arrayContaining([expect.objectContaining({ module: JwtModule })]),
     );
   });
 

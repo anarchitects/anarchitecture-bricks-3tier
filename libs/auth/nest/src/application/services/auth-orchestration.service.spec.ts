@@ -1,10 +1,15 @@
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthAccountRepository } from '../ports/auth-account.repository';
 import { AuthUserRepository } from '../ports/auth-user.repository';
 import { AuthEnginePort } from './auth-engine.port';
 import { AuthOrchestrationService } from './auth-orchestration.service';
+import { AuthPrincipalResolver } from './auth-principal.resolver';
 import { HashService } from './hash.service';
+import { PoliciesService } from './policies.service';
 
 describe('AuthOrchestrationService', () => {
   let service: AuthOrchestrationService;
@@ -34,6 +39,15 @@ describe('AuthOrchestrationService', () => {
     requestPasswordReset: jest.Mock;
     resetPassword: jest.Mock;
     verifyEmail: jest.Mock;
+  };
+
+  let mockAuthPrincipalResolver: {
+    resolveFromHeaders: jest.Mock;
+    resolveUserById: jest.Mock;
+  };
+
+  let mockPoliciesService: {
+    rulesForLoadedUser: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -67,6 +81,15 @@ describe('AuthOrchestrationService', () => {
       verifyEmail: jest.fn().mockResolvedValue({ success: true }),
     };
 
+    mockAuthPrincipalResolver = {
+      resolveFromHeaders: jest.fn(),
+      resolveUserById: jest.fn(),
+    };
+
+    mockPoliciesService = {
+      rulesForLoadedUser: jest.fn().mockReturnValue([]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthOrchestrationService,
@@ -77,6 +100,11 @@ describe('AuthOrchestrationService', () => {
         },
         { provide: AuthUserRepository, useValue: mockAuthUserRepository },
         { provide: AuthEnginePort, useValue: mockAuthEnginePort },
+        {
+          provide: AuthPrincipalResolver,
+          useValue: mockAuthPrincipalResolver,
+        },
+        { provide: PoliciesService, useValue: mockPoliciesService },
       ],
     }).compile();
 
@@ -96,7 +124,7 @@ describe('AuthOrchestrationService', () => {
       userId: 'user-id',
       headers,
     });
-    mockAuthUserRepository.findOne.mockResolvedValue({
+    mockAuthPrincipalResolver.resolveUserById.mockResolvedValue({
       id: 'user-id',
       email: 'user@example.com',
       roles: [],
@@ -114,6 +142,9 @@ describe('AuthOrchestrationService', () => {
       headers,
     });
     expect(mockAuthEnginePort.login).toHaveBeenCalledWith(dto, undefined);
+    expect(mockAuthPrincipalResolver.resolveUserById).toHaveBeenCalledWith(
+      'user-id',
+    );
   });
 
   it('delegates core logout to AuthEnginePort', async () => {
@@ -175,7 +206,9 @@ describe('AuthOrchestrationService', () => {
   it('delegates forgotPassword to the Better Auth engine', async () => {
     const dto = { email: 'test@example.com' };
 
-    await expect(service.forgotPassword(dto)).resolves.toEqual({ success: true });
+    await expect(service.forgotPassword(dto)).resolves.toEqual({
+      success: true,
+    });
     expect(mockAuthEnginePort.requestPasswordReset).toHaveBeenCalledWith(dto);
   });
 
@@ -186,7 +219,9 @@ describe('AuthOrchestrationService', () => {
       confirmPassword: 'newPassword123',
     };
 
-    await expect(service.resetPassword(dto)).resolves.toEqual({ success: true });
+    await expect(service.resetPassword(dto)).resolves.toEqual({
+      success: true,
+    });
     expect(mockAuthEnginePort.resetPassword).toHaveBeenCalledWith(dto);
     expect(mockAuthUserRepository.update).not.toHaveBeenCalled();
   });
@@ -195,15 +230,17 @@ describe('AuthOrchestrationService', () => {
     mockAuthUserRepository.findOne.mockResolvedValueOnce({
       id: 'user-id',
     });
-    mockAuthAccountRepository.findCredentialAccountByUserId.mockResolvedValueOnce({
-      id: 'user-id-credential',
-      userId: 'user-id',
-      accountId: 'user-id',
-      providerId: 'credential',
-      password: 'current-hash',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    mockAuthAccountRepository.findCredentialAccountByUserId.mockResolvedValueOnce(
+      {
+        id: 'user-id-credential',
+        userId: 'user-id',
+        accountId: 'user-id',
+        providerId: 'credential',
+        password: 'current-hash',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    );
 
     await expect(
       service.changePassword('user-id', {
@@ -217,12 +254,12 @@ describe('AuthOrchestrationService', () => {
       'old-password',
       'current-hash',
     );
-    expect(mockAuthAccountRepository.upsertCredentialAccount).toHaveBeenCalledWith(
-      {
-        userId: 'user-id',
-        passwordHash: 'hashedPassword',
-      },
-    );
+    expect(
+      mockAuthAccountRepository.upsertCredentialAccount,
+    ).toHaveBeenCalledWith({
+      userId: 'user-id',
+      passwordHash: 'hashedPassword',
+    });
     expect(mockAuthUserRepository.update).not.toHaveBeenCalled();
   });
 
@@ -231,15 +268,17 @@ describe('AuthOrchestrationService', () => {
       id: 'user-id',
       email: 'current@example.com',
     });
-    mockAuthAccountRepository.findCredentialAccountByUserId.mockResolvedValueOnce({
-      id: 'user-id-credential',
-      userId: 'user-id',
-      accountId: 'user-id',
-      providerId: 'credential',
-      password: 'current-hash',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    mockAuthAccountRepository.findCredentialAccountByUserId.mockResolvedValueOnce(
+      {
+        id: 'user-id-credential',
+        userId: 'user-id',
+        accountId: 'user-id',
+        providerId: 'credential',
+        password: 'current-hash',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    );
 
     await expect(
       service.updateEmail('user-id', {
@@ -277,7 +316,9 @@ describe('AuthOrchestrationService', () => {
   });
 
   it('maps Better Auth reset-password token failures to BadRequest', async () => {
-    mockAuthEnginePort.resetPassword.mockRejectedValueOnce(new Error('invalid'));
+    mockAuthEnginePort.resetPassword.mockRejectedValueOnce(
+      new Error('invalid'),
+    );
 
     await expect(
       service.resetPassword({
@@ -291,20 +332,16 @@ describe('AuthOrchestrationService', () => {
   it('maps Better Auth verify-email token failures to BadRequest', async () => {
     mockAuthEnginePort.verifyEmail.mockRejectedValueOnce(new Error('invalid'));
 
-    await expect(
-      service.verifyEmail({ token: 'bad-token' }),
-    ).rejects.toThrow(new BadRequestException('Invalid token'));
+    await expect(service.verifyEmail({ token: 'bad-token' })).rejects.toThrow(
+      new BadRequestException('Invalid token'),
+    );
   });
 
   it('returns user info from the active Better Auth session', async () => {
     const headers = new Headers({
       'set-cookie': 'better-auth.session=abc; Path=/; HttpOnly',
     });
-    mockAuthEnginePort.getSession.mockResolvedValue({
-      userId: 'user-id',
-      headers,
-    });
-    mockAuthUserRepository.findOne.mockResolvedValueOnce({
+    const user = {
       id: 'user-id',
       email: 'user@example.com',
       roles: [
@@ -321,10 +358,26 @@ describe('AuthOrchestrationService', () => {
           ],
         },
       ],
+    };
+    mockAuthPrincipalResolver.resolveFromHeaders.mockResolvedValue({
+      user,
+      headers,
     });
+    mockPoliciesService.rulesForLoadedUser.mockReturnValue([
+      {
+        action: 'read',
+        subject: 'Project',
+        conditions: { ownerId: 'user-id' },
+        fields: ['name'],
+        inverted: false,
+        reason: 'Allowed',
+      },
+    ]);
 
     await expect(
-      service.getLoggedInUserInfo(new Headers({ cookie: 'better-auth.session=abc' })),
+      service.getLoggedInUserInfo(
+        new Headers({ cookie: 'better-auth.session=abc' }),
+      ),
     ).resolves.toEqual({
       body: {
         user: {
@@ -348,7 +401,7 @@ describe('AuthOrchestrationService', () => {
   });
 
   it('rejects when there is no active Better Auth session', async () => {
-    mockAuthEnginePort.getSession.mockResolvedValue(null);
+    mockAuthPrincipalResolver.resolveFromHeaders.mockResolvedValue(null);
 
     await expect(service.getLoggedInUserInfo()).rejects.toThrow(
       new BadRequestException('No active auth session'),
@@ -356,27 +409,16 @@ describe('AuthOrchestrationService', () => {
   });
 
   it('rejects malformed persisted permissions', async () => {
-    mockAuthEnginePort.getSession.mockResolvedValue({
-      userId: 'user-id',
+    mockAuthPrincipalResolver.resolveFromHeaders.mockResolvedValue({
+      user: {
+        id: 'user-id',
+        email: 'user@example.com',
+        roles: [],
+      },
       headers: undefined,
     });
-    mockAuthUserRepository.findOne.mockResolvedValueOnce({
-      id: 'user-id',
-      email: 'user@example.com',
-      roles: [
-        {
-          permissions: [
-            {
-              action: '',
-              subject: 'Project',
-              conditions: null,
-              fields: null,
-              inverted: false,
-              reason: null,
-            },
-          ],
-        },
-      ],
+    mockPoliciesService.rulesForLoadedUser.mockImplementationOnce(() => {
+      throw new InternalServerErrorException();
     });
 
     await expect(service.getLoggedInUserInfo()).rejects.toThrow(

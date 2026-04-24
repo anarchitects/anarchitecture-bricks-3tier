@@ -20,9 +20,10 @@ import {
 import { AuthAccountRepository } from '../ports/auth-account.repository';
 import { AuthUserRepository } from '../ports/auth-user.repository';
 import { AuthEnginePort } from './auth-engine.port';
+import { AuthPrincipalResolver } from './auth-principal.resolver';
 import { AuthHttpResult, AuthService } from './auth.service';
 import { HashService } from './hash.service';
-import { toValidatedPersistedPolicyRule } from './persisted-policy-rule';
+import { PoliciesService } from './policies.service';
 
 @Injectable()
 export class AuthOrchestrationService implements AuthService {
@@ -31,6 +32,8 @@ export class AuthOrchestrationService implements AuthService {
     private readonly authAccountRepository: AuthAccountRepository,
     private readonly authUserRepository: AuthUserRepository,
     private readonly authEnginePort: AuthEnginePort,
+    private readonly authPrincipalResolver: AuthPrincipalResolver,
+    private readonly policiesService: PoliciesService,
   ) {}
 
   async registerUser(dto: RegisterRequestDTO): Promise<RegisterResponseDTO> {
@@ -158,10 +161,7 @@ export class AuthOrchestrationService implements AuthService {
       throw new BadRequestException('User not found');
     }
     const passwordHash = password
-      ? await this.getCredentialPasswordHashOrThrow(
-          user.id,
-          'Invalid password',
-        )
+      ? await this.getCredentialPasswordHashOrThrow(user.id, 'Invalid password')
       : null;
     const isPasswordValid =
       password && passwordHash
@@ -178,29 +178,30 @@ export class AuthOrchestrationService implements AuthService {
   async getLoggedInUserInfo(
     headers?: HeadersInit,
   ): Promise<AuthHttpResult<{ user: User; rbac: PolicyRule[] }>> {
-    const session = await this.authEnginePort.getSession(headers);
-    if (!session) {
+    const principal =
+      await this.authPrincipalResolver.resolveFromHeaders(headers);
+    if (!principal) {
       throw new BadRequestException('No active auth session');
     }
 
     return {
-      body: await this.buildLoggedInUserInfo(session.userId),
-      headers: session.headers,
+      body: {
+        user: principal.user,
+        rbac: this.policiesService.rulesForLoadedUser(principal.user),
+      },
+      headers: principal.headers,
     };
   }
 
   private async buildLoggedInUserInfo(
     userId: string,
   ): Promise<{ user: User; rbac: PolicyRule[] }> {
-    const user = await this.authUserRepository.findOne({
-      where: { id: userId },
-      relations: ['roles', 'roles.permissions'],
-    });
+    const user = await this.authPrincipalResolver.resolveUserById(userId);
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
-    const rbac = this.getValidatedPolicyRules(user);
+    const rbac = this.policiesService.rulesForLoadedUser(user);
     return { user, rbac };
   }
 
@@ -224,25 +225,6 @@ export class AuthOrchestrationService implements AuthService {
       await action();
     } catch {
       throw new BadRequestException(errorMessage);
-    }
-  }
-
-  private getValidatedPolicyRules(user: User): PolicyRule[] {
-    try {
-      const rbac: PolicyRule[] = [];
-      user.roles?.forEach((role) => {
-        role.permissions?.forEach((permission) => {
-          rbac.push(toValidatedPersistedPolicyRule(permission));
-        });
-      });
-
-      return rbac;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Malformed persisted policy rule payload: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
     }
   }
 

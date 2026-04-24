@@ -7,6 +7,8 @@ import {
 } from './auth-contracts';
 import { AuthController } from './controllers/auth.controller';
 import { AuthApplicationModule } from '../application';
+import { AuthenticationGuard } from './guards/authentication.guard';
+import { AuthorizationGuard } from './guards/authorization.guard';
 import { PoliciesGuard } from './guards/policies.guard';
 import { ResourceAuthorizationGuard } from './guards/resource-authorization.guard';
 import { JwtAuthPluginController } from '../infrastructure-engine/better-auth/plugins/jwt/jwt-auth-plugin.controller';
@@ -19,8 +21,18 @@ import type { AuthPresentationModuleOptions } from '../config';
 
 @Module({
   controllers: [AuthController],
-  providers: [PoliciesGuard, ResourceAuthorizationGuard],
-  exports: [PoliciesGuard, ResourceAuthorizationGuard],
+  providers: [
+    AuthenticationGuard,
+    AuthorizationGuard,
+    PoliciesGuard,
+    ResourceAuthorizationGuard,
+  ],
+  exports: [
+    AuthenticationGuard,
+    AuthorizationGuard,
+    PoliciesGuard,
+    ResourceAuthorizationGuard,
+  ],
 })
 export class AuthPresentationModule {
   static forRoot(options: AuthPresentationModuleOptions = {}): DynamicModule {
@@ -39,7 +51,13 @@ export class AuthPresentationModule {
       imports: [AuthApplicationModule.forRoot(options.application)],
       controllers: jwtPluginController,
       providers: [createAuthContractsProvider(authContracts)],
-      exports: [AuthApplicationModule],
+      exports: [
+        AuthApplicationModule,
+        AuthenticationGuard,
+        AuthorizationGuard,
+        PoliciesGuard,
+        ResourceAuthorizationGuard,
+      ],
     };
   }
 

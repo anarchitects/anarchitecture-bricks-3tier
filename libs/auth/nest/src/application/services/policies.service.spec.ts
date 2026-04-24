@@ -1,4 +1,7 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Permission, PolicyRule, Role, User } from '@anarchitects/auth-ts';
 import { AuthUserRepository } from '../ports/auth-user.repository';
@@ -93,6 +96,9 @@ describe('PoliciesService', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+    mockAuthUserRepository.findOne.mockResolvedValue(mockUser);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PoliciesService,
@@ -145,6 +151,24 @@ describe('PoliciesService', () => {
         expectedPolicyRules,
       );
       expect(ability).toEqual({});
+    });
+  });
+
+  describe('assertCanAttemptRoutePolicies', () => {
+    it('allows a coarse route pass when a persisted rule matches', async () => {
+      await expect(
+        service.assertCanAttemptRoutePolicies(mockUser, [
+          { action: 'read', subject: 'Article' },
+        ]),
+      ).resolves.toBeUndefined();
+    });
+
+    it('forbids a coarse route pass when no persisted rule matches', async () => {
+      await expect(
+        service.assertCanAttemptRoutePolicies(mockUser, [
+          { action: 'delete', subject: 'Article' },
+        ]),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

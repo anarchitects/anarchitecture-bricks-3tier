@@ -23,10 +23,12 @@ import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.to
 import { AuthEnginePort } from './services/auth-engine.port';
 import { BetterAuthDatabasePort } from './services/better-auth-database.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
+import { AuthPrincipalResolver } from './services/auth-principal.resolver';
 import { AuthService } from './services/auth.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
 import { PoliciesService } from './services/policies.service';
+import { ResourceAuthorizationService } from './services/resource-authorization.service';
 
 @Module({})
 export class AuthApplicationModule extends ConfigurableModuleClass {
@@ -41,11 +43,22 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
     const providers = [];
     const exports = [];
 
-    providers.push(AbilityFactory, PoliciesService, {
-      provide: AUTH_RESOURCE_AUTHORIZATION_LOADERS,
-      useValue: resourceAuthorization.loaders,
-    });
-    exports.push(AUTH_RESOURCE_AUTHORIZATION_LOADERS, PoliciesService);
+    providers.push(
+      AbilityFactory,
+      PoliciesService,
+      AuthPrincipalResolver,
+      ResourceAuthorizationService,
+      {
+        provide: AUTH_RESOURCE_AUTHORIZATION_LOADERS,
+        useValue: resourceAuthorization.loaders,
+      },
+    );
+    exports.push(
+      AUTH_RESOURCE_AUTHORIZATION_LOADERS,
+      AuthPrincipalResolver,
+      PoliciesService,
+      ResourceAuthorizationService,
+    );
 
     switch (encryption.algorithm) {
       case 'bcrypt':
