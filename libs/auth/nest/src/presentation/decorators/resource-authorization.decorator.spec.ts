@@ -1,10 +1,9 @@
-import { GUARDS_METADATA, ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
+import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import {
   AuthorizeResource,
   AUTHORIZE_RESOURCE_KEY,
 } from './authorize-resource.decorator';
 import { AuthorizedResource } from './authorized-resource.decorator';
-import { ResourceAuthorizationGuard } from '../guards/resource-authorization.guard';
 
 describe('resource authorization decorators', () => {
   type ParamFactory = (
@@ -31,20 +30,13 @@ describe('resource authorization decorators', () => {
     }
   }
 
-  it('stores resource authorization metadata and applies the guard', () => {
+  it('stores resource authorization metadata without binding guards', () => {
     expect(
       Reflect.getMetadata(
         AUTHORIZE_RESOURCE_KEY,
         TestController.prototype.update,
       ),
     ).toEqual([{ action: 'update', subject: 'Post', idParam: 'postId' }]);
-
-    const guards = Reflect.getMetadata(
-      GUARDS_METADATA,
-      TestController.prototype.update,
-    ) as Array<new (...args: unknown[]) => unknown>;
-
-    expect(guards).toContain(ResourceAuthorizationGuard);
   });
 
   it('reads the attached authorized resource using route metadata by default', () => {

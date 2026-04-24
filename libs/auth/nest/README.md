@@ -62,6 +62,12 @@ That target boots `auth-nest` against ephemeral PostgreSQL and exercises the rea
 | `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                      |
 | `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                        |
 
+Controller-facing security declarations that should not pull in this runtime
+package live in `@anarchitects/auth-declarations`. Use that package for
+`@Public()`, `@Policies(...)`, and `@AuthorizeResource(...)`. Runtime
+enforcement, guards, modules, principal resolution, and app wiring remain owned
+by `@anarchitects/auth-nest`.
+
 ## Wiring Migrations And Entities
 
 Prefer symbol imports from `@anarchitects/auth-nest/infrastructure-persistence` when wiring TypeORM `DataSource` migrations or host-level entity registration. This gives consumers a stable public contract instead of depending on package-internal file paths.
@@ -339,11 +345,11 @@ export class AuthController {
 ### Route-level authorization with policies
 
 ```ts
-import { Controller, Patch, UseGuards } from '@nestjs/common';
-import { AuthorizedResource, AuthorizeResource, Policies, PoliciesGuard } from '@anarchitects/auth-nest/presentation';
+import { Controller, Patch } from '@nestjs/common';
+import { AuthorizeResource, Policies } from '@anarchitects/auth-declarations';
+import { AuthorizedResource } from '@anarchitects/auth-nest/presentation';
 
 @Controller('posts')
-@UseGuards(PoliciesGuard)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
@@ -372,14 +378,14 @@ AuthModule.forRoot({
 });
 ```
 
-`@Policies()` remains the coarse route-level pre-check. `@AuthorizeResource(...)` uses the app-registered loader to fetch the concrete entity, evaluates the instance-level CASL rule behind the scenes, and attaches the authorized resource to the request so `@AuthorizedResource()` can read it in the handler.
+`@Policies()` remains the coarse route-level declaration. `@AuthorizeResource(...)` declares the concrete resource check that `auth-nest` runtime guards can perform after loading the resource through the app-registered loader. The runtime flow attaches the authorized resource to the request so `@AuthorizedResource()` can read it in the handler.
 
 ## Authorization Model
 
 CASL integration in `@anarchitects/auth-nest` is intentionally split into two layers:
 
-- `@Policies()` uses `RoutePolicy` and performs a coarse route-level pre-check
-- `@AuthorizeResource(...)` performs the concrete instance-level check after loading the resource
+- `@Policies()` uses `RoutePolicy` to declare a coarse route-level pre-check
+- `@AuthorizeResource(...)` declares the concrete instance-level check that runtime enforcement performs after loading the resource
 - `@AuthorizedResource()` gives the handler access to the already loaded and authorized entity
 
 Use this split to avoid overstating what route metadata can prove. Ownership-sensitive rules such as "writers may only update their own posts" need the concrete resource instance before CASL can decide correctly.

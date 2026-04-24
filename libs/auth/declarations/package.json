@@ -1,0 +1,36 @@
+{
+  "name": "@anarchitects/auth-declarations",
+  "version": "0.0.1",
+  "description": "Declaration-only security metadata decorators for Anarchitecture auth-aware Nest controllers.",
+  "type": "module",
+  "main": "./index.cjs",
+  "module": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@anarchitects/auth-ts": "^0.8.1"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/auth/declarations"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/auth/declarations",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  }
+}
