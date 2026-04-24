@@ -199,7 +199,7 @@
         "projectsRelationship": "independent",
         "projects": ["directory:libs/auth/**"],
         "version": {
-          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=auth-angular,auth-nest,auth-ts && yarn nx run-many -t build -p auth-angular,auth-nest,auth-ts",
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=auth-angular,auth-declarations,auth-nest,auth-ts && yarn nx run-many -t build -p auth-angular,auth-declarations,auth-nest,auth-ts",
           "updateDependents": "auto",
           "preserveMatchingDependencyRanges": [
             "devDependencies",

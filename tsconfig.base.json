@@ -66,6 +66,9 @@
       "@anarchitects/auth-ts/dtos/jwt": ["libs/auth/ts/src/dtos/jwt/index.ts"],
       "@anarchitects/auth-ts/models": ["libs/auth/ts/src/models/index.ts"],
       "@anarchitects/auth-ts/mappers": ["libs/auth/ts/src/mappers/index.ts"],
+      "@anarchitects/auth-declarations": [
+        "libs/auth/declarations/src/index.ts"
+      ],
       "@anarchitects/auth-nest": ["libs/auth/nest/src/index.ts"],
       "@anarchitects/auth-nest/application": [
         "libs/auth/nest/src/application/index.ts"
