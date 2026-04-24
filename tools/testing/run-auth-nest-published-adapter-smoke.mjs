@@ -27,37 +27,43 @@ const nodeModulesRoot = path.join(
 async function main() {
   await prepareWorkspacePackageLinks();
 
-  const { AuthModule } = require(path.join(
-    workspaceRoot,
-    'dist',
-    'libs',
-    'auth',
-    'nest',
-    'src',
-    'auth.module.js',
-  ));
-  const { loadBetterAuthTypeormAdapterModule } = require(path.join(
-    workspaceRoot,
-    'dist',
-    'libs',
-    'auth',
-    'nest',
-    'src',
-    'infrastructure-engine',
-    'better-auth',
-    'better-auth.module-loader.js',
-  ));
-  const { CreateAuthSchema1720200000000 } = require(path.join(
-    workspaceRoot,
-    'dist',
-    'libs',
-    'auth',
-    'nest',
-    'src',
-    'infrastructure-persistence',
-    'migrations',
-    '1720200000000-create-auth-schema.js',
-  ));
+  const { AuthModule } = require(
+    path.join(
+      workspaceRoot,
+      'dist',
+      'libs',
+      'auth',
+      'nest',
+      'src',
+      'auth.module.js',
+    ),
+  );
+  const { loadBetterAuthTypeormAdapterModule } = require(
+    path.join(
+      workspaceRoot,
+      'dist',
+      'libs',
+      'auth',
+      'nest',
+      'src',
+      'infrastructure-engine',
+      'better-auth',
+      'better-auth.module-loader.js',
+    ),
+  );
+  const { CreateAuthSchema1720200000000 } = require(
+    path.join(
+      workspaceRoot,
+      'dist',
+      'libs',
+      'auth',
+      'nest',
+      'src',
+      'infrastructure-persistence',
+      'migrations',
+      '1720200000000-create-auth-schema.js',
+    ),
+  );
 
   const adapterModule = await loadBetterAuthTypeormAdapterModule();
   assert.equal(
@@ -129,7 +135,9 @@ async function main() {
       ],
     }).compile();
 
-    app = moduleRef.createNestApplication(new FastifyAdapter({ logger: false }));
+    app = moduleRef.createNestApplication(
+      new FastifyAdapter({ logger: false }),
+    );
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
 
@@ -143,7 +151,12 @@ async function main() {
         name: 'Integration User',
       },
     });
-    assertStatus(registerResponse.statusCode, 200, 'register', registerResponse.body);
+    assertStatus(
+      registerResponse.statusCode,
+      200,
+      'register',
+      registerResponse.body,
+    );
     assert.deepEqual(registerResponse.json(), { success: true });
 
     const loginResponse = await app.inject({
@@ -156,7 +169,9 @@ async function main() {
     });
     assertStatus(loginResponse.statusCode, 200, 'login', loginResponse.body);
 
-    const sessionCookie = extractSessionCookie(loginResponse.headers['set-cookie']);
+    const sessionCookie = extractSessionCookie(
+      loginResponse.headers['set-cookie'],
+    );
     assert.match(sessionCookie, /^better-auth\./);
 
     const loginBody = loginResponse.json();
@@ -189,7 +204,9 @@ async function main() {
     assertStatus(logoutResponse.statusCode, 200, 'logout', logoutResponse.body);
     assert.deepEqual(logoutResponse.json(), { success: true });
 
-    const clearedCookie = extractSessionCookie(logoutResponse.headers['set-cookie']);
+    const clearedCookie = extractSessionCookie(
+      logoutResponse.headers['set-cookie'],
+    );
 
     const meAfterLogoutResponse = await app.inject({
       method: 'GET',
@@ -204,7 +221,10 @@ async function main() {
       'me after logout',
       meAfterLogoutResponse.body,
     );
-    assert.equal(meAfterLogoutResponse.json().message, 'No active auth session');
+    assert.equal(
+      meAfterLogoutResponse.json().message,
+      'No active auth session',
+    );
   } finally {
     if (app) {
       await app.close();
@@ -225,22 +245,42 @@ async function prepareWorkspacePackageLinks() {
 
   const links = [
     {
+      name: 'auth-declarations',
+      target: path.join(workspaceRoot, 'dist', 'libs', 'auth', 'declarations'),
+    },
+    {
       name: 'auth-ts',
       target: path.join(workspaceRoot, 'dist', 'libs', 'auth', 'ts'),
     },
     {
       name: 'common-nest-mailer',
-      target: path.join(workspaceRoot, 'dist', 'libs', 'common', 'nest', 'mailer'),
+      target: path.join(
+        workspaceRoot,
+        'dist',
+        'libs',
+        'common',
+        'nest',
+        'mailer',
+      ),
     },
   ];
 
   for (const link of links) {
-    await symlink(link.target, path.join(nodeModulesRoot, link.name), 'junction');
+    await symlink(
+      link.target,
+      path.join(nodeModulesRoot, link.name),
+      'junction',
+    );
   }
 
   process.env.NODE_PATH = process.env.NODE_PATH
     ? `${path.join(workspaceRoot, '.tmp', 'auth-nest-published-adapter', 'node_modules')}${path.delimiter}${process.env.NODE_PATH}`
-    : path.join(workspaceRoot, '.tmp', 'auth-nest-published-adapter', 'node_modules');
+    : path.join(
+        workspaceRoot,
+        '.tmp',
+        'auth-nest-published-adapter',
+        'node_modules',
+      );
 
   Module._initPaths();
 }
@@ -304,7 +344,9 @@ function extractSessionCookie(headerValue) {
 
   const [cookieValue] = sessionCookie.split(';');
   if (!cookieValue) {
-    throw new Error('Malformed Better Auth session cookie in response headers.');
+    throw new Error(
+      'Malformed Better Auth session cookie in response headers.',
+    );
   }
 
   return cookieValue;
