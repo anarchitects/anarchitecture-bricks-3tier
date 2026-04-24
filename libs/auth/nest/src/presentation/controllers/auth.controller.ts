@@ -18,6 +18,7 @@ import {
   UserIdParamsSchema,
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
+import { Public } from '@anarchitects/auth-declarations';
 import {
   Body,
   Controller,
@@ -30,6 +31,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
+import { toAuthHeaders } from '../../application/services/auth-headers';
 import { AuthService } from '../../application/services/auth.service';
 import { AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER } from '../auth-controller-route-schemas';
 
@@ -39,6 +41,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('/register')
+  @Public()
   @RouteSchema({
     body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: RegisterResponseSchema },
@@ -50,6 +53,7 @@ export class AuthController {
   }
 
   @Patch('/activate')
+  @Public()
   @RouteSchema({
     body: ActivateUserRequestSchema,
     response: { 200: SuccessResponseSchema },
@@ -62,6 +66,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('/login')
+  @Public()
   @RouteSchema({
     body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: LoggedInUserInfoResponseSchema },
@@ -72,7 +77,10 @@ export class AuthController {
     @Res({ passthrough: true })
     reply: { header(name: string, value: string | string[]): unknown },
   ): Promise<LoggedInUserInfoResponseDTO> {
-    const result = await this.authService.login(dto, toHeaders(req.headers));
+    const result = await this.authService.login(
+      dto,
+      toAuthHeaders(req.headers),
+    );
     applyResponseHeaders(reply, result.headers);
     return result.body;
   }
@@ -89,7 +97,10 @@ export class AuthController {
     @Res({ passthrough: true })
     reply: { header(name: string, value: string | string[]): unknown },
   ): Promise<SuccessResponseDTO> {
-    const result = await this.authService.logout(dto, toHeaders(req.headers));
+    const result = await this.authService.logout(
+      dto,
+      toAuthHeaders(req.headers),
+    );
     applyResponseHeaders(reply, result.headers);
     return result.body;
   }
@@ -109,6 +120,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('/forgot-password')
+  @Public()
   @RouteSchema({
     body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
@@ -121,6 +133,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('/reset-password')
+  @Public()
   @RouteSchema({
     body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
@@ -133,6 +146,7 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('/verify-email')
+  @Public()
   @RouteSchema({
     body: AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER,
     response: { 200: SuccessResponseSchema },
@@ -164,32 +178,11 @@ export class AuthController {
     @Req() req: { headers: Record<string, string | string[] | undefined> },
   ): Promise<LoggedInUserInfoResponseDTO> {
     const result = await this.authService.getLoggedInUserInfo(
-      toHeaders(req.headers),
+      toAuthHeaders(req.headers),
     );
     return result.body;
   }
 }
-
-const toHeaders = (
-  input: Record<string, string | string[] | undefined>,
-): Headers => {
-  const headers = new Headers();
-
-  Object.entries(input).forEach(([key, value]) => {
-    if (value === undefined) {
-      return;
-    }
-
-    if (Array.isArray(value)) {
-      value.forEach((entry) => headers.append(key, entry));
-      return;
-    }
-
-    headers.set(key, value);
-  });
-
-  return headers;
-};
 
 const applyResponseHeaders = (
   reply: { header(name: string, value: string | string[]): unknown },

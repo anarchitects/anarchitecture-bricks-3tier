@@ -14,18 +14,18 @@ import {
   SuccessResponseDTO,
   SuccessResponseSchema,
 } from '@anarchitects/auth-ts/dtos';
+import { Public } from '@anarchitects/auth-declarations';
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { BetterAuthJwtPluginService } from './better-auth-jwt-plugin.service';
 
 @Controller('auth/jwt')
 export class JwtAuthPluginController {
-  constructor(
-    private readonly jwtPluginService: BetterAuthJwtPluginService,
-  ) {}
+  constructor(private readonly jwtPluginService: BetterAuthJwtPluginService) {}
 
   @HttpCode(200)
   @Post('/login')
+  @Public()
   @RouteSchema({
     body: LoginRequestSchema,
     response: { 200: LoginResponseSchema },
@@ -36,6 +36,7 @@ export class JwtAuthPluginController {
 
   @HttpCode(200)
   @Post('/logout')
+  @Public()
   @RouteSchema({
     body: JwtLogoutRequestSchema,
     response: { 200: SuccessResponseSchema },
@@ -46,6 +47,7 @@ export class JwtAuthPluginController {
 
   @HttpCode(200)
   @Post('/refresh')
+  @Public()
   @RouteSchema({
     body: RefreshTokenRequestSchema,
     response: { 200: RefreshTokenResponseSchema },

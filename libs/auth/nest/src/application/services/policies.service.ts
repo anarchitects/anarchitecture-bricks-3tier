@@ -1,5 +1,14 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PolicyRule, User } from '@anarchitects/auth-ts/models';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import {
+  canAttemptRoutePolicy,
+  PolicyRule,
+  RoutePolicy,
+  User,
+} from '@anarchitects/auth-ts/models';
 import { AppAbility, AbilityFactory } from '../factories/ability.factory';
 import { AuthUserRepository } from '../ports/auth-user.repository';
 import { toValidatedPersistedPolicyRule } from './persisted-policy-rule';
@@ -20,6 +29,10 @@ export class PoliciesService {
       return [];
     }
 
+    return this.rulesForLoadedUser(user);
+  }
+
+  rulesForLoadedUser(user: User): PolicyRule[] {
     try {
       return (user.roles ?? []).flatMap((role) =>
         (role.permissions ?? []).map((permission) =>
@@ -37,5 +50,32 @@ export class PoliciesService {
 
   async buildAbilityForUser(authUser: User): Promise<AppAbility> {
     return this.abilityFactory.buildAbility(await this.rulesForUser(authUser));
+  }
+
+  async canAttemptRoutePolicies(
+    authUser: User,
+    routePolicies: RoutePolicy[],
+  ): Promise<boolean> {
+    if (!routePolicies.length) {
+      return true;
+    }
+
+    const policyRules = await this.rulesForUser(authUser);
+    return routePolicies.every((routePolicy) =>
+      canAttemptRoutePolicy(routePolicy, policyRules),
+    );
+  }
+
+  async assertCanAttemptRoutePolicies(
+    authUser: User,
+    routePolicies: RoutePolicy[],
+  ): Promise<void> {
+    const canAttempt = await this.canAttemptRoutePolicies(
+      authUser,
+      routePolicies,
+    );
+    if (!canAttempt) {
+      throw new ForbiddenException();
+    }
   }
 }

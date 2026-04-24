@@ -1,3 +1,4 @@
+import { AUTH_PUBLIC_METADATA_KEY } from '@anarchitects/auth-declarations';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../../application/services/auth.service';
 import { AuthController } from './auth.controller';
@@ -57,6 +58,40 @@ describe('AuthController', () => {
     expect(controller).toBeDefined();
   });
 
+  it('marks only session-bootstrap routes as public for global auth guards', () => {
+    const publicMethods: Array<keyof AuthController> = [
+      'registerUser',
+      'activateUser',
+      'login',
+      'forgotPassword',
+      'resetPassword',
+      'verifyEmail',
+    ];
+    const protectedMethods: Array<keyof AuthController> = [
+      'logout',
+      'changePassword',
+      'updateEmail',
+      'getLoggedInUserInfo',
+    ];
+
+    publicMethods.forEach((method) => {
+      expect(
+        Reflect.getMetadata(
+          AUTH_PUBLIC_METADATA_KEY,
+          AuthController.prototype[method],
+        ),
+      ).toBe(true);
+    });
+    protectedMethods.forEach((method) => {
+      expect(
+        Reflect.getMetadata(
+          AUTH_PUBLIC_METADATA_KEY,
+          AuthController.prototype[method],
+        ),
+      ).toBeUndefined();
+    });
+  });
+
   it('delegates registration', async () => {
     const dto = {
       email: 'test@example.com',
@@ -94,10 +129,9 @@ describe('AuthController', () => {
       dto,
       expect.any(Headers),
     );
-    expect(reply.header).toHaveBeenCalledWith(
-      'set-cookie',
-      ['better-auth.session=abc; Path=/; HttpOnly'],
-    );
+    expect(reply.header).toHaveBeenCalledWith('set-cookie', [
+      'better-auth.session=abc; Path=/; HttpOnly',
+    ]);
   });
 
   it('delegates core session logout and applies response cookies', async () => {
@@ -112,10 +146,9 @@ describe('AuthController', () => {
       dto,
       expect.any(Headers),
     );
-    expect(reply.header).toHaveBeenCalledWith(
-      'set-cookie',
-      ['better-auth.session=abc; Path=/; HttpOnly'],
-    );
+    expect(reply.header).toHaveBeenCalledWith('set-cookie', [
+      'better-auth.session=abc; Path=/; HttpOnly',
+    ]);
   });
 
   it('delegates changePassword', async () => {
