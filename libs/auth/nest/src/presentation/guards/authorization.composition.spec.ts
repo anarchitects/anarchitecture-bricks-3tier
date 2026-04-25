@@ -115,6 +115,22 @@ describe('AuthorizationGuard', () => {
     });
   });
 
+  it('bypasses authorization entirely for public routes', async () => {
+    mockReflector.getAllAndOverride.mockImplementation((key: string) =>
+      key === 'auth:public' ? true : [{ action: 'update', subject: 'Post' }],
+    );
+
+    await expect(
+      guard.canActivate(createExecutionContext({}, () => true)),
+    ).resolves.toBe(true);
+    expect(
+      mockPoliciesService.assertCanAttemptRoutePolicies,
+    ).not.toHaveBeenCalled();
+    expect(
+      mockResourceAuthorizationService.authorizeResources,
+    ).not.toHaveBeenCalled();
+  });
+
   it('does not run resource checks when the coarse route pass fails', async () => {
     mockReflector.getAllAndOverride.mockImplementation((key: string) => {
       if (key === POLICIES_KEY) {

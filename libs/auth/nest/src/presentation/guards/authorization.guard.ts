@@ -13,6 +13,7 @@ import {
   AuthRuntimeRequest,
   requireAuthenticatedUser,
 } from './authenticated-user';
+import { isPublicRoute } from './public-route';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -23,6 +24,10 @@ export class AuthorizationGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (isPublicRoute(this.reflector, context)) {
+      return true;
+    }
+
     const targets = [context.getHandler(), context.getClass()];
     const policies =
       this.reflector.getAllAndOverride<RoutePolicy[]>(POLICIES_KEY, targets) ??

@@ -1,4 +1,5 @@
 export * from './presentation.module';
+export * from './runtime-security.providers';
 export * from './controllers/auth.controller';
 export * from './guards/authentication.guard';
 export * from './guards/authorization.guard';

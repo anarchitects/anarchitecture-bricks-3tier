@@ -14,6 +14,7 @@ import {
   AuthService,
 } from './application';
 import { AuthModule } from './auth.module';
+import { provideAuthRuntimeGuards } from './presentation';
 import { applyAuthControllerContractRouteSchemas } from './presentation/auth-controller-route-schemas';
 import {
   AUTH_CONTRACTS,
@@ -205,6 +206,25 @@ describe('AuthModule', () => {
     expect(moduleRef.get(MailerPort, { strict: false })).toBeInstanceOf(
       NodeMailerAdapter,
     );
+  });
+
+  it('lets a host app activate auth guards centrally from root providers', async () => {
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        TypeOrmTestingModule,
+        AuthModule.forRoot({
+          ...authModuleOptions,
+          mailer: {
+            provider: 'noop',
+          },
+        }),
+      ],
+      providers: [...provideAuthRuntimeGuards()],
+    }).compile();
+
+    expect(moduleRef.get(AuthController, { strict: false })).toBeDefined();
+    expect(moduleRef.get(AuthService, { strict: false })).toBeDefined();
   });
 
   it('resolves AUTH_MAILER_PROVIDER through forRootFromConfig', async () => {

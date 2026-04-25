@@ -22,20 +22,17 @@ Use facade composition modules for the default host-app path:
 ```ts
 import { Module } from '@nestjs/common';
 import { FormsModule } from '@anarchitects/forms-nest';
-import { AuthModule } from '@anarchitects/auth-nest';
+import { AuthModule, provideAuthRuntimeGuards } from '@anarchitects/auth-nest';
 
 @Module({
-  imports: [
-    FormsModule.forRoot({}),
-    FormsModule.forRootFromConfig(),
-    AuthModule.forRoot({}),
-    AuthModule.forRootFromConfig(),
-  ],
+  imports: [FormsModule.forRoot({}), FormsModule.forRootFromConfig(), AuthModule.forRoot({}), AuthModule.forRootFromConfig()],
+  providers: [...provideAuthRuntimeGuards()],
 })
 export class AppModule {}
 ```
 
 Easy mode is preferred when teams want predictable integration and minimal Nest wiring.
+Activate auth centrally from the root module providers instead of binding guards on individual controllers.
 
 ## Advanced Mode with Layer Entry Points
 
