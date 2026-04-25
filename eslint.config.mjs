@@ -89,12 +89,51 @@ export default [
             {
               sourceTag: 'scope:ts-frontend',
               onlyDependOnLibsWithTags: ['*'],
+            }
+          ],
+        },
+      ],
+    },
+  },
+
+  // 🔒 ADR enforcement: common must remain domain-neutral
+  {
+    files: ['libs/common/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@anarchitects/forms-*', '@anarchitects/auth-*'],
+              message:
+                'Common libraries must remain domain-neutral and may not depend on forms or auth domains.',
             },
           ],
         },
       ],
     },
   },
+
+  // 🔒 ADR enforcement: forms must not depend on auth
+  {
+    files: ['libs/forms/**/*.{ts,tsx,js,jsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@anarchitects/auth-*'],
+              message:
+                'Forms is a generic intake domain and must not depend on auth domain.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   {
     files: [
       '**/*.ts',
@@ -106,7 +145,6 @@ export default [
       '**/*.cjs',
       '**/*.mjs',
     ],
-    // Override or add rules here
     rules: {},
   },
   {
