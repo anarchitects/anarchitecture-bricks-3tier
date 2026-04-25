@@ -10,6 +10,7 @@ import {
   AuthRuntimeRequest,
   requireAuthenticatedUser,
 } from './authenticated-user';
+import { isPublicRoute } from './public-route';
 
 @Injectable()
 export class ResourceAuthorizationGuard implements CanActivate {
@@ -19,6 +20,10 @@ export class ResourceAuthorizationGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (isPublicRoute(this.reflector, context)) {
+      return true;
+    }
+
     const request = context.switchToHttp().getRequest<AuthRuntimeRequest>();
     const resources =
       this.reflector.getAllAndOverride<ResourceAuthorizationRoute[]>(

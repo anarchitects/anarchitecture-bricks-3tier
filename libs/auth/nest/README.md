@@ -53,14 +53,14 @@ That target boots `auth-nest` against ephemeral PostgreSQL and exercises the rea
 
 ## Exports
 
-| Import path                                          | Contents                                                                                                                                                                                            |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, plus re-exports of layered entry points for convenience                                                                             |
-| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `AuthPrincipalResolver`, `PoliciesService`, `ResourceAuthorizationService`, `AbilityFactory`, resource-authorization helpers/types                          |
-| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `AuthenticationGuard`, `AuthorizationGuard`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `@AuthorizedResource()`, declarations compatibility exports |
-| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, core auth persistence entities, `CreateAuthSchema1720200000000`, `AuthAccountRepository`, `AuthUserRepository`, and persistence module option types                        |
-| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                                             |
-| `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                                               |
+| Import path                                          | Contents                                                                                                                                                                                                                          |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@anarchitects/auth-nest`                            | `AuthModule.forRoot(...)`, `AuthModule.forRootFromConfig(...)`, `provideAuthRuntimeGuards()`, plus re-exports of layered entry points for convenience                                                                             |
+| `@anarchitects/auth-nest/application`                | `AuthApplicationModule`, `AuthService`, `AuthPrincipalResolver`, `PoliciesService`, `ResourceAuthorizationService`, `AbilityFactory`, resource-authorization helpers/types                                                        |
+| `@anarchitects/auth-nest/presentation`               | `AuthPresentationModule`, `AuthController`, `AuthenticationGuard`, `AuthorizationGuard`, `PoliciesGuard`, `ResourceAuthorizationGuard`, `provideAuthRuntimeGuards()`, `@AuthorizedResource()`, declarations compatibility exports |
+| `@anarchitects/auth-nest/infrastructure-persistence` | `AuthPersistenceModule`, core auth persistence entities, `CreateAuthSchema1720200000000`, `AuthAccountRepository`, `AuthUserRepository`, and persistence module option types                                                      |
+| `@anarchitects/auth-nest/infrastructure-mailer`      | `AuthMailerModule`, `NodeMailerAdapter`                                                                                                                                                                                           |
+| `@anarchitects/auth-nest/config`                     | `authConfig`, `AuthConfig` type, `InjectAuthConfig()`                                                                                                                                                                             |
 
 Controller-facing security declarations that should not pull in this runtime
 package live in `@anarchitects/auth-declarations`. Use that package for
@@ -73,11 +73,24 @@ by `@anarchitects/auth-nest`.
 `auth-nest` owns the runtime side of authentication and authorization.
 
 - `AuthenticationGuard` is ready for global registration by a host app. It honors `@Public()`, resolves the Better Auth session through `AuthPrincipalResolver`, hydrates the repo-owned user principal, and attaches it to `request.user`.
-- `AuthorizationGuard` is ready for global authorization registration by a host app. It reads `@Policies(...)` and `@AuthorizeResource(...)` metadata from `@anarchitects/auth-declarations`.
+- `AuthorizationGuard` is ready for global authorization registration by a host app. It honors `@Public()`, then reads `@Policies(...)` and `@AuthorizeResource(...)` metadata from `@anarchitects/auth-declarations`.
 - `PoliciesService` performs the lightweight route pass check against the CASL-aligned `{ action, subject }` shape. Conditional and field-scoped persisted rules may allow the route attempt, but they do not prove access to a specific resource instance.
 - `ResourceAuthorizationService` performs the concrete resource check after a configured loader returns the subject instance. This is where CASL evaluates conditions against loaded data.
 
-The package exports these guards and services, but app-shell/global guard registration is intentionally left to the consuming application.
+Use the app shell to activate runtime security centrally:
+
+```ts
+import { Module } from '@nestjs/common';
+import { AuthModule, provideAuthRuntimeGuards } from '@anarchitects/auth-nest';
+
+@Module({
+  imports: [AuthModule.forRoot({})],
+  providers: [...provideAuthRuntimeGuards()],
+})
+export class AppModule {}
+```
+
+`provideAuthRuntimeGuards()` registers `AuthenticationGuard` first and `AuthorizationGuard` second as `APP_GUARD` providers, so principal resolution always runs before route-policy or resource checks. Controller-level `UseGuards(...)` wiring is no longer the default integration path.
 
 ## Wiring Migrations And Entities
 
@@ -182,7 +195,7 @@ export class AppModule {}
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
-import { AuthModule } from '@anarchitects/auth-nest';
+import { AuthModule, provideAuthRuntimeGuards } from '@anarchitects/auth-nest';
 import { authConfig } from '@anarchitects/auth-nest/config';
 
 @Module({
@@ -213,6 +226,7 @@ import { authConfig } from '@anarchitects/auth-nest/config';
       },
     }),
   ],
+  providers: [...provideAuthRuntimeGuards()],
 })
 export class AuthApiModule {}
 ```
@@ -263,7 +277,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
 import { authConfig } from '@anarchitects/auth-nest/config';
 import { AuthApplicationModule } from '@anarchitects/auth-nest/application';
-import { AuthPresentationModule } from '@anarchitects/auth-nest/presentation';
+import { AuthPresentationModule, provideAuthRuntimeGuards } from '@anarchitects/auth-nest/presentation';
 import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer';
 
 @Module({
@@ -298,6 +312,7 @@ import { AuthMailerModule } from '@anarchitects/auth-nest/infrastructure-mailer'
       provider: 'node',
     }),
   ],
+  providers: [...provideAuthRuntimeGuards()],
 })
 export class AuthApiModule {}
 ```

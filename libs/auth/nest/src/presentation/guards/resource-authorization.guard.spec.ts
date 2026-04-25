@@ -61,6 +61,21 @@ describe('ResourceAuthorizationGuard', () => {
     ).not.toHaveBeenCalled();
   });
 
+  it('bypasses resource authorization for public routes', async () => {
+    mockReflector.getAllAndOverride.mockImplementation((key: string) =>
+      key === 'auth:public'
+        ? true
+        : [{ action: 'update', subject: 'Post', idParam: 'postId' }],
+    );
+
+    await expect(guard.canActivate(createExecutionContext({}))).resolves.toBe(
+      true,
+    );
+    expect(
+      mockResourceAuthorizationService.authorizeResources,
+    ).not.toHaveBeenCalled();
+  });
+
   it('throws when the user is missing for resource-authorized routes', async () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post', idParam: 'postId' },

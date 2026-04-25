@@ -1,8 +1,8 @@
-import { AUTH_PUBLIC_METADATA_KEY } from '@anarchitects/auth-declarations';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthPrincipalResolver } from '../../application/services/auth-principal.resolver';
 import { AuthRuntimeRequest } from './authenticated-user';
+import { isPublicRoute } from './public-route';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -12,12 +12,7 @@ export class AuthenticationGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>(
-      AUTH_PUBLIC_METADATA_KEY,
-      [context.getHandler(), context.getClass()],
-    );
-
-    if (isPublic) {
+    if (isPublicRoute(this.reflector, context)) {
       return true;
     }
 

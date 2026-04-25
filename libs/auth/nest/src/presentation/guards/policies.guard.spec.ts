@@ -59,6 +59,19 @@ describe('PoliciesGuard', () => {
     expect(mockPoliciesService.rulesForUser).not.toHaveBeenCalled();
   });
 
+  it('bypasses policy checks for public routes', async () => {
+    mockReflector.getAllAndOverride.mockImplementation((key: string) =>
+      key === 'auth:public' ? true : [{ action: 'update', subject: 'Post' }],
+    );
+
+    await expect(guard.canActivate(createExecutionContext())).resolves.toBe(
+      true,
+    );
+    expect(
+      mockPoliciesService.assertCanAttemptRoutePolicies,
+    ).not.toHaveBeenCalled();
+  });
+
   it('throws when the user is missing for protected routes', async () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
