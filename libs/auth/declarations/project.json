@@ -10,7 +10,7 @@
       "fallbackCurrentVersionResolver": "disk"
     }
   },
-  "tags": ["domain:auth", "tech:nest", "type:declaration"],
+  "tags": ["domain:auth", "tech:nest", "type:declaration", "auth:declaration"],
   "targets": {
     "nx-release-publish": {
       "options": {

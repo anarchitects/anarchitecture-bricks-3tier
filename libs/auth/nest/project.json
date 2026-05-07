@@ -10,7 +10,7 @@
       "fallbackCurrentVersionResolver": "disk"
     }
   },
-  "tags": ["domain:auth", "tech:nest"],
+  "tags": ["domain:auth", "tech:nest", "auth:runtime"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",

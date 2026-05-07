@@ -11,7 +11,7 @@
       "fallbackCurrentVersionResolver": "disk"
     }
   },
-  "tags": ["domain:auth", "tech:angular"],
+  "tags": ["domain:auth", "tech:angular", "auth:client"],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
