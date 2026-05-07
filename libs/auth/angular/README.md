@@ -34,6 +34,12 @@ CASL integration in `@anarchitects/auth-angular` mirrors the backend split inste
 
 Angular should hide or redirect on unauthorized work, but Nest remains the final enforcement boundary for instance-sensitive access.
 
+That mirrors the package split on the backend:
+
+- `@anarchitects/auth-declarations` declares controller security intent
+- `@anarchitects/auth-nest` performs runtime enforcement
+- Angular guards and helpers exist for UX flow and preflight checks, not as a replacement for backend authorization
+
 ## Installation
 
 ```bash

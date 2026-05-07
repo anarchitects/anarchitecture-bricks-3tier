@@ -51,6 +51,10 @@ This is the contract emitted by `/auth/me`, persisted through auth permission ma
 
 Use `RoutePolicy` when a consumer only needs to answer "may this user attempt this kind of work at all?" Concrete ownership or field-sensitive checks still belong to loaded resources and CASL ability evaluation in Angular/Nest layers.
 
+This is the shared contract behind `@anarchitects/auth-declarations` route
+metadata and the coarse route-attempt helpers in `@anarchitects/auth-angular`.
+It is intentionally not the full resource-authorization contract.
+
 ## Installation
 
 ```bash

@@ -11,6 +11,7 @@ This is the Nest implementation cookbook for Anarchitecture Bricks. It focuses o
 
 - Nest libraries follow: `presentation -> application <- infrastructure`.
 - Shared contracts (DTOs/models/schemas) are consumed from TS packages (`@anarchitects/forms-ts`, `@anarchitects/auth-ts`).
+- Lightweight auth controller declarations live in `@anarchitects/auth-declarations`.
 - Domain libraries expose both facade composition modules and layer-specific secondary entry points.
 - Controllers keep `@RouteSchema` pure and imported from TS contract libraries.
 - OpenAPI metadata is assigned centrally in specs tooling.
@@ -42,6 +43,7 @@ Use layered entry points when you need explicit control over domain composition:
 - `@anarchitects/forms-nest/presentation`
 - `@anarchitects/forms-nest/infrastructure-*`
 - `@anarchitects/forms-nest/config`
+- `@anarchitects/auth-declarations`
 - `@anarchitects/auth-nest/application`
 - `@anarchitects/auth-nest/presentation`
 - `@anarchitects/auth-nest/infrastructure-*`
@@ -62,12 +64,37 @@ Nest libraries (`@anarchitects/forms-nest`, `@anarchitects/auth-nest`) map these
 
 For `@anarchitects/auth-nest`, document and preserve the two-layer authorization model:
 
-- `@anarchitects/auth-ts` owns the `PolicyRule` shape
+- `@anarchitects/auth-ts` owns the serialized `PolicyRule` and `RoutePolicy` contracts
+- `@anarchitects/auth-declarations` owns controller-facing decorators such as `@Public()`, `@Policies(...)`, and `@AuthorizeResource(...)`
 - `@Policies()` is a coarse route-level pre-check over `{ action, subject }`
-- `@AuthorizeResource(...)` is the resource-aware path that loads the entity and evaluates the concrete CASL rule
-- `@AuthorizedResource()` exposes that already authorized entity to the handler
+- `@AuthorizeResource(...)` is the resource-aware declaration that points runtime enforcement at the correct loader and route param
+- `@anarchitects/auth-nest` owns runtime enforcement and `@AuthorizedResource()`
 
 This split is required for ownership-sensitive rules. Route metadata alone cannot prove that a user may update a specific post; the resource must be loaded before CASL can make that final decision.
+
+Typical composition:
+
+```ts
+import { Controller, Patch } from '@nestjs/common';
+import { AuthorizeResource, Policies } from '@anarchitects/auth-declarations';
+import { AuthorizedResource, AuthModule, provideAuthRuntimeGuards } from '@anarchitects/auth-nest';
+
+@Controller('posts')
+export class PostsController {
+  @Patch(':postId')
+  @Policies({ action: 'update', subject: 'Post' })
+  @AuthorizeResource({ action: 'update', subject: 'Post', idParam: 'postId' })
+  updatePost(@AuthorizedResource() post: Post) {
+    return post;
+  }
+}
+
+@Module({
+  imports: [AuthModule.forRoot({})],
+  providers: [...provideAuthRuntimeGuards()],
+})
+export class AppModule {}
+```
 
 Malformed persisted permission payloads are treated as trust-boundary failures and must fail closed instead of being partially trusted.
 
