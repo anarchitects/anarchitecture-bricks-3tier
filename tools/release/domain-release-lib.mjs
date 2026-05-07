@@ -3,6 +3,15 @@ import { join } from 'node:path';
 import semver from 'semver';
 
 export const TRANSIENT_VERSION_PLAN_PREFIX = 'domain-release-plan-';
+export const SUPPORTED_RELEASE_BUMPS = new Set([
+  'major',
+  'premajor',
+  'minor',
+  'preminor',
+  'patch',
+  'prepatch',
+  'prerelease',
+]);
 
 const BUMP_ORDER = {
   none: 0,
@@ -286,6 +295,33 @@ export function computeHybridReleasePlanFromBumps({
 
 export function hasAnyVersionPlanBumps(projectBumps) {
   return Object.values(projectBumps).some((bump) => bump !== 'none');
+}
+
+export function createForcedReleasePlan({
+  releaseGroups,
+  releaseGroupToFilteredProjects,
+  bump,
+}) {
+  if (!SUPPORTED_RELEASE_BUMPS.has(bump)) {
+    throw new Error(
+      `Unsupported release bump "${bump}". Expected one of: ${Array.from(
+        SUPPORTED_RELEASE_BUMPS,
+      ).join(', ')}.`,
+    );
+  }
+
+  const projectBumps = {};
+
+  for (const releaseGroup of releaseGroups) {
+    const filteredProjects = releaseGroupToFilteredProjects.get(releaseGroup);
+    const projectNames = Array.from(filteredProjects ?? releaseGroup.projects ?? []);
+
+    for (const projectName of projectNames) {
+      projectBumps[projectName] = bump;
+    }
+  }
+
+  return projectBumps;
 }
 
 export function buildVersionPlanContent(projectBumps, message) {

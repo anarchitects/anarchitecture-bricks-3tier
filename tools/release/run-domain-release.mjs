@@ -10,6 +10,7 @@ import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 
 import {
+  createForcedReleasePlan,
   computeHybridReleasePlanFromBumps,
   createTransientVersionPlan,
   expandReleaseGroupsByDependents,
@@ -85,12 +86,19 @@ async function main() {
   assertNoExistingVersionPlans();
 
   const baseClient = new ReleaseClient({});
-  const projectBumps = await discoverHybridReleasePlan({
-    groups: internalGroups,
-    releaseContext,
-  });
+  const selectedReleaseGroups = filterReleaseGroups(releaseContext.releaseGraph, internalGroups);
+  const projectBumps = options.bump
+    ? createForcedReleasePlan({
+        releaseGroups: selectedReleaseGroups,
+        releaseGroupToFilteredProjects: releaseContext.releaseGraph.releaseGroupToFilteredProjects,
+        bump: options.bump,
+      })
+    : await discoverHybridReleasePlan({
+        groups: internalGroups,
+        releaseContext,
+      });
 
-  logComputedPlan(projectBumps);
+  logComputedPlan(projectBumps, options.bump);
 
   const transientPlan = hasAnyVersionPlanBumps(projectBumps)
     ? createTransientVersionPlan({
@@ -309,6 +317,7 @@ async function discoverHybridReleasePlan({ groups, releaseContext }) {
 function parseArgs(argv) {
   const options = {
     domain: null,
+    bump: null,
     dryRun: false,
     verbose: false,
     yes: false,
@@ -327,6 +336,21 @@ function parseArgs(argv) {
 
     if (arg.startsWith('--domain=')) {
       options.domain = arg.slice('--domain='.length);
+      continue;
+    }
+
+    if (arg === '--bump') {
+      const bumpValue = argv[index + 1] ?? null;
+      if (!bumpValue || bumpValue.startsWith('-')) {
+        throw new Error('Missing required value for --bump.');
+      }
+      options.bump = bumpValue;
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith('--bump=')) {
+      options.bump = arg.slice('--bump='.length);
       continue;
     }
 
@@ -360,6 +384,10 @@ function parseArgs(argv) {
 
   if (!options.domain) {
     throw new Error('Missing required --domain argument.');
+  }
+
+  if (options.bump === '') {
+    throw new Error('Missing required value for --bump.');
   }
 
   return options;
@@ -417,14 +445,18 @@ function cleanupTransientPlan(transientPlan) {
   }
 }
 
-function logComputedPlan(projectBumps) {
+function logComputedPlan(projectBumps, forcedBump = null) {
   const entries = Object.entries(projectBumps);
   if (entries.length === 0) {
     console.log('No projects were selected for version planning.');
     return;
   }
 
-  console.log('Computed hybrid release bumps:');
+  if (forcedBump) {
+    console.log(`Computed hybrid release bumps from manual override --bump=${forcedBump}:`);
+  } else {
+    console.log('Computed hybrid release bumps:');
+  }
   for (const [projectName, bump] of entries) {
     console.log(`- ${projectName}: ${bump}`);
   }

@@ -14,6 +14,23 @@ on:
           - forms
           - auth
           - common
+      bump:
+        description: Optional semver override for the selected domain release
+        required: false
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+      first_release:
+        description: Treat the selected release as a first release when one or more projects have no prior release tag
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -56,7 +73,16 @@ jobs:
           git config user.email "anarchitects-bot[bot]@users.noreply.github.com"
 
       - name: Run release for selected domain group
-        run: yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} --yes
+        run: |
+          bump_args=""
+          first_release_args=""
+          if [ -n "${{ inputs.bump }}" ]; then
+            bump_args="--bump=${{ inputs.bump }}"
+          fi
+          if [ "${{ inputs.first_release }}" = "true" ]; then
+            first_release_args="--first-release"
+          fi
+          yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} $bump_args $first_release_args --yes
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
