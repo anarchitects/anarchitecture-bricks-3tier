@@ -10,7 +10,7 @@
       "fallbackCurrentVersionResolver": "disk"
     }
   },
-  "tags": ["domain:auth", "tech:ts"],
+  "tags": ["domain:auth", "tech:ts", "auth:contracts"],
   "targets": {
     "nx-release-publish": {
       "options": {

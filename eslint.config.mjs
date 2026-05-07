@@ -26,7 +26,11 @@ export default [
             },
             {
               sourceTag: 'domain:forms',
-              onlyDependOnLibsWithTags: ['domain:shared', 'domain:forms'],
+              onlyDependOnLibsWithTags: [
+                'domain:shared',
+                'domain:forms',
+                'auth:declaration',
+              ],
             },
             {
               sourceTag: 'domain:auth',
@@ -35,6 +39,32 @@ export default [
                 'domain:forms',
                 'domain:auth',
               ],
+            },
+            {
+              sourceTag: 'auth:contracts',
+              onlyDependOnLibsWithTags: ['domain:shared', 'auth:contracts'],
+            },
+            {
+              sourceTag: 'auth:declaration',
+              onlyDependOnLibsWithTags: [
+                'domain:shared',
+                'auth:contracts',
+                'auth:declaration',
+              ],
+            },
+            {
+              sourceTag: 'auth:runtime',
+              onlyDependOnLibsWithTags: [
+                'domain:shared',
+                'domain:forms',
+                'auth:contracts',
+                'auth:declaration',
+                'auth:runtime',
+              ],
+            },
+            {
+              sourceTag: 'auth:client',
+              notDependOnLibsWithTags: ['auth:runtime', 'auth:declaration'],
             },
             {
               sourceTag: 'domain:storybook',
@@ -87,6 +117,37 @@ export default [
               message:
                 'Do not define route schemas in Nest controllers. Import DTO schemas from libs/*/ts/dtos.',
             },
+            {
+              name: '@anarchitects/auth-nest',
+              allowImportNames: ['AuthorizedResource'],
+              message:
+                'Nest controllers may declare security with @anarchitects/auth-declarations. Runtime auth-nest composition belongs in app-shell modules; only AuthorizedResource is allowed here as the request-bound resource reader.',
+            },
+            {
+              name: '@anarchitects/auth-nest/presentation',
+              message:
+                'Do not import auth-nest presentation runtime APIs into controllers. Use @anarchitects/auth-declarations for controller-facing security metadata.',
+            },
+            {
+              name: '@anarchitects/auth-nest/application',
+              message:
+                'Do not import auth-nest application runtime APIs into controllers for security wiring.',
+            },
+            {
+              name: '@anarchitects/auth-nest/config',
+              message:
+                'Do not import auth-nest config/runtime shell APIs into controllers.',
+            },
+            {
+              name: '@anarchitects/auth-nest/infrastructure-persistence',
+              message:
+                'Do not import auth-nest infrastructure runtime APIs into controllers.',
+            },
+            {
+              name: '@anarchitects/auth-nest/infrastructure-mailer',
+              message:
+                'Do not import auth-nest infrastructure runtime APIs into controllers.',
+            },
           ],
         },
       ],
@@ -109,6 +170,49 @@ export default [
             "CallExpression[callee.name='RouteSchema'] > ObjectExpression > Property[key.type='Identifier'][key.name='tags']",
           message:
             'tags are OpenAPI metadata and must be assigned in tools/api-specs, not in controllers.',
+        },
+      ],
+    },
+  },
+  {
+    files: ['libs/*/angular/feature/**/*.ts'],
+    ignores: ['**/*.spec.ts', '**/*.test.ts', '**/*.stories.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@anarchitects/auth-nest',
+              message:
+                'Feature bricks must not import the Nest runtime package. Security runtime activation belongs to app composition, not feature code.',
+            },
+            {
+              name: '@anarchitects/auth-nest/presentation',
+              message:
+                'Feature bricks must not import auth-nest presentation runtime APIs.',
+            },
+            {
+              name: '@anarchitects/auth-nest/application',
+              message:
+                'Feature bricks must not import auth-nest application runtime APIs.',
+            },
+            {
+              name: '@anarchitects/auth-nest/config',
+              message:
+                'Feature bricks must not import auth-nest config/runtime shell APIs.',
+            },
+            {
+              name: '@anarchitects/auth-nest/infrastructure-persistence',
+              message:
+                'Feature bricks must not import auth-nest infrastructure runtime APIs.',
+            },
+            {
+              name: '@anarchitects/auth-nest/infrastructure-mailer',
+              message:
+                'Feature bricks must not import auth-nest infrastructure runtime APIs.',
+            },
+          ],
         },
       ],
     },
@@ -146,7 +250,7 @@ export default [
                 '../../../../*/src/*',
               ],
               message:
-                'Auth Angular feature code must depend on state/ui/config/util entrypoints, never data-access or another entrypoint\'s internal src path.',
+                "Auth Angular feature code must depend on state/ui/config/util entrypoints, never data-access or another entrypoint's internal src path.",
             },
           ],
         },
@@ -189,7 +293,7 @@ export default [
                 '../../../../*/src/*',
               ],
               message:
-                'Auth Angular state may depend on data-access/config/util, but not on feature/ui or another entrypoint\'s internal src path.',
+                "Auth Angular state may depend on data-access/config/util, but not on feature/ui or another entrypoint's internal src path.",
             },
           ],
         },
@@ -240,7 +344,7 @@ export default [
                 '../../../../*/src/*',
               ],
               message:
-                'Auth Angular UI must stay presentation-only and may not import feature/state/data-access layers or another entrypoint\'s internal src path.',
+                "Auth Angular UI must stay presentation-only and may not import feature/state/data-access layers or another entrypoint's internal src path.",
             },
           ],
         },
@@ -291,7 +395,7 @@ export default [
                 '../../../../*/src/*',
               ],
               message:
-                'Auth Angular data-access may only depend on config/util and shared TS contracts, never feature/state/ui or another entrypoint\'s internal src path.',
+                "Auth Angular data-access may only depend on config/util and shared TS contracts, never feature/state/ui or another entrypoint's internal src path.",
             },
           ],
         },
