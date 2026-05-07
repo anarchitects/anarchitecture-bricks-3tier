@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@anarchitects/auth-declarations": "0.8.0",
+    "@anarchitects/auth-declarations": "^0.8.1",
     "@anarchitects/better-auth-typeorm-adapter": "0.1.0",
     "@sinclair/typebox": "^0.34.41",
     "@better-auth/passkey": "^1.5.6",
