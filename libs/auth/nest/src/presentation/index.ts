@@ -6,7 +6,6 @@ export * from './guards/authorization.guard';
 export * from './guards/policies.guard';
 export * from './guards/resource-authorization.guard';
 export * from './decorators/authorized-resource.decorator';
-export * from './route-policy';
 export type {
   AuthContractConfigOverrides,
   AuthPresentationModuleOptions,

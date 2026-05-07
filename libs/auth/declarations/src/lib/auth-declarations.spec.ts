@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import * as declarationsEntryPoint from '../index';
 import {
   AUTHORIZE_RESOURCE_KEY,
   AUTH_PUBLIC_METADATA_KEY,
@@ -84,6 +85,20 @@ describe('auth security declaration decorators', () => {
     expect(source).not.toMatch(
       /\b(CanActivate|ExecutionContext|Injectable|Module|Provider)\b/,
     );
+  });
+
+  it('keeps the root entrypoint focused on declaration-only security APIs', () => {
+    expect(declarationsEntryPoint).toHaveProperty('Public');
+    expect(declarationsEntryPoint).toHaveProperty('Policies');
+    expect(declarationsEntryPoint).toHaveProperty('AuthorizeResource');
+    expect(declarationsEntryPoint).toHaveProperty('RequirePermissions');
+    expect(declarationsEntryPoint).toHaveProperty('RequireResourceAccess');
+
+    expect(declarationsEntryPoint).not.toHaveProperty('AuthorizedResource');
+    expect(declarationsEntryPoint).not.toHaveProperty(
+      'provideAuthRuntimeGuards',
+    );
+    expect(declarationsEntryPoint).not.toHaveProperty('AuthModule');
   });
 
   it('keeps controller and feature bricks on declaration-only security imports', () => {

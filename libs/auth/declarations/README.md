@@ -49,6 +49,22 @@ coarse route pass check and does not prove ownership or other instance-sensitive
 rules. Concrete resource authorization belongs to the runtime flow once the
 subject instance is available.
 
+Typical pairing:
+
+```ts
+import { Module } from '@nestjs/common';
+import { AuthModule, provideAuthRuntimeGuards } from '@anarchitects/auth-nest';
+
+@Module({
+  imports: [AuthModule.forRoot({})],
+  providers: [...provideAuthRuntimeGuards()],
+})
+export class AppModule {}
+```
+
+Controllers declare intent through `@anarchitects/auth-declarations`. Host apps
+activate the runtime once, centrally, through `@anarchitects/auth-nest`.
+
 ## Exports
 
 - `@Public()` — marks a class or route handler as intentionally public.
@@ -64,6 +80,10 @@ subject instance is available.
 This package does not enforce authentication or authorization. It does not
 export guards, providers, modules, principal resolution, request-resource
 extraction, or app-shell activation helpers.
+
+It also does not export `@AuthorizedResource()`. That helper belongs to the
+runtime package because it reads the resource that `auth-nest` attached to the
+request after authorization.
 
 Runtime enforcement belongs to `@anarchitects/auth-nest`, which can read this
 metadata from controllers and apply the appropriate security behavior.
