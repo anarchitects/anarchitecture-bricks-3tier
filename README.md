@@ -141,7 +141,10 @@ nx run forms-angular-example:contract-test
 Run releases via the **Release (Manual)** GitHub workflow:
 
 - Workflow input `domain` must be one of: `forms`, `auth`, `common`.
+- Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
+- Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --yes`, which handles versioning, changelog generation, git/tagging, GitHub releases, and publish.
+- When conventional-commit inference needs a one-off override, the repo runner also supports `--bump=<patch|minor|major|prepatch|preminor|premajor|prerelease>`.
 - Use **Publish Packages (Recovery)** only to retry publish if a release run fails after versioning/tagging.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final release tags from a release-prep branch before merge.
@@ -149,6 +152,8 @@ Run releases via the **Release (Manual)** GitHub workflow:
 
 Avoid routine local `yarn nx release`; use the workflow or the repo runner for auditable, controlled domain releases.
 If local dry-runs are needed, use the repo runner, for example `yarn nx run release-tools:domain-release -- --domain=forms -d`.
+If you need to override bump inference for a one-time release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
+If the release also includes a package with no prior release tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --first-release -d`.
 
 ## Layering Rules
 

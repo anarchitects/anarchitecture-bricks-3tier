@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/auth-declarations",
-  "version": "0.0.1",
+  "version": "0.8.1",
   "description": "Declaration-only security metadata decorators for Anarchitecture auth-aware Nest controllers.",
   "type": "module",
   "main": "./index.cjs",

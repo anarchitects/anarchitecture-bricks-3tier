@@ -97,7 +97,10 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
 - Select exactly one domain group input: `forms`, `auth`, or `common`.
+- Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
+- Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --yes`.
+- The repo runner also supports `--bump=<patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference.
 - Do not run local `nx release` before merging PRs; use the repo runner instead.
 - Use **Publish Packages (Recovery)** only if publishing needs to be retried after a failed release run.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
@@ -111,6 +114,8 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - The release tag ancestry check fails when a `{projectName}@{version}` tag exists but points to a commit outside current branch history.
 - Group-scoped release preflight runs only the selected release group's ancestry check and builds.
 - For local dry-run validation, use the repo runner (for example `yarn nx run release-tools:domain-release -- --domain=forms -d`).
+- If you need to override the inferred bump for a single release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
+- If that release also introduces a package with no prior tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --first-release -d`.
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`

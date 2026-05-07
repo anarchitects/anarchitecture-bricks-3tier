@@ -4,10 +4,12 @@ import assert from 'node:assert/strict';
 import {
   computeHybridReleasePlanFromBumps,
   computeHybridReleasePlan,
+  createForcedReleasePlan,
   createTransientVersionPlan,
   expandReleaseGroupsByDependents,
   inferDomainFromProjectRoot,
   resolveReleaseGroupsForDomain,
+  SUPPORTED_RELEASE_BUMPS,
 } from './domain-release-lib.mjs';
 
 function buildReleaseGroup(name, projects) {
@@ -164,6 +166,35 @@ test('computeHybridReleasePlanFromBumps promotes all fixed-group peers when one 
     'common-a': 'patch',
     'common-b': 'patch',
   });
+});
+
+test('createForcedReleasePlan applies a manual bump to every project in the selected groups', () => {
+  const authGroup = buildReleaseGroup('auth', ['auth-angular', 'auth-declarations', 'auth-nest']);
+  const plan = createForcedReleasePlan({
+    releaseGroups: [authGroup],
+    releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+    bump: 'patch',
+  });
+
+  assert.deepEqual(plan, {
+    'auth-angular': 'patch',
+    'auth-declarations': 'patch',
+    'auth-nest': 'patch',
+  });
+});
+
+test('createForcedReleasePlan rejects unsupported manual bump values', () => {
+  const authGroup = buildReleaseGroup('auth', ['auth-angular']);
+
+  assert.throws(
+    () =>
+      createForcedReleasePlan({
+        releaseGroups: [authGroup],
+        releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+        bump: 'banana',
+      }),
+    new RegExp(`Expected one of: ${Array.from(SUPPORTED_RELEASE_BUMPS).join(', ')}`),
+  );
 });
 
 test('computeHybridReleasePlan throws when a multi-project group does not share major.minor', () => {
