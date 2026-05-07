@@ -3,9 +3,11 @@ import {
   createParamDecorator,
   ExecutionContext,
 } from '@nestjs/common';
+import {
+  AUTHORIZE_RESOURCE_KEY,
+  type ResourceAuthorizationRoute,
+} from '@anarchitects/auth-declarations';
 import { Subject } from '@anarchitects/auth-ts/models';
-import { ResourceAuthorizationRoute } from '../../application/resource-authorization.types';
-import { AUTHORIZE_RESOURCE_KEY } from './authorize-resource.decorator';
 import {
   getAuthorizedResource,
   getAuthorizedResourceStore,

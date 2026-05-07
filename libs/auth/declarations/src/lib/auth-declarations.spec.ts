@@ -28,6 +28,12 @@ const collectProductionSourceFiles = (directory: string): string[] =>
     return [fullPath];
   });
 
+const collectControllerAndFeatureSourceFiles = (directory: string): string[] =>
+  collectProductionSourceFiles(directory).filter(
+    (filePath) =>
+      filePath.includes('/controllers/') || filePath.includes('/feature/'),
+  );
+
 describe('auth security declaration decorators', () => {
   @Public()
   class PublicController {
@@ -77,6 +83,30 @@ describe('auth security declaration decorators', () => {
     expect(source).not.toMatch(/\bUseGuards\b/);
     expect(source).not.toMatch(
       /\b(CanActivate|ExecutionContext|Injectable|Module|Provider)\b/,
+    );
+  });
+
+  it('keeps controller and feature bricks on declaration-only security imports', () => {
+    const workspaceRoot = join(
+      import.meta.dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      '..',
+    );
+    const source = collectControllerAndFeatureSourceFiles(
+      join(workspaceRoot, 'libs'),
+    )
+      .map((filePath) => readFileSync(filePath, 'utf8'))
+      .join('\n');
+
+    expect(source).not.toMatch(
+      /from ['"]@anarchitects\/auth-nest(?:\/presentation)?['"]/,
+    );
+    expect(source).not.toMatch(/\bUseGuards\b/);
+    expect(source).not.toMatch(
+      /\b(AuthenticationGuard|AuthorizationGuard|PoliciesGuard|ResourceAuthorizationGuard|provideAuthRuntimeGuards)\b/,
     );
   });
 

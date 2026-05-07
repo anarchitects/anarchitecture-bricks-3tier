@@ -2,7 +2,7 @@ import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import {
   AuthorizeResource,
   AUTHORIZE_RESOURCE_KEY,
-} from './authorize-resource.decorator';
+} from '@anarchitects/auth-declarations';
 import { AuthorizedResource } from './authorized-resource.decorator';
 
 describe('resource authorization decorators', () => {
