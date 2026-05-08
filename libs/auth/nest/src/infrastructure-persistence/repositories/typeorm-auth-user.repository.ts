@@ -3,21 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@anarchitects/auth-ts/models';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { AuthUserRepository } from '../../application/ports/auth-user.repository';
+import { AuthUserEntity } from '../entities/auth-user.entity';
 import { RoleEntity } from '../entities/role.entity';
-import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class TypeormAuthUserRepository implements AuthUserRepository {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(AuthUserEntity)
+    private readonly userRepository: Repository<AuthUserEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
   async find(conditions: FindManyOptions<User> = {}): Promise<User[]> {
     return this.userRepository.find(conditions);
   }
-  async findOne(conditions: FindOneOptions<User>): Promise<UserEntity> {
+  async findOne(conditions: FindOneOptions<User>): Promise<AuthUserEntity> {
     const user = await this.userRepository.findOne(conditions);
     if (!user) {
       throw new NotFoundException(
@@ -65,7 +65,7 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
     }
     return this.userRepository.save(updatedUser);
   }
-  async delete(userId: string): Promise<UserEntity> {
+  async delete(userId: string): Promise<AuthUserEntity> {
     const user = await this.findOne({ where: { id: userId } });
     return this.userRepository.remove(user);
   }

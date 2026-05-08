@@ -1,9 +1,10 @@
 // Entities
 export * from './entities/account.entity';
+export * from './entities/auth-user.entity';
 export * from './entities/permission.entity';
 export * from './entities/role.entity';
 export * from './entities/session.entity';
-export * from './entities/user.entity';
+export { AuthUserEntity as UserEntity } from './entities/auth-user.entity';
 export * from './entities/verification.entity';
 
 // Migrations

@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeormAuthUserRepository } from './typeorm-auth-user.repository';
 import { User } from '@anarchitects/auth-ts/models';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { AuthUserEntity } from '../entities/auth-user.entity';
 import { RoleEntity } from '../entities/role.entity';
-import { UserEntity } from '../entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
 
 describe('TypeormAuthUserRepository', () => {
@@ -52,7 +52,7 @@ describe('TypeormAuthUserRepository', () => {
       providers: [
         TypeormAuthUserRepository,
         {
-          provide: getRepositoryToken(UserEntity),
+          provide: getRepositoryToken(AuthUserEntity),
           useValue: mockUserRepository,
         },
         {

@@ -4,10 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthAccountRepository } from '../application/ports/auth-account.repository';
 import { AuthUserRepository } from '../application/ports/auth-user.repository';
 import { AccountEntity } from './entities/account.entity';
+import { AuthUserEntity } from './entities/auth-user.entity';
 import { PermissionEntity } from './entities/permission.entity';
 import { RoleEntity } from './entities/role.entity';
 import { SessionEntity } from './entities/session.entity';
-import { UserEntity } from './entities/user.entity';
 import { VerificationEntity } from './entities/verification.entity';
 import {
   ConfigurableModuleClass,
@@ -34,7 +34,7 @@ export class AuthPersistenceModule extends ConfigurableModuleClass {
         TypeOrmModule.forFeature([
           AccountEntity,
           SessionEntity,
-          UserEntity,
+          AuthUserEntity,
           VerificationEntity,
           RoleEntity,
           PermissionEntity,

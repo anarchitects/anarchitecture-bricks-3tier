@@ -6,8 +6,8 @@ import { AUTH_APPLICATION_MODULE_OPTIONS } from '../../application/application.m
 import { BetterAuthDatabasePort } from '../../application/services/better-auth-database.port';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
 import { AccountEntity } from '../../infrastructure-persistence/entities/account.entity';
+import { AuthUserEntity } from '../../infrastructure-persistence/entities/auth-user.entity';
 import { SessionEntity } from '../../infrastructure-persistence/entities/session.entity';
-import { UserEntity } from '../../infrastructure-persistence/entities/user.entity';
 import { VerificationEntity } from '../../infrastructure-persistence/entities/verification.entity';
 import { loadBetterAuthTypeormAdapterModule } from './better-auth.module-loader';
 import { PasskeyEntity } from './plugins/passkeys/passkey.entity';
@@ -63,7 +63,7 @@ export function createBetterAuthTypeormModels(
   options: Pick<ResolvedAuthApplicationModuleOptions, 'plugins'>,
 ): BetterAuthTypeormModelMap {
   const models: BetterAuthTypeormModelMap = {
-    users: UserEntity,
+    users: AuthUserEntity,
     accounts: AccountEntity,
     sessions: SessionEntity,
     verifications: VerificationEntity,
