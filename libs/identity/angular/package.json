@@ -1,0 +1,20 @@
+{
+  "name": "@anarchitects/identity-angular",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/core": "^21.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/identity/angular"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/identity/angular",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  }
+}

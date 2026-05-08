@@ -1,0 +1,54 @@
+{
+  "name": "identity-angular",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/identity/angular",
+  "prefix": "anarchitects",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:identity", "tech:angular"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/identity/angular/ng-package.json",
+        "tsConfig": "libs/identity/angular/tsconfig.lib.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/identity/angular/tsconfig.lib.prod.json"
+        },
+        "development": {}
+      },
+      "defaultConfiguration": "production"
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "tsConfig": "libs/identity/angular/tsconfig.spec.json",
+        "include": ["**/*.spec.ts", "**/*.test.ts"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "compodoc": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/docs/compodoc/identity-angular"],
+      "options": {
+        "command": "rm -rf dist/docs/compodoc/identity-angular && yarn exec compodoc libs/identity/angular/src -p libs/identity/angular/tsconfig.lib.json -d dist/docs/compodoc/identity-angular/html --disableCoverage --disableGraph --silent && yarn exec compodoc libs/identity/angular/src -p libs/identity/angular/tsconfig.lib.json -d dist/docs/compodoc/identity-angular/json -e json --disableCoverage --disableGraph --silent"
+      }
+    }
+  }
+}
