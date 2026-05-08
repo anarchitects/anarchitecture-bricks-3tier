@@ -41,6 +41,14 @@ export default [
               ],
             },
             {
+              sourceTag: 'domain:identity',
+              onlyDependOnLibsWithTags: [
+                'domain:shared',
+                'domain:auth',
+                'domain:identity',
+              ],
+            },
+            {
               sourceTag: 'auth:contracts',
               onlyDependOnLibsWithTags: ['domain:shared', 'auth:contracts'],
             },
