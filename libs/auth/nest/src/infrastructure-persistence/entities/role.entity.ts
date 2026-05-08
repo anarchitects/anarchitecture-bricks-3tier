@@ -38,7 +38,7 @@ export class RoleEntity implements Role {
   })
   permissions!: Permission[] | null;
 
-  @ManyToMany('UserEntity', 'roles')
+  @ManyToMany('AuthUserEntity', 'roles')
   users!: User[] | null;
 
   @CreateDateColumn()

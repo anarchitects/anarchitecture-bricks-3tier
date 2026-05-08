@@ -2,8 +2,8 @@ import type { BetterAuthOptions } from 'better-auth';
 import type { DataSource } from 'typeorm';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
 import { AccountEntity } from '../../infrastructure-persistence/entities/account.entity';
+import { AuthUserEntity } from '../../infrastructure-persistence/entities/auth-user.entity';
 import { SessionEntity } from '../../infrastructure-persistence/entities/session.entity';
-import { UserEntity } from '../../infrastructure-persistence/entities/user.entity';
 import { VerificationEntity } from '../../infrastructure-persistence/entities/verification.entity';
 import { loadBetterAuthTypeormAdapterModule } from './better-auth.module-loader';
 import {
@@ -96,7 +96,7 @@ describe('BetterAuthTypeormDatabaseAdapter', () => {
     expect(createBetterAuthTypeormAdapter).toHaveBeenCalledWith({
       dataSource,
       models: {
-        users: UserEntity,
+        users: AuthUserEntity,
         accounts: AccountEntity,
         sessions: SessionEntity,
         verifications: VerificationEntity,
@@ -127,7 +127,7 @@ describe('BetterAuthTypeormDatabaseAdapter', () => {
     expect(createBetterAuthTypeormAdapter).toHaveBeenCalledWith(
       expect.objectContaining({
         models: {
-          users: UserEntity,
+          users: AuthUserEntity,
           accounts: AccountEntity,
           sessions: SessionEntity,
           verifications: VerificationEntity,
@@ -141,7 +141,7 @@ describe('BetterAuthTypeormDatabaseAdapter', () => {
 describe('createBetterAuthTypeormModels', () => {
   it('returns the core Better Auth model map by default', () => {
     expect(createBetterAuthTypeormModels(baseOptions)).toEqual({
-      users: UserEntity,
+      users: AuthUserEntity,
       accounts: AccountEntity,
       sessions: SessionEntity,
       verifications: VerificationEntity,
@@ -160,7 +160,7 @@ describe('createBetterAuthTypeormModels', () => {
         },
       }),
     ).toEqual({
-      users: UserEntity,
+      users: AuthUserEntity,
       accounts: AccountEntity,
       sessions: SessionEntity,
       verifications: VerificationEntity,
