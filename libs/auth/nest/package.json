@@ -1,15 +1,15 @@
 {
   "name": "@anarchitects/auth-nest",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@anarchitects/auth-declarations": "^0.8.2",
+    "@anarchitects/auth-declarations": "^0.8.3",
     "@anarchitects/better-auth-typeorm-adapter": "0.1.0",
     "@sinclair/typebox": "^0.34.41",
     "@better-auth/passkey": "^1.5.6",
-    "@anarchitects/auth-ts": "^0.8.2",
+    "@anarchitects/auth-ts": "^0.8.3",
     "@anarchitects/common-nest-mailer": "^0.3.2",
     "@casl/ability": "^6.7.3",
     "@opentelemetry/api": "^1.9.0",
