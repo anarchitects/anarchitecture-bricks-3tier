@@ -1,1 +1,1 @@
-export * from './identity-profile.model';
+export * from './user-profile.model';

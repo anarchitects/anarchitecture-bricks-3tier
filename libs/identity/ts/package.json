@@ -1,7 +1,7 @@
 {
   "name": "@anarchitects/identity-ts",
   "version": "0.0.1",
-  "description": "Shared identity models for the Anarchitecture identity domain.",
+  "description": "Shared identity models and TypeBox DTO schemas for the Anarchitecture identity domain.",
   "type": "module",
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -15,13 +15,24 @@
   "bugs": {
     "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   },
-  "keywords": ["identity", "profile", "anarchitecture"],
-  "dependencies": {},
+  "keywords": [
+    "identity",
+    "profile",
+    "anarchitecture"
+  ],
+  "dependencies": {
+    "@sinclair/typebox": "0.34.41"
+  },
   "exports": {
     ".": {
       "types": "./index.d.ts",
       "import": "./index.js",
       "require": "./index.cjs"
+    },
+    "./dtos": {
+      "types": "./dtos/index.d.ts",
+      "import": "./dtos/index.js",
+      "require": "./dtos/index.cjs"
     },
     "./models": {
       "types": "./models/index.d.ts",
