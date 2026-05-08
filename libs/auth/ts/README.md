@@ -173,6 +173,14 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 
 `AuthUser` is the preferred shared auth-domain user contract. `User` remains exported as a temporary compatibility alias for existing consumers.
 
+## AuthUser migration
+
+- Preferred import moving forward: `import { AuthUser } from '@anarchitects/auth-ts'` or `@anarchitects/auth-ts/models`
+- Temporary compatibility alias: `User` remains exported and is type-equivalent to `AuthUser`
+- Downstream migration path: rename local imports, annotations, and helper signatures from `User` to `AuthUser`; no DTO field names or runtime payload shapes changed as part of this rename
+- Source compatibility note: payloads such as `/auth/me` still use the field name `user`; the rename only changes the preferred shared TypeScript contract name behind that field
+- Database migration note: none in `@anarchitects/auth-ts`; this package only ships shared contracts and runtime validation helpers
+
 ### Contract profile versioning
 
 - Contract profiles carry their own `version` field.

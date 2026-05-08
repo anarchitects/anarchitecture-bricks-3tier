@@ -110,13 +110,13 @@ Prefer symbol imports from `@anarchitects/auth-nest/infrastructure-persistence` 
 Recommended:
 
 ```ts
-import { AccountEntity, CreateAuthSchema1720200000000, PermissionEntity, RoleEntity, SessionEntity, UserEntity, VerificationEntity } from '@anarchitects/auth-nest/infrastructure-persistence';
+import { AccountEntity, AuthUserEntity, CreateAuthSchema1720200000000, PermissionEntity, RoleEntity, SessionEntity, VerificationEntity } from '@anarchitects/auth-nest/infrastructure-persistence';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   migrations: [CreateAuthSchema1720200000000],
-  entities: [AccountEntity, PermissionEntity, RoleEntity, SessionEntity, UserEntity, VerificationEntity],
+  entities: [AccountEntity, AuthUserEntity, PermissionEntity, RoleEntity, SessionEntity, VerificationEntity],
 });
 ```
 
@@ -132,6 +132,15 @@ export const AppDataSource = new DataSource({
 ```
 
 Use the symbol-based approach for production apps and reusable templates. Keep plugin-specific migrations with their owning plugin modules; the `infrastructure-persistence` entry point only exposes the core auth schema migration.
+
+## AuthUser migration and compatibility
+
+- Preferred persistence class: `AuthUserEntity` from `@anarchitects/auth-nest/infrastructure-persistence`
+- Temporary compatibility alias: `UserEntity` remains exported from the same entry point and resolves to `AuthUserEntity`
+- Preferred auth-domain service names: `resolveAuthUserById`, `rulesForAuthUser`, `rulesForLoadedAuthUser`, `buildAbilityForAuthUser`, and `assertCanAttemptRoutePoliciesForAuthUser`
+- Temporary compatibility wrappers remain for older call sites: `resolveUserById`, `rulesForUser`, `rulesForLoadedUser`, `buildAbilityForUser`, and `assertCanAttemptRoutePolicies`
+- Downstream migration path: rename TypeScript imports and helper calls to the `AuthUser*` variants; controller payload field names and Better Auth provider field names intentionally remain unchanged
+- Database migration requirement: none expected for this rename. The persistence class name changed, but the mapped table and relation names remain `auth.users`, `auth.user_roles`, `auth.roles`, and `auth.role_permissions`
 
 ## Configuration
 
