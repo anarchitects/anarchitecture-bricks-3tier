@@ -98,9 +98,7 @@ describe('AuthPrincipalResolver', () => {
       .spyOn(resolver, 'resolveAuthUserById')
       .mockResolvedValueOnce(authUser as never);
 
-    await expect(resolver.resolveUserById('user-1')).resolves.toEqual(
-      authUser,
-    );
+    await expect(resolver.resolveUserById('user-1')).resolves.toEqual(authUser);
     expect(resolveAuthUserByIdSpy).toHaveBeenCalledWith('user-1');
   });
 });
