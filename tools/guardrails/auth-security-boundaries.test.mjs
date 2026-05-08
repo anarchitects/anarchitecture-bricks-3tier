@@ -95,3 +95,41 @@ test('guardrail: Angular feature code may not import auth-nest runtime APIs', as
     `Expected Angular feature runtime imports to be rejected, but found: ${JSON.stringify(messages, null, 2)}`,
   );
 });
+
+test('guardrail: identity projects may depend on auth projects', async () => {
+  const messages = await lintText(
+    'libs/identity/ts/src/auth-import.ts',
+    `
+      import type { RoutePolicy } from '@anarchitects/auth-ts/models';
+
+      export const policy: RoutePolicy = {
+        action: 'read',
+        subject: 'IdentityProfile',
+      };
+    `,
+  );
+
+  assert.deepEqual(
+    messages,
+    [],
+    `Expected identity -> auth imports to be allowed, but found: ${JSON.stringify(messages, null, 2)}`,
+  );
+});
+
+test('guardrail: auth projects may not depend on identity projects', async () => {
+  const messages = await lintText(
+    'libs/auth/ts/src/identity-import.ts',
+    `
+      import type { IdentityProfile } from '@anarchitects/identity-ts';
+
+      export const profileId = (profile: IdentityProfile) => profile.id;
+    `,
+  );
+
+  assert.ok(
+    messages.some(
+      (message) => message.ruleId === '@nx/enforce-module-boundaries',
+    ),
+    `Expected auth -> identity imports to be rejected, but found: ${JSON.stringify(messages, null, 2)}`,
+  );
+});
