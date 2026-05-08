@@ -205,6 +205,12 @@ export class RegisterActionComponent {
 
 With a contract such as `register.name.required = false` plus `emptyStringPolicy = 'strip'`, the store omits `name` from the outgoing request body instead of sending `name: ''`.
 
+## AuthUser compatibility
+
+- Preferred shared session type: `AuthUser` from `@anarchitects/auth-ts` or `@anarchitects/auth-ts/models`
+- `AuthStore` intentionally keeps a smaller session snapshot derived from `AuthUser` (`id` and `email`) instead of storing the full user graph in client state
+- Backend response compatibility is unchanged: the session payload still uses the field name `user`, even though the preferred shared contract type behind that field is now `AuthUser`
+
 ### Optional JWT plugin wiring
 
 Keep the root auth surface session-first. Only wire the JWT plugin when the host app explicitly needs token-based flows:

@@ -91,4 +91,16 @@ describe('AuthPrincipalResolver', () => {
       UnauthorizedException,
     );
   });
+
+  it('keeps resolveUserById as a compatibility wrapper', async () => {
+    const authUser = { id: 'user-1', roles: [] };
+    const resolveAuthUserByIdSpy = jest
+      .spyOn(resolver, 'resolveAuthUserById')
+      .mockResolvedValueOnce(authUser as never);
+
+    await expect(resolver.resolveUserById('user-1')).resolves.toEqual(
+      authUser,
+    );
+    expect(resolveAuthUserByIdSpy).toHaveBeenCalledWith('user-1');
+  });
 });

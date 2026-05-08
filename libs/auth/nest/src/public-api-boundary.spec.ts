@@ -1,4 +1,5 @@
 import * as rootEntryPoint from './index';
+import * as persistenceEntryPoint from './infrastructure-persistence';
 import * as presentationEntryPoint from './presentation';
 
 describe('auth-nest public entrypoints', () => {
@@ -24,5 +25,13 @@ describe('auth-nest public entrypoints', () => {
     expect(presentationEntryPoint).not.toHaveProperty('Policies');
     expect(presentationEntryPoint).not.toHaveProperty('AuthorizeResource');
     expect(presentationEntryPoint).not.toHaveProperty('RoutePolicy');
+  });
+
+  it('keeps persistence user exports compatible during the AuthUser rename', () => {
+    expect(persistenceEntryPoint).toHaveProperty('AuthUserEntity');
+    expect(persistenceEntryPoint).toHaveProperty('UserEntity');
+    expect(persistenceEntryPoint.UserEntity).toBe(
+      persistenceEntryPoint.AuthUserEntity,
+    );
   });
 });

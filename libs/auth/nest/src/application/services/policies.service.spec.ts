@@ -119,6 +119,12 @@ describe('PoliciesService', () => {
       expect(permissions).toEqual(expectedPolicyRules);
     });
 
+    it('keeps rulesForUser as a compatibility wrapper', async () => {
+      await expect(service.rulesForUser(mockAuthUser)).resolves.toEqual(
+        expectedPolicyRules,
+      );
+    });
+
     it.each(malformedPermissions)(
       'should fail closed on malformed persisted policy rules: $description',
       async ({ permission }) => {
@@ -152,6 +158,15 @@ describe('PoliciesService', () => {
       );
       expect(ability).toEqual({});
     });
+
+    it('keeps buildAbilityForUser as a compatibility wrapper', async () => {
+      await expect(service.buildAbilityForUser(mockAuthUser)).resolves.toEqual(
+        {},
+      );
+      expect(mockAbilityFactory.buildAbility).toHaveBeenCalledWith(
+        expectedPolicyRules,
+      );
+    });
   });
 
   describe('assertCanAttemptRoutePolicies', () => {
@@ -169,6 +184,14 @@ describe('PoliciesService', () => {
           { action: 'delete', subject: 'Article' },
         ]),
       ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('keeps assertCanAttemptRoutePolicies as a compatibility wrapper', async () => {
+      await expect(
+        service.assertCanAttemptRoutePolicies(mockAuthUser, [
+          { action: 'read', subject: 'Article' },
+        ]),
+      ).resolves.toBeUndefined();
     });
   });
 });
