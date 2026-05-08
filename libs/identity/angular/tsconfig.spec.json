@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../dist/out-tsc",
+    "types": ["vitest/globals"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "config/src/**/*.ts",
+    "config/src/**/*.d.ts",
+    "data-access/src/**/*.ts",
+    "data-access/src/**/*.d.ts",
+    "feature/src/**/*.ts",
+    "feature/src/**/*.d.ts",
+    "state/src/**/*.ts",
+    "state/src/**/*.d.ts",
+    "ui/src/**/*.ts",
+    "ui/src/**/*.d.ts"
+  ]
+}

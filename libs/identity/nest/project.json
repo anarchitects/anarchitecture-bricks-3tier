@@ -1,0 +1,46 @@
+{
+  "name": "identity-nest",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/identity/nest/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:identity", "tech:nest"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/identity/nest",
+        "tsConfig": "libs/identity/nest/tsconfig.lib.json",
+        "packageJson": "libs/identity/nest/package.json",
+        "main": "libs/identity/nest/src/index.ts",
+        "assets": ["libs/identity/nest/*.md"],
+        "additionalEntryPoints": [
+          "libs/identity/nest/src/application/index.ts",
+          "libs/identity/nest/src/config/index.ts",
+          "libs/identity/nest/src/infrastructure/index.ts",
+          "libs/identity/nest/src/presentation/index.ts"
+        ],
+        "generateExportsField": true
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/identity/nest/jest.config.ts"
+      }
+    }
+  }
+}

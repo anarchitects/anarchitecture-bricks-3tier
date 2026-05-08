@@ -208,6 +208,19 @@
           ]
         }
       },
+      "identity": {
+        "projectsRelationship": "independent",
+        "projects": ["directory:libs/identity/**"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=identity-angular,identity-nest,identity-ts && yarn nx run-many -t build -p identity-angular,identity-nest,identity-ts",
+          "updateDependents": "auto",
+          "preserveMatchingDependencyRanges": [
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies"
+          ]
+        }
+      },
       "common-angular": {
         "projectsRelationship": "independent",
         "projects": [
@@ -235,6 +248,7 @@
       }
     },
     "version": {
+      "preVersionCommand": "yarn dlx nx run-many -t build",
       "conventionalCommits": true,
       "updateDependents": "never"
     },

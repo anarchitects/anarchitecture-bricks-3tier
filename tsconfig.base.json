@@ -171,6 +171,41 @@
       ],
       "@anarchitects/common-angular-ui-layouts/defaults": [
         "libs/common/angular/ui-layouts/defaults/src/index.ts"
+      ],
+      "@anarchitects/identity-ts": ["libs/identity/ts/src/index.ts"],
+      "@anarchitects/identity-ts/models": [
+        "libs/identity/ts/src/models/index.ts"
+      ],
+      "@anarchitects/identity-nest": ["libs/identity/nest/src/index.ts"],
+      "@anarchitects/identity-nest/application": [
+        "libs/identity/nest/src/application/index.ts"
+      ],
+      "@anarchitects/identity-nest/config": [
+        "libs/identity/nest/src/config/index.ts"
+      ],
+      "@anarchitects/identity-nest/infrastructure": [
+        "libs/identity/nest/src/infrastructure/index.ts"
+      ],
+      "@anarchitects/identity-nest/presentation": [
+        "libs/identity/nest/src/presentation/index.ts"
+      ],
+      "@anarchitects/identity-angular": [
+        "libs/identity/angular/src/index.ts"
+      ],
+      "@anarchitects/identity-angular/config": [
+        "libs/identity/angular/config/src/index.ts"
+      ],
+      "@anarchitects/identity-angular/data-access": [
+        "libs/identity/angular/data-access/src/index.ts"
+      ],
+      "@anarchitects/identity-angular/feature": [
+        "libs/identity/angular/feature/src/index.ts"
+      ],
+      "@anarchitects/identity-angular/state": [
+        "libs/identity/angular/state/src/index.ts"
+      ],
+      "@anarchitects/identity-angular/ui": [
+        "libs/identity/angular/ui/src/index.ts"
       ]
     }
   },

@@ -4,6 +4,7 @@ import { dirname, join, relative } from 'node:path';
 const expectedDomainTags = [
   { prefix: 'libs/forms/', tag: 'domain:forms' },
   { prefix: 'libs/auth/', tag: 'domain:auth' },
+  { prefix: 'libs/identity/', tag: 'domain:identity' },
   { prefix: 'libs/common/', tag: 'domain:shared' },
 ];
 
@@ -74,5 +75,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `Domain tag validation passed for ${checkedProjects} project(s) in forms/auth/common.`,
+  `Domain tag validation passed for ${checkedProjects} project(s) in forms/auth/identity/common.`,
 );

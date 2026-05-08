@@ -1,0 +1,36 @@
+{
+  "name": "@anarchitects/identity-ts",
+  "version": "0.0.1",
+  "description": "Shared identity models for the Anarchitecture identity domain.",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/identity/ts"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/identity/ts",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  },
+  "keywords": ["identity", "profile", "anarchitecture"],
+  "dependencies": {},
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./models": {
+      "types": "./models/index.d.ts",
+      "import": "./models/index.js",
+      "require": "./models/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
