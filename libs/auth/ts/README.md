@@ -4,7 +4,7 @@ TypeScript DTOs and domain models for the Anarchitecture authentication stack. T
 
 - Implementation-driven request/response schemas authored with [TypeBox](https://github.com/sinclairzx81/typebox)
 - Type-safe DTO aliases consumed by Angular and Nest libraries and reflected in generated OpenAPI docs
-- Domain models (`User`, `Role`, `Permission`) for composing dynamic RBAC logic across services
+- Domain models (`AuthUser`, `Role`, `Permission`) for composing dynamic RBAC logic across services
 - Contract-driven auth profile factories that generate backend request schemas and frontend form metadata from one config
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
@@ -161,15 +161,17 @@ if (errors.length > 0) {
 ### Working with domain models
 
 ```ts
-import { User, Role, Permission } from '@anarchitects/auth-ts/models';
+import { AuthUser, Role, Permission } from '@anarchitects/auth-ts';
 
-function can(user: User, action: string, subject: string): boolean {
+function can(user: AuthUser, action: string, subject: string): boolean {
   const roles: Role[] = user.roles ?? [];
   return roles.some((role) => (role.permissions ?? []).some((permission: Permission) => permission.action === action && permission.subject === subject));
 }
 ```
 
 The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relationships to support dynamic RBAC composition in persistence layers.
+
+`AuthUser` is the preferred shared auth-domain user contract. `User` remains exported as a temporary compatibility alias for existing consumers.
 
 ### Contract profile versioning
 

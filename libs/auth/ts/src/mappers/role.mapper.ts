@@ -1,5 +1,5 @@
 import { Role } from '../models/role.model';
-import { User } from '../models/user.model';
+import { AuthUser } from '../models/auth-user.model';
 import { fromIsoDateTime, toIsoDateTime } from './date-time';
 import { PublicRole } from './auth-public.types';
 import { fromPublicPermission, toPublicPermission } from './permission.mapper';
@@ -15,14 +15,14 @@ export const toPublicRole = (model: Role): PublicRole => ({
 
 export const fromPublicRole = (
   dto: PublicRole,
-  options?: { users?: User[] | null },
+  options?: { users?: AuthUser[] | null },
 ): Role => ({
   id: dto.id,
   name: dto.name,
   description: dto.description,
-  permissions: dto.permissions?.map((permission) =>
-    fromPublicPermission(permission),
-  ) ?? null,
+  permissions:
+    dto.permissions?.map((permission) => fromPublicPermission(permission)) ??
+    null,
   users: options?.users ?? null,
   createdAt: fromIsoDateTime(dto.createdAt, 'createdAt'),
   updatedAt: fromIsoDateTime(dto.updatedAt, 'updatedAt'),

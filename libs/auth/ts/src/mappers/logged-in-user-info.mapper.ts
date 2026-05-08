@@ -1,12 +1,12 @@
 import { parsePolicyRuleArrayDTO } from '../dtos';
 import { LoggedInUserInfoResponseDTO } from '../dtos/logged-in-user-info-response.dto';
-import { PolicyRule, User } from '../models';
+import { AuthUser, PolicyRule } from '../models';
 import { PolicyRuleWire, PublicUser } from './auth-public.types';
 import { fromPolicyRuleWire, toPolicyRuleWire } from './policy-rule.mapper';
-import { fromPublicUser, toPublicUser } from './user.mapper';
+import { fromPublicAuthUser, toPublicAuthUser } from './auth-user.mapper';
 
 export type LoggedInUserInfoModel = {
-  user: User;
+  user: AuthUser;
   rbac: PolicyRule[];
 };
 
@@ -28,7 +28,7 @@ const assertObject = (
 export const toLoggedInUserInfoResponseDTO = (
   model: LoggedInUserInfoModel,
 ): LoggedInUserInfoResponseDTO => ({
-  user: toPublicUser(model.user),
+  user: toPublicAuthUser(model.user),
   rbac: model.rbac.map(toPolicyRuleWire),
 });
 
@@ -39,7 +39,7 @@ export const fromLoggedInUserInfoResponseDTO = (
   const rbac = parsePolicyRuleArrayDTO(dto.rbac, 'rbac');
 
   return {
-    user: fromPublicUser(user as PublicUser),
+    user: fromPublicAuthUser(user as PublicUser),
     rbac: rbac.map((rule) => fromPolicyRuleWire(rule as PolicyRuleWire)),
   };
 };

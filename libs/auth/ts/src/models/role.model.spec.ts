@@ -1,7 +1,7 @@
 import { expectTypeOf, describe, it } from 'vitest';
 import type { Role } from './role.model';
 import type { Permission } from './permission.model';
-import type { User } from './user.model';
+import type { AuthUser } from './auth-user.model';
 
 describe('Role model type', () => {
   it('matches the expected structure', () => {
@@ -10,7 +10,7 @@ describe('Role model type', () => {
       name: string;
       description: string | null;
       permissions: Permission[] | null;
-      users: User[] | null;
+      users: AuthUser[] | null;
       createdAt: Date;
       updatedAt: Date;
     }>();
@@ -21,7 +21,9 @@ describe('Role model type', () => {
       .toHaveProperty('permissions')
       .toMatchTypeOf<Permission[] | null>();
 
-    expectTypeOf<Role>().toHaveProperty('users').toMatchTypeOf<User[] | null>();
+    expectTypeOf<Role>()
+      .toHaveProperty('users')
+      .toMatchTypeOf<AuthUser[] | null>();
   });
 
   it('uses Date timestamps', () => {
