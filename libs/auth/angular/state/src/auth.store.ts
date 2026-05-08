@@ -16,7 +16,7 @@ import {
   UpdateEmailRequestDTO,
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
-import { PolicyRule, User } from '@anarchitects/auth-ts/models';
+import { AuthUser, PolicyRule } from '@anarchitects/auth-ts/models';
 import { computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { tapResponse } from '@ngrx/operators';
@@ -48,7 +48,7 @@ type AuthState = {
   restoring: boolean;
 };
 
-type AuthUser = Pick<User, 'id' | 'email'>;
+type AuthSessionUser = Pick<AuthUser, 'id' | 'email'>;
 
 const LOGIN_REDIRECT_PATH = '/login';
 
@@ -85,7 +85,7 @@ const toErrorMessage = (error: unknown): string => {
 
 const patchAuthenticatedSession = (
   store: object,
-  session: { user: AuthUser; rbac: PolicyRule[] },
+  session: { user: AuthSessionUser; rbac: PolicyRule[] },
 ) => {
   patchState(store as never, setAllEntities([session.user]), {
     ability: createAppAbility(session.rbac),
@@ -125,7 +125,7 @@ const shapePayloadForSubmit = <TPayload extends Record<string, unknown>>(
 
 export const AuthStore = signalStore(
   withState(initialState),
-  withEntities<AuthUser>(),
+  withEntities<AuthSessionUser>(),
   withProps(() => ({
     _authApi: inject(AuthApi),
     _authContracts: injectAuthContracts(),

@@ -16,7 +16,7 @@ import {
   VerifyEmailRequestDTO,
   parsePolicyRuleArrayDTO,
 } from '@anarchitects/auth-ts/dtos';
-import { PolicyRule, User } from '@anarchitects/auth-ts/models';
+import { AuthUser, PolicyRule } from '@anarchitects/auth-ts/models';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map } from 'rxjs';
@@ -100,10 +100,10 @@ export class AuthApi {
       : undefined;
 
     return this.http
-      .get<{ user: User; rbac: unknown }>(
-        `${this.resourceUrl}/me`,
-        context ? { context } : undefined,
-      )
+      .get<{
+        user: AuthUser;
+        rbac: unknown;
+      }>(`${this.resourceUrl}/me`, context ? { context } : undefined)
       .pipe(
         map(({ user, rbac }) => ({
           user,
