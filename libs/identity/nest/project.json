@@ -25,6 +25,7 @@
           "libs/identity/nest/src/application/index.ts",
           "libs/identity/nest/src/config/index.ts",
           "libs/identity/nest/src/infrastructure/index.ts",
+          "libs/identity/nest/src/infrastructure-persistence/index.ts",
           "libs/identity/nest/src/presentation/index.ts"
         ],
         "generateExportsField": true
