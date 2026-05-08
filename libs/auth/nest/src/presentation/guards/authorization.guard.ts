@@ -11,7 +11,7 @@ import { ResourceAuthorizationService } from '../../application/services/resourc
 import { attachAuthorizedResource } from '../authorized-resource.request';
 import {
   AuthRuntimeRequest,
-  requireAuthenticatedUser,
+  requireAuthenticatedAuthUser,
 } from './authenticated-user';
 import { isPublicRoute } from './public-route';
 
@@ -43,13 +43,16 @@ export class AuthorizationGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<AuthRuntimeRequest>();
-    const user = requireAuthenticatedUser(request);
+    const authUser = requireAuthenticatedAuthUser(request);
 
-    await this.policiesService.assertCanAttemptRoutePolicies(user, policies);
+    await this.policiesService.assertCanAttemptRoutePoliciesForAuthUser(
+      authUser,
+      policies,
+    );
 
     const authorizedResources =
       await this.resourceAuthorizationService.authorizeResources({
-        user,
+        user: authUser,
         params: request.params,
         resources,
       });

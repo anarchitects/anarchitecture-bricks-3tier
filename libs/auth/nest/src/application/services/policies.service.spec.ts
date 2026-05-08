@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Permission, PolicyRule, Role, User } from '@anarchitects/auth-ts';
+import { AuthUser, Permission, PolicyRule, Role } from '@anarchitects/auth-ts';
 import { AuthUserRepository } from '../ports/auth-user.repository';
 import { PoliciesService } from './policies.service';
 import { AbilityFactory } from '../factories/ability.factory';
@@ -33,7 +33,7 @@ describe('PoliciesService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-  const mockUser: User = {
+  const mockAuthUser: AuthUser = {
     id: 'user-1',
     roles: [mockRole],
     email: '',
@@ -88,7 +88,7 @@ describe('PoliciesService', () => {
   ];
 
   const mockAuthUserRepository = {
-    findOne: jest.fn().mockResolvedValue(mockUser),
+    findOne: jest.fn().mockResolvedValue(mockAuthUser),
   };
 
   const mockAbilityFactory = {
@@ -97,7 +97,7 @@ describe('PoliciesService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    mockAuthUserRepository.findOne.mockResolvedValue(mockUser);
+    mockAuthUserRepository.findOne.mockResolvedValue(mockAuthUser);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -113,9 +113,9 @@ describe('PoliciesService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  describe('rulesForUser', () => {
-    it('should return permissions for the user', async () => {
-      const permissions = await service.rulesForUser(mockUser);
+  describe('rulesForAuthUser', () => {
+    it('should return permissions for the auth user', async () => {
+      const permissions = await service.rulesForAuthUser(mockAuthUser);
       expect(permissions).toEqual(expectedPolicyRules);
     });
 
@@ -123,7 +123,7 @@ describe('PoliciesService', () => {
       'should fail closed on malformed persisted policy rules: $description',
       async ({ permission }) => {
         mockAuthUserRepository.findOne.mockResolvedValueOnce({
-          ...mockUser,
+          ...mockAuthUser,
           roles: [
             {
               ...mockRole,
@@ -137,16 +137,16 @@ describe('PoliciesService', () => {
           ],
         });
 
-        await expect(service.rulesForUser(mockUser)).rejects.toThrow(
+        await expect(service.rulesForAuthUser(mockAuthUser)).rejects.toThrow(
           InternalServerErrorException,
         );
       },
     );
   });
 
-  describe('buildAbilityForUser', () => {
-    it('should build ability for the user', async () => {
-      const ability = await service.buildAbilityForUser(mockUser);
+  describe('buildAbilityForAuthUser', () => {
+    it('should build ability for the auth user', async () => {
+      const ability = await service.buildAbilityForAuthUser(mockAuthUser);
       expect(mockAbilityFactory.buildAbility).toHaveBeenCalledWith(
         expectedPolicyRules,
       );
@@ -157,7 +157,7 @@ describe('PoliciesService', () => {
   describe('assertCanAttemptRoutePolicies', () => {
     it('allows a coarse route pass when a persisted rule matches', async () => {
       await expect(
-        service.assertCanAttemptRoutePolicies(mockUser, [
+        service.assertCanAttemptRoutePoliciesForAuthUser(mockAuthUser, [
           { action: 'read', subject: 'Article' },
         ]),
       ).resolves.toBeUndefined();
@@ -165,7 +165,7 @@ describe('PoliciesService', () => {
 
     it('forbids a coarse route pass when no persisted rule matches', async () => {
       await expect(
-        service.assertCanAttemptRoutePolicies(mockUser, [
+        service.assertCanAttemptRoutePoliciesForAuthUser(mockAuthUser, [
           { action: 'delete', subject: 'Article' },
         ]),
       ).rejects.toThrow(ForbiddenException);

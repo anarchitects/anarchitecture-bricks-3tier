@@ -43,11 +43,11 @@ describe('AuthOrchestrationService', () => {
 
   let mockAuthPrincipalResolver: {
     resolveFromHeaders: jest.Mock;
-    resolveUserById: jest.Mock;
+    resolveAuthUserById: jest.Mock;
   };
 
   let mockPoliciesService: {
-    rulesForLoadedUser: jest.Mock;
+    rulesForLoadedAuthUser: jest.Mock;
   };
 
   beforeEach(async () => {
@@ -83,11 +83,11 @@ describe('AuthOrchestrationService', () => {
 
     mockAuthPrincipalResolver = {
       resolveFromHeaders: jest.fn(),
-      resolveUserById: jest.fn(),
+      resolveAuthUserById: jest.fn(),
     };
 
     mockPoliciesService = {
-      rulesForLoadedUser: jest.fn().mockReturnValue([]),
+      rulesForLoadedAuthUser: jest.fn().mockReturnValue([]),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -124,7 +124,7 @@ describe('AuthOrchestrationService', () => {
       userId: 'user-id',
       headers,
     });
-    mockAuthPrincipalResolver.resolveUserById.mockResolvedValue({
+    mockAuthPrincipalResolver.resolveAuthUserById.mockResolvedValue({
       id: 'user-id',
       email: 'user@example.com',
       roles: [],
@@ -142,7 +142,7 @@ describe('AuthOrchestrationService', () => {
       headers,
     });
     expect(mockAuthEnginePort.login).toHaveBeenCalledWith(dto, undefined);
-    expect(mockAuthPrincipalResolver.resolveUserById).toHaveBeenCalledWith(
+    expect(mockAuthPrincipalResolver.resolveAuthUserById).toHaveBeenCalledWith(
       'user-id',
     );
   });
@@ -363,7 +363,7 @@ describe('AuthOrchestrationService', () => {
       user,
       headers,
     });
-    mockPoliciesService.rulesForLoadedUser.mockReturnValue([
+    mockPoliciesService.rulesForLoadedAuthUser.mockReturnValue([
       {
         action: 'read',
         subject: 'Project',
@@ -417,7 +417,7 @@ describe('AuthOrchestrationService', () => {
       },
       headers: undefined,
     });
-    mockPoliciesService.rulesForLoadedUser.mockImplementationOnce(() => {
+    mockPoliciesService.rulesForLoadedAuthUser.mockImplementationOnce(() => {
       throw new InternalServerErrorException();
     });
 

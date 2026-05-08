@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from '../resource-authorization.tokens';
 import {
   AuthorizableResource,
@@ -16,7 +16,7 @@ import { PoliciesService } from './policies.service';
 import { assertCanAccessResource } from './resource-authorization';
 
 export type ResourceAuthorizationInput = {
-  user: User;
+  user: AuthUser;
   params?: Record<string, string | undefined>;
   resources: ResourceAuthorizationRoute[];
 };
@@ -32,7 +32,7 @@ export class ResourceAuthorizationService {
   ) {}
 
   async authorizeResources({
-    user,
+    user: authUser,
     params,
     resources,
   }: ResourceAuthorizationInput): Promise<AuthorizedResourceMap> {
@@ -40,7 +40,8 @@ export class ResourceAuthorizationService {
       return {};
     }
 
-    const ability = await this.policiesService.buildAbilityForUser(user);
+    const ability =
+      await this.policiesService.buildAbilityForAuthUser(authUser);
     const authorizedResources: AuthorizedResourceMap = {};
 
     for (const resource of resources) {
@@ -58,7 +59,7 @@ export class ResourceAuthorizationService {
         );
       }
 
-      const loadedResource = await loader({ user, resourceId });
+      const loadedResource = await loader({ user: authUser, resourceId });
       if (!loadedResource) {
         throw new NotFoundException();
       }

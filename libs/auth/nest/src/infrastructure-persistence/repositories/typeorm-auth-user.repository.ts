@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { AuthUserRepository } from '../../application/ports/auth-user.repository';
 import { AuthUserEntity } from '../entities/auth-user.entity';
@@ -14,21 +14,21 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
-  async find(conditions: FindManyOptions<User> = {}): Promise<User[]> {
+  async find(conditions: FindManyOptions<AuthUser> = {}): Promise<AuthUser[]> {
     return this.userRepository.find(conditions);
   }
-  async findOne(conditions: FindOneOptions<User>): Promise<AuthUserEntity> {
-    const user = await this.userRepository.findOne(conditions);
-    if (!user) {
+  async findOne(conditions: FindOneOptions<AuthUser>): Promise<AuthUserEntity> {
+    const authUser = await this.userRepository.findOne(conditions);
+    if (!authUser) {
       throw new NotFoundException(
         `User with conditions #${JSON.stringify(conditions)} not found`,
       );
     }
-    return user;
+    return authUser;
   }
-  async create(user: Partial<User>): Promise<User> {
-    const newUser = this.userRepository.create(user);
-    return this.userRepository.save(newUser);
+  async create(authUser: Partial<AuthUser>): Promise<AuthUser> {
+    const newAuthUser = this.userRepository.create(authUser);
+    return this.userRepository.save(newAuthUser);
   }
   async ensureRole(userId: string, roleName: string): Promise<void> {
     let role = await this.roleRepository.findOne({ where: { name: roleName } });
@@ -43,27 +43,29 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
       );
     }
 
-    const user = await this.userRepository.findOne({
+    const authUser = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['roles'],
     });
-    if (!user) {
+    if (!authUser) {
       throw new NotFoundException(`User with id #${userId} not found`);
     }
 
-    if (user.roles?.some((existingRole) => existingRole.name === roleName)) {
+    if (
+      authUser.roles?.some((existingRole) => existingRole.name === roleName)
+    ) {
       return;
     }
 
-    user.roles = [...(user.roles ?? []), role];
-    await this.userRepository.save(user);
+    authUser.roles = [...(authUser.roles ?? []), role];
+    await this.userRepository.save(authUser);
   }
-  async update(user: Partial<User>): Promise<User> {
-    const updatedUser = await this.userRepository.preload(user);
-    if (!updatedUser) {
-      throw new NotFoundException(`User with id #${user.id} not found`);
+  async update(authUser: Partial<AuthUser>): Promise<AuthUser> {
+    const updatedAuthUser = await this.userRepository.preload(authUser);
+    if (!updatedAuthUser) {
+      throw new NotFoundException(`User with id #${authUser.id} not found`);
     }
-    return this.userRepository.save(updatedUser);
+    return this.userRepository.save(updatedAuthUser);
   }
   async delete(userId: string): Promise<AuthUserEntity> {
     const user = await this.findOne({ where: { id: userId } });

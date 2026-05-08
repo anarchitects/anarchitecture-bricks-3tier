@@ -10,7 +10,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import type { User } from '@anarchitects/auth-ts/models';
+import type { AuthUser } from '@anarchitects/auth-ts/models';
 import {
   AuthorizeResource,
   Policies,
@@ -30,7 +30,7 @@ import { provideAuthRuntimeGuards } from '../runtime-security.providers';
 
 const now = new Date('2026-04-25T10:00:00.000Z');
 
-const writerUser: User = {
+const writerAuthUser: AuthUser = {
   id: 'user-1',
   email: 'writer@example.com',
   name: 'Writer',
@@ -66,7 +66,7 @@ const writerUser: User = {
   updatedAt: now,
 };
 
-const limitedUser: User = {
+const limitedAuthUser: AuthUser = {
   id: 'user-2',
   email: 'limited@example.com',
   name: 'Limited',
@@ -102,9 +102,9 @@ const limitedUser: User = {
   updatedAt: now,
 };
 
-const usersById: Record<string, User> = {
-  'user-1': writerUser,
-  'user-2': limitedUser,
+const authUsersById: Record<string, AuthUser> = {
+  'user-1': writerAuthUser,
+  'user-2': limitedAuthUser,
 };
 
 const postsById = {
@@ -128,7 +128,7 @@ class RuntimeSecurityController {
   }
 
   @Get('me')
-  authenticatedRoute(@Req() request: { user: User }) {
+  authenticatedRoute(@Req() request: { user: AuthUser }) {
     return { userId: request.user.id };
   }
 
@@ -182,13 +182,13 @@ describe('runtime security app-shell activation', () => {
     find: jest.fn(),
     findOne: jest.fn(async (conditions: { where?: { id?: string } }) => {
       const userId = conditions.where?.id;
-      const user = userId ? usersById[userId] : null;
+      const authUser = userId ? authUsersById[userId] : null;
 
-      if (!user) {
+      if (!authUser) {
         throw new UnauthorizedException('User not found');
       }
 
-      return user;
+      return authUser;
     }),
     ensureRole: jest.fn(),
     create: jest.fn(),
@@ -351,7 +351,7 @@ describe('runtime security app-shell activation', () => {
     expect(response.statusCode).toBe(200);
     expect(response.json()).toEqual(postsById['post-1']);
     expect(postLoader).toHaveBeenCalledWith({
-      user: writerUser,
+      user: writerAuthUser,
       resourceId: 'post-1',
     });
   });
@@ -369,7 +369,7 @@ describe('runtime security app-shell activation', () => {
 
     expect(response.statusCode).toBe(403);
     expect(postLoader).toHaveBeenCalledWith({
-      user: writerUser,
+      user: writerAuthUser,
       resourceId: 'post-2',
     });
   });

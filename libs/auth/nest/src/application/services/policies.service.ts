@@ -4,10 +4,10 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import {
+  AuthUser,
   canAttemptRoutePolicy,
   PolicyRule,
   RoutePolicy,
-  User,
 } from '@anarchitects/auth-ts/models';
 import { AppAbility, AbilityFactory } from '../factories/ability.factory';
 import { AuthUserRepository } from '../ports/auth-user.repository';
@@ -20,21 +20,25 @@ export class PoliciesService {
     private readonly abilityFactory: AbilityFactory,
   ) {}
 
-  async rulesForUser(authUser: User): Promise<PolicyRule[]> {
-    const user = await this.authUserRepository.findOne({
+  async rulesForAuthUser(authUser: AuthUser): Promise<PolicyRule[]> {
+    const loadedAuthUser = await this.authUserRepository.findOne({
       where: { id: authUser.id },
       relations: ['roles', 'roles.permissions'],
     });
-    if (!user) {
+    if (!loadedAuthUser) {
       return [];
     }
 
-    return this.rulesForLoadedUser(user);
+    return this.rulesForLoadedAuthUser(loadedAuthUser);
   }
 
-  rulesForLoadedUser(user: User): PolicyRule[] {
+  async rulesForUser(authUser: AuthUser): Promise<PolicyRule[]> {
+    return this.rulesForAuthUser(authUser);
+  }
+
+  rulesForLoadedAuthUser(authUser: AuthUser): PolicyRule[] {
     try {
-      return (user.roles ?? []).flatMap((role) =>
+      return (authUser.roles ?? []).flatMap((role) =>
         (role.permissions ?? []).map((permission) =>
           toValidatedPersistedPolicyRule(permission),
         ),
@@ -48,34 +52,61 @@ export class PoliciesService {
     }
   }
 
-  async buildAbilityForUser(authUser: User): Promise<AppAbility> {
-    return this.abilityFactory.buildAbility(await this.rulesForUser(authUser));
+  rulesForLoadedUser(authUser: AuthUser): PolicyRule[] {
+    return this.rulesForLoadedAuthUser(authUser);
   }
 
-  async canAttemptRoutePolicies(
-    authUser: User,
+  async buildAbilityForAuthUser(authUser: AuthUser): Promise<AppAbility> {
+    return this.abilityFactory.buildAbility(
+      await this.rulesForAuthUser(authUser),
+    );
+  }
+
+  async buildAbilityForUser(authUser: AuthUser): Promise<AppAbility> {
+    return this.buildAbilityForAuthUser(authUser);
+  }
+
+  async canAttemptRoutePoliciesForAuthUser(
+    authUser: AuthUser,
     routePolicies: RoutePolicy[],
   ): Promise<boolean> {
     if (!routePolicies.length) {
       return true;
     }
 
-    const policyRules = await this.rulesForUser(authUser);
+    const policyRules = await this.rulesForAuthUser(authUser);
     return routePolicies.every((routePolicy) =>
       canAttemptRoutePolicy(routePolicy, policyRules),
     );
   }
 
-  async assertCanAttemptRoutePolicies(
-    authUser: User,
+  async canAttemptRoutePolicies(
+    authUser: AuthUser,
+    routePolicies: RoutePolicy[],
+  ): Promise<boolean> {
+    return this.canAttemptRoutePoliciesForAuthUser(authUser, routePolicies);
+  }
+
+  async assertCanAttemptRoutePoliciesForAuthUser(
+    authUser: AuthUser,
     routePolicies: RoutePolicy[],
   ): Promise<void> {
-    const canAttempt = await this.canAttemptRoutePolicies(
+    const canAttempt = await this.canAttemptRoutePoliciesForAuthUser(
       authUser,
       routePolicies,
     );
     if (!canAttempt) {
       throw new ForbiddenException();
     }
+  }
+
+  async assertCanAttemptRoutePolicies(
+    authUser: AuthUser,
+    routePolicies: RoutePolicy[],
+  ): Promise<void> {
+    return this.assertCanAttemptRoutePoliciesForAuthUser(
+      authUser,
+      routePolicies,
+    );
   }
 }

@@ -7,7 +7,7 @@ import {
   RefreshTokenResponseDTO,
 } from '@anarchitects/auth-ts/dtos/jwt';
 import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 import { AuthAccountRepository } from '../../../../application/ports/auth-account.repository';
 import { AuthUserRepository } from '../../../../application/ports/auth-user.repository';
 import { HashService } from '../../../../application/services/hash.service';
@@ -25,15 +25,17 @@ export class BetterAuthJwtPluginService {
 
   async login(dto: LoginRequestDTO): Promise<LoginResponseDTO> {
     const { credential, password } = dto;
-    const user = await this.authUserRepository.findOne({
+    const authUser = await this.authUserRepository.findOne({
       where: [{ email: credential }, { name: credential }],
     });
-    if (!user) {
+    if (!authUser) {
       throw new BadRequestException('Invalid credentials');
     }
 
     const credentialAccount =
-      await this.authAccountRepository.findCredentialAccountByUserId(user.id);
+      await this.authAccountRepository.findCredentialAccountByUserId(
+        authUser.id,
+      );
     if (!credentialAccount?.password) {
       throw new BadRequestException('Invalid credentials');
     }
@@ -46,25 +48,27 @@ export class BetterAuthJwtPluginService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    return this.generateTokens(user);
+    return this.generateAuthUserTokens(authUser);
   }
 
   async logout(dto: JwtLogoutRequestDTO): Promise<{ success: boolean }> {
     const { accessToken, refreshToken } = dto;
 
-    const payload = await this.jwtService.verifyAsync(refreshToken).catch(() => {
-      throw new BadRequestException('Invalid refresh token');
-    });
+    const payload = await this.jwtService
+      .verifyAsync(refreshToken)
+      .catch(() => {
+        throw new BadRequestException('Invalid refresh token');
+      });
 
     if (!payload?.sub) {
       throw new BadRequestException('Invalid refresh token');
     }
 
-    const user = await this.authUserRepository.findOne({
+    const authUser = await this.authUserRepository.findOne({
       where: { id: payload.sub },
     });
 
-    if (!user) {
+    if (!authUser) {
       throw new BadRequestException('Invalid refresh token');
     }
 
@@ -76,7 +80,7 @@ export class BetterAuthJwtPluginService {
 
     await this.jwtTokenInvalidationRepository.invalidateTokens(
       tokenHashes,
-      user.id,
+      authUser.id,
     );
 
     return { success: true };
@@ -87,19 +91,21 @@ export class BetterAuthJwtPluginService {
   ): Promise<RefreshTokenResponseDTO> {
     const { refreshToken } = dto;
 
-    const payload = await this.jwtService.verifyAsync(refreshToken).catch(() => {
-      throw new BadRequestException('Invalid refresh token');
-    });
+    const payload = await this.jwtService
+      .verifyAsync(refreshToken)
+      .catch(() => {
+        throw new BadRequestException('Invalid refresh token');
+      });
 
     if (!payload?.sub) {
       throw new BadRequestException('Invalid refresh token');
     }
 
-    const user = await this.authUserRepository.findOne({
+    const authUser = await this.authUserRepository.findOne({
       where: { id: payload.sub },
     });
 
-    if (!user) {
+    if (!authUser) {
       throw new BadRequestException('User not found');
     }
 
@@ -111,13 +117,13 @@ export class BetterAuthJwtPluginService {
       throw new BadRequestException('Refresh token has been invalidated');
     }
 
-    return this.generateTokens(user);
+    return this.generateAuthUserTokens(authUser);
   }
 
-  private async generateTokens(user: User) {
+  private async generateAuthUserTokens(authUser: AuthUser) {
     const payload = {
-      sub: user.id,
-      roles: user.roles?.map((role) => role.name),
+      sub: authUser.id,
+      roles: authUser.roles?.map((role) => role.name),
     };
     const accessToken = await this.jwtService.signAsync(payload);
     const refreshToken = await this.jwtService.signAsync(payload);

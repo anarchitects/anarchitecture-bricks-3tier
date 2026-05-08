@@ -1,4 +1,4 @@
-import { PolicyRule, User } from '@anarchitects/auth-ts';
+import { AuthUser, PolicyRule } from '@anarchitects/auth-ts';
 import {
   ActivateUserRequestDTO,
   ChangePasswordRequestDTO,
@@ -17,6 +17,11 @@ import { Injectable } from '@nestjs/common';
 export type AuthHttpResult<T> = {
   body: T;
   headers?: Headers;
+};
+
+export type LoggedInAuthUserInfo = {
+  user: AuthUser;
+  rbac: PolicyRule[];
 };
 
 @Injectable()
@@ -52,5 +57,5 @@ export abstract class AuthService {
   ): Promise<{ success: boolean }>;
   abstract getLoggedInUserInfo(
     headers?: HeadersInit,
-  ): Promise<AuthHttpResult<{ user: User; rbac: PolicyRule[] }>>;
+  ): Promise<AuthHttpResult<LoggedInAuthUserInfo>>;
 }

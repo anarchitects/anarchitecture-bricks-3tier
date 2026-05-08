@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 
 @Injectable()
 export abstract class AuthUserRepository {
-  abstract find(conditions: unknown): Promise<User[]>;
-  abstract findOne(conditions: unknown): Promise<User>;
+  abstract find(conditions: unknown): Promise<AuthUser[]>;
+  abstract findOne(conditions: unknown): Promise<AuthUser>;
   abstract ensureRole(userId: string, roleName: string): Promise<void>;
-  abstract create(user: Partial<User>): Promise<User>;
-  abstract update(user: Partial<User>): Promise<User>;
-  abstract delete(userId: string): Promise<User>;
+  abstract create(authUser: Partial<AuthUser>): Promise<AuthUser>;
+  abstract update(authUser: Partial<AuthUser>): Promise<AuthUser>;
+  abstract delete(userId: string): Promise<AuthUser>;
 }
