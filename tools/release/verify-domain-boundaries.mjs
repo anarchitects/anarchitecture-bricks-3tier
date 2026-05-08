@@ -59,6 +59,7 @@ function run() {
   const sharedToDomainEdges = collectForbiddenEdges(projectGraph, sharedProjects, [
     'domain:forms',
     'domain:auth',
+    'domain:identity',
   ]);
 
   const authNestDependencies = projectGraph.dependencies?.['auth-nest'] ?? [];
@@ -73,7 +74,7 @@ function run() {
   }
 
   if (sharedToDomainEdges.length > 0) {
-    errors.push('Shared domain must not depend on forms/auth domains.');
+    errors.push('Shared domain must not depend on forms/auth/identity domains.');
   }
 
   if (hasAuthNestToFormsNest) {
@@ -92,7 +93,7 @@ function run() {
     [
       'Domain boundary verification passed.',
       'Checked forms projects for reverse auth dependencies.',
-      'Checked shared projects for forms/auth dependencies.',
+      'Checked shared projects for forms/auth/identity dependencies.',
       'Confirmed auth-nest has no direct forms-nest dependency.',
     ].join(' '),
   );

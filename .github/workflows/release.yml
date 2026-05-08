@@ -13,6 +13,7 @@ on:
         options:
           - forms
           - auth
+          - identity
           - common
       bump:
         description: Optional semver override for the selected domain release
