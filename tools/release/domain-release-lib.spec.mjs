@@ -19,6 +19,7 @@ function buildReleaseGroup(name, projects) {
 test('inferDomainFromProjectRoot resolves library domains from project roots', () => {
   assert.equal(inferDomainFromProjectRoot('libs/common/angular/ui-layouts'), 'common');
   assert.equal(inferDomainFromProjectRoot('libs/auth/angular'), 'auth');
+  assert.equal(inferDomainFromProjectRoot('libs/identity/nest'), 'identity');
   assert.equal(inferDomainFromProjectRoot('tools/release'), null);
 });
 
@@ -26,6 +27,7 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
   const releaseGroups = [
     buildReleaseGroup('forms', ['forms-angular', 'forms-nest', 'forms-ts']),
     buildReleaseGroup('auth', ['auth-angular', 'auth-nest', 'auth-ts']),
+    buildReleaseGroup('identity', ['identity-angular', 'identity-nest', 'identity-ts']),
     buildReleaseGroup('common-angular', ['common-angular-ui-layouts']),
     buildReleaseGroup('common-nest', ['common-nest-mailer']),
   ];
@@ -36,9 +38,17 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
     'auth-angular': { data: { root: 'libs/auth/angular' } },
     'auth-nest': { data: { root: 'libs/auth/nest' } },
     'auth-ts': { data: { root: 'libs/auth/ts' } },
+    'identity-angular': { data: { root: 'libs/identity/angular' } },
+    'identity-nest': { data: { root: 'libs/identity/nest' } },
+    'identity-ts': { data: { root: 'libs/identity/ts' } },
     'common-angular-ui-layouts': { data: { root: 'libs/common/angular/ui-layouts' } },
     'common-nest-mailer': { data: { root: 'libs/common/nest/mailer' } },
   };
+
+  assert.deepEqual(
+    resolveReleaseGroupsForDomain({ domain: 'identity', releaseGroups, projectNodes }),
+    ['identity'],
+  );
 
   assert.deepEqual(
     resolveReleaseGroupsForDomain({ domain: 'common', releaseGroups, projectNodes }),

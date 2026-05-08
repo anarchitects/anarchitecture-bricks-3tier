@@ -96,7 +96,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 ## Release Workflow (Domain Groups)
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
-- Select exactly one domain group input: `forms`, `auth`, or `common`.
+- Select exactly one domain group input: `forms`, `auth`, `identity`, or `common`.
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --yes`.
@@ -119,6 +119,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`
+  - `libs/identity/**` -> `domain:identity`
   - `libs/common/**` -> `domain:shared`
 
 ## Testing Expectations
