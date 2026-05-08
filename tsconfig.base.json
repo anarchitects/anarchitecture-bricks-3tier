@@ -189,9 +189,7 @@
       "@anarchitects/identity-nest/presentation": [
         "libs/identity/nest/src/presentation/index.ts"
       ],
-      "@anarchitects/identity-angular": [
-        "libs/identity/angular/src/index.ts"
-      ],
+      "@anarchitects/identity-angular": ["libs/identity/angular/src/index.ts"],
       "@anarchitects/identity-angular/config": [
         "libs/identity/angular/config/src/index.ts"
       ],

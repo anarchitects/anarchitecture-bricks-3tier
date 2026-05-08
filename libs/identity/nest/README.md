@@ -14,15 +14,25 @@ NestJS facade and layer entry points for the Anarchitecture identity domain.
 - Explicit `application`, `presentation`, `infrastructure`, and `config` entry points
 - Placeholder layering that preserves the repo's Nest package shape without adding API behavior
 
+## Installation
+
+```bash
+npm install @anarchitects/identity-nest
+# or
+yarn add @anarchitects/identity-nest
+# or
+pnpm add @anarchitects/identity-nest
+```
+
 ## Exports
 
-| Import path | Description |
-| --- | --- |
-| `@anarchitects/identity-nest` | Root facade module and convenience re-exports |
-| `@anarchitects/identity-nest/application` | Application-layer placeholder module |
-| `@anarchitects/identity-nest/presentation` | Presentation-layer placeholder module |
-| `@anarchitects/identity-nest/infrastructure` | Infrastructure-layer placeholder module |
-| `@anarchitects/identity-nest/config` | Typed config namespace and module option helpers |
+| Import path                                  | Description                                      |
+| -------------------------------------------- | ------------------------------------------------ |
+| `@anarchitects/identity-nest`                | Root facade module and convenience re-exports    |
+| `@anarchitects/identity-nest/application`    | Application-layer placeholder module             |
+| `@anarchitects/identity-nest/presentation`   | Presentation-layer placeholder module            |
+| `@anarchitects/identity-nest/infrastructure` | Infrastructure-layer placeholder module          |
+| `@anarchitects/identity-nest/config`         | Typed config namespace and module option helpers |
 
 ## Usage
 

@@ -14,16 +14,26 @@ Angular identity package shells for the Anarchitecture identity domain.
 - Explicit provider helpers for config, data-access, and state composition
 - Minimal placeholder layers with no routed UI or API behavior in issue `#310`
 
+## Installation
+
+```bash
+npm install @anarchitects/identity-angular
+# or
+yarn add @anarchitects/identity-angular
+# or
+pnpm add @anarchitects/identity-angular
+```
+
 ## Entry points
 
-| Import path | Description |
-| --- | --- |
-| `@anarchitects/identity-angular` | Root barrel for routine app wiring |
-| `@anarchitects/identity-angular/config` | Config tokens and provider helpers |
+| Import path                                  | Description                                            |
+| -------------------------------------------- | ------------------------------------------------------ |
+| `@anarchitects/identity-angular`             | Root barrel for routine app wiring                     |
+| `@anarchitects/identity-angular/config`      | Config tokens and provider helpers                     |
 | `@anarchitects/identity-angular/data-access` | Identity data-access placeholder service and providers |
-| `@anarchitects/identity-angular/feature` | Feature-level provider composition |
-| `@anarchitects/identity-angular/state` | Explicitly provided identity state store |
-| `@anarchitects/identity-angular/ui` | Reserved UI entry point placeholder |
+| `@anarchitects/identity-angular/feature`     | Feature-level provider composition                     |
+| `@anarchitects/identity-angular/state`       | Explicitly provided identity state store               |
+| `@anarchitects/identity-angular/ui`          | Reserved UI entry point placeholder                    |
 
 ## Usage
 

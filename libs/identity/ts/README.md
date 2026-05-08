@@ -14,12 +14,22 @@ Shared TypeScript models for the Anarchitecture identity domain.
 - Clean root and secondary entry points without deep-import requirements
 - Publishable package metadata aligned with the rest of the workspace
 
+## Installation
+
+```bash
+npm install @anarchitects/identity-ts
+# or
+yarn add @anarchitects/identity-ts
+# or
+pnpm add @anarchitects/identity-ts
+```
+
 ## Entry points
 
-| Import path | Description |
-| --- | --- |
-| `@anarchitects/identity-ts` | Root barrel for shared identity models |
-| `@anarchitects/identity-ts/models` | Shared identity model definitions |
+| Import path                        | Description                            |
+| ---------------------------------- | -------------------------------------- |
+| `@anarchitects/identity-ts`        | Root barrel for shared identity models |
+| `@anarchitects/identity-ts/models` | Shared identity model definitions      |
 
 ## Usage
 
