@@ -18,7 +18,7 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 - `config`: DI tokens and provider helpers (API resource path, defaults)
 - `config`: DI tokens and provider helpers for auth contract profiles via `provideAuthContracts(...)`
 - `data-access`: generated OpenAPI clients plus adapters over the Nest API
-- `state`: signal-based store plus explicit provider helper for core session login/logout, eager session restore, and ability hydration
+- `state`: signal-based store plus explicit provider helper for core session login/logout, eager session restore, and ability hydration; session user data aligns with the shared `AuthUser` contract from `@anarchitects/auth-ts`
 - `feature`: coarse route guard, resource-aware route guard, and orchestration components that delegate rendering to auth UI components
 - `util`: CASL ability helpers (`createAppAbility`, `canAccessResource`, `canAccessResourceField`, `AppAbility`)
 - `ui`: presentational auth domain form components built on `AnarchitectsUiForm`

@@ -8,10 +8,10 @@ import {
   provideAuthContracts,
 } from '@anarchitects/auth-angular/config';
 import { AuthApi } from '@anarchitects/auth-angular/data-access';
-import { PolicyRule, User } from '@anarchitects/auth-ts/models';
+import { AuthUser, PolicyRule } from '@anarchitects/auth-ts/models';
 import { AuthStore } from './auth.store';
 import { provideAuthState } from './auth-state.provider';
-const hydratedSession: { user: User; rbac: PolicyRule[] } = {
+const hydratedSession: { user: AuthUser; rbac: PolicyRule[] } = {
   user: {
     id: 'user-id',
     email: 'user@example.com',
