@@ -1,12 +1,12 @@
 import { Permission } from './permission.model';
-import { User } from './user.model';
+import { AuthUser } from './auth-user.model';
 
 export type Role = {
   id: string;
   name: string;
   description: string | null;
   permissions: Permission[] | null;
-  users: User[] | null;
+  users: AuthUser[] | null;
   createdAt: Date;
   updatedAt: Date;
 };
