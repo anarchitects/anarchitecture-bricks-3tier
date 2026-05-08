@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { PoliciesService } from '../../application/services/policies.service';
 import {
   AuthRuntimeRequest,
-  requireAuthenticatedUser,
+  requireAuthenticatedAuthUser,
 } from './authenticated-user';
 import { isPublicRoute } from './public-route';
 
@@ -27,8 +27,11 @@ export class PoliciesGuard implements CanActivate {
 
     if (policies?.length) {
       const request = context.switchToHttp().getRequest<AuthRuntimeRequest>();
-      const user = requireAuthenticatedUser(request);
-      await this.policiesService.assertCanAttemptRoutePolicies(user, policies);
+      const authUser = requireAuthenticatedAuthUser(request);
+      await this.policiesService.assertCanAttemptRoutePoliciesForAuthUser(
+        authUser,
+        policies,
+      );
     }
 
     return true;

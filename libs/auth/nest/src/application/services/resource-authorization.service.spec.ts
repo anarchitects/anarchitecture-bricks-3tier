@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import type { User } from '@anarchitects/auth-ts/models';
+import type { AuthUser } from '@anarchitects/auth-ts/models';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AbilityFactory } from '../factories/ability.factory';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from '../resource-authorization.tokens';
@@ -15,11 +15,11 @@ describe('ResourceAuthorizationService', () => {
   let service: ResourceAuthorizationService;
 
   const mockPoliciesService = {
-    buildAbilityForUser: jest.fn(),
+    buildAbilityForAuthUser: jest.fn(),
   };
 
   const postLoader = jest.fn();
-  const user = { id: 'user-1' } as User;
+  const authUser = { id: 'user-1' } as AuthUser;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -43,21 +43,21 @@ describe('ResourceAuthorizationService', () => {
   it('does nothing when no resource metadata exists', async () => {
     await expect(
       service.authorizeResources({
-        user,
+        user: authUser,
         resources: [],
       }),
     ).resolves.toEqual({});
-    expect(mockPoliciesService.buildAbilityForUser).not.toHaveBeenCalled();
+    expect(mockPoliciesService.buildAbilityForAuthUser).not.toHaveBeenCalled();
   });
 
   it('fails when the resource loader is not registered', async () => {
-    mockPoliciesService.buildAbilityForUser.mockResolvedValue({
+    mockPoliciesService.buildAbilityForAuthUser.mockResolvedValue({
       can: jest.fn().mockReturnValue(true),
     });
 
     await expect(
       service.authorizeResources({
-        user,
+        user: authUser,
         params: { commentId: 'comment-1' },
         resources: [
           { action: 'update', subject: 'Comment', idParam: 'commentId' },
@@ -67,13 +67,13 @@ describe('ResourceAuthorizationService', () => {
   });
 
   it('fails when the configured route parameter is missing', async () => {
-    mockPoliciesService.buildAbilityForUser.mockResolvedValue({
+    mockPoliciesService.buildAbilityForAuthUser.mockResolvedValue({
       can: jest.fn().mockReturnValue(true),
     });
 
     await expect(
       service.authorizeResources({
-        user,
+        user: authUser,
         params: {},
         resources: [{ action: 'update', subject: 'Post', idParam: 'postId' }],
       }),
@@ -81,14 +81,14 @@ describe('ResourceAuthorizationService', () => {
   });
 
   it('fails when the loader cannot find the resource', async () => {
-    mockPoliciesService.buildAbilityForUser.mockResolvedValue({
+    mockPoliciesService.buildAbilityForAuthUser.mockResolvedValue({
       can: jest.fn().mockReturnValue(true),
     });
     postLoader.mockResolvedValue(null);
 
     await expect(
       service.authorizeResources({
-        user,
+        user: authUser,
         params: { postId: 'post-1' },
         resources: [{ action: 'update', subject: 'Post', idParam: 'postId' }],
       }),
@@ -98,7 +98,7 @@ describe('ResourceAuthorizationService', () => {
   it('authorizes and returns a matching conditional resource', async () => {
     const abilityFactory = new AbilityFactory();
     const post = { id: 'post-1', authorId: 'user-1' };
-    mockPoliciesService.buildAbilityForUser.mockResolvedValue(
+    mockPoliciesService.buildAbilityForAuthUser.mockResolvedValue(
       abilityFactory.buildAbility([
         {
           action: 'update',
@@ -111,7 +111,7 @@ describe('ResourceAuthorizationService', () => {
 
     await expect(
       service.authorizeResources({
-        user,
+        user: authUser,
         params: { postId: 'post-1' },
         resources: [{ action: 'update', subject: 'Post', idParam: 'postId' }],
       }),
@@ -119,14 +119,14 @@ describe('ResourceAuthorizationService', () => {
       Post: post,
     });
     expect(postLoader).toHaveBeenCalledWith({
-      user,
+      user: authUser,
       resourceId: 'post-1',
     });
   });
 
   it('forbids a non-matching conditional resource after loading it', async () => {
     const abilityFactory = new AbilityFactory();
-    mockPoliciesService.buildAbilityForUser.mockResolvedValue(
+    mockPoliciesService.buildAbilityForAuthUser.mockResolvedValue(
       abilityFactory.buildAbility([
         {
           action: 'update',
@@ -139,7 +139,7 @@ describe('ResourceAuthorizationService', () => {
 
     await expect(
       service.authorizeResources({
-        user,
+        user: authUser,
         params: { postId: 'post-1' },
         resources: [{ action: 'update', subject: 'Post', idParam: 'postId' }],
       }),

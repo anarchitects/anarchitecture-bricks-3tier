@@ -11,7 +11,6 @@ import {
   UpdateEmailRequestDTO,
   VerifyEmailRequestDTO,
 } from '@anarchitects/auth-ts/dtos';
-import { PolicyRule, User } from '@anarchitects/auth-ts/models';
 import {
   BadRequestException,
   Injectable,
@@ -21,7 +20,11 @@ import { AuthAccountRepository } from '../ports/auth-account.repository';
 import { AuthUserRepository } from '../ports/auth-user.repository';
 import { AuthEnginePort } from './auth-engine.port';
 import { AuthPrincipalResolver } from './auth-principal.resolver';
-import { AuthHttpResult, AuthService } from './auth.service';
+import {
+  AuthHttpResult,
+  AuthService,
+  LoggedInAuthUserInfo,
+} from './auth.service';
 import { HashService } from './hash.service';
 import { PoliciesService } from './policies.service';
 
@@ -41,15 +44,16 @@ export class AuthOrchestrationService implements AuthService {
       throw new BadRequestException('Passwords do not match');
     }
 
-    const existingUsers = await this.authUserRepository.find({
+    const existingAuthUsers = await this.authUserRepository.find({
       where: { email: dto.email },
     });
-    if (existingUsers.length > 0) {
+    if (existingAuthUsers.length > 0) {
       throw new BadRequestException('User already exists');
     }
 
     const result = await this.authEnginePort.register(dto);
-    const userId = result.userId ?? (await this.findUserIdByEmail(dto.email));
+    const userId =
+      result.userId ?? (await this.findAuthUserIdByEmail(dto.email));
 
     await this.authUserRepository.ensureRole(userId, 'user');
 
@@ -67,7 +71,7 @@ export class AuthOrchestrationService implements AuthService {
     headers?: HeadersInit,
   ): Promise<AuthHttpResult<LoggedInUserInfoResponseDTO>> {
     const session = await this.authEnginePort.login(dto, headers);
-    const body = await this.buildLoggedInUserInfo(session.userId);
+    const body = await this.buildLoggedInAuthUserInfo(session.userId);
 
     return {
       body,
@@ -95,14 +99,14 @@ export class AuthOrchestrationService implements AuthService {
     if (newPassword !== confirmPassword) {
       throw new BadRequestException('Passwords do not match');
     }
-    const user = await this.authUserRepository.findOne({
+    const authUser = await this.authUserRepository.findOne({
       where: { id: userId },
     });
-    if (!user) {
+    if (!authUser) {
       throw new BadRequestException('User not found');
     }
     const currentPasswordHash = await this.getCredentialPasswordHashOrThrow(
-      user.id,
+      authUser.id,
       'Invalid current password',
     );
     const isCurrentPasswordValid = await this.hashService.compare(
@@ -114,7 +118,7 @@ export class AuthOrchestrationService implements AuthService {
     }
     const newPasswordHash = await this.hashService.hash(newPassword);
     await this.authAccountRepository.upsertCredentialAccount({
-      userId: user.id,
+      userId: authUser.id,
       passwordHash: newPasswordHash,
     });
     return { success: true };
@@ -154,14 +158,17 @@ export class AuthOrchestrationService implements AuthService {
     dto: UpdateEmailRequestDTO,
   ): Promise<{ success: boolean }> {
     const { newEmail, password } = dto;
-    const user = await this.authUserRepository.findOne({
+    const authUser = await this.authUserRepository.findOne({
       where: { id: userId },
     });
-    if (!user) {
+    if (!authUser) {
       throw new BadRequestException('User not found');
     }
     const passwordHash = password
-      ? await this.getCredentialPasswordHashOrThrow(user.id, 'Invalid password')
+      ? await this.getCredentialPasswordHashOrThrow(
+          authUser.id,
+          'Invalid password',
+        )
       : null;
     const isPasswordValid =
       password && passwordHash
@@ -170,14 +177,14 @@ export class AuthOrchestrationService implements AuthService {
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid password');
     }
-    user.email = newEmail;
-    await this.authUserRepository.update(user);
+    authUser.email = newEmail;
+    await this.authUserRepository.update(authUser);
     return { success: true };
   }
 
   async getLoggedInUserInfo(
     headers?: HeadersInit,
-  ): Promise<AuthHttpResult<{ user: User; rbac: PolicyRule[] }>> {
+  ): Promise<AuthHttpResult<LoggedInAuthUserInfo>> {
     const principal =
       await this.authPrincipalResolver.resolveFromHeaders(headers);
     if (!principal) {
@@ -187,27 +194,28 @@ export class AuthOrchestrationService implements AuthService {
     return {
       body: {
         user: principal.user,
-        rbac: this.policiesService.rulesForLoadedUser(principal.user),
+        rbac: this.policiesService.rulesForLoadedAuthUser(principal.user),
       },
       headers: principal.headers,
     };
   }
 
-  private async buildLoggedInUserInfo(
+  private async buildLoggedInAuthUserInfo(
     userId: string,
-  ): Promise<{ user: User; rbac: PolicyRule[] }> {
-    const user = await this.authPrincipalResolver.resolveUserById(userId);
-    if (!user) {
+  ): Promise<LoggedInAuthUserInfo> {
+    const authUser =
+      await this.authPrincipalResolver.resolveAuthUserById(userId);
+    if (!authUser) {
       throw new BadRequestException('User not found');
     }
 
-    const rbac = this.policiesService.rulesForLoadedUser(user);
-    return { user, rbac };
+    const rbac = this.policiesService.rulesForLoadedAuthUser(authUser);
+    return { user: authUser, rbac };
   }
 
-  private async findUserIdByEmail(email: string): Promise<string> {
-    const users = await this.authUserRepository.find({ where: { email } });
-    const userId = users[0]?.id;
+  private async findAuthUserIdByEmail(email: string): Promise<string> {
+    const authUsers = await this.authUserRepository.find({ where: { email } });
+    const userId = authUsers[0]?.id;
     if (!userId) {
       throw new InternalServerErrorException(
         'Better Auth sign-up completed without a resolvable user record.',

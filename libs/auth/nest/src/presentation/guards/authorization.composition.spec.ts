@@ -16,7 +16,7 @@ describe('AuthorizationGuard', () => {
   let guard: AuthorizationGuard;
 
   const mockPoliciesService = {
-    assertCanAttemptRoutePolicies: jest.fn(),
+    assertCanAttemptRoutePoliciesForAuthUser: jest.fn(),
   };
 
   const mockResourceAuthorizationService = {
@@ -80,7 +80,7 @@ describe('AuthorizationGuard', () => {
       }
       return undefined;
     });
-    mockPoliciesService.assertCanAttemptRoutePolicies.mockResolvedValue(
+    mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser.mockResolvedValue(
       undefined,
     );
     mockResourceAuthorizationService.authorizeResources.mockResolvedValue({
@@ -92,7 +92,7 @@ describe('AuthorizationGuard', () => {
     ).resolves.toBe(true);
 
     expect(
-      mockPoliciesService.assertCanAttemptRoutePolicies,
+      mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser,
     ).toHaveBeenCalledWith(request.user, policies);
     expect(
       mockResourceAuthorizationService.authorizeResources,
@@ -102,7 +102,7 @@ describe('AuthorizationGuard', () => {
       resources,
     });
     expect(
-      mockPoliciesService.assertCanAttemptRoutePolicies.mock
+      mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser.mock
         .invocationCallOrder[0],
     ).toBeLessThan(
       mockResourceAuthorizationService.authorizeResources.mock
@@ -124,7 +124,7 @@ describe('AuthorizationGuard', () => {
       guard.canActivate(createExecutionContext({}, () => true)),
     ).resolves.toBe(true);
     expect(
-      mockPoliciesService.assertCanAttemptRoutePolicies,
+      mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser,
     ).not.toHaveBeenCalled();
     expect(
       mockResourceAuthorizationService.authorizeResources,
@@ -141,7 +141,7 @@ describe('AuthorizationGuard', () => {
       }
       return undefined;
     });
-    mockPoliciesService.assertCanAttemptRoutePolicies.mockRejectedValue(
+    mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser.mockRejectedValue(
       new ForbiddenException(),
     );
 

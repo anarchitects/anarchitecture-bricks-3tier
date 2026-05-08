@@ -8,7 +8,7 @@ import { ResourceAuthorizationService } from '../../application/services/resourc
 import { attachAuthorizedResource } from '../authorized-resource.request';
 import {
   AuthRuntimeRequest,
-  requireAuthenticatedUser,
+  requireAuthenticatedAuthUser,
 } from './authenticated-user';
 import { isPublicRoute } from './public-route';
 
@@ -35,10 +35,10 @@ export class ResourceAuthorizationGuard implements CanActivate {
       return true;
     }
 
-    const user = requireAuthenticatedUser(request);
+    const authUser = requireAuthenticatedAuthUser(request);
     const authorizedResources =
       await this.resourceAuthorizationService.authorizeResources({
-        user,
+        user: authUser,
         params: request.params,
         resources,
       });

@@ -1,9 +1,9 @@
-import { Action, Subject, User } from '@anarchitects/auth-ts/models';
+import { Action, AuthUser, Subject } from '@anarchitects/auth-ts/models';
 
 export type AuthorizableResource = Record<string, unknown>;
 
 export type ResourceAuthorizationLoaderInput = {
-  user: User;
+  user: AuthUser;
   resourceId: string;
 };
 

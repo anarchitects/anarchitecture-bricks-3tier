@@ -12,9 +12,9 @@ describe('PoliciesGuard', () => {
   let guard: PoliciesGuard;
 
   const mockPoliciesService = {
-    rulesForUser: jest.fn(),
-    buildAbilityForUser: jest.fn(),
-    assertCanAttemptRoutePolicies: jest.fn(),
+    rulesForAuthUser: jest.fn(),
+    buildAbilityForAuthUser: jest.fn(),
+    assertCanAttemptRoutePoliciesForAuthUser: jest.fn(),
   };
 
   const mockReflector = {
@@ -56,7 +56,7 @@ describe('PoliciesGuard', () => {
     await expect(guard.canActivate(createExecutionContext())).resolves.toBe(
       true,
     );
-    expect(mockPoliciesService.rulesForUser).not.toHaveBeenCalled();
+    expect(mockPoliciesService.rulesForAuthUser).not.toHaveBeenCalled();
   });
 
   it('bypasses policy checks for public routes', async () => {
@@ -68,7 +68,7 @@ describe('PoliciesGuard', () => {
       true,
     );
     expect(
-      mockPoliciesService.assertCanAttemptRoutePolicies,
+      mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser,
     ).not.toHaveBeenCalled();
   });
 
@@ -88,7 +88,7 @@ describe('PoliciesGuard', () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
     ]);
-    mockPoliciesService.assertCanAttemptRoutePolicies.mockResolvedValue(
+    mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser.mockResolvedValue(
       undefined,
     );
 
@@ -96,7 +96,7 @@ describe('PoliciesGuard', () => {
       true,
     );
     expect(
-      mockPoliciesService.assertCanAttemptRoutePolicies,
+      mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser,
     ).toHaveBeenCalledWith(user, policies);
   });
 
@@ -104,7 +104,7 @@ describe('PoliciesGuard', () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
     ]);
-    mockPoliciesService.assertCanAttemptRoutePolicies.mockRejectedValue(
+    mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser.mockRejectedValue(
       new ForbiddenException(),
     );
 
@@ -117,7 +117,7 @@ describe('PoliciesGuard', () => {
     mockReflector.getAllAndOverride.mockReturnValue([
       { action: 'update', subject: 'Post' },
     ]);
-    mockPoliciesService.assertCanAttemptRoutePolicies.mockRejectedValue(
+    mockPoliciesService.assertCanAttemptRoutePoliciesForAuthUser.mockRejectedValue(
       new Error('Malformed persisted policy rule payload'),
     );
 

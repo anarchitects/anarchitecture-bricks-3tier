@@ -1,16 +1,20 @@
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 import { UnauthorizedException } from '@nestjs/common';
 
 export type AuthRuntimeRequest = {
-  user?: User;
+  user?: AuthUser;
   headers?: Record<string, string | string[] | undefined>;
   params?: Record<string, string | undefined>;
 };
 
-export const requireAuthenticatedUser = (request: AuthRuntimeRequest): User => {
+export const requireAuthenticatedAuthUser = (
+  request: AuthRuntimeRequest,
+): AuthUser => {
   if (!request.user) {
     throw new UnauthorizedException('User not authenticated');
   }
 
   return request.user;
 };
+
+export const requireAuthenticatedUser = requireAuthenticatedAuthUser;

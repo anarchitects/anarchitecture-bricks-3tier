@@ -43,15 +43,15 @@ describe('AuthPrincipalResolver', () => {
     const sessionHeaders = new Headers({
       'set-cookie': 'better-auth.session=abc; Path=/; HttpOnly',
     });
-    const user = { id: 'user-1', roles: [] };
+    const authUser = { id: 'user-1', roles: [] };
     mockAuthEnginePort.getSession.mockResolvedValue({
       userId: 'user-1',
       headers: sessionHeaders,
     });
-    mockAuthUserRepository.findOne.mockResolvedValue(user);
+    mockAuthUserRepository.findOne.mockResolvedValue(authUser);
 
     await expect(resolver.resolveFromHeaders(headers)).resolves.toEqual({
-      user,
+      user: authUser,
       headers: sessionHeaders,
     });
     expect(mockAuthEnginePort.getSession).toHaveBeenCalledWith(headers);

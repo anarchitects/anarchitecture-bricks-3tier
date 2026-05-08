@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeormAuthUserRepository } from './typeorm-auth-user.repository';
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AuthUserEntity } from '../entities/auth-user.entity';
 import { RoleEntity } from '../entities/role.entity';
@@ -8,7 +8,7 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('TypeormAuthUserRepository', () => {
   let provider: TypeormAuthUserRepository;
-  const mockUser: User = {
+  const mockAuthUser: AuthUser = {
     id: 'user-id-123',
     name: 'testuser',
     email: 'testuser@example.com',
@@ -20,24 +20,24 @@ describe('TypeormAuthUserRepository', () => {
   };
 
   const mockUserRepository = {
-    find: jest.fn().mockResolvedValue([mockUser]),
-    findOne: jest.fn().mockResolvedValue(mockUser),
-    create: jest.fn().mockReturnValue(mockUser),
+    find: jest.fn().mockResolvedValue([mockAuthUser]),
+    findOne: jest.fn().mockResolvedValue(mockAuthUser),
+    create: jest.fn().mockReturnValue(mockAuthUser),
     save: jest.fn().mockImplementation(
-      async (entity: Partial<User>) =>
+      async (entity: Partial<AuthUser>) =>
         ({
-          ...mockUser,
+          ...mockAuthUser,
           ...entity,
-        }) as User,
+        }) as AuthUser,
     ),
     preload: jest.fn().mockImplementation(
-      async (partial: Partial<User>) =>
+      async (partial: Partial<AuthUser>) =>
         ({
-          ...mockUser,
+          ...mockAuthUser,
           ...partial,
-        }) as User,
+        }) as AuthUser,
     ),
-    remove: jest.fn().mockResolvedValue(mockUser),
+    remove: jest.fn().mockResolvedValue(mockAuthUser),
   };
   const mockRoleRepository = {
     findOne: jest.fn(),
@@ -71,14 +71,14 @@ describe('TypeormAuthUserRepository', () => {
   describe('find', () => {
     it('should return an array of users', async () => {
       const users = await provider.find();
-      expect(users).toEqual([mockUser]);
+      expect(users).toEqual([mockAuthUser]);
       expect(mockUserRepository.find).toHaveBeenCalled();
     });
   });
   describe('findOne', () => {
     it('should return a user by conditions', async () => {
       const user = await provider.findOne({ where: { id: 'user-id-123' } });
-      expect(user).toEqual(mockUser);
+      expect(user).toEqual(mockAuthUser);
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: 'user-id-123' },
       });
@@ -99,9 +99,9 @@ describe('TypeormAuthUserRepository', () => {
         email: 'newuser@example.com',
         image: null,
       });
-      expect(newUser).toEqual(mockUser);
+      expect(newUser).toEqual(mockAuthUser);
       expect(mockUserRepository.create).toHaveBeenCalled();
-      expect(mockUserRepository.save).toHaveBeenCalledWith(mockUser);
+      expect(mockUserRepository.save).toHaveBeenCalledWith(mockAuthUser);
     });
   });
   describe('ensureRole', () => {
@@ -112,14 +112,14 @@ describe('TypeormAuthUserRepository', () => {
       };
       mockRoleRepository.findOne.mockResolvedValueOnce(role);
       mockUserRepository.findOne.mockResolvedValueOnce({
-        ...mockUser,
+        ...mockAuthUser,
         roles: [],
       });
 
       await provider.ensureRole('user-id-123', 'user');
 
       expect(mockUserRepository.save).toHaveBeenCalledWith({
-        ...mockUser,
+        ...mockAuthUser,
         roles: [role],
       });
     });
@@ -130,7 +130,7 @@ describe('TypeormAuthUserRepository', () => {
       mockRoleRepository.create.mockReturnValue(createdRole);
       mockRoleRepository.save.mockResolvedValueOnce(createdRole);
       mockUserRepository.findOne.mockResolvedValueOnce({
-        ...mockUser,
+        ...mockAuthUser,
         roles: [],
       });
 
@@ -150,7 +150,7 @@ describe('TypeormAuthUserRepository', () => {
         id: 'user-id-123',
         email: 'updateduser@example.com',
       });
-      const mockUpdatedUser = { ...mockUser, ...updatedUser };
+      const mockUpdatedUser = { ...mockAuthUser, ...updatedUser };
       expect(updatedUser).toEqual(mockUpdatedUser);
       expect(mockUserRepository.preload).toHaveBeenCalledWith({
         id: 'user-id-123',
@@ -172,8 +172,8 @@ describe('TypeormAuthUserRepository', () => {
   describe('delete', () => {
     it('should delete an existing user', async () => {
       const deletedUser = await provider.delete('user-id-123');
-      expect(deletedUser).toEqual(mockUser);
-      expect(mockUserRepository.remove).toHaveBeenCalledWith(mockUser);
+      expect(deletedUser).toEqual(mockAuthUser);
+      expect(mockUserRepository.remove).toHaveBeenCalledWith(mockAuthUser);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { User } from '@anarchitects/auth-ts/models';
+import { AuthUser } from '@anarchitects/auth-ts/models';
 import {
   Injectable,
   NotFoundException,
@@ -9,7 +9,7 @@ import { AuthEnginePort } from './auth-engine.port';
 import { AuthRequestHeaders, toAuthHeaders } from './auth-headers';
 
 export type AuthPrincipal = {
-  user: User;
+  user: AuthUser;
   headers?: Headers;
 };
 
@@ -30,13 +30,13 @@ export class AuthPrincipalResolver {
       return null;
     }
 
-    const user = await this.resolveUserById(session.userId);
-    if (!user) {
+    const authUser = await this.resolveAuthUserById(session.userId);
+    if (!authUser) {
       return null;
     }
 
     return {
-      user,
+      user: authUser,
       headers: session.headers,
     };
   }
@@ -52,7 +52,7 @@ export class AuthPrincipalResolver {
     return principal;
   }
 
-  async resolveUserById(userId: string): Promise<User | null> {
+  async resolveAuthUserById(userId: string): Promise<AuthUser | null> {
     try {
       return await this.authUserRepository.findOne({
         where: { id: userId },
@@ -65,5 +65,9 @@ export class AuthPrincipalResolver {
 
       throw error;
     }
+  }
+
+  async resolveUserById(userId: string): Promise<AuthUser | null> {
+    return this.resolveAuthUserById(userId);
   }
 }
