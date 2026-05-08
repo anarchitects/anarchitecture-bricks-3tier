@@ -34,13 +34,14 @@ export default defineConfig(() => ({
     lib: {
       entry: {
         index: 'src/index.ts',
+        'dtos/index': 'src/dtos/index.ts',
         'models/index': 'src/models/index.ts',
       },
       formats: ['es' as const, 'cjs' as const],
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [],
+      external: ['@sinclair/typebox'],
     },
   },
   test: {
@@ -48,6 +49,7 @@ export default defineConfig(() => ({
     watch: false,
     globals: true,
     environment: 'node',
+    setupFiles: ['src/test-setup.ts'],
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {

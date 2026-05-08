@@ -1,16 +1,17 @@
 # @anarchitects/identity-ts
 
-Shared TypeScript models for the Anarchitecture identity domain.
+Shared TypeScript models and TypeBox DTO schemas for the Anarchitecture identity domain.
 
 ## Developer + AI Agent Start Here
 
 - Treat this package as the canonical home for shared identity contracts and models.
-- Prefer public imports from `@anarchitects/identity-ts` or `@anarchitects/identity-ts/models`.
+- Prefer public imports from `@anarchitects/identity-ts`, `@anarchitects/identity-ts/models`, or `@anarchitects/identity-ts/dtos`.
 - Keep framework-specific behavior in `@anarchitects/identity-angular` and `@anarchitects/identity-nest`.
 
 ## Features
 
-- Canonical shared identity model placeholders for future cross-stack use
+- Canonical shared `UserProfile` model for future cross-stack use
+- TypeBox DTO and schema contracts for create/get/update profile operations
 - Clean root and secondary entry points without deep-import requirements
 - Publishable package metadata aligned with the rest of the workspace
 
@@ -26,18 +27,33 @@ pnpm add @anarchitects/identity-ts
 
 ## Entry points
 
-| Import path                        | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| `@anarchitects/identity-ts`        | Root barrel for shared identity models |
-| `@anarchitects/identity-ts/models` | Shared identity model definitions      |
+| Import path                        | Description                                     |
+| ---------------------------------- | ----------------------------------------------- |
+| `@anarchitects/identity-ts`        | Root barrel for shared identity models and DTOs |
+| `@anarchitects/identity-ts/models` | Shared identity model definitions               |
+| `@anarchitects/identity-ts/dtos`   | Shared identity DTO schemas and types           |
 
 ## Usage
 
 ```ts
-import { IdentityProfile } from '@anarchitects/identity-ts';
+import { CreateUserProfileRequestDTO, UserProfile } from '@anarchitects/identity-ts';
 
-const profile: IdentityProfile = {
-  id: 'identity-profile-id',
+const createProfile: CreateUserProfileRequestDTO = {
+  authUserId: 'auth-user-id',
+  displayName: 'Jane Doe',
+};
+
+const profile: UserProfile = {
+  id: 'profile-id',
+  authUserId: 'auth-user-id',
+  displayName: 'Jane Doe',
+  givenName: 'Jane',
+  familyName: 'Doe',
+  avatarUrl: null,
+  locale: 'en-BE',
+  timeZone: 'Europe/Brussels',
+  createdAt: new Date('2026-05-08T12:00:00.000Z'),
+  updatedAt: new Date('2026-05-08T12:00:00.000Z'),
 };
 ```
 
@@ -48,8 +64,8 @@ const profile: IdentityProfile = {
 
 ## Development notes
 
-- This package intentionally exposes only minimal shared model placeholders in issue `#310`.
-- Persistence behavior, DTO expansion, and cross-domain rules belong to follow-up identity issues.
+- This package is the canonical source for shared identity profile contracts.
+- Persistence behavior, repositories, services, and HTTP endpoints belong to follow-up identity issues.
 
 ## Contributing
 
