@@ -6,9 +6,13 @@
   "types": "./src/index.d.ts",
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
-    "@nestjs/config": "^4.0.2"
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/typeorm": "^11.0.0",
+    "typeorm": "^0.3.27"
   },
   "dependencies": {
+    "@anarchitects/identity-ts": "^0.0.1",
+    "uuidv7": "^1.0.2",
     "tslib": "^2.3.0"
   },
   "publishConfig": {
@@ -16,10 +20,21 @@
   },
   "typesVersions": {
     "*": {
-      "application": ["src/application/index.d.ts"],
-      "config": ["src/config/index.d.ts"],
-      "infrastructure": ["src/infrastructure/index.d.ts"],
-      "presentation": ["src/presentation/index.d.ts"]
+      "application": [
+        "src/application/index.d.ts"
+      ],
+      "config": [
+        "src/config/index.d.ts"
+      ],
+      "infrastructure": [
+        "src/infrastructure/index.d.ts"
+      ],
+      "infrastructure-persistence": [
+        "src/infrastructure-persistence/index.d.ts"
+      ],
+      "presentation": [
+        "src/presentation/index.d.ts"
+      ]
     }
   },
   "repository": {
