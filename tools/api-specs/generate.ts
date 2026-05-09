@@ -20,17 +20,17 @@ import {
   toRouteKey,
 } from './route-metadata';
 import { AuthService } from '../../libs/auth/nest/src/application/services/auth.service';
-import {
-  applyAuthControllerContractRouteSchemas,
-} from '../../libs/auth/nest/src/presentation/auth-controller-route-schemas';
-import {
-  createDefaultAuthContracts,
-} from '../../libs/auth/nest/src/presentation/auth-contracts';
+import { applyAuthControllerContractRouteSchemas } from '../../libs/auth/nest/src/presentation/auth-controller-route-schemas';
+import { createDefaultAuthContracts } from '../../libs/auth/nest/src/presentation/auth-contracts';
 import { AuthController } from '../../libs/auth/nest/src/presentation/controllers/auth.controller';
 import { FormsService } from '../../libs/forms/nest/src/application/services/forms.service';
 import { SubmissionsService } from '../../libs/forms/nest/src/application/services/submissions.service';
 import { FormsController } from '../../libs/forms/nest/src/presentation/controllers/forms.controller';
 import { SubmissionsController } from '../../libs/forms/nest/src/presentation/controllers/submissions.controller';
+import { CreateUserProfileService } from '../../libs/identity/nest/src/application/services/create-user-profile.service';
+import { GetUserProfileService } from '../../libs/identity/nest/src/application/services/get-user-profile.service';
+import { UpdateUserProfileService } from '../../libs/identity/nest/src/application/services/update-user-profile.service';
+import { UserProfilesController } from '../../libs/identity/nest/src/presentation/controllers/user-profiles.controller';
 
 const OUTPUT_DIR = join(process.cwd(), 'docs/openapi');
 const JSON_OUTPUT = join(OUTPUT_DIR, 'openapi.json');
@@ -91,13 +91,50 @@ const submissionsServiceStub: Pick<SubmissionsService, 'submit'> = {
   }),
 };
 
+const userProfileDocument = {
+  id: 'profile-id',
+  authUserId: 'auth-user-id',
+  displayName: 'Docs User',
+  givenName: 'Docs',
+  familyName: 'User',
+  avatarUrl: 'https://example.com/avatar.png',
+  locale: 'en-BE',
+  timeZone: 'Europe/Brussels',
+  createdAt: '2020-01-01T00:00:00.000Z',
+  updatedAt: '2020-01-01T00:00:00.000Z',
+};
+
+const createUserProfileServiceStub: Pick<CreateUserProfileService, 'create'> = {
+  create: async () => userProfileDocument,
+};
+
+const getUserProfileServiceStub: Pick<
+  GetUserProfileService,
+  'getById' | 'getByAuthUserId'
+> = {
+  getById: async () => userProfileDocument,
+  getByAuthUserId: async () => userProfileDocument,
+};
+
+const updateUserProfileServiceStub: Pick<
+  UpdateUserProfileService,
+  'updateById'
+> = {
+  updateById: async () => userProfileDocument,
+};
+
 applyAuthControllerContractRouteSchemas(
   AuthController,
   createDefaultAuthContracts(),
 );
 
 @Module({
-  controllers: [AuthController, FormsController, SubmissionsController],
+  controllers: [
+    AuthController,
+    FormsController,
+    SubmissionsController,
+    UserProfilesController,
+  ],
   providers: [
     {
       provide: AuthService,
@@ -110,6 +147,18 @@ applyAuthControllerContractRouteSchemas(
     {
       provide: SubmissionsService,
       useValue: submissionsServiceStub,
+    },
+    {
+      provide: CreateUserProfileService,
+      useValue: createUserProfileServiceStub,
+    },
+    {
+      provide: GetUserProfileService,
+      useValue: getUserProfileServiceStub,
+    },
+    {
+      provide: UpdateUserProfileService,
+      useValue: updateUserProfileServiceStub,
     },
   ],
 })
@@ -164,7 +213,7 @@ async function run() {
           description: 'Local',
         },
       ],
-      tags: [{ name: 'Auth' }, { name: 'Forms' }],
+      tags: [{ name: 'Auth' }, { name: 'Forms' }, { name: 'Identity' }],
     },
     hideUntagged: false,
     transform: ({

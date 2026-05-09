@@ -27,9 +27,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -46,9 +44,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -56,9 +52,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/change-password/{userId}": {
@@ -113,9 +107,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -123,9 +115,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/forgot-password": {
@@ -141,9 +131,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email"
-                ],
+                "required": ["email"],
                 "type": "object"
               }
             }
@@ -160,9 +148,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -170,9 +156,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/login": {
@@ -193,10 +177,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "credential",
-                  "password"
-                ],
+                "required": ["credential", "password"],
                 "type": "object"
               }
             }
@@ -240,20 +221,14 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "action",
-                          "subject"
-                        ],
+                        "required": ["action", "subject"],
                         "type": "object"
                       },
                       "type": "array"
                     },
                     "user": {}
                   },
-                  "required": [
-                    "user",
-                    "rbac"
-                  ],
+                  "required": ["user", "rbac"],
                   "type": "object"
                 }
               }
@@ -261,9 +236,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/logout": {
@@ -291,9 +264,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -301,9 +272,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/me": {
@@ -346,20 +315,14 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "action",
-                          "subject"
-                        ],
+                        "required": ["action", "subject"],
                         "type": "object"
                       },
                       "type": "array"
                     },
                     "user": {}
                   },
-                  "required": [
-                    "user",
-                    "rbac"
-                  ],
+                  "required": ["user", "rbac"],
                   "type": "object"
                 }
               }
@@ -367,9 +330,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/register": {
@@ -398,11 +359,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email",
-                  "password",
-                  "confirmPassword"
-                ],
+                "required": ["email", "password", "confirmPassword"],
                 "type": "object"
               }
             }
@@ -419,9 +376,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -429,9 +384,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/reset-password": {
@@ -455,11 +408,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token",
-                  "password",
-                  "confirmPassword"
-                ],
+                "required": ["token", "password", "confirmPassword"],
                 "type": "object"
               }
             }
@@ -476,9 +425,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -486,9 +433,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/update-email/{userId}": {
@@ -518,9 +463,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "newEmail"
-                ],
+                "required": ["newEmail"],
                 "type": "object"
               }
             }
@@ -537,9 +480,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -547,9 +488,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/auth/verify-email": {
@@ -565,9 +504,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -584,9 +521,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -594,9 +529,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Auth"
-        ]
+        "tags": ["Auth"]
       }
     },
     "/forms/{formId}": {
@@ -647,11 +580,7 @@
                                   "type": "string"
                                 }
                               },
-                              "required": [
-                                "enabled",
-                                "templateId",
-                                "subject"
-                              ],
+                              "required": ["enabled", "templateId", "subject"],
                               "type": "object"
                             },
                             "subject": {
@@ -671,9 +600,7 @@
                                     "type": "string"
                                   }
                                 },
-                                "required": [
-                                  "url"
-                                ],
+                                "required": ["url"],
                                 "type": "object"
                               },
                               "type": "array"
@@ -687,45 +614,31 @@
                               "kind": {
                                 "anyOf": [
                                   {
-                                    "enum": [
-                                      "string"
-                                    ],
+                                    "enum": ["string"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "password"
-                                    ],
+                                    "enum": ["password"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "email"
-                                    ],
+                                    "enum": ["email"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "textarea"
-                                    ],
+                                    "enum": ["textarea"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "boolean"
-                                    ],
+                                    "enum": ["boolean"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "select"
-                                    ],
+                                    "enum": ["select"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "file"
-                                    ],
+                                    "enum": ["file"],
                                     "type": "string"
                                   }
                                 ]
@@ -751,10 +664,7 @@
                                       "type": "string"
                                     }
                                   },
-                                  "required": [
-                                    "value",
-                                    "label"
-                                  ],
+                                  "required": ["value", "label"],
                                   "type": "object"
                                 },
                                 "type": "array"
@@ -784,10 +694,7 @@
                                 "type": "object"
                               }
                             },
-                            "required": [
-                              "name",
-                              "kind"
-                            ],
+                            "required": ["name", "kind"],
                             "type": "object"
                           },
                           "type": "array"
@@ -800,21 +707,15 @@
                             "captcha": {
                               "anyOf": [
                                 {
-                                  "enum": [
-                                    "turnstile"
-                                  ],
+                                  "enum": ["turnstile"],
                                   "type": "string"
                                 },
                                 {
-                                  "enum": [
-                                    "hcaptcha"
-                                  ],
+                                  "enum": ["hcaptcha"],
                                   "type": "string"
                                 },
                                 {
-                                  "enum": [
-                                    "none"
-                                  ],
+                                  "enum": ["none"],
                                   "type": "string"
                                 }
                               ]
@@ -823,18 +724,14 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "captcha"
-                          ],
+                          "required": ["captcha"],
                           "type": "object"
                         },
                         "validationRules": {
                           "items": {
                             "properties": {
                               "kind": {
-                                "enum": [
-                                  "matchFields"
-                                ],
+                                "enum": ["matchFields"],
                                 "type": "string"
                               },
                               "message": {
@@ -847,11 +744,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "kind",
-                              "sourceField",
-                              "targetField"
-                            ],
+                            "required": ["kind", "sourceField", "targetField"],
                             "type": "object"
                           },
                           "type": "array"
@@ -861,19 +754,12 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "id",
-                        "version",
-                        "fields"
-                      ],
+                      "required": ["id", "version", "fields"],
                       "type": "object"
                     },
                     "schema": {}
                   },
-                  "required": [
-                    "config",
-                    "schema"
-                  ],
+                  "required": ["config", "schema"],
                   "type": "object"
                 }
               }
@@ -881,9 +767,7 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Forms"
-        ]
+        "tags": ["Forms"]
       }
     },
     "/forms/submit": {
@@ -906,11 +790,7 @@
                     "type": "object"
                   }
                 },
-                "required": [
-                  "formId",
-                  "formVersion",
-                  "payload"
-                ],
+                "required": ["formId", "formVersion", "payload"],
                 "type": "object"
               }
             }
@@ -961,9 +841,613 @@
             "description": "Default Response"
           }
         },
-        "tags": [
-          "Forms"
-        ]
+        "tags": ["Forms"]
+      }
+    },
+    "/identity/profiles": {
+      "post": {
+        "operationId": "createUserProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "authUserId": {
+                    "type": "string"
+                  },
+                  "avatarUrl": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "displayName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "familyName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "givenName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "locale": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "timeZone": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": ["authUserId"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "authUserId": {
+                      "type": "string"
+                    },
+                    "avatarUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "familyName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "givenName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "timeZone": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "authUserId",
+                    "displayName",
+                    "givenName",
+                    "familyName",
+                    "avatarUrl",
+                    "locale",
+                    "timeZone",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Identity"]
+      }
+    },
+    "/identity/profiles/{profileId}": {
+      "get": {
+        "operationId": "getUserProfileById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profileId",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "pattern": "^\\S+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "authUserId": {
+                      "type": "string"
+                    },
+                    "avatarUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "familyName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "givenName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "timeZone": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "authUserId",
+                    "displayName",
+                    "givenName",
+                    "familyName",
+                    "avatarUrl",
+                    "locale",
+                    "timeZone",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Identity"]
+      },
+      "patch": {
+        "operationId": "updateUserProfile",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profileId",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "pattern": "^\\S+$",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "avatarUrl": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "displayName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "familyName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "givenName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "locale": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "timeZone": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "authUserId": {
+                      "type": "string"
+                    },
+                    "avatarUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "familyName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "givenName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "timeZone": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "authUserId",
+                    "displayName",
+                    "givenName",
+                    "familyName",
+                    "avatarUrl",
+                    "locale",
+                    "timeZone",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Identity"]
+      }
+    },
+    "/identity/profiles/by-auth-user/{authUserId}": {
+      "get": {
+        "operationId": "getUserProfileByAuthUserId",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authUserId",
+            "required": true,
+            "schema": {
+              "minLength": 1,
+              "pattern": "^\\S+$",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "authUserId": {
+                      "type": "string"
+                    },
+                    "avatarUrl": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "createdAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "familyName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "givenName": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "locale": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "timeZone": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "updatedAt": {
+                      "format": "date-time",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "authUserId",
+                    "displayName",
+                    "givenName",
+                    "familyName",
+                    "avatarUrl",
+                    "locale",
+                    "timeZone",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Identity"]
       }
     }
   },
@@ -979,6 +1463,9 @@
     },
     {
       "name": "Forms"
+    },
+    {
+      "name": "Identity"
     }
   ]
 }

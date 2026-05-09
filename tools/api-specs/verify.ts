@@ -22,6 +22,12 @@ const REQUIRED_PATHS: Array<{ path: string; methods: string[] }> = [
   { path: '/auth/me', methods: ['get'] },
   { path: '/forms/{formId}', methods: ['get'] },
   { path: '/forms/submit', methods: ['post'] },
+  { path: '/identity/profiles', methods: ['post'] },
+  { path: '/identity/profiles/{profileId}', methods: ['get', 'patch'] },
+  {
+    path: '/identity/profiles/by-auth-user/{authUserId}',
+    methods: ['get'],
+  },
 ];
 
 function readOpenApi(): OpenApiDocument {

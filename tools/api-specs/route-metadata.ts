@@ -1,6 +1,7 @@
 export const TAG_PREFIX_MAP: Array<{ prefix: string; tag: string }> = [
   { prefix: '/auth', tag: 'Auth' },
   { prefix: '/forms', tag: 'Forms' },
+  { prefix: '/identity', tag: 'Identity' },
 ];
 
 export const OPERATION_ID_MAP: Record<string, string> = {
@@ -17,6 +18,11 @@ export const OPERATION_ID_MAP: Record<string, string> = {
   'POST /auth/verify-email': 'verifyEmail',
   'GET /forms/{formId}': 'getFormDefinition',
   'POST /forms/submit': 'submitForm',
+  'POST /identity/profiles': 'createUserProfile',
+  'GET /identity/profiles/by-auth-user/{authUserId}':
+    'getUserProfileByAuthUserId',
+  'GET /identity/profiles/{profileId}': 'getUserProfileById',
+  'PATCH /identity/profiles/{profileId}': 'updateUserProfile',
 };
 
 export function normalizePath(url: string): string {
