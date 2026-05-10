@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 
+import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -288,6 +289,9 @@ async function run() {
   mkdirSync(OUTPUT_DIR, { recursive: true });
   writeFileSync(JSON_OUTPUT, `${JSON.stringify(openApiDocument, null, 2)}\n`);
   writeFileSync(YAML_OUTPUT, `${stringify(openApiDocument)}\n`);
+  execFileSync('yarn', ['prettier', JSON_OUTPUT, YAML_OUTPUT, '--write'], {
+    stdio: 'inherit',
+  });
 
   await app.close();
 

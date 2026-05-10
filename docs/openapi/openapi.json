@@ -1,7 +1,5 @@
 {
-  "components": {
-    "schemas": {}
-  },
+  "components": { "schemas": {} },
   "info": {
     "contact": {
       "email": "info@anarchitects.dev",
@@ -21,12 +19,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "properties": {
-                  "token": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
+                "properties": { "token": { "minLength": 1, "type": "string" } },
                 "required": ["token"],
                 "type": "object"
               }
@@ -39,11 +32,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -63,9 +52,7 @@
             "in": "path",
             "name": "userId",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -73,18 +60,9 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "confirmPassword": {
-                    "minLength": 6,
-                    "type": "string"
-                  },
-                  "currentPassword": {
-                    "minLength": 6,
-                    "type": "string"
-                  },
-                  "newPassword": {
-                    "minLength": 6,
-                    "type": "string"
-                  }
+                  "confirmPassword": { "minLength": 6, "type": "string" },
+                  "currentPassword": { "minLength": 6, "type": "string" },
+                  "newPassword": { "minLength": 6, "type": "string" }
                 },
                 "required": [
                   "currentPassword",
@@ -102,11 +80,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -126,10 +100,7 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "email": {
-                    "format": "email",
-                    "type": "string"
-                  }
+                  "email": { "format": "email", "type": "string" }
                 },
                 "required": ["email"],
                 "type": "object"
@@ -143,11 +114,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -172,10 +139,7 @@
                     "minLength": 2,
                     "type": "string"
                   },
-                  "password": {
-                    "minLength": 6,
-                    "type": "string"
-                  }
+                  "password": { "minLength": 6, "type": "string" }
                 },
                 "required": ["credential", "password"],
                 "type": "object"
@@ -194,32 +158,18 @@
                       "items": {
                         "additionalProperties": false,
                         "properties": {
-                          "action": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
+                          "action": { "minLength": 1, "type": "string" },
                           "conditions": {
                             "additionalProperties": {},
                             "type": "object"
                           },
                           "fields": {
-                            "items": {
-                              "minLength": 1,
-                              "type": "string"
-                            },
+                            "items": { "minLength": 1, "type": "string" },
                             "type": "array"
                           },
-                          "inverted": {
-                            "type": "boolean"
-                          },
-                          "reason": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "subject": {
-                            "minLength": 1,
-                            "type": "string"
-                          }
+                          "inverted": { "type": "boolean" },
+                          "reason": { "minLength": 1, "type": "string" },
+                          "subject": { "minLength": 1, "type": "string" }
                         },
                         "required": ["action", "subject"],
                         "type": "object"
@@ -259,11 +209,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -288,32 +234,18 @@
                       "items": {
                         "additionalProperties": false,
                         "properties": {
-                          "action": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
+                          "action": { "minLength": 1, "type": "string" },
                           "conditions": {
                             "additionalProperties": {},
                             "type": "object"
                           },
                           "fields": {
-                            "items": {
-                              "minLength": 1,
-                              "type": "string"
-                            },
+                            "items": { "minLength": 1, "type": "string" },
                             "type": "array"
                           },
-                          "inverted": {
-                            "type": "boolean"
-                          },
-                          "reason": {
-                            "minLength": 1,
-                            "type": "string"
-                          },
-                          "subject": {
-                            "minLength": 1,
-                            "type": "string"
-                          }
+                          "inverted": { "type": "boolean" },
+                          "reason": { "minLength": 1, "type": "string" },
+                          "subject": { "minLength": 1, "type": "string" }
                         },
                         "required": ["action", "subject"],
                         "type": "object"
@@ -341,23 +273,14 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "confirmPassword": {
-                    "minLength": 6,
-                    "type": "string"
-                  },
-                  "email": {
-                    "format": "email",
-                    "type": "string"
-                  },
+                  "confirmPassword": { "minLength": 6, "type": "string" },
+                  "email": { "format": "email", "type": "string" },
                   "name": {
                     "maxLength": 100,
                     "minLength": 2,
                     "type": "string"
                   },
-                  "password": {
-                    "minLength": 6,
-                    "type": "string"
-                  }
+                  "password": { "minLength": 6, "type": "string" }
                 },
                 "required": ["email", "password", "confirmPassword"],
                 "type": "object"
@@ -371,11 +294,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -395,18 +314,9 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "confirmPassword": {
-                    "minLength": 6,
-                    "type": "string"
-                  },
-                  "password": {
-                    "minLength": 6,
-                    "type": "string"
-                  },
-                  "token": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
+                  "confirmPassword": { "minLength": 6, "type": "string" },
+                  "password": { "minLength": 6, "type": "string" },
+                  "token": { "minLength": 1, "type": "string" }
                 },
                 "required": ["token", "password", "confirmPassword"],
                 "type": "object"
@@ -420,11 +330,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -444,9 +350,7 @@
             "in": "path",
             "name": "userId",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -454,14 +358,8 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "newEmail": {
-                    "format": "email",
-                    "type": "string"
-                  },
-                  "password": {
-                    "minLength": 6,
-                    "type": "string"
-                  }
+                  "newEmail": { "format": "email", "type": "string" },
+                  "password": { "minLength": 6, "type": "string" }
                 },
                 "required": ["newEmail"],
                 "type": "object"
@@ -475,11 +373,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -498,12 +392,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "properties": {
-                  "token": {
-                    "minLength": 1,
-                    "type": "string"
-                  }
-                },
+                "properties": { "token": { "minLength": 1, "type": "string" } },
                 "required": ["token"],
                 "type": "object"
               }
@@ -516,11 +405,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    }
-                  },
+                  "properties": { "success": { "type": "boolean" } },
                   "required": ["success"],
                   "type": "object"
                 }
@@ -540,18 +425,13 @@
             "in": "query",
             "name": "formVersion",
             "required": false,
-            "schema": {
-              "minimum": 1,
-              "type": "integer"
-            }
+            "schema": { "minimum": 1, "type": "integer" }
           },
           {
             "in": "path",
             "name": "formId",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -570,35 +450,20 @@
                             },
                             "autoReply": {
                               "properties": {
-                                "enabled": {
-                                  "type": "boolean"
-                                },
-                                "subject": {
-                                  "type": "string"
-                                },
-                                "templateId": {
-                                  "type": "string"
-                                }
+                                "enabled": { "type": "boolean" },
+                                "subject": { "type": "string" },
+                                "templateId": { "type": "string" }
                               },
                               "required": ["enabled", "templateId", "subject"],
                               "type": "object"
                             },
-                            "subject": {
-                              "type": "string"
-                            },
-                            "templateId": {
-                              "type": "string"
-                            },
+                            "subject": { "type": "string" },
+                            "templateId": { "type": "string" },
                             "webhooks": {
                               "items": {
                                 "properties": {
-                                  "secret": {
-                                    "type": "string"
-                                  },
-                                  "url": {
-                                    "format": "uri",
-                                    "type": "string"
-                                  }
+                                  "secret": { "type": "string" },
+                                  "url": { "format": "uri", "type": "string" }
                                 },
                                 "required": ["url"],
                                 "type": "object"
@@ -613,83 +478,37 @@
                             "properties": {
                               "kind": {
                                 "anyOf": [
-                                  {
-                                    "enum": ["string"],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": ["password"],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": ["email"],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": ["textarea"],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": ["boolean"],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": ["select"],
-                                    "type": "string"
-                                  },
-                                  {
-                                    "enum": ["file"],
-                                    "type": "string"
-                                  }
+                                  { "enum": ["string"], "type": "string" },
+                                  { "enum": ["password"], "type": "string" },
+                                  { "enum": ["email"], "type": "string" },
+                                  { "enum": ["textarea"], "type": "string" },
+                                  { "enum": ["boolean"], "type": "string" },
+                                  { "enum": ["select"], "type": "string" },
+                                  { "enum": ["file"], "type": "string" }
                                 ]
                               },
-                              "maxLength": {
-                                "minimum": 0,
-                                "type": "integer"
-                              },
-                              "minLength": {
-                                "minimum": 0,
-                                "type": "integer"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
+                              "maxLength": { "minimum": 0, "type": "integer" },
+                              "minLength": { "minimum": 0, "type": "integer" },
+                              "name": { "type": "string" },
                               "options": {
                                 "items": {
                                   "properties": {
-                                    "label": {
-                                      "type": "string"
-                                    },
-                                    "value": {
-                                      "type": "string"
-                                    }
+                                    "label": { "type": "string" },
+                                    "value": { "type": "string" }
                                   },
                                   "required": ["value", "label"],
                                   "type": "object"
                                 },
                                 "type": "array"
                               },
-                              "pattern": {
-                                "type": "string"
-                              },
-                              "required": {
-                                "type": "boolean"
-                              },
+                              "pattern": { "type": "string" },
+                              "required": { "type": "boolean" },
                               "ui": {
                                 "properties": {
-                                  "help": {
-                                    "type": "string"
-                                  },
-                                  "label": {
-                                    "type": "string"
-                                  },
-                                  "placeholder": {
-                                    "type": "string"
-                                  },
-                                  "rows": {
-                                    "minimum": 1,
-                                    "type": "integer"
-                                  }
+                                  "help": { "type": "string" },
+                                  "label": { "type": "string" },
+                                  "placeholder": { "type": "string" },
+                                  "rows": { "minimum": 1, "type": "integer" }
                                 },
                                 "type": "object"
                               }
@@ -699,30 +518,17 @@
                           },
                           "type": "array"
                         },
-                        "id": {
-                          "type": "string"
-                        },
+                        "id": { "type": "string" },
                         "security": {
                           "properties": {
                             "captcha": {
                               "anyOf": [
-                                {
-                                  "enum": ["turnstile"],
-                                  "type": "string"
-                                },
-                                {
-                                  "enum": ["hcaptcha"],
-                                  "type": "string"
-                                },
-                                {
-                                  "enum": ["none"],
-                                  "type": "string"
-                                }
+                                { "enum": ["turnstile"], "type": "string" },
+                                { "enum": ["hcaptcha"], "type": "string" },
+                                { "enum": ["none"], "type": "string" }
                               ]
                             },
-                            "honeypot": {
-                              "type": "string"
-                            }
+                            "honeypot": { "type": "string" }
                           },
                           "required": ["captcha"],
                           "type": "object"
@@ -734,25 +540,16 @@
                                 "enum": ["matchFields"],
                                 "type": "string"
                               },
-                              "message": {
-                                "type": "string"
-                              },
-                              "sourceField": {
-                                "type": "string"
-                              },
-                              "targetField": {
-                                "type": "string"
-                              }
+                              "message": { "type": "string" },
+                              "sourceField": { "type": "string" },
+                              "targetField": { "type": "string" }
                             },
                             "required": ["kind", "sourceField", "targetField"],
                             "type": "object"
                           },
                           "type": "array"
                         },
-                        "version": {
-                          "minimum": 1,
-                          "type": "integer"
-                        }
+                        "version": { "minimum": 1, "type": "integer" }
                       },
                       "required": ["id", "version", "fields"],
                       "type": "object"
@@ -778,17 +575,9 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "formId": {
-                    "type": "string"
-                  },
-                  "formVersion": {
-                    "minimum": 1,
-                    "type": "integer"
-                  },
-                  "payload": {
-                    "additionalProperties": {},
-                    "type": "object"
-                  }
+                  "formId": { "type": "string" },
+                  "formVersion": { "minimum": 1, "type": "integer" },
+                  "payload": { "additionalProperties": {}, "type": "object" }
                 },
                 "required": ["formId", "formVersion", "payload"],
                 "type": "object"
@@ -803,28 +592,12 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "createdAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    },
-                    "formId": {
-                      "type": "string"
-                    },
-                    "formVersion": {
-                      "minimum": 1,
-                      "type": "integer"
-                    },
-                    "id": {
-                      "type": "string"
-                    },
-                    "payload": {
-                      "additionalProperties": {},
-                      "type": "object"
-                    },
-                    "updatedAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    }
+                    "createdAt": { "format": "date-time", "type": "string" },
+                    "formId": { "type": "string" },
+                    "formVersion": { "minimum": 1, "type": "integer" },
+                    "id": { "type": "string" },
+                    "payload": { "additionalProperties": {}, "type": "object" },
+                    "updatedAt": { "format": "date-time", "type": "string" }
                   },
                   "required": [
                     "id",
@@ -852,68 +625,24 @@
             "application/json": {
               "schema": {
                 "properties": {
-                  "authUserId": {
-                    "type": "string"
-                  },
+                  "authUserId": { "type": "string" },
                   "avatarUrl": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "displayName": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "familyName": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "givenName": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "locale": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "timeZone": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   }
                 },
                 "required": ["authUserId"],
@@ -929,80 +658,28 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "authUserId": {
-                      "type": "string"
-                    },
+                    "authUserId": { "type": "string" },
                     "avatarUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "createdAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    },
+                    "createdAt": { "format": "date-time", "type": "string" },
                     "displayName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "familyName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "givenName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "id": {
-                      "type": "string"
-                    },
+                    "id": { "type": "string" },
                     "locale": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "timeZone": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "updatedAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    }
+                    "updatedAt": { "format": "date-time", "type": "string" }
                   },
                   "required": [
                     "id",
@@ -1034,11 +711,7 @@
             "in": "path",
             "name": "profileId",
             "required": true,
-            "schema": {
-              "minLength": 1,
-              "pattern": "^\\S+$",
-              "type": "string"
-            }
+            "schema": { "minLength": 1, "pattern": "^\\S+$", "type": "string" }
           }
         ],
         "responses": {
@@ -1047,80 +720,28 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "authUserId": {
-                      "type": "string"
-                    },
+                    "authUserId": { "type": "string" },
                     "avatarUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "createdAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    },
+                    "createdAt": { "format": "date-time", "type": "string" },
                     "displayName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "familyName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "givenName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "id": {
-                      "type": "string"
-                    },
+                    "id": { "type": "string" },
                     "locale": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "timeZone": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "updatedAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    }
+                    "updatedAt": { "format": "date-time", "type": "string" }
                   },
                   "required": [
                     "id",
@@ -1150,11 +771,7 @@
             "in": "path",
             "name": "profileId",
             "required": true,
-            "schema": {
-              "minLength": 1,
-              "pattern": "^\\S+$",
-              "type": "string"
-            }
+            "schema": { "minLength": 1, "pattern": "^\\S+$", "type": "string" }
           }
         ],
         "requestBody": {
@@ -1163,64 +780,22 @@
               "schema": {
                 "properties": {
                   "avatarUrl": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "displayName": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "familyName": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "givenName": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "locale": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   },
                   "timeZone": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "null"
-                      }
-                    ]
+                    "anyOf": [{ "type": "string" }, { "type": "null" }]
                   }
                 },
                 "type": "object"
@@ -1235,80 +810,28 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "authUserId": {
-                      "type": "string"
-                    },
+                    "authUserId": { "type": "string" },
                     "avatarUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "createdAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    },
+                    "createdAt": { "format": "date-time", "type": "string" },
                     "displayName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "familyName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "givenName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "id": {
-                      "type": "string"
-                    },
+                    "id": { "type": "string" },
                     "locale": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "timeZone": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "updatedAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    }
+                    "updatedAt": { "format": "date-time", "type": "string" }
                   },
                   "required": [
                     "id",
@@ -1340,11 +863,7 @@
             "in": "path",
             "name": "authUserId",
             "required": true,
-            "schema": {
-              "minLength": 1,
-              "pattern": "^\\S+$",
-              "type": "string"
-            }
+            "schema": { "minLength": 1, "pattern": "^\\S+$", "type": "string" }
           }
         ],
         "responses": {
@@ -1353,80 +872,28 @@
               "application/json": {
                 "schema": {
                   "properties": {
-                    "authUserId": {
-                      "type": "string"
-                    },
+                    "authUserId": { "type": "string" },
                     "avatarUrl": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "createdAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    },
+                    "createdAt": { "format": "date-time", "type": "string" },
                     "displayName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "familyName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "givenName": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "id": {
-                      "type": "string"
-                    },
+                    "id": { "type": "string" },
                     "locale": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
                     "timeZone": {
-                      "anyOf": [
-                        {
-                          "type": "string"
-                        },
-                        {
-                          "type": "null"
-                        }
-                      ]
+                      "anyOf": [{ "type": "string" }, { "type": "null" }]
                     },
-                    "updatedAt": {
-                      "format": "date-time",
-                      "type": "string"
-                    }
+                    "updatedAt": { "format": "date-time", "type": "string" }
                   },
                   "required": [
                     "id",
@@ -1451,21 +918,6 @@
       }
     }
   },
-  "servers": [
-    {
-      "description": "Local",
-      "url": "http://localhost:3000"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Auth"
-    },
-    {
-      "name": "Forms"
-    },
-    {
-      "name": "Identity"
-    }
-  ]
+  "servers": [{ "description": "Local", "url": "http://localhost:3000" }],
+  "tags": [{ "name": "Auth" }, { "name": "Forms" }, { "name": "Identity" }]
 }
