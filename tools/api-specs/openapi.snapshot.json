@@ -38,6 +38,16 @@
     },
     "/forms/submit": {
       "post": "submitForm"
+    },
+    "/identity/profiles": {
+      "post": "createUserProfile"
+    },
+    "/identity/profiles/{profileId}": {
+      "get": "getUserProfileById",
+      "patch": "updateUserProfile"
+    },
+    "/identity/profiles/by-auth-user/{authUserId}": {
+      "get": "getUserProfileByAuthUserId"
     }
   }
 }

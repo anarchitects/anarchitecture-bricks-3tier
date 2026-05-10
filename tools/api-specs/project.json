@@ -18,10 +18,16 @@
           "fileset": "{workspaceRoot}/libs/forms/nest/src/**/*"
         },
         {
+          "fileset": "{workspaceRoot}/libs/identity/nest/src/**/*"
+        },
+        {
           "fileset": "{workspaceRoot}/libs/auth/ts/src/**/*"
         },
         {
           "fileset": "{workspaceRoot}/libs/forms/ts/src/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/identity/ts/src/**/*"
         }
       ],
       "outputs": ["{workspaceRoot}/docs/openapi"],

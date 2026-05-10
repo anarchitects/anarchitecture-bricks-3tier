@@ -46,7 +46,7 @@ jobs:
       - run: yarn nx run docs-hub:validate-content
       - run: yarn nx run api-specs:lint
       - run: yarn nx run angular-docs:generate
-      - run: yarn nx format:check
+      - run: yarn nx-cloud record -- yarn nx format:check
       - run: yarn nx affected -t lint --parallel=3
       - run: yarn nx affected -t test --parallel=1
       - run: yarn nx affected -t test-published-adapter --parallel=1

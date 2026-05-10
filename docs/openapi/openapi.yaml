@@ -27,7 +27,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -70,7 +70,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -99,7 +99,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -133,7 +133,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -186,7 +186,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -203,7 +203,7 @@ paths:
     get:
       operationId: getLoggedInUserInfo
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -272,7 +272,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -309,7 +309,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -347,7 +347,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -376,7 +376,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -405,7 +405,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -592,7 +592,7 @@ paths:
               type: object
         required: true
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
@@ -624,10 +624,331 @@ paths:
           description: Default Response
       tags:
         - Forms
+  /identity/profiles:
+    post:
+      operationId: createUserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                authUserId:
+                  type: string
+                avatarUrl:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                displayName:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                familyName:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                givenName:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                locale:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                timeZone:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+              required:
+                - authUserId
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  authUserId:
+                    type: string
+                  avatarUrl:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  createdAt:
+                    format: date-time
+                    type: string
+                  displayName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  familyName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  givenName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  id:
+                    type: string
+                  locale:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  timeZone:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  updatedAt:
+                    format: date-time
+                    type: string
+                required:
+                  - id
+                  - authUserId
+                  - displayName
+                  - givenName
+                  - familyName
+                  - avatarUrl
+                  - locale
+                  - timeZone
+                  - createdAt
+                  - updatedAt
+                type: object
+          description: Default Response
+      tags:
+        - Identity
+  /identity/profiles/{profileId}:
+    get:
+      operationId: getUserProfileById
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema:
+            minLength: 1
+            pattern: ^\S+$
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  authUserId:
+                    type: string
+                  avatarUrl:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  createdAt:
+                    format: date-time
+                    type: string
+                  displayName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  familyName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  givenName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  id:
+                    type: string
+                  locale:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  timeZone:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  updatedAt:
+                    format: date-time
+                    type: string
+                required:
+                  - id
+                  - authUserId
+                  - displayName
+                  - givenName
+                  - familyName
+                  - avatarUrl
+                  - locale
+                  - timeZone
+                  - createdAt
+                  - updatedAt
+                type: object
+          description: Default Response
+      tags:
+        - Identity
+    patch:
+      operationId: updateUserProfile
+      parameters:
+        - in: path
+          name: profileId
+          required: true
+          schema:
+            minLength: 1
+            pattern: ^\S+$
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                avatarUrl:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                displayName:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                familyName:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                givenName:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                locale:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+                timeZone:
+                  anyOf:
+                    - type: string
+                    - type: 'null'
+              type: object
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  authUserId:
+                    type: string
+                  avatarUrl:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  createdAt:
+                    format: date-time
+                    type: string
+                  displayName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  familyName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  givenName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  id:
+                    type: string
+                  locale:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  timeZone:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  updatedAt:
+                    format: date-time
+                    type: string
+                required:
+                  - id
+                  - authUserId
+                  - displayName
+                  - givenName
+                  - familyName
+                  - avatarUrl
+                  - locale
+                  - timeZone
+                  - createdAt
+                  - updatedAt
+                type: object
+          description: Default Response
+      tags:
+        - Identity
+  /identity/profiles/by-auth-user/{authUserId}:
+    get:
+      operationId: getUserProfileByAuthUserId
+      parameters:
+        - in: path
+          name: authUserId
+          required: true
+          schema:
+            minLength: 1
+            pattern: ^\S+$
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  authUserId:
+                    type: string
+                  avatarUrl:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  createdAt:
+                    format: date-time
+                    type: string
+                  displayName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  familyName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  givenName:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  id:
+                    type: string
+                  locale:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  timeZone:
+                    anyOf:
+                      - type: string
+                      - type: 'null'
+                  updatedAt:
+                    format: date-time
+                    type: string
+                required:
+                  - id
+                  - authUserId
+                  - displayName
+                  - givenName
+                  - familyName
+                  - avatarUrl
+                  - locale
+                  - timeZone
+                  - createdAt
+                  - updatedAt
+                type: object
+          description: Default Response
+      tags:
+        - Identity
 servers:
   - description: Local
     url: http://localhost:3000
 tags:
   - name: Auth
   - name: Forms
-
+  - name: Identity

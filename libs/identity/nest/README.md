@@ -5,7 +5,7 @@ NestJS facade and layer entry points for the Anarchitecture identity domain.
 ## Developer + AI Agent Start Here
 
 - Start with `IdentityModule.forRoot()` or `IdentityModule.forRootFromConfig()` from the root entry point.
-- Keep runtime behavior minimal until identity-specific application services and presentation behavior land.
+- Start from the published facade, then compose profile endpoints through the presentation entry point when you need the built-in controller surface.
 - Import advanced composition surfaces through public secondary entry points only.
 
 ## Features
@@ -13,6 +13,7 @@ NestJS facade and layer entry points for the Anarchitecture identity domain.
 - Root facade module with `forRoot` and `forRootFromConfig`
 - Explicit `application`, `presentation`, `infrastructure`, `infrastructure-persistence`, and `config` entry points
 - TypeORM-backed `UserProfile` persistence with scalar `authUserId` ownership
+- Identity profile application services and controller endpoints for create/get/update flows
 - No inverse auth persistence relations; identity stores ownership through `authUserId` only
 
 ## Installation
@@ -31,7 +32,7 @@ pnpm add @anarchitects/identity-nest
 | -------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `@anarchitects/identity-nest`                            | Root facade module and convenience re-exports                           |
 | `@anarchitects/identity-nest/application`                | Application-layer placeholder module                                    |
-| `@anarchitects/identity-nest/presentation`               | Presentation-layer placeholder module                                   |
+| `@anarchitects/identity-nest/presentation`               | Presentation module and `UserProfilesController`                        |
 | `@anarchitects/identity-nest/infrastructure`             | Infrastructure-layer placeholder module                                 |
 | `@anarchitects/identity-nest/infrastructure-persistence` | `UserProfileEntity`, migration, persistence module, and repository port |
 | `@anarchitects/identity-nest/config`                     | Typed config namespace and module option helpers                        |
@@ -55,7 +56,7 @@ export class AppModule {}
 
 ## Development notes
 
-- This package intentionally contains no controllers or endpoints in issue `#315`.
+- The package now exposes profile endpoints at `/identity/profiles`, `/identity/profiles/:profileId`, and `/identity/profiles/by-auth-user/:authUserId`.
 - `UserProfile` persistence lives in the identity domain and stores auth ownership only through scalar `authUserId`.
 - Do not add TypeORM relations back into auth; future identity runtime behavior should extend the published layer entry points instead of introducing deep imports.
 
