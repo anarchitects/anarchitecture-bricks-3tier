@@ -47,11 +47,11 @@ Forms does NOT own:
 
 ## Examples
 
-| Scenario | Forms Responsibility | Domain Responsibility |
-| --- | --- | --- |
-| Contact form | Capture message | Handle/support logic |
-| Booking form | Capture extra fields | Booking lifecycle |
-| Job application | Capture answers | Recruitment process |
+| Scenario        | Forms Responsibility | Domain Responsibility |
+| --------------- | -------------------- | --------------------- |
+| Contact form    | Capture message      | Handle/support logic  |
+| Booking form    | Capture extra fields | Booking lifecycle     |
+| Job application | Capture answers      | Recruitment process   |
 
 ## Constraints
 

@@ -89,7 +89,7 @@ export default [
             {
               sourceTag: 'scope:ts-frontend',
               onlyDependOnLibsWithTags: ['*'],
-            }
+            },
           ],
         },
       ],

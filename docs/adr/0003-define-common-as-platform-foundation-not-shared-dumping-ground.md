@@ -68,17 +68,17 @@ If a concept has business language, lifecycle, ownership, policies, or workflows
 
 ## Examples
 
-| Candidate | Decision | Rationale |
-| --- | --- | --- |
-| Button, badge, alert, card | Common | Domain-neutral UI primitive |
-| Design tokens | Common | Cross-domain design foundation |
-| Slot/template directives | Common | Domain-neutral UI composition |
-| Layout host | Common with constraints | Generic UI layout orchestration |
-| Mail transport setup | Common | Technical infrastructure seam |
-| Contact message handling | Not common | Belongs to forms, site, contact, or support depending on semantics |
-| Password reset email semantics | Not common | Belongs to auth |
-| Booking confirmation | Not common | Belongs to booking |
-| Role management UI | Not common | Belongs to auth or a future IAM/access-control capability |
+| Candidate                      | Decision                | Rationale                                                          |
+| ------------------------------ | ----------------------- | ------------------------------------------------------------------ |
+| Button, badge, alert, card     | Common                  | Domain-neutral UI primitive                                        |
+| Design tokens                  | Common                  | Cross-domain design foundation                                     |
+| Slot/template directives       | Common                  | Domain-neutral UI composition                                      |
+| Layout host                    | Common with constraints | Generic UI layout orchestration                                    |
+| Mail transport setup           | Common                  | Technical infrastructure seam                                      |
+| Contact message handling       | Not common              | Belongs to forms, site, contact, or support depending on semantics |
+| Password reset email semantics | Not common              | Belongs to auth                                                    |
+| Booking confirmation           | Not common              | Belongs to booking                                                 |
+| Role management UI             | Not common              | Belongs to auth or a future IAM/access-control capability          |
 
 ## Consequences
 
