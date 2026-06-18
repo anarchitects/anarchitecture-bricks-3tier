@@ -39,7 +39,7 @@ export default defineConfig(() => ({
       },
       formats: ['es' as const, 'cjs' as const],
     },
-    rollupOptions: {
+    rolldownOptions: {
       // External packages that should not be bundled into your library.
       external: ['@sinclair/typebox'],
     },
