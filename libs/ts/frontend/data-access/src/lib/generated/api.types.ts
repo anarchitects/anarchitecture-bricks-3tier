@@ -4,841 +4,848 @@
  */
 
 export interface paths {
-    "/auth/activate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["activateUser"];
-        trace?: never;
+  '/auth/activate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/change-password/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["changePassword"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['activateUser'];
+    trace?: never;
+  };
+  '/auth/change-password/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/forgot-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["forgotPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['changePassword'];
+    trace?: never;
+  };
+  '/auth/forgot-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['forgotPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["logout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['login'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getLoggedInUserInfo"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["registerUser"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getLoggedInUserInfo'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/reset-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["resetPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['registerUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/reset-password': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/update-email/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["updateEmail"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['resetPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/auth/update-email/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/auth/verify-email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["verifyEmail"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['updateEmail'];
+    trace?: never;
+  };
+  '/auth/verify-email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/forms/{formId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getFormDefinition"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['verifyEmail'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/forms/{formId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/forms/submit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["submitForm"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getFormDefinition'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/forms/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/identity/profiles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createUserProfile"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['submitForm'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/identity/profiles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/identity/profiles/{profileId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getUserProfileById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["updateUserProfile"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['createUserProfile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/identity/profiles/{profileId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/identity/profiles/by-auth-user/{authUserId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getUserProfileByAuthUserId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['getUserProfileById'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['updateUserProfile'];
+    trace?: never;
+  };
+  '/identity/profiles/by-auth-user/{authUserId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations['getUserProfileByAuthUserId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: never;
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+  schemas: never;
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    activateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    token: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+  activateUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    changePassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: string;
-            };
-            cookie?: never;
+    requestBody: {
+      content: {
+        'application/json': {
+          token: string;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    confirmPassword: string;
-                    currentPassword: string;
-                    newPassword: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+      };
     };
-    forgotPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    email: string;
-                };
-            };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
         };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+      };
     };
-    login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    credential: string;
-                    password: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        rbac: {
-                            action: string;
-                            conditions?: {
-                                [key: string]: unknown;
-                            };
-                            fields?: string[];
-                            inverted?: boolean;
-                            reason?: string;
-                            subject: string;
-                        }[];
-                        user: unknown;
-                    };
-                };
-            };
-        };
+  };
+  changePassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+      };
+      cookie?: never;
     };
-    logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody: {
+      content: {
+        'application/json': {
+          confirmPassword: string;
+          currentPassword: string;
+          newPassword: string;
         };
-        requestBody: {
-            content: {
-                "application/json": Record<string, never>;
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+      };
     };
-    getLoggedInUserInfo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        rbac: {
-                            action: string;
-                            conditions?: {
-                                [key: string]: unknown;
-                            };
-                            fields?: string[];
-                            inverted?: boolean;
-                            reason?: string;
-                            subject: string;
-                        }[];
-                        user: unknown;
-                    };
-                };
-            };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
         };
+      };
     };
-    registerUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    confirmPassword: string;
-                    /** Format: email */
-                    email: string;
-                    name?: string;
-                    password: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+  };
+  forgotPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    resetPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          email: string;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    confirmPassword: string;
-                    password: string;
-                    token: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+      };
     };
-    updateEmail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                userId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    /** Format: email */
-                    newEmail: string;
-                    password?: string;
-                };
-            };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
         };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+      };
     };
-    verifyEmail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    token: string;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        success: boolean;
-                    };
-                };
-            };
-        };
+  };
+  login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getFormDefinition: {
-        parameters: {
-            query?: {
-                formVersion?: number;
-            };
-            header?: never;
-            path: {
-                formId: string;
-            };
-            cookie?: never;
+    requestBody: {
+      content: {
+        'application/json': {
+          credential: string;
+          password: string;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        config: {
-                            delivery?: {
-                                /** Format: email */
-                                adminEmail?: string;
-                                autoReply?: {
-                                    enabled: boolean;
-                                    subject: string;
-                                    templateId: string;
-                                };
-                                subject?: string;
-                                templateId?: string;
-                                webhooks?: {
-                                    secret?: string;
-                                    /** Format: uri */
-                                    url: string;
-                                }[];
-                            };
-                            fields: {
-                                kind: "string" | "password" | "email" | "textarea" | "boolean" | "select" | "file";
-                                maxLength?: number;
-                                minLength?: number;
-                                name: string;
-                                options?: {
-                                    label: string;
-                                    value: string;
-                                }[];
-                                pattern?: string;
-                                required?: boolean;
-                                ui?: {
-                                    help?: string;
-                                    label?: string;
-                                    placeholder?: string;
-                                    rows?: number;
-                                };
-                            }[];
-                            id: string;
-                            security?: {
-                                captcha: "turnstile" | "hcaptcha" | "none";
-                                honeypot?: string;
-                            };
-                            validationRules?: {
-                                /** @enum {string} */
-                                kind: "matchFields";
-                                message?: string;
-                                sourceField: string;
-                                targetField: string;
-                            }[];
-                            version: number;
-                        };
-                        schema: unknown;
-                    };
-                };
-            };
-        };
+      };
     };
-    submitForm: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    formId: string;
-                    formVersion: number;
-                    payload: {
-                        [key: string]: unknown;
-                    };
-                };
-            };
+        content: {
+          'application/json': {
+            rbac: {
+              action: string;
+              conditions?: {
+                [key: string]: unknown;
+              };
+              fields?: string[];
+              inverted?: boolean;
+              reason?: string;
+              subject: string;
+            }[];
+            user: unknown;
+          };
         };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        /** Format: date-time */
-                        createdAt: string;
-                        formId: string;
-                        formVersion: number;
-                        id: string;
-                        payload: {
-                            [key: string]: unknown;
-                        };
-                        /** Format: date-time */
-                        updatedAt: string;
-                    };
-                };
-            };
-        };
+      };
     };
-    createUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": {
-                    authUserId: string;
-                    avatarUrl?: string | null;
-                    displayName?: string | null;
-                    familyName?: string | null;
-                    givenName?: string | null;
-                    locale?: string | null;
-                    timeZone?: string | null;
-                };
-            };
-        };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        authUserId: string;
-                        avatarUrl: string | null;
-                        /** Format: date-time */
-                        createdAt: string;
-                        displayName: string | null;
-                        familyName: string | null;
-                        givenName: string | null;
-                        id: string;
-                        locale: string | null;
-                        timeZone: string | null;
-                        /** Format: date-time */
-                        updatedAt: string;
-                    };
-                };
-            };
-        };
+  };
+  logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    getUserProfileById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        authUserId: string;
-                        avatarUrl: string | null;
-                        /** Format: date-time */
-                        createdAt: string;
-                        displayName: string | null;
-                        familyName: string | null;
-                        givenName: string | null;
-                        id: string;
-                        locale: string | null;
-                        timeZone: string | null;
-                        /** Format: date-time */
-                        updatedAt: string;
-                    };
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': Record<string, never>;
+      };
     };
-    updateUserProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                profileId: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": {
-                    avatarUrl?: string | null;
-                    displayName?: string | null;
-                    familyName?: string | null;
-                    givenName?: string | null;
-                    locale?: string | null;
-                    timeZone?: string | null;
-                };
-            };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
         };
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        authUserId: string;
-                        avatarUrl: string | null;
-                        /** Format: date-time */
-                        createdAt: string;
-                        displayName: string | null;
-                        familyName: string | null;
-                        givenName: string | null;
-                        id: string;
-                        locale: string | null;
-                        timeZone: string | null;
-                        /** Format: date-time */
-                        updatedAt: string;
-                    };
-                };
-            };
-        };
+      };
     };
-    getUserProfileByAuthUserId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                authUserId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Default Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        authUserId: string;
-                        avatarUrl: string | null;
-                        /** Format: date-time */
-                        createdAt: string;
-                        displayName: string | null;
-                        familyName: string | null;
-                        givenName: string | null;
-                        id: string;
-                        locale: string | null;
-                        timeZone: string | null;
-                        /** Format: date-time */
-                        updatedAt: string;
-                    };
-                };
-            };
-        };
+  };
+  getLoggedInUserInfo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    requestBody?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            rbac: {
+              action: string;
+              conditions?: {
+                [key: string]: unknown;
+              };
+              fields?: string[];
+              inverted?: boolean;
+              reason?: string;
+              subject: string;
+            }[];
+            user: unknown;
+          };
+        };
+      };
+    };
+  };
+  registerUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          confirmPassword: string;
+          /** Format: email */
+          email: string;
+          name?: string;
+          password: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
+        };
+      };
+    };
+  };
+  resetPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          confirmPassword: string;
+          password: string;
+          token: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
+        };
+      };
+    };
+  };
+  updateEmail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        userId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          /** Format: email */
+          newEmail: string;
+          password?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
+        };
+      };
+    };
+  };
+  verifyEmail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          token: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            success: boolean;
+          };
+        };
+      };
+    };
+  };
+  getFormDefinition: {
+    parameters: {
+      query?: {
+        formVersion?: number;
+      };
+      header?: never;
+      path: {
+        formId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            config: {
+              delivery?: {
+                /** Format: email */
+                adminEmail?: string;
+                autoReply?: {
+                  enabled: boolean;
+                  subject: string;
+                  templateId: string;
+                };
+                subject?: string;
+                templateId?: string;
+                webhooks?: {
+                  secret?: string;
+                  /** Format: uri */
+                  url: string;
+                }[];
+              };
+              fields: {
+                kind:
+                  | 'string'
+                  | 'password'
+                  | 'email'
+                  | 'textarea'
+                  | 'boolean'
+                  | 'select'
+                  | 'file';
+                maxLength?: number;
+                minLength?: number;
+                name: string;
+                options?: {
+                  label: string;
+                  value: string;
+                }[];
+                pattern?: string;
+                required?: boolean;
+                ui?: {
+                  help?: string;
+                  label?: string;
+                  placeholder?: string;
+                  rows?: number;
+                };
+              }[];
+              id: string;
+              security?: {
+                captcha: 'turnstile' | 'hcaptcha' | 'none';
+                honeypot?: string;
+              };
+              validationRules?: {
+                /** @enum {string} */
+                kind: 'matchFields';
+                message?: string;
+                sourceField: string;
+                targetField: string;
+              }[];
+              version: number;
+            };
+            schema: unknown;
+          };
+        };
+      };
+    };
+  };
+  submitForm: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          formId: string;
+          formVersion: number;
+          payload: {
+            [key: string]: unknown;
+          };
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            /** Format: date-time */
+            createdAt: string;
+            formId: string;
+            formVersion: number;
+            id: string;
+            payload: {
+              [key: string]: unknown;
+            };
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  createUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          authUserId: string;
+          avatarUrl?: string | null;
+          displayName?: string | null;
+          familyName?: string | null;
+          givenName?: string | null;
+          locale?: string | null;
+          timeZone?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  getUserProfileById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  updateUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          avatarUrl?: string | null;
+          displayName?: string | null;
+          familyName?: string | null;
+          givenName?: string | null;
+          locale?: string | null;
+          timeZone?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  getUserProfileByAuthUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        authUserId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
 }
