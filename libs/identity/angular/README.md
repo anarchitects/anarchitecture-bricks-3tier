@@ -38,7 +38,9 @@ pnpm add @anarchitects/identity-angular
 | `@anarchitects/identity-angular/state`       | Explicitly provided `IdentityStore`             |
 | `@anarchitects/identity-angular/ui`          | Profile view and Signal Forms editor components |
 
-## Easy mode
+## Usage
+
+### Easy mode
 
 Configure Angular HTTP once at the application root, compose the identity providers, and render the feature with the authenticated user id:
 
@@ -73,7 +75,7 @@ export class ProfilePage {
 
 The default API route is `/api/identity/profiles`. Set `apiBaseUrl` when the API is hosted on another origin.
 
-## Advanced composition
+### Advanced composition
 
 Applications can compose the layers independently and provide state at application, route, or component scope:
 
