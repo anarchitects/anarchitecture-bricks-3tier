@@ -50,6 +50,7 @@ describe('UserProfileFeature', () => {
     fixture = TestBed.createComponent(UserProfileFeature);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('authUserId', 'auth-user-1');
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 
@@ -77,6 +78,7 @@ describe('UserProfileFeature', () => {
   it('should render loading and failure state accessibly', async () => {
     loadingState.set(true);
     errorState.set('Profile unavailable');
+    fixture.detectChanges();
     await fixture.whenStable();
 
     const element = fixture.nativeElement as HTMLElement;

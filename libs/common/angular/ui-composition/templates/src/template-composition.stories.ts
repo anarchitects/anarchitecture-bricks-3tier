@@ -7,6 +7,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { AnxTemplateDirective } from './template.directive';
@@ -16,6 +17,7 @@ import { findAnxTemplate } from './template-registry';
   selector: 'anarchitects-template-composition-demo',
   standalone: true,
   imports: [NgTemplateOutlet, AnxTemplateDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-template anxTemplate="item" let-item>Item: {{ item.name }}</ng-template>
     <ng-template anxTemplate="item" anxTemplateVariant="compact" let-item>

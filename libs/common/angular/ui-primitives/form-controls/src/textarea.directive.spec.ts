@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiTextareaDirective } from './textarea.directive';
 
 @Component({
   imports: [AnarchitectsUiTextareaDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<textarea
     anarchitectsUiTextarea
     [resize]="'none'"

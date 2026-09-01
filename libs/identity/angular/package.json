@@ -5,9 +5,9 @@
     "@anarchitects/identity-ts": "^0.0.2"
   },
   "peerDependencies": {
-    "@angular/common": "^21.1.0",
-    "@angular/core": "^21.1.0",
-    "@angular/forms": "^21.1.0",
+    "@angular/common": "^21.1.0 || ^22.0.0",
+    "@angular/core": "^21.1.0 || ^22.0.0",
+    "@angular/forms": "^21.1.0 || ^22.0.0",
     "rxjs": "~7.8.0"
   },
   "publishConfig": {

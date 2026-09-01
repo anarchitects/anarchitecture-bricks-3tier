@@ -192,6 +192,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 - [Guide: Alignment With `anarchitecture-bricks-ddd`](docs/guides/alignment-with-bricks-ddd.md)
 - [Guide: Migration To `anarchitecture-bricks-ddd`](docs/guides/migration-to-bricks-ddd.md)
+- [Guide: Angular 22 And TypeScript 6 Migration](docs/guides/angular-22-migration.md)
 
 ## Architecture Decision Records
 

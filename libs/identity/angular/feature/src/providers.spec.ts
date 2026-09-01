@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { IDENTITY_CONFIG } from '@anarchitects/identity-angular/config';
 import { IdentityApi } from '@anarchitects/identity-angular/data-access';
@@ -13,7 +13,7 @@ describe('provideIdentityFeature', () => {
   it('should compose config, data access, and state providers', () => {
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         ...provideIdentityFeature({
           apiResourcePath: 'profiles',
         }),

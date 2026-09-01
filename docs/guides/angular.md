@@ -6,6 +6,7 @@ This is the Angular implementation cookbook for Anarchitecture Bricks. It focuse
 
 - [Frontend Foundation Guide](/guides/design-ui-systems.html)
 - [TS Contracts Guide](/guides/ts-contracts.html)
+- [Angular 22 and TypeScript 6 Migration Notes](/guides/angular-22-migration.html)
 
 ## Architecture
 

@@ -196,6 +196,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/identity/profiles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['createUserProfile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/identity/profiles/{profileId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['getUserProfileById'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['updateUserProfile'];
+    trace?: never;
+  };
+  '/identity/profiles/by-auth-user/{authUserId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['getUserProfileByAuthUserId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -632,6 +680,167 @@ export interface operations {
             payload: {
               [key: string]: unknown;
             };
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  createUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          authUserId: string;
+          avatarUrl?: string | null;
+          displayName?: string | null;
+          familyName?: string | null;
+          givenName?: string | null;
+          locale?: string | null;
+          timeZone?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  getUserProfileById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  updateUserProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        profileId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': {
+          avatarUrl?: string | null;
+          displayName?: string | null;
+          familyName?: string | null;
+          givenName?: string | null;
+          locale?: string | null;
+          timeZone?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
+            /** Format: date-time */
+            updatedAt: string;
+          };
+        };
+      };
+    };
+  };
+  getUserProfileByAuthUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        authUserId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Default Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            authUserId: string;
+            avatarUrl: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            displayName: string | null;
+            familyName: string | null;
+            givenName: string | null;
+            id: string;
+            locale: string | null;
+            timeZone: string | null;
             /** Format: date-time */
             updatedAt: string;
           };

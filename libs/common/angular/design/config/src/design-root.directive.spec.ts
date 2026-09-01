@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideDesignSystemConfig } from './config.providers';
 import { AnxDesignRootDirective } from './design-root.directive';
 
 @Component({
   imports: [AnxDesignRootDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section anarchitectsDesignRoot></section>
     <section class="plain-host"></section>
@@ -14,6 +15,7 @@ class DefaultDesignRootHostComponent {}
 
 @Component({
   imports: [AnxDesignRootDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       anarchitectsDesignRoot
@@ -26,6 +28,7 @@ class ManualAttributeDesignRootHostComponent {}
 
 @Component({
   imports: [AnxDesignRootDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       anarchitectsDesignRoot
@@ -40,6 +43,7 @@ class InputOverrideDesignRootHostComponent {}
 
 @Component({
   imports: [AnxDesignRootDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       anarchitectsDesignRoot

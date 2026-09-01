@@ -6,7 +6,7 @@ import {
   ANX_LAYOUT_DEFINITIONS,
 } from '@anarchitects/common-angular-ui-layouts/registry';
 import { AnarchitectsUiInputDirective } from '@anarchitects/common-angular-ui-primitives/form-controls';
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAnxDefaultLayouts } from './default-layout.providers';
 
@@ -17,6 +17,7 @@ import { provideAnxDefaultLayouts } from './default-layout.providers';
     AnarchitectsUiInputDirective,
   ],
   providers: [...provideAnxDefaultLayouts()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       class="anx-root"

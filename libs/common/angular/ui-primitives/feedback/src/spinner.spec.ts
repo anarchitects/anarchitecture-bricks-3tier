@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiSpinner } from './spinner';
 
 @Component({
   imports: [AnarchitectsUiSpinner],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<anarchitects-ui-spinner
     [size]="'lg'"
     [tone]="'danger'"

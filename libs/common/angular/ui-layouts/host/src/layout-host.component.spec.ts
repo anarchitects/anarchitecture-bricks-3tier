@@ -1,4 +1,10 @@
-import { Component, computed, input, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   AnxLayoutDefinition,
@@ -14,6 +20,7 @@ import { AnarchitectsUiLayoutHost } from './layout-host.component';
 
 @Component({
   selector: 'anarchitects-test-list-layout',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p class="layout-id">{{ context().layout.id }}</p>
     <p class="item-count">{{ itemCount() }}</p>
@@ -53,6 +60,7 @@ const TEST_LIST_LAYOUTS: readonly AnxLayoutDefinition[] = [
     ...provideAnxLayouts(TEST_LIST_LAYOUTS),
     provideAnxLayoutDefaults({ list: 'list:grid' }),
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-layout-host
       [kind]="'list'"
@@ -73,6 +81,7 @@ class HostComponent {
 @Component({
   imports: [AnarchitectsUiLayoutHost],
   providers: [...provideAnxLayouts(TEST_LIST_LAYOUTS)],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-layout-host [kind]="'list'" [model]="{ items: [1, 2] }" />
   `,

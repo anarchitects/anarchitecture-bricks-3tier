@@ -4,7 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { FormsApi } from './forms-api';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 
 describe('FormsApi', () => {
@@ -13,7 +13,11 @@ describe('FormsApi', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [FormsApi, provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        FormsApi,
+        provideHttpClient(withXhr()),
+        provideHttpClientTesting(),
+      ],
     });
     service = TestBed.inject(FormsApi);
     controller = TestBed.inject(HttpTestingController);

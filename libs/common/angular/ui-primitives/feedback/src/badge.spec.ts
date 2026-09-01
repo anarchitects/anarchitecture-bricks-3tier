@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiBadge } from './badge';
 
 @Component({
   imports: [AnarchitectsUiBadge],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-badge [tone]="'success'">
       <span anxSlot="start">#</span>

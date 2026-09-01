@@ -2,8 +2,8 @@
   "name": "@anarchitects/storybook-angular",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0",
+    "@angular/common": "^21.0.0 || ^22.0.0",
+    "@angular/core": "^21.0.0 || ^22.0.0",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/angular": "^10.1.11"
   },

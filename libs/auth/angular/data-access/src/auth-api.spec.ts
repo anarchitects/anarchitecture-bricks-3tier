@@ -3,7 +3,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { SUPPRESS_AUTH_FAILURE_REDIRECT } from '@anarchitects/auth-angular/config';
 import { firstValueFrom } from 'rxjs';
 import { AuthApi } from './auth-api';
@@ -14,7 +14,7 @@ describe('AuthApi', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideHttpClient(withXhr()), provideHttpClientTesting()],
     });
     service = TestBed.inject(AuthApi);
     httpController = TestBed.inject(HttpTestingController);

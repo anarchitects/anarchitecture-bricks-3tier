@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiSelectDirective } from './select.directive';
 
 @Component({
   imports: [AnarchitectsUiSelectDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<select anarchitectsUiSelect [size]="'sm'" [invalid]="true">
     <option>A</option>
   </select>`,

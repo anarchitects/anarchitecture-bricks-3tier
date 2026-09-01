@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiAlert } from './alert';
 
 @Component({
   imports: [AnarchitectsUiAlert],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-alert
       [tone]="'danger'"

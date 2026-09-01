@@ -5,7 +5,7 @@ import { CanMatchFn } from '@angular/router';
 import { AuthStore } from '@anarchitects/auth-angular/state';
 import { createAppAbility } from '@anarchitects/auth-angular/util';
 import { PolicyRule } from '@anarchitects/auth-ts/models';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { policyGuard } from './policy.guard';
 
 describe('policyGuard', () => {
@@ -24,7 +24,7 @@ describe('policyGuard', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         {
           provide: AuthStore,
           useValue: {
@@ -55,6 +55,7 @@ describe('policyGuard', () => {
       executeGuard(
         { data: { action: 'read', subject: 'Document' } } as never,
         [],
+        {} as never,
       ) as Observable<boolean>,
     );
 
@@ -70,6 +71,7 @@ describe('policyGuard', () => {
       executeGuard(
         { data: { action: 'read', subject: 'Document' } } as never,
         [],
+        {} as never,
       ) as Observable<boolean>,
     );
 
@@ -91,6 +93,7 @@ describe('policyGuard', () => {
       executeGuard(
         { data: { action: 'update', subject: 'Post' } } as never,
         [],
+        {} as never,
       ) as Observable<boolean>,
     );
 
@@ -106,6 +109,7 @@ describe('policyGuard', () => {
       executeGuard(
         { data: { action: 'update', subject: 'Post' } } as never,
         [],
+        {} as never,
       ) as Observable<boolean>,
     );
 
@@ -122,6 +126,7 @@ describe('policyGuard', () => {
       executeGuard(
         { data: { action: 'read', subject: 'Document' } } as never,
         [],
+        {} as never,
       ) as Observable<boolean>,
     );
 
@@ -139,6 +144,7 @@ describe('policyGuard', () => {
       executeGuard(
         { data: { action: 'read', subject: 'Document' } } as never,
         [],
+        {} as never,
       ) as Observable<boolean>,
     );
 
