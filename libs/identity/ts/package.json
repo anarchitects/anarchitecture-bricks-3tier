@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/identity-ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Shared identity models and TypeBox DTO schemas for the Anarchitecture identity domain.",
   "type": "module",
   "main": "./index.js",
