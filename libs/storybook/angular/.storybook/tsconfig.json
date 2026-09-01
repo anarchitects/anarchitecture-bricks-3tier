@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "isolatedModules": true,
-    "emitDecoratorMetadata": false
+    "emitDecoratorMetadata": false,
+    "ignoreDeprecations": "5.0"
   },
   "exclude": ["../**/*.spec.ts"],
   "include": [
