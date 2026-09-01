@@ -27,6 +27,7 @@ describe('UserProfileView', () => {
     fixture = TestBed.createComponent(UserProfileView);
     component = fixture.componentInstance;
     fixture.componentRef.setInput('profile', profile);
+    fixture.detectChanges();
     await fixture.whenStable();
   });
 

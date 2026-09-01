@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnarchitectsUiButton } from './button';
 
 @Component({
   imports: [AnarchitectsUiButton],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-button
       [tone]="tone()"

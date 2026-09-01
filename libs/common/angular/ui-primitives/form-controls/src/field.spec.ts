@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiField } from './field';
 import { AnarchitectsUiInputDirective } from './input.directive';
 
 @Component({
   imports: [AnarchitectsUiField, AnarchitectsUiInputDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-field [forId]="'email'" [required]="true" [invalid]="true">
       <span anxSlot="label">Email</span>

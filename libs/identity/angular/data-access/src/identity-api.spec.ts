@@ -2,7 +2,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { provideIdentityConfig } from '@anarchitects/identity-angular/config';
 import type {
@@ -32,7 +32,7 @@ describe('IdentityApi', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
+        provideHttpClient(withXhr()),
         provideHttpClientTesting(),
         ...provideIdentityConfig({
           apiBaseUrl: 'https://api.example.test/',

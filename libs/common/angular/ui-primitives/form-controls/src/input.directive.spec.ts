@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiInputDirective } from './input.directive';
 
 @Component({
   imports: [AnarchitectsUiInputDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<input anarchitectsUiInput [size]="'lg'" [invalid]="true" />`,
 })
 class HostComponent {}

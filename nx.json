@@ -68,7 +68,11 @@
     },
     "@nx/angular:unit-test": {
       "cache": true,
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production"],
+      "options": {
+        "runnerConfig": "vitest.angular.config.ts",
+        "setupFiles": ["tools/testing/setup-angular-tests.ts"]
+      }
     },
     "compodoc": {
       "cache": true,

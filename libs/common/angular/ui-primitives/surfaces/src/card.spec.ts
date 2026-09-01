@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { AnarchitectsUiCard } from './card';
 
 @Component({
   imports: [AnarchitectsUiCard],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-ui-card [appearance]="'elevated'">
       <span anxSlot="header">Profile</span>

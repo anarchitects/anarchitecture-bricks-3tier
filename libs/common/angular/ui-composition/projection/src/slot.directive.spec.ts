@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnxSlotDirective } from './slot.directive';
 
 @Component({
   imports: [AnxSlotDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div id="known" anxSlot="header">Known</div>
     <div id="alias" anxSlot="anxCardHeader">Alias</div>

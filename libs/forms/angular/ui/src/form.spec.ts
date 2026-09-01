@@ -1,12 +1,17 @@
 import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
 import { FormConfig } from '@anarchitects/forms-ts/models';
-import { Component, ComponentRef } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ValidatorFn } from '@angular/forms';
 import { AnarchitectsUiForm } from './form';
 
 @Component({
   imports: [AnarchitectsUiForm],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section
       class="anx-root anx-region anx-stack"
@@ -49,6 +54,7 @@ class ThemedFormHostComponent {
 
 @Component({
   imports: [AnarchitectsUiForm, AnxSlotDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <anarchitects-forms-ui-form
       [config]="config"

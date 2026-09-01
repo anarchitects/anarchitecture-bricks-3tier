@@ -1,10 +1,16 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
+import {
+  Component,
+  QueryList,
+  ViewChildren,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AnxTemplateDirective } from './template.directive';
 import { findAnxTemplate, groupAnxTemplatesByName } from './template-registry';
 
 @Component({
   imports: [AnxTemplateDirective],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-template anxTemplate="item" let-item>{{ item }}</ng-template>
     <ng-template anxTemplate="item" anxTemplateVariant="compact" let-item>
