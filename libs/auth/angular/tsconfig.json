@@ -12,7 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "module": "preserve",
     "lib": ["dom", "es2022"],
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "5.0"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
