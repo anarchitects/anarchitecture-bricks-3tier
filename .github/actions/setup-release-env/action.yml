@@ -28,3 +28,7 @@ runs:
     - name: Validate domain tags
       shell: bash
       run: node tools/release/validate-domain-tags.mjs
+
+    - name: Validate Angular package release coverage
+      shell: bash
+      run: yarn nx run release-tools:validate-angular-package-compatibility

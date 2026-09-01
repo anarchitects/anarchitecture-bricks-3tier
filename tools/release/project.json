@@ -12,6 +12,30 @@
         "command": "node tools/release/validate-domain-tags.mjs"
       }
     },
+    "validate-angular-package-compatibility": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/release/validate-angular-package-compatibility.mjs"
+      }
+    },
+    "validate-angular-packed-manifests": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        { "projects": "auth-angular", "target": "build" },
+        { "projects": "forms-angular", "target": "build" },
+        { "projects": "identity-angular", "target": "build" },
+        { "projects": "common-angular-design", "target": "build" },
+        {
+          "projects": "common-angular-ui-composition",
+          "target": "build"
+        },
+        { "projects": "common-angular-ui-layouts", "target": "build" },
+        { "projects": "common-angular-ui-primitives", "target": "build" }
+      ],
+      "options": {
+        "command": "node tools/release/validate-angular-package-compatibility.mjs --dist"
+      }
+    },
     "verify-domain-boundaries": {
       "executor": "nx:run-commands",
       "options": {

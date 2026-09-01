@@ -41,6 +41,7 @@ jobs:
         env:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
       - run: yarn nx run release-tools:verify-domain-boundaries
+      - run: yarn nx run release-tools:validate-angular-package-compatibility
       - run: yarn nx run docs-hub:validate-content
       - run: yarn nx run api-specs:lint
       - run: yarn nx run angular-docs:generate
