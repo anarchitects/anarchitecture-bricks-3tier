@@ -1,0 +1,98 @@
+{
+  "name": "auth-angular-example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "examples/auth-angular-example/src",
+  "tags": ["type:example", "tech:angular", "domain:auth"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/examples/auth-angular-example",
+        "browser": "examples/auth-angular-example/src/main.ts",
+        "tsConfig": "examples/auth-angular-example/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "examples/auth-angular-example/public"
+          }
+        ],
+        "styles": ["examples/auth-angular-example/src/styles.css"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4201
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "auth-angular-example:build:production"
+        },
+        "development": {
+          "buildTarget": "auth-angular-example:build:development"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false,
+        "include": ["examples/auth-angular-example/src/app/**/*.spec.ts"]
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p examples/auth-angular-example/tsconfig.app.json --noEmit"
+      }
+    },
+    "contract-test": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["api-specs:generate"],
+      "options": {
+        "command": "node tools/api-specs/run-prism-jest.mjs examples/auth-angular-example/jest.contract.config.cts src/contract/auth-api.contract.spec.ts"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "auth-angular-example:build",
+        "port": 4201,
+        "staticFilePath": "dist/examples/auth-angular-example/browser",
+        "spa": true
+      }
+    }
+  }
+}

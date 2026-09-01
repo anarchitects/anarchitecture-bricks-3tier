@@ -1,0 +1,95 @@
+{
+  "name": "forms-angular-example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "examples/forms-angular-example/src",
+  "tags": ["type:example", "tech:angular", "domain:forms"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/examples/forms-angular-example",
+        "browser": "examples/forms-angular-example/src/main.ts",
+        "tsConfig": "examples/forms-angular-example/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "examples/forms-angular-example/public"
+          }
+        ],
+        "styles": ["examples/forms-angular-example/src/styles.css"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "configurations": {
+        "production": {
+          "buildTarget": "forms-angular-example:build:production"
+        },
+        "development": {
+          "buildTarget": "forms-angular-example:build:development"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false,
+        "include": ["examples/forms-angular-example/src/app/**/*.spec.ts"]
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p examples/forms-angular-example/tsconfig.app.json --noEmit"
+      }
+    },
+    "contract-test": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["api-specs:generate"],
+      "options": {
+        "command": "node tools/api-specs/run-prism-jest.mjs examples/forms-angular-example/jest.contract.config.cts src/contract/forms-api.contract.spec.ts"
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "forms-angular-example:build",
+        "port": 4200,
+        "staticFilePath": "dist/examples/forms-angular-example/browser",
+        "spa": true
+      }
+    }
+  }
+}
