@@ -21,6 +21,7 @@ jobs:
           - angular: 22
             typescript: 6.0
     steps:
+      - run: corepack enable
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
@@ -28,6 +29,5 @@ jobs:
         with:
           node-version: 22
           cache: yarn
-      - run: corepack enable
       - run: yarn install --immutable
       - run: yarn nx run angular-consumer-compatibility:test-${{ matrix.angular }} --skipNxCache
