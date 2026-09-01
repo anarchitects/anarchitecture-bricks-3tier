@@ -116,25 +116,26 @@ nx run forms-angular-example:contract-test
 
 ## Key Nx Targets
 
-| Command                                                    | Description                                           |
-| ---------------------------------------------------------- | ----------------------------------------------------- |
-| `nx run api-specs:generate`                                | Generate OpenAPI JSON/YAML from Nest controllers      |
-| `nx run api-specs:lint`                                    | Lint generated OpenAPI                                |
-| `nx run api-specs:diff`                                    | Compare generated OpenAPI against `origin/main`       |
-| `nx run api-specs:mock`                                    | Run Prism mock server from generated OpenAPI          |
-| `nx run api-specs:verify`                                  | Validate required endpoints + snapshot stability      |
-| `nx run angular-docs:generate`                             | Generate and merge Compodoc docs                      |
-| `nx run docs-hub:validate-content`                         | Enforce required docs sections for guides and READMEs |
-| `nx run storybook-angular:build-storybook`                 | Build Storybook with technical docs metadata          |
-| `nx run docs-hub:build`                                    | Build static docs hub pages                           |
-| `nx run docs-hub:verify`                                   | Validate docs hub outputs and required links          |
-| `nx run release-tools:validate-non-bumping-commits`        | Enforce non-bumping commit types for docs-surface PRs |
-| `nx run release-tools:domain-release -- --domain=forms -d` | Dry-run the supported domain release workflow         |
-| `nx run auth-nest-example:contract-test`                   | Validate auth Nest runtime responses against OpenAPI  |
-| `nx run auth-angular-example:contract-test`                | Validate auth Angular data-access against Prism mock  |
-| `nx run forms-nest-example:contract-test`                  | Validate Nest runtime responses against OpenAPI       |
-| `nx run forms-angular-example:contract-test`               | Validate Angular data-access calls against Prism mock |
-| `nx affected -t lint test build`                           | Standard affected checks                              |
+| Command                                                       | Description                                           |
+| ------------------------------------------------------------- | ----------------------------------------------------- |
+| `nx run api-specs:generate`                                   | Generate OpenAPI JSON/YAML from Nest controllers      |
+| `nx run api-specs:lint`                                       | Lint generated OpenAPI                                |
+| `nx run api-specs:diff`                                       | Compare generated OpenAPI against `origin/main`       |
+| `nx run api-specs:mock`                                       | Run Prism mock server from generated OpenAPI          |
+| `nx run api-specs:verify`                                     | Validate required endpoints + snapshot stability      |
+| `nx run angular-docs:generate`                                | Generate and merge Compodoc docs                      |
+| `nx run docs-hub:validate-content`                            | Enforce required docs sections for guides and READMEs |
+| `nx run storybook-angular:build-storybook`                    | Build Storybook with technical docs metadata          |
+| `nx run docs-hub:build`                                       | Build static docs hub pages                           |
+| `nx run docs-hub:verify`                                      | Validate docs hub outputs and required links          |
+| `nx run release-tools:validate-non-bumping-commits`           | Enforce non-bumping commit types for docs-surface PRs |
+| `nx run release-tools:validate-angular-package-compatibility` | Validate Angular peers and release-group coverage     |
+| `nx run release-tools:domain-release -- --domain=forms -d`    | Dry-run the supported domain release workflow         |
+| `nx run auth-nest-example:contract-test`                      | Validate auth Nest runtime responses against OpenAPI  |
+| `nx run auth-angular-example:contract-test`                   | Validate auth Angular data-access against Prism mock  |
+| `nx run forms-nest-example:contract-test`                     | Validate Nest runtime responses against OpenAPI       |
+| `nx run forms-angular-example:contract-test`                  | Validate Angular data-access calls against Prism mock |
+| `nx affected -t lint test build`                              | Standard affected checks                              |
 
 ## Release By Domain
 

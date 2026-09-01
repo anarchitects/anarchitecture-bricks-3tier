@@ -2,6 +2,9 @@
 
 Storybook host for Angular library stories in this workspace.
 
+This is an internal documentation and compatibility-test host. It is deliberately
+private and must not be published as an npm package.
+
 ## Purpose
 
 This package configures Storybook rendering context, including design-theme

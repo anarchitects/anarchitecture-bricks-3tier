@@ -37,6 +37,27 @@ Published Angular package peer ranges are minimally widened to Angular `^21 || ^
 NgRx similarly accept NgRx 21 or 22. Issue #369 owns packaged-consumer proof and the complete adjacent
 peer audit.
 
+## Published package compatibility
+
+Issue #369 validates the final compatibility line on the Angular 22 workspace and records the release
+status of every Angular project:
+
+| Project                         | Angular peers    | Adjacent peers       | Release status                  |
+| ------------------------------- | ---------------- | -------------------- | ------------------------------- |
+| `auth-angular`                  | Angular 21/22    | NgRx 21/22, RxJS 7.8 | `auth` release group            |
+| `forms-angular`                 | Angular 21/22    | NgRx 21/22, RxJS 7.8 | `forms` release group           |
+| `identity-angular`              | Angular 21.1+/22 | RxJS 7.8             | `identity` release group        |
+| `common-angular-design`         | Angular 21/22    | None                 | `common-angular` release group  |
+| `common-angular-ui-composition` | Angular 21/22    | None                 | `common-angular` release group  |
+| `common-angular-ui-layouts`     | Angular 21/22    | RxJS 7.8             | `common-angular` release group  |
+| `common-angular-ui-primitives`  | Angular 21/22    | None                 | `common-angular` release group  |
+| `storybook-angular`             | Angular 21/22    | Storybook 10         | Private documentation/test host |
+
+`storybook-angular` has no distributable library API, so it is explicitly private and remains outside
+all release groups. The release compatibility guard rejects any other public Angular package that is
+not covered by an Nx release group. Its packed-manifest mode also compares every built public package's
+peer metadata with its source manifest.
+
 ## TypeScript 6 Compatibility Decisions
 
 The workspace still relies on `baseUrl`, path aliases, and CommonJS/Node 10 module resolution in its
@@ -60,6 +81,8 @@ Run migration validation without Nx cache:
 yarn nx run-many -t lint test build typecheck --skipNxCache
 yarn nx run storybook-angular:build-storybook --skipNxCache
 yarn nx run storybook-angular:test-storybook --skipNxCache
+yarn nx run release-tools:validate-angular-package-compatibility --skipNxCache
+yarn nx run release-tools:validate-angular-packed-manifests --skipNxCache
 yarn nx run api-specs:generate --skipNxCache
 ```
 

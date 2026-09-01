@@ -113,6 +113,8 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
   - external peer normalization derives ranges from root `package.json`; exact root versions become major-wide caret peers (for example `21.1.6` -> `^21.0.0`)
 - The release tag ancestry check fails when a `{projectName}@{version}` tag exists but points to a commit outside current branch history.
 - Group-scoped release preflight runs only the selected release group's ancestry check and builds.
+- `nx run release-tools:validate-angular-package-compatibility` ensures every public Angular package
+  has dual-major peer coverage and belongs to a supported release group.
 - For local dry-run validation, use the repo runner (for example `yarn nx run release-tools:domain-release -- --domain=forms -d`).
 - If you need to override the inferred bump for a single release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
 - If that release also introduces a package with no prior tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --first-release -d`.
