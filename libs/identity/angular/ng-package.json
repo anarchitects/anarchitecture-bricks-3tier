@@ -3,5 +3,6 @@
   "dest": "../../../dist/libs/identity/angular",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "allowedNonPeerDependencies": ["@anarchitects/identity-ts"]
 }

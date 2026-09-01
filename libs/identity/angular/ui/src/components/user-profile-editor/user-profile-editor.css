@@ -1,0 +1,20 @@
+:host {
+  display: block;
+}
+
+form,
+label {
+  display: grid;
+}
+
+form {
+  gap: 1rem;
+}
+
+label {
+  gap: 0.25rem;
+}
+
+button {
+  justify-self: start;
+}

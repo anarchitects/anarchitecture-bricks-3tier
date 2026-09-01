@@ -1,0 +1,26 @@
+<article>
+  @if (profile().avatarUrl; as avatarUrl) {
+  <img [src]="avatarUrl" [alt]="avatarAlt()" />
+  }
+
+  <h3>{{ profile().displayName ?? 'User profile' }}</h3>
+
+  <dl>
+    <div>
+      <dt>Given name</dt>
+      <dd>{{ profile().givenName ?? 'Not provided' }}</dd>
+    </div>
+    <div>
+      <dt>Family name</dt>
+      <dd>{{ profile().familyName ?? 'Not provided' }}</dd>
+    </div>
+    <div>
+      <dt>Locale</dt>
+      <dd>{{ profile().locale ?? 'Not provided' }}</dd>
+    </div>
+    <div>
+      <dt>Time zone</dt>
+      <dd>{{ profile().timeZone ?? 'Not provided' }}</dd>
+    </div>
+  </dl>
+</article>

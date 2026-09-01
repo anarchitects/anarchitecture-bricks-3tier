@@ -1,0 +1,35 @@
+<form (submit)="submit(); $event.preventDefault()">
+  <label>
+    Display name
+    <input autocomplete="name" [formField]="profileForm.displayName" />
+  </label>
+
+  <label>
+    Given name
+    <input autocomplete="given-name" [formField]="profileForm.givenName" />
+  </label>
+
+  <label>
+    Family name
+    <input autocomplete="family-name" [formField]="profileForm.familyName" />
+  </label>
+
+  <label>
+    Avatar URL
+    <input inputmode="url" [formField]="profileForm.avatarUrl" />
+  </label>
+
+  <label>
+    Locale
+    <input [formField]="profileForm.locale" />
+  </label>
+
+  <label>
+    Time zone
+    <input [formField]="profileForm.timeZone" />
+  </label>
+
+  <button type="submit" [disabled]="saving() || profileForm().submitting()">
+    {{ saving() || profileForm().submitting() ? 'Saving…' : 'Save profile' }}
+  </button>
+</form>
