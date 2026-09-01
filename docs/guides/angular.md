@@ -4,7 +4,7 @@
 
 This is the Angular implementation cookbook for Anarchitecture Bricks. It focuses on practical Angular setup and consumption patterns, while shared design/runtime guidance and TS contract ownership stay canonical in:
 
-- [Design/UI Systems Guide](/guides/design-ui-systems.html)
+- [Frontend Foundation Guide](/guides/design-ui-systems.html)
 - [TS Contracts Guide](/guides/ts-contracts.html)
 
 ## Architecture
@@ -24,11 +24,7 @@ import { provideFormsFeature } from '@anarchitects/forms-angular';
 import { provideAuthFeature } from '@anarchitects/auth-angular';
 
 export const appConfig = {
-  providers: [
-    provideHttpClient(withFetch()),
-    ...provideFormsFeature(),
-    ...provideAuthFeature(),
-  ],
+  providers: [provideHttpClient(withFetch()), ...provideFormsFeature(), ...provideAuthFeature()],
 };
 ```
 
@@ -64,11 +60,13 @@ Angular consumers (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`) 
 
 ## Layout Cookbook
 
-- Configure layout runtime through `@anarchitects/common-angular-ui-layouts`.
-- Use explicit layout input when route behavior must be deterministic.
-- Set defaults with `provideAnxLayoutDefaults(...)`.
-- Register custom layout renderers with `provideAnxLayouts([...])`.
-- Keep design/runtime layout contract definitions centralized in [Design/UI Systems Guide](/guides/design-ui-systems.html).
+For new work, keep domain-specific layout behavior in the Angular domain capability and compose route/page
+shells in the host application. Use Tailwind utilities for styling; do not introduce a generic runtime
+layout registry merely to select CSS arrangements.
+
+`@anarchitects/common-angular-ui-layouts` remains available for the final legacy compatibility line but is
+scheduled for removal under [ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html).
+Follow the [Frontend Foundation Guide](/guides/design-ui-systems.html) for target ownership.
 
 ## Batteries-Included Forms Pages
 
@@ -117,18 +115,12 @@ When you need richer page copy, project custom regions into the form component.
 - `app-forms-caption-bottom`: renders one or more caption blocks below the form
 
 ```html
-<anarchitects-forms-feature-form
-  [formId]="'contact_default'"
-  [formVersion]="1"
-  [pageTitle]="'Support request'"
->
+<anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" [pageTitle]="'Support request'">
   <p anxSlot="app-forms-caption-top">Product support and onboarding</p>
   <p anxSlot="app-forms-caption-top">Billing and enterprise assistance</p>
 
   <p anxSlot="app-forms-caption-bottom">Typical response in one business day</p>
-  <p anxSlot="app-forms-caption-bottom">
-    Priority requests are triaged continuously
-  </p>
+  <p anxSlot="app-forms-caption-bottom">Priority requests are triaged continuously</p>
 </anarchitects-forms-feature-form>
 ```
 
