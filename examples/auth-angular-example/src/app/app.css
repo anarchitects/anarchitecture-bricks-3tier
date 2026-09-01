@@ -1,0 +1,36 @@
+.example-header {
+  align-items: center;
+  border-bottom: 1px solid #d9e2ec;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+}
+
+.brand {
+  color: #102a43;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+nav a {
+  color: #334e68;
+}
+
+nav a.active {
+  color: #0b69a3;
+  font-weight: 700;
+}
+
+.example-shell {
+  margin: 0 auto;
+  max-width: 64rem;
+  padding: 3rem 1.5rem;
+}

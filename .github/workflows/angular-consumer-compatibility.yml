@@ -1,0 +1,33 @@
+name: Angular packaged consumer compatibility
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  packaged-consumer:
+    name: Angular ${{ matrix.angular }} / TypeScript ${{ matrix.typescript }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - angular: 21
+            typescript: 5.9
+          - angular: 22
+            typescript: 6.0
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: yarn
+      - run: corepack enable
+      - run: yarn install --immutable
+      - run: yarn nx run angular-consumer-compatibility:test-${{ matrix.angular }} --skipNxCache

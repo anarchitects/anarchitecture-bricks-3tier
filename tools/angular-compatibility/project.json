@@ -1,0 +1,26 @@
+{
+  "name": "angular-consumer-compatibility",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "tags": ["type:tool", "tech:angular", "domain:workspace"],
+  "targets": {
+    "test-21": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        { "projects": ["forms-angular", "auth-angular"], "target": "build" }
+      ],
+      "options": {
+        "command": "node tools/angular-compatibility/run-packaged-consumer.mjs 21"
+      }
+    },
+    "test-22": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        { "projects": ["forms-angular", "auth-angular"], "target": "build" }
+      ],
+      "options": {
+        "command": "node tools/angular-compatibility/run-packaged-consumer.mjs 22"
+      }
+    }
+  }
+}
