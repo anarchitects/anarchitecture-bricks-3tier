@@ -1,5 +1,10 @@
 # @anarchitects/common-angular-design
 
+> Transition status: retained for the final compatibility line; do not adopt for new work. The package is
+> scheduled for source removal and later npm deprecation under
+> [ADR-0003](../../../../docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md).
+> Published versions will not be unpublished.
+
 Reusable Angular design foundations for Anarchitecture bricks.
 
 This package provides the design contract foundation: tokens, semantic hook

@@ -197,6 +197,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 - [ADR-0001: Align With `anarchitecture-bricks-ddd` And Support Migration](docs/adr/0001-align-with-bricks-ddd-and-support-migration.md)
 - [ADR-0002: Do Not Split Libraries By Audience Until Workflow Divergence Is Real](docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md)
+- [ADR-0003: Adopt Tailwind v4 As The Frontend Foundation And Retire Common Angular UI Packages](docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md)
 
 ## Documentation Tooling
 

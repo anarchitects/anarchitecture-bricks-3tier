@@ -1,257 +1,164 @@
-# Design/UI Systems Guide
+# Frontend Foundation Guide
 
 ## Intent
 
-This guide defines the cross-stack design and UI system model for Anarchitecture Bricks. It explains how to consume `@anarchitects/*` packages so design contracts, composition APIs, and runtime layouts stay consistent across domains and applications.
+This guide defines the target frontend foundation for Anarchitecture Bricks.
+[ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html)
+supersedes the previous layered Common Angular UI-system direction. The current packages remain supported
+through the staged transition, but new frontend-foundation work targets Tailwind CSS v4.
 
-Contract ownership for DTOs and domain models is defined in the canonical [TS Contracts Guide](/guides/ts-contracts.html).
+Contract ownership for DTOs and domain models remains canonical in the
+[TS Contracts Guide](/guides/ts-contracts.html).
 
 ## System Layers
 
-The UI system is layered and should be adopted in order:
+The target model separates CSS infrastructure from application behavior:
 
-1. `@anarchitects/common-angular-design`
-2. `@anarchitects/common-angular-ui-composition`
-3. `@anarchitects/common-angular-ui-primitives`
-4. `@anarchitects/common-angular-ui-layouts`
-5. Domain UI slices (`@anarchitects/forms-angular/ui`, `@anarchitects/auth-angular/ui`)
+```text
+@anarchitects/tailwind
+  theme.css       design tokens and theme conventions
+  base.css        shared baseline and accessibility-minded defaults
+  utilities.css   shared utilities and variants
 
-Domain orchestration should still follow Angular layering:
-`ui <- feature -> state -> data-access`.
+Angular domain capabilities
+  ui              behavior-bearing components and domain projection
+  feature         workflow composition
+  state           explicit scoped state
+  data-access     transport adapters
 
-Backend support should still follow Nest layering:
-`presentation -> application <- infrastructure`.
+host application
+  routes, page shells, audience policy, and product-specific composition
+```
+
+Angular domains continue to follow `ui <- feature -> state -> data-access`. Nest domains continue to
+follow `presentation -> application <- infrastructure`. Tailwind does not change either dependency rule.
 
 ## Token and Theme Model
 
-Use token and theme contracts from `@anarchitects/common-angular-design` as the primary extension mechanism:
-
-- Keep shared packages unbranded.
-- Apply product branding via token overrides and theme contexts.
-- Use semantic hooks (`data-anx-theme`, `data-anx-density`, `data-anx-surface`, `data-anx-layout`) to scope behavior.
-
-Example:
+The future `@anarchitects/tailwind` package exposes an aggregate easy mode:
 
 ```css
-.anx-root[data-anx-theme='brand-a'] {
-  --anx-sys-color-primary: #0f766e;
-  --anx-sys-color-accent: #0ea5e9;
-  --anx-layout-content-max-width: 72rem;
-}
+@import '@anarchitects/tailwind';
 ```
 
-## Shell/Layout Contract Hardening (Phase 2)
+Advanced consumers can compose or replace individual layers:
 
-Shell and layout contracts are intentionally separated to prevent collisions.
-
-Source-of-truth symbols:
-
-- `ANX_SHELL_UTILITY_CLASSNAMES`
-- `ANX_DESIGN_HOOK_CLASSNAMES`
-- `ANX_SEMANTIC_CLASSNAMES` (backward-compatibility union)
-- `isAnxShellUtilityClass(...)`
-
-Package author rule source:
-
-- `ANX_PACKAGE_AUTHOR_RULES` in `@anarchitects/common-angular-design/styles`
-
-Enforcement source:
-
-- `tools/guardrails/shell-utility-collision.test.mjs`
-
-### Package Author CSS Class Rules
-
-When building UI package components, understand the two categories of semantic classes.
-
-### Shell Utility Classes (Consumer Use Only)
-
-These classes control layout and spacing in consumer app shells and **must not be applied to package component host elements**:
-
-- `anx-region` — block padding wrapper
-- `anx-stack` — vertical grid flow (gap-based)
-- `anx-inline` — flex inline row
-- `anx-grid` — multi-column grid layout
-
-**Critical Rule:** Applying these to package component hosts causes unintended double-spacing when the component is nested inside a consumer's layout container using the same utilities.
-
-### Design Hook Classes (Component-Safe)
-
-These classes define visual treatment safe for component styling:
-
-- `anx-surface` — border, shadow, and background treatment
-- `anx-heading` — heading typography sizing
-- `anx-text` — muted secondary text
-- `anx-action` — button-like action styling
-
-### Correct Package Component Spacing
-
-Use `:host` CSS for component-internal spacing instead:
-
-```ts
-@Component({
-  selector: 'anarchitects-ui-card',
-  host: {
-    class: 'anx-card anx-surface', // Design hooks OK; no shell utilities
-    '[class.anx-card--interactive]': 'interactive()',
-  },
-  styles: `
-    :host {
-      padding: var(--anx-layout-block-padding-current);
-      gap: var(--anx-layout-gap-stack);
-    }
-  `,
-})
-export class AnarchitectsCard {}
+```css
+@import '@anarchitects/tailwind/theme.css';
+@import '@anarchitects/tailwind/base.css';
+@import '@anarchitects/tailwind/utilities.css';
 ```
 
-For details, see the [CSS Class Rules](/contracts) in the contracts documentation.
+The implementation uses Tailwind v4 CSS-first configuration: CSS imports, `@theme`, CSS-defined
+utilities and variants, and documented `@source`. It does not introduce a legacy JavaScript configuration
+preset or an Angular runtime wrapper.
 
-## Single-Source Theme Setup
+Tailwind ignores dependencies during automatic source detection. A consuming application must register
+published packages whose compiled templates contain utility classes, using a path appropriate to that
+application:
 
-Use one canonical app-bootstrap path for shared design context:
-
-1. Apply base styles once before rendering.
-2. Register `provideDesignSystemConfig(...)` at app root.
-3. Avoid manual `data-anx-theme`, `data-anx-density`, and `data-anx-surface`
-   on the root in new setups.
-
-Example:
-
-```ts
-import { bootstrapApplication } from '@angular/platform-browser';
-import { provideDesignSystemConfig } from '@anarchitects/common-angular-design/config';
-import { applyAnxBaseStyles } from '@anarchitects/common-angular-design/styles';
-
-applyAnxBaseStyles();
-
-bootstrapApplication(AppComponent, {
-  providers: [
-    ...provideDesignSystemConfig({
-      theme: 'default',
-      density: 'comfortable',
-      surface: 'plain',
-      layout: 'list',
-      columns: 1,
-    }),
-  ],
-});
+```css
+@source "../node_modules/@anarchitects";
 ```
 
-The provider applies `anx-root`, `data-anx-theme`, `data-anx-density`, and
-`data-anx-surface` on `document.documentElement` during bootstrap.
-
-`data-anx-layout` and `data-anx-columns` remain explicit where local layout
-scope is required.
-
-### Precedence Rules
-
-For managed root values (`theme`, `density`, `surface`) the resolution order is:
-
-1. Directive input (`designTheme`, `designDensity`, `designSurface`)
-2. Explicit host/root attribute value (`data-anx-*`)
-3. Provider configuration (`provideDesignSystemConfig`)
-
-This keeps migration safe because existing explicit attributes remain
-authoritative.
-
-## Migration and Validation Workflow
-
-When migrating existing consumers to hardened shell/layout contracts:
-
-1. Keep shell utility classes only in consumer shell wrappers.
-2. Remove shell utility classes from shared package component hosts and internal templates.
-3. Move component spacing to explicit component CSS (`:host`, component-scoped selectors).
-4. Validate contract enforcement and downstream behavior:
-   - `yarn nx run guardrails:test`
-   - `yarn nx run forms-angular-ui:test --testFile=libs/forms/angular/ui/src/form.spec.ts`
-5. Run docs verification:
-   - `yarn nx run docs-hub:validate-content`
-   - `yarn nx run docs-hub:build`
-   - `yarn nx run docs-hub:verify`
-
-For full migration sequence examples, see the [Theme Migration Guide](/guides/theme-migration.html).
+The implementation and exact consumer paths arrive in later subissues of epic #362. This guide defines
+the contract rather than claiming those artifacts already exist.
 
 ## Composition Contracts
 
-Use `@anarchitects/common-angular-ui-composition` for stable projection contracts:
+Composition is behavior, so domain Angular packages own the slots and templates they render. Use native
+Angular content projection and template APIs locally in `@anarchitects/forms-angular`,
+`@anarchitects/auth-angular`, or another owning capability. Do not create a workspace-wide composition
+schema merely to standardize styling.
 
-- Canonical slots via `anxSlot="..."` as public API.
-- Templates via `ng-template[anxTemplate]` for host customization.
-- Alias compatibility only as migration support, not as new API surface.
-
-Example:
-
-```html
-<anarchitects-ui-card>
-  <h3 anxSlot="header">Summary</h3>
-  <p anxSlot="content">Rendered with stable slot contracts.</p>
-  <div anxSlot="footer">
-    <button anxSlot="actions">Continue</button>
-  </div>
-</anarchitects-ui-card>
-```
+`@anarchitects/common-angular-ui-composition` remains available during the final compatibility wave. Its
+necessary domain behavior moves to the relevant domain before the shared package is removed.
 
 ## Primitive Contracts
 
-Use `@anarchitects/common-angular-ui-primitives` for reusable, non-domain visual building blocks:
+Behavior-bearing controls belong in domain Angular UI or the consuming application. Their owner remains
+responsible for interaction, focus, ARIA, validation, and state semantics. General presentation should use
+Tailwind utilities directly instead of wrapping every visual element in an Anarchitects component.
 
-- Keep primitive APIs token-driven and wrapper-friendly.
-- Keep business decisions in feature/state layers.
-- Extend via app wrappers instead of modifying shared primitive contracts.
+`@anarchitects/common-angular-ui-primitives` remains available during the final compatibility wave but is
+not the target for new primitives. Tailwind replaces its styling infrastructure, not its Angular behavior.
 
 ## Layout Runtime Contracts
 
-Use `@anarchitects/common-angular-ui-layouts` when runtime layout selection is required:
+Domain-specific runtime layout behavior belongs to the domain that needs it. Route layouts, product shells,
+and audience-specific composition belong to the host application. A generic runtime registry is warranted
+only when cross-domain behavioral reuse is demonstrated, not simply to select a CSS arrangement.
 
-- Layout kinds: form, list, detail.
-- Resolution precedence: host input, provider defaults, built-in fallback.
-- Extend through provider APIs (`provideAnxLayouts`, `provideAnxLayoutDefaults`) instead of hardcoded branching.
+`@anarchitects/common-angular-ui-layouts` remains available during the final compatibility wave. Required
+form behavior moves into `@anarchitects/forms-angular`; generic page composition moves to consumers.
 
 ## Domain Integration Matrix
 
-| Domain Package                | Role                                     | Design/UI System Integration                                                     |
-| ----------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
-| `@anarchitects/forms-angular` | Dynamic form/list/detail flows           | Consumes shared composition, primitives, and layout runtime contracts            |
-| `@anarchitects/auth-angular`  | Auth feature orchestration and domain UI | Uses shared design tokens/primitives and contract-safe state composition         |
-| `@anarchitects/forms-nest`    | Forms API/service backend                | Must preserve contract stability used by frontend layouts and form rendering     |
-| `@anarchitects/auth-nest`     | Auth lifecycle backend                   | Must preserve contract stability used by frontend state/feature and policy flows |
+| Capability                               | Owner after migration                                           |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| Design tokens and CSS theme defaults     | `@anarchitects/tailwind/theme.css` plus consumer overrides      |
+| Base styles                              | `@anarchitects/tailwind/base.css`                               |
+| Shared CSS utilities and variants        | `@anarchitects/tailwind/utilities.css`                          |
+| Dark mode and density conventions        | CSS variables/selectors in the Tailwind foundation and host CSS |
+| Domain slots and templates               | The Angular domain package that renders them                    |
+| Form/list/detail behavior                | The owning domain Angular package                               |
+| Route layouts and product shells         | The consuming application                                       |
+| Behavior-bearing controls                | Domain Angular UI or the consuming application                  |
+| Focus, ARIA, validation, and interaction | The behavior-bearing Angular component and its consumer         |
+
+The full retained/retired mapping is canonical in
+[ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html).
 
 ## Cookbook Patterns
 
-- Pattern: baseline app setup
-  apply base styles first, then register provider config before rendering domain UI.
-- Pattern: product theming
-  apply token/theme overrides in app shell, not shared packages.
-- Pattern: shell utility ownership
-  keep shell utility classes in consumer layout wrappers only.
-- Pattern: projection stability
-  publish canonical slot/template names and avoid breaking renames.
-- Pattern: backend-safe evolution
-  update DTO contracts first, regenerate OpenAPI, then adapt frontend consumers.
-- Pattern: layout extensibility
-  register custom layouts via providers and preserve deterministic fallbacks.
+- Easy foundation: import `@anarchitects/tailwind` once in the application stylesheet.
+- Advanced foundation: import theme, base, and utilities separately to override or omit a layer.
+- Product theming: override Tailwind theme variables and ordinary CSS variables in consumer CSS.
+- Domain projection: keep slots next to the domain component that gives them meaning.
+- Layout composition: keep workflow layout in the domain and route/page shells in the host app.
+- Published templates: add an explicit `@source` and verify production CSS generation.
+- Accessibility: preserve behavior in Angular while changing its visual implementation.
 
 ## Anti-Patterns
 
-- Treating design packages as optional CSS rather than contract infrastructure.
-- Hardcoding brand styles inside shared primitives.
-- Embedding orchestration/state logic in primitive components.
-- Breaking slot or template names without migration path.
-- Applying shell utility classes to shared package component hosts.
-- Shipping backend schema changes without OpenAPI and frontend consumer verification.
+- Treating Tailwind as a replacement for Angular behavior.
+- Adding an Angular runtime wrapper or JavaScript configuration preset around Tailwind v4.
+- Creating generic component wrappers for visual consistency alone.
+- Moving domain projection or validation contracts into the CSS package.
+- Hiding application shells or audience policy inside a cross-domain layout registry.
+- Removing behavioral wrappers without preserving focus, ARIA, interaction, and state semantics.
+- Depending on automatic source detection for templates shipped inside npm dependencies.
 
 ## Adoption Checklist
 
-- Add `@anarchitects/common-angular-design`, call `applyAnxBaseStyles()`, and register `provideDesignSystemConfig(...)` in app providers.
-- Adopt `@anarchitects/common-angular-ui-composition` slot/template contracts in shared and domain UI.
-- Use `@anarchitects/common-angular-ui-primitives` as base visual building blocks.
-- Add `@anarchitects/common-angular-ui-layouts` only when runtime-selectable layout behavior is required.
-- Keep forms and auth frontend packages aligned with backend contracts (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`, `@anarchitects/forms-nest`, `@anarchitects/auth-nest`).
-- Keep shell utility classes in consumer layout wrappers and out of shared package hosts.
-- Validate guardrails and downstream integration:
-  `yarn nx run guardrails:test` and
-  `yarn nx run forms-angular-ui:test --testFile=libs/forms/angular/ui/src/form.spec.ts`.
-- Validate docs and generated outputs:
-  `yarn nx run docs-hub:validate-content`,
-  `yarn nx run docs-hub:build`,
-  `yarn nx run docs-hub:verify`.
+- Use `@anarchitects/tailwind` for new styling foundation work after it is published.
+- Choose aggregate easy mode or explicit theme/base/utilities advanced mode.
+- Register published Angular template locations with `@source`.
+- Keep domain-specific slots and runtime behaviors in their Angular domain package.
+- Keep generic page/layout composition in the host application.
+- Validate theme overrides, dark mode, density, accessibility, and production CSS output.
+- Do not add new dependencies on the four retiring Common Angular packages.
+
+## Legacy Package Transition
+
+The packages being retired are:
+
+- `@anarchitects/common-angular-design`
+- `@anarchitects/common-angular-ui-composition`
+- `@anarchitects/common-angular-ui-layouts`
+- `@anarchitects/common-angular-ui-primitives`
+
+They remain available for compatibility while the three release waves complete. After forms and auth no
+longer depend on them, their source projects will be removed and their published npm versions will be
+deprecated with migration guidance. Published versions will not be unpublished.
+
+The [Legacy Theme Migration Reference](/guides/theme-migration.html) documents the old system for teams
+maintaining the final legacy line. A complete consumer migration guide will follow after the Tailwind and
+Signal Forms APIs exist.
+
+## Repository Alignment
+
+The package incubates at `libs/common/tailwind` in this repository and is designed for later extraction to
+`anarchitecture-community`. `anarchitecture-plugins` may provide Nx setup automation after the public CSS
+contract stabilizes. The DDD companion repository aligns on capability and consumption, not necessarily on
+physical structure.

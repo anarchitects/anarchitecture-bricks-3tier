@@ -1,5 +1,10 @@
 # @anarchitects/common-angular-ui-layouts
 
+> Transition status: retained for the final compatibility line; do not adopt for new work. Domain-owned
+> behavior and host-app composition replace this shared runtime under
+> [ADR-0003](../../../../docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md).
+> Published versions will not be unpublished.
+
 Pluggable layout runtime infrastructure for Angular bricks.
 
 This package provides layout contracts, registry, runtime host, and built-in

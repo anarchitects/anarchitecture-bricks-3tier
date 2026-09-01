@@ -1,5 +1,10 @@
 # @anarchitects/common-angular-ui-primitives
 
+> Transition status: retained for the final compatibility line; do not adopt for new work. Domain UI and
+> host components styled with the Tailwind foundation replace this generic wrapper layer under
+> [ADR-0003](../../../../docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md).
+> Published versions will not be unpublished.
+
 Reusable Angular UI primitives for Anarchitecture bricks.
 
 This package builds on `@anarchitects/common-angular-design` and provides
