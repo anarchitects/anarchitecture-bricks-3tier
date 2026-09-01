@@ -28,6 +28,7 @@ describe('provideIdentityState', () => {
 
     const store = TestBed.inject(IdentityStore);
 
-    expect(store.resourcePath()).toBe('profiles');
+    expect(store.profile()).toBeNull();
+    expect(store.loading()).toBe(false);
   });
 });

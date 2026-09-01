@@ -1,0 +1,18 @@
+<section>
+  <h2>Profile</h2>
+
+  @if (store.loading()) {
+  <p role="status">Loading profile…</p>
+  } @else if (store.profile(); as profile) {
+  <anarchitects-user-profile-view [profile]="profile" />
+  <anarchitects-user-profile-editor
+    [profile]="profile"
+    [saving]="store.saving()"
+    (profileSubmitted)="updateProfile($event)"
+  />
+  } @else {
+  <p>No profile is available.</p>
+  } @if (store.error(); as error) {
+  <p role="alert">{{ error }}</p>
+  }
+</section>

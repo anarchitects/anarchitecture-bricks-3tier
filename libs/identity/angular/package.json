@@ -1,8 +1,14 @@
 {
   "name": "@anarchitects/identity-angular",
   "version": "0.0.1",
+  "dependencies": {
+    "@anarchitects/identity-ts": "^0.0.1"
+  },
   "peerDependencies": {
-    "@angular/core": "^21.1.0"
+    "@angular/common": "^21.1.0",
+    "@angular/core": "^21.1.0",
+    "@angular/forms": "^21.1.0",
+    "rxjs": "~7.8.0"
   },
   "publishConfig": {
     "access": "public"
