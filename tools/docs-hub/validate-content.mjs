@@ -105,11 +105,13 @@ const aiGuideRequiredBlocks = [
   },
   {
     label: '.github/copilot-instructions.md overlay fenced block',
-    pattern: /###\s+\.github\/copilot-instructions\.md[\s\S]*?```(?:md)?[\s\S]*?```/i,
+    pattern:
+      /###\s+\.github\/copilot-instructions\.md[\s\S]*?```(?:md)?[\s\S]*?```/i,
   },
 ];
 
 const designUiSystemsRequiredTokens = [
+  '@anarchitects/tailwind',
   '@anarchitects/common-angular-design',
   '@anarchitects/common-angular-ui-composition',
   '@anarchitects/common-angular-ui-primitives',
@@ -222,7 +224,9 @@ function collectPublishableReadmes() {
     });
   }
 
-  return readmes.sort((left, right) => left.packageName.localeCompare(right.packageName));
+  return readmes.sort((left, right) =>
+    left.packageName.localeCompare(right.packageName),
+  );
 }
 
 const failures = [];
@@ -253,7 +257,9 @@ for (const guide of guideFiles) {
   if (guide.key === 'aiAgents') {
     const normalizedMarkdown = markdownContent.toLowerCase();
     const missingMentions = aiGuideRequiredMentions
-      .filter((entry) => !normalizedMarkdown.includes(entry.token.toLowerCase()))
+      .filter(
+        (entry) => !normalizedMarkdown.includes(entry.token.toLowerCase()),
+      )
       .map((entry) => `"${entry.label}"`);
 
     if (missingMentions.length > 0) {
@@ -263,7 +269,9 @@ for (const guide of guideFiles) {
     }
 
     const missingPackageTokens = aiGuideRequiredPackageTokens
-      .filter((entry) => !normalizedMarkdown.includes(entry.token.toLowerCase()))
+      .filter(
+        (entry) => !normalizedMarkdown.includes(entry.token.toLowerCase()),
+      )
       .map((entry) => `"${entry.label}"`);
 
     if (missingPackageTokens.length > 0) {
@@ -306,9 +314,10 @@ for (const guide of guideFiles) {
       );
     }
 
-    const duplicatedTsCanonicalHeadings = forbiddenTsCanonicalHeadingsInFrameworkGuides
-      .filter((heading) => headings.includes(heading))
-      .map((heading) => `"${heading}"`);
+    const duplicatedTsCanonicalHeadings =
+      forbiddenTsCanonicalHeadingsInFrameworkGuides
+        .filter((heading) => headings.includes(heading))
+        .map((heading) => `"${heading}"`);
 
     if (duplicatedTsCanonicalHeadings.length > 0) {
       failures.push(
@@ -327,7 +336,9 @@ for (const guide of guideFiles) {
   }
 }
 
-const designUiSystemsContent = (guideContents.get('designUiSystems') ?? '').toLowerCase();
+const designUiSystemsContent = (
+  guideContents.get('designUiSystems') ?? ''
+).toLowerCase();
 const missingCoverageTokens = designUiSystemsRequiredTokens
   .filter((token) => !designUiSystemsContent.includes(token.toLowerCase()))
   .map((token) => `"${token}"`);
@@ -338,7 +349,9 @@ if (missingCoverageTokens.length > 0) {
   );
 }
 
-const tsContractsContent = (guideContents.get('tsContracts') ?? '').toLowerCase();
+const tsContractsContent = (
+  guideContents.get('tsContracts') ?? ''
+).toLowerCase();
 const missingTsCoverageTokens = tsContractsRequiredTokens
   .filter((token) => !tsContractsContent.includes(token.toLowerCase()))
   .map((token) => `"${token}"`);
@@ -352,7 +365,9 @@ if (missingTsCoverageTokens.length > 0) {
 const packageReadmes = collectPublishableReadmes();
 for (const pkg of packageReadmes) {
   if (pkg.missingFile) {
-    failures.push(`${pkg.packageName}: missing README file (${pkg.readmePath}).`);
+    failures.push(
+      `${pkg.packageName}: missing README file (${pkg.readmePath}).`,
+    );
     continue;
   }
 
@@ -369,15 +384,23 @@ for (const pkg of packageReadmes) {
   if (!hasHeading(headings, 'usage')) {
     missing.push('"Usage"');
   }
-  if (!hasHeading(headings, 'exports') && !hasHeading(headings, 'entry points')) {
+  if (
+    !hasHeading(headings, 'exports') &&
+    !hasHeading(headings, 'entry points')
+  ) {
     missing.push('"Exports" or "Entry points"');
   }
-  if (!hasHeading(headings, 'configuration') && !hasHeading(headings, 'development notes')) {
+  if (
+    !hasHeading(headings, 'configuration') &&
+    !hasHeading(headings, 'development notes')
+  ) {
     missing.push('"Configuration" or "Development notes"');
   }
 
   if (missing.length > 0) {
-    failures.push(`${pkg.readmePath}: missing required headings -> ${missing.join(', ')}`);
+    failures.push(
+      `${pkg.readmePath}: missing required headings -> ${missing.join(', ')}`,
+    );
   }
 }
 

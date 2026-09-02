@@ -35,7 +35,7 @@ follow `presentation -> application <- infrastructure`. Tailwind does not change
 
 ## Token and Theme Model
 
-The future `@anarchitects/tailwind` package exposes an aggregate easy mode:
+The `@anarchitects/tailwind` package exposes an aggregate easy mode:
 
 ```css
 @import '@anarchitects/tailwind';
@@ -61,8 +61,8 @@ application:
 @source "../node_modules/@anarchitects";
 ```
 
-The implementation and exact consumer paths arrive in later subissues of epic #362. This guide defines
-the contract rather than claiming those artifacts already exist.
+Paths are relative to the stylesheet that declares them. Use the package README for installed-package,
+workspace-library, and consumer-source examples, and verify the resulting production CSS.
 
 ## Composition Contracts
 

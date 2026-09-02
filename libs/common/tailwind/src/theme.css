@@ -1,0 +1,73 @@
+@import 'tailwindcss/theme.css' layer(theme);
+
+@theme inline {
+  --color-anx-canvas: var(--anx-color-canvas);
+  --color-anx-surface: var(--anx-color-surface);
+  --color-anx-surface-muted: var(--anx-color-surface-muted);
+  --color-anx-foreground: var(--anx-color-foreground);
+  --color-anx-foreground-muted: var(--anx-color-foreground-muted);
+  --color-anx-border: var(--anx-color-border);
+  --color-anx-accent: var(--anx-color-accent);
+  --color-anx-on-accent: var(--anx-color-on-accent);
+  --color-anx-danger: var(--anx-color-danger);
+  --color-anx-focus: var(--anx-color-focus);
+  --font-anx-sans: var(--anx-font-sans);
+  --radius-anx-control: var(--anx-radius-control);
+  --radius-anx-surface: var(--anx-radius-surface);
+  --shadow-anx-surface: var(--anx-shadow-surface);
+  --spacing-anx-control: var(--anx-control-block-size);
+  --spacing-anx-stack: var(--anx-stack-gap);
+  --spacing-anx-cluster: var(--anx-cluster-gap);
+}
+
+:root {
+  color-scheme: light;
+  --anx-color-canvas: oklch(0.985 0.002 247);
+  --anx-color-surface: oklch(1 0 0);
+  --anx-color-surface-muted: oklch(0.96 0.006 247);
+  --anx-color-foreground: oklch(0.21 0.018 255);
+  --anx-color-foreground-muted: oklch(0.48 0.025 255);
+  --anx-color-border: oklch(0.86 0.014 255);
+  --anx-color-accent: oklch(0.55 0.2 255);
+  --anx-color-on-accent: oklch(0.99 0.004 255);
+  --anx-color-danger: oklch(0.58 0.22 27);
+  --anx-color-focus: oklch(0.62 0.2 255);
+  --anx-font-sans:
+    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  --anx-radius-control: 0.5rem;
+  --anx-radius-surface: 0.75rem;
+  --anx-shadow-surface:
+    0 1px 2px oklch(0.21 0.018 255 / 8%), 0 8px 24px oklch(0.21 0.018 255 / 8%);
+  --anx-control-block-size: 2.75rem;
+  --anx-stack-gap: 1rem;
+  --anx-cluster-gap: 0.75rem;
+}
+
+:where([data-theme='dark']) {
+  color-scheme: dark;
+  --anx-color-canvas: oklch(0.17 0.018 255);
+  --anx-color-surface: oklch(0.22 0.02 255);
+  --anx-color-surface-muted: oklch(0.27 0.022 255);
+  --anx-color-foreground: oklch(0.95 0.008 255);
+  --anx-color-foreground-muted: oklch(0.72 0.02 255);
+  --anx-color-border: oklch(0.38 0.025 255);
+  --anx-color-accent: oklch(0.7 0.16 255);
+  --anx-color-on-accent: oklch(0.16 0.018 255);
+  --anx-color-danger: oklch(0.72 0.17 27);
+  --anx-color-focus: oklch(0.74 0.16 255);
+  --anx-shadow-surface:
+    0 1px 2px oklch(0 0 0 / 24%), 0 12px 32px oklch(0 0 0 / 24%);
+}
+
+:where([data-density='compact']) {
+  --anx-control-block-size: 2.25rem;
+  --anx-stack-gap: 0.75rem;
+  --anx-cluster-gap: 0.5rem;
+}
+
+:where([data-density='comfortable']) {
+  --anx-control-block-size: 3.25rem;
+  --anx-stack-gap: 1.25rem;
+  --anx-cluster-gap: 1rem;
+}

@@ -1,0 +1,50 @@
+@import 'tailwindcss/preflight.css' layer(base);
+
+@layer base {
+  :where(html) {
+    background: var(--anx-color-canvas);
+    color: var(--anx-color-foreground);
+    font-family: var(--anx-font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  :where(body) {
+    min-block-size: 100dvb;
+    background: inherit;
+    color: inherit;
+  }
+
+  :where(button, input, select, textarea) {
+    color: inherit;
+    font: inherit;
+  }
+
+  :where(
+    button,
+    [role='button'],
+    input,
+    select,
+    textarea,
+    a[href]
+  ):focus-visible {
+    outline: 2px solid var(--anx-color-focus);
+    outline-offset: 2px;
+  }
+
+  :where([aria-disabled='true'], :disabled) {
+    cursor: not-allowed;
+  }
+
+  :where([hidden]) {
+    display: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(*, *::before, *::after) {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}

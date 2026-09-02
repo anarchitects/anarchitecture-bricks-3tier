@@ -255,10 +255,16 @@
         "version": {
           "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=common-nest-mailer && yarn nx run common-nest-mailer:build"
         }
+      },
+      "common-tailwind": {
+        "projectsRelationship": "independent",
+        "projects": ["tailwind"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=tailwind && yarn nx run tailwind:build"
+        }
       }
     },
     "version": {
-      "preVersionCommand": "yarn dlx nx run-many -t build",
       "conventionalCommits": true,
       "updateDependents": "never"
     },

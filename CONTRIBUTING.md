@@ -99,6 +99,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Select exactly one domain group input: `forms`, `auth`, `identity`, or `common`.
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
+- The `common` domain dynamically includes the `common-angular`, `common-nest`, and `common-tailwind` release groups.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`.
 - The repo runner also supports `--bump=<patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference.
 - Do not run local `nx release` before merging PRs; use the repo runner instead.

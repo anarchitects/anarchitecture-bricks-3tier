@@ -1,0 +1,2 @@
+@import '../../src/index.css';
+@source inline("anx-stack anx-control anx-surface bg-anx-accent text-anx-on-accent dark:bg-anx-surface-muted compact:anx-control");

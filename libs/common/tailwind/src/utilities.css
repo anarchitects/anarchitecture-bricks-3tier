@@ -1,0 +1,39 @@
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+@custom-variant compact (&:where([data-density='compact'], [data-density='compact'] *));
+@custom-variant comfortable (&:where([data-density='comfortable'], [data-density='comfortable'] *));
+
+@utility anx-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--anx-stack-gap);
+}
+
+@utility anx-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--anx-cluster-gap);
+}
+
+@utility anx-control {
+  min-block-size: var(--anx-control-block-size);
+  border: 1px solid var(--anx-color-border);
+  border-radius: var(--anx-radius-control);
+  background: var(--anx-color-surface);
+  color: var(--anx-color-foreground);
+}
+
+@utility anx-surface {
+  border: 1px solid var(--anx-color-border);
+  border-radius: var(--anx-radius-surface);
+  background: var(--anx-color-surface);
+  color: var(--anx-color-foreground);
+  box-shadow: var(--anx-shadow-surface);
+}
+
+@utility anx-focus-ring {
+  outline: 2px solid var(--anx-color-focus);
+  outline-offset: 2px;
+}
