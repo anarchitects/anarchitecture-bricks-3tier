@@ -1,10 +1,20 @@
-<main class="example-shell">
-  <p class="eyebrow">Anarchitects consumer contract</p>
-  <h1>Forms Angular example</h1>
-  <anarchitects-forms-feature-form
-    formId="contact_default"
-    [formVersion]="1"
-    pageTitle="Contact us"
-    pageSubtitle="Rendered by @anarchitects/forms-angular"
-  />
+<main
+  class="min-h-dvh bg-anx-canvas px-6 py-12 text-anx-foreground"
+  data-consumer-mode="easy"
+  data-density="comfortable"
+>
+  <section class="anx-stack mx-auto w-full max-w-5xl">
+    <p class="m-0 text-xs font-bold uppercase tracking-widest text-anx-accent">
+      Anarchitects consumer contract
+    </p>
+    <h1 class="m-0 text-3xl font-bold">Forms Angular example</h1>
+    <div class="anx-surface p-6">
+      <anarchitects-forms-feature-form
+        formId="contact_default"
+        [formVersion]="1"
+        pageTitle="Contact us"
+        pageSubtitle="Rendered by @anarchitects/forms-angular"
+      />
+    </div>
+  </section>
 </main>

@@ -27,4 +27,15 @@ test('renders a form supplied by the forms package', async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Contact us' })).toBeVisible();
   await expect(page.getByLabel('Email address')).toBeVisible();
+  const easyMode = page.locator('[data-consumer-mode="easy"]');
+  await expect(easyMode).toBeVisible();
+  await expect
+    .poll(() =>
+      easyMode.evaluate((element) =>
+        getComputedStyle(element)
+          .getPropertyValue('--anx-control-block-size')
+          .trim(),
+      ),
+    )
+    .toBe('3.25rem');
 });

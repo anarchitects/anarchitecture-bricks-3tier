@@ -1,13 +1,25 @@
-<header class="example-header">
-  <a class="brand" routerLink="/">Auth Angular example</a>
-  <nav aria-label="Authentication examples">
-    <a routerLink="/login" routerLinkActive="active">Login</a>
-    <a routerLink="/register" routerLinkActive="active">Register</a>
-    <a routerLink="/forgot-password" routerLinkActive="active"
-      >Forgot password</a
+<div
+  class="min-h-dvh bg-anx-canvas text-anx-foreground"
+  data-consumer-mode="advanced"
+  data-density="compact"
+>
+  <header
+    class="anx-cluster border-b border-anx-border bg-anx-surface px-6 py-4"
+  >
+    <a class="brand font-bold text-anx-accent no-underline" routerLink="/"
+      >Auth Angular example</a
     >
-  </nav>
-</header>
-<main class="example-shell">
-  <router-outlet />
-</main>
+    <nav class="anx-cluster ml-auto" aria-label="Authentication examples">
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+      <a routerLink="/register" routerLinkActive="active">Register</a>
+      <a routerLink="/forgot-password" routerLinkActive="active"
+        >Forgot password</a
+      >
+    </nav>
+  </header>
+  <main class="mx-auto w-full max-w-5xl px-6 py-12">
+    <div class="anx-surface p-6">
+      <router-outlet />
+    </div>
+  </main>
+</div>

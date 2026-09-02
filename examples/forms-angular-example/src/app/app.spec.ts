@@ -26,5 +26,7 @@ describe('App', () => {
     expect(
       compiled.querySelector('anarchitects-forms-feature-form'),
     ).toBeTruthy();
+    expect(compiled.querySelector('[data-consumer-mode="easy"]')).toBeTruthy();
+    expect(compiled.querySelector('[data-density="comfortable"]')).toBeTruthy();
   });
 });

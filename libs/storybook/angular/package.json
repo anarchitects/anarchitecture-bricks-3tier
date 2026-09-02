@@ -8,7 +8,9 @@
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/angular": "^10.1.11"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",

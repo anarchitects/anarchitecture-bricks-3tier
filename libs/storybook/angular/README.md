@@ -8,23 +8,37 @@ private and must not be published as an npm package.
 ## Purpose
 
 This package configures Storybook rendering context, including design-theme
-wrapping used by component stories.
+wrapping used by component stories. It consumes the aggregate
+`@anarchitects/tailwind` entry point and compiles it with the Tailwind v4
+PostCSS plugin.
 
 ## Theme setup in Storybook
 
-Storybook uses decorator-level wrappers and local `data-anx-*` attributes to
-set story context. This is intentional for isolated story rendering.
+Storybook uses decorator-level wrappers and the foundation's canonical
+`data-theme="light|dark"` and `data-density="comfortable|compact"` attributes
+to set story context. Surface, layout, and column attributes remain local
+Storybook controls for representative legacy components.
 
-This differs from application bootstrap, where canonical setup is:
+The preview stylesheet demonstrates aggregate easy-mode consumption:
 
-1. `applyAnxBaseStyles()` before render
-2. `provideDesignSystemConfig(...)` at app root
+```css
+@import '@anarchitects/tailwind';
+@source './preview.ts';
+@source '../../../auth/angular';
+@source '../../../forms/angular';
+@source '../../../common/angular';
+```
+
+The Angular examples provide the corresponding easy and advanced consumer
+setups, including explicit theme/base/utilities composition and token
+overrides.
 
 ## Guidance
 
 - Use Storybook decorators for story isolation and toolbar-driven preview
   controls.
-- Do not treat Storybook wrapper attributes as the canonical app-consumer setup.
+- Keep styling CSS-first; do not add a runtime Tailwind wrapper or a
+  `tailwind.config.*` file.
 - For migration and canonical setup details, use:
   - `docs/guides/design-ui-systems.md`
   - `docs/guides/theme-migration.md`

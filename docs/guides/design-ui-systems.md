@@ -53,16 +53,21 @@ The implementation uses Tailwind v4 CSS-first configuration: CSS imports, `@them
 utilities and variants, and documented `@source`. It does not introduce a legacy JavaScript configuration
 preset or an Angular runtime wrapper.
 
-Tailwind ignores dependencies during automatic source detection. A consuming application must register
-published packages whose compiled templates contain utility classes, using a path appropriate to that
-application:
+The foundation disables automatic workspace detection with `source(none)` so production output is
+deterministic. A consuming application must register its own templates and published packages whose
+compiled templates contain utility classes, using paths appropriate to that application:
 
 ```css
+@source "./app";
 @source "../node_modules/@anarchitects";
 ```
 
 Paths are relative to the stylesheet that declares them. Use the package README for installed-package,
 workspace-library, and consumer-source examples, and verify the resulting production CSS.
+
+The restored forms example demonstrates the aggregate easy mode. The auth example demonstrates explicit
+theme/base/utilities composition and a consumer `@theme` override. Storybook uses the aggregate mode with
+toolbar-driven `data-theme="light|dark"` and `data-density="comfortable|compact"` validation.
 
 ## Composition Contracts
 

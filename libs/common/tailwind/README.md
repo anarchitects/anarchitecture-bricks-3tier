@@ -83,9 +83,10 @@ The foundation includes reusable `anx-stack`, `anx-cluster`, `anx-control`, `anx
 
 ### Source detection
 
-Tailwind ignores dependencies and other ignored paths during automatic detection. Register every
-published package whose templates contain utility classes. `@source` paths are relative to the stylesheet
-where they appear, so adjust the examples for the consumer's layout.
+The foundation opts out of automatic workspace detection with `source(none)` so production output is
+deterministic. Register the consumer application and every published package whose templates contain
+utility classes. `@source` paths are relative to the stylesheet where they appear, so adjust the examples
+for the consumer's layout.
 
 Installed packages:
 
