@@ -1,0 +1,29 @@
+@import '@anarchitects/tailwind';
+
+@source './preview.ts';
+@source '../../../auth/angular';
+@source '../../../forms/angular';
+@source '../../../common/angular';
+
+@theme {
+  --color-anx-accent: oklch(0.67 0.17 255);
+}
+
+.anx-storybook-frame {
+  align-content: start;
+  inline-size: min(100%, 75rem);
+  min-block-size: 100dvb;
+  margin-inline: auto;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.anx-storybook-frame[data-anx-surface='card'] {
+  border: 1px solid var(--anx-color-border);
+  border-radius: var(--anx-radius-surface);
+  box-shadow: var(--anx-shadow-surface);
+}

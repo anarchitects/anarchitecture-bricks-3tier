@@ -84,6 +84,13 @@
         "command": "node tools/api-specs/run-prism-jest.mjs examples/auth-angular-example/jest.contract.config.cts src/contract/auth-api.contract.spec.ts"
       }
     },
+    "tailwind-css-contract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/tailwind/validate-consumer-css.mjs --target=auth"
+      }
+    },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",

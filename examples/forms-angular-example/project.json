@@ -81,6 +81,13 @@
         "command": "node tools/api-specs/run-prism-jest.mjs examples/forms-angular-example/jest.contract.config.cts src/contract/forms-api.contract.spec.ts"
       }
     },
+    "tailwind-css-contract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/tailwind/validate-consumer-css.mjs --target=forms"
+      }
+    },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",

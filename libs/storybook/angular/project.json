@@ -59,6 +59,13 @@
         "command": "test-storybook -c libs/storybook/angular/.storybook --url=http://localhost:4400"
       }
     },
+    "tailwind-css-contract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build-storybook"],
+      "options": {
+        "command": "node tools/tailwind/validate-consumer-css.mjs --target=storybook"
+      }
+    },
     "static-storybook": {
       "executor": "@nx/web:file-server",
       "dependsOn": ["build-storybook"],

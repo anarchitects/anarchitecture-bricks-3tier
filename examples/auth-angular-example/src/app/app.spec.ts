@@ -32,5 +32,9 @@ describe('App', () => {
       'Auth Angular example',
     );
     expect(compiled.querySelector('nav')).toBeTruthy();
+    expect(
+      compiled.querySelector('[data-consumer-mode="advanced"]'),
+    ).toBeTruthy();
+    expect(compiled.querySelector('[data-density="compact"]')).toBeTruthy();
   });
 });

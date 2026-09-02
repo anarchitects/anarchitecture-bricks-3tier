@@ -53,6 +53,7 @@ describe('@anarchitects/tailwind', () => {
     expect(css).toContain('.text-anx-on-accent');
     expect(css).toContain('[data-theme=dark]');
     expect(css).toContain('[data-density=compact]');
+    expect(css).not.toContain('.translate-x-96');
   });
 
   it('compiles advanced entry points and consumer token overrides', () => {

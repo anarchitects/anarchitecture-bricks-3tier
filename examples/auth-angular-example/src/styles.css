@@ -1,1 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
+@import '@anarchitects/tailwind/theme.css';
+@import '@anarchitects/tailwind/base.css';
+@import '@anarchitects/tailwind/utilities.css';
+
+@source './app';
+@source '../../../libs/auth/angular';
+@source '../../../libs/forms/angular';
+
+@theme {
+  --color-anx-accent: oklch(0.64 0.18 235);
+}
+
+:root {
+  --anx-color-accent: oklch(0.64 0.18 235);
+}

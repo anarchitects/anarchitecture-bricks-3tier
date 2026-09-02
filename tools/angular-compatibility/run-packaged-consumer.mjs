@@ -23,6 +23,7 @@ const isolatedEnvironment = {
   npm_config_cache: join(temporaryRoot, 'npm-cache'),
 };
 const packageRoots = [
+  'dist/libs/common/tailwind',
   'dist/libs/common/angular/design',
   'dist/libs/common/angular/ui-composition',
   'dist/libs/common/angular/ui-layouts',
@@ -98,12 +99,15 @@ try {
       '@sinclair/typebox': '^0.34.41',
       'jwt-decode': '^4.0.0',
       rxjs: '~7.8.0',
+      tailwindcss: '^4.3.3',
       tslib: '^2.3.0',
     },
     devDependencies: {
       '@angular/build': buildVersion,
       '@angular/cli': buildVersion,
       '@angular/compiler-cli': angularVersion,
+      '@tailwindcss/postcss': '^4.3.3',
+      postcss: '^8.4.5',
       typescript: major === '21' ? '5.9.3' : '6.0.3',
     },
   };
@@ -129,6 +133,21 @@ try {
       join(temporaryRoot, project, 'public'),
       { recursive: true },
     );
+    cpSync(
+      resolve(root, 'examples', project, '.postcssrc.json'),
+      join(temporaryRoot, project, '.postcssrc.json'),
+    );
+    const consumerStylesPath = join(
+      temporaryRoot,
+      project,
+      'src',
+      'styles.css',
+    );
+    const consumerStyles = readFileSync(consumerStylesPath, 'utf8').replace(
+      /(?:@source '\.\.\/\.\.\/\.\.\/libs\/(?:auth|forms)\/angular';\n)+/g,
+      "@source '../../node_modules/@anarchitects';\n",
+    );
+    writeFileSync(consumerStylesPath, consumerStyles);
     writeFileSync(
       join(temporaryRoot, project, 'tsconfig.app.json'),
       `${JSON.stringify({ compilerOptions: { outDir: '../out-tsc', target: 'ES2022', module: 'preserve', moduleResolution: 'bundler', strict: true, experimentalDecorators: true, useDefineForClassFields: false, isolatedModules: true }, angularCompilerOptions: { strictInjectionParameters: true, strictInputAccessModifiers: true, strictTemplates: true }, files: ['src/main.ts'], include: ['src/**/*.d.ts'] }, null, 2)}\n`,
