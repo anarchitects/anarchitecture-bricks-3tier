@@ -1,4 +1,4 @@
-# ADR-0003: Define `libs/common` As Platform/Foundation, Not A Shared Dumping Ground
+# ADR-0004: Define `libs/common` As Platform/Foundation, Not A Shared Dumping Ground
 
 ## Status
 

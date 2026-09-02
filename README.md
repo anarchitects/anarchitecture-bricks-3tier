@@ -202,6 +202,12 @@ Alignment does **not** mean identical file structure or forced architectural sam
 - [ADR-0001: Align With `anarchitecture-bricks-ddd` And Support Migration](docs/adr/0001-align-with-bricks-ddd-and-support-migration.md)
 - [ADR-0002: Do Not Split Libraries By Audience Until Workflow Divergence Is Real](docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md)
 - [ADR-0003: Adopt Tailwind v4 As The Frontend Foundation And Retire Common Angular UI Packages](docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md)
+- [ADR-0004: Define `libs/common` As Platform/Foundation, Not A Shared Dumping Ground](docs/adr/0004-define-common-as-platform-foundation-not-shared-dumping-ground.md)
+- [ADR-0005: Define Forms As A Configurable Intake Domain](docs/adr/0005-define-forms-as-configurable-intake-domain.md)
+- [ADR-0006: Forms Must Not Replace Typed Domain APIs](docs/adr/0006-forms-must-not-replace-domain-apis.md)
+- [ADR-0007: Common Mailer Is Transport Infrastructure Only](docs/adr/0007-common-mailer-is-transport-only.md)
+- [ADR-0008: Forms Must Prefer Events Over Embedded Business Logic](docs/adr/0008-forms-event-driven-extension.md)
+- [ADR-0009: Forms Admin Features Must Remain Lightweight](docs/adr/0009-forms-admin-scope-limitation.md)
 
 ## Documentation Tooling
 

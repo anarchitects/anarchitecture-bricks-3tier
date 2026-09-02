@@ -1,4 +1,4 @@
-# ADR-0006: Common Mailer Is Transport Infrastructure Only
+# ADR-0007: Common Mailer Is Transport Infrastructure Only
 
 ## Status
 

@@ -1,4 +1,4 @@
-# ADR-0004: Define Forms As A Configurable Intake Domain
+# ADR-0005: Define Forms As A Configurable Intake Domain
 
 ## Status
 

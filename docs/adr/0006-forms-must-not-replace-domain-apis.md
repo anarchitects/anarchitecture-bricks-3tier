@@ -1,4 +1,4 @@
-# ADR-0005: Forms Must Not Replace Typed Domain APIs
+# ADR-0006: Forms Must Not Replace Typed Domain APIs
 
 ## Status
 
