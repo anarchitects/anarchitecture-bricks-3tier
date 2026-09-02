@@ -1,11 +1,11 @@
 {
   "name": "@anarchitects/forms-angular",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "dependencies": {
-    "@anarchitects/common-angular-ui-composition": "^0.1.0",
-    "@anarchitects/common-angular-ui-layouts": "^0.1.0",
-    "@anarchitects/common-angular-ui-primitives": "^0.1.0",
-    "@anarchitects/forms-ts": "^0.7.0"
+    "@anarchitects/common-angular-ui-composition": "^0.1.1",
+    "@anarchitects/common-angular-ui-layouts": "^0.1.1",
+    "@anarchitects/common-angular-ui-primitives": "^0.1.1",
+    "@anarchitects/forms-ts": "^0.7.1"
   },
   "peerDependencies": {
     "@angular/common": "^21.0.0 || ^22.0.0",

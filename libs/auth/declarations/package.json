@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/auth-declarations",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Declaration-only security metadata decorators for Anarchitecture auth-aware Nest controllers.",
   "type": "module",
   "main": "./index.cjs",
@@ -15,7 +15,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@anarchitects/auth-ts": "^0.9.0"
+    "@anarchitects/auth-ts": "^0.9.1"
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0"
