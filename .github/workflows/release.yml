@@ -35,7 +35,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 concurrency:
   group: release-manual
@@ -53,13 +52,13 @@ jobs:
 
       - name: Generate GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.ANARCHITECTS_BOT_APP_ID }}
           private-key: ${{ secrets.ANARCHITECTS_BOT_PRIVATE_KEY }}
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
@@ -83,8 +82,6 @@ jobs:
           if [ "${{ inputs.first_release }}" = "true" ]; then
             first_release_args="--first-release"
           fi
-          yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} $bump_args $first_release_args --yes
+          yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} $bump_args $first_release_args --skip-publish --yes
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true

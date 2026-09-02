@@ -144,9 +144,11 @@ Run releases via the **Release (Manual)** GitHub workflow:
 - Workflow input `domain` must be one of: `forms`, `auth`, `identity`, `common`.
 - Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
 - Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
-- The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --yes`, which handles versioning, changelog generation, git/tagging, GitHub releases, and publish.
+- The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`, which handles versioning, changelog generation, git/tagging, and GitHub releases.
 - When conventional-commit inference needs a one-off override, the repo runner also supports `--bump=<patch|minor|major|prepatch|preminor|premajor|prerelease>`.
-- Use **Publish Packages (Recovery)** only to retry publish if a release run fails after versioning/tagging.
+- Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.
+- For a publish-only retry, manually run **Publish** with the existing package tag, for example `auth-nest@0.9.0`. Do not rerun versioning.
+- Domain major and minor lines stay synchronized while patch versions may diverge. With Nx's pre-1.0 adjustment, use `bump=major` to advance a `0.x` domain to its next minor line.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final release tags from a release-prep branch before merge.
 - If a release-prep PR is squash-merged after tags were created on the branch, retarget those tags to the merge commit on `main` before running release.

@@ -172,9 +172,10 @@ For all implementation work, keep humans as the control point for code acceptanc
 ## Release Workflow Rules
 
 - Release ownership is CI-based via GitHub Actions, not local developer machines.
-- Trigger releases using `.github/workflows/release.yml` (`Release (Manual)`), selecting exactly one domain group (`forms`, `auth`, or `common`).
-- The release workflow runs full `nx release --groups=<domain> --yes` (versioning, changelog/release notes, git commit/tag/push, GitHub release, publish).
-- Use `.github/workflows/publish.yml` (`Publish Packages (Recovery)`) only for manual publish retries after a failed release run.
+- Trigger releases using `.github/workflows/release.yml` (`Release (Manual)`), selecting exactly one domain group (`forms`, `auth`, `identity`, or `common`).
+- The release workflow performs versioning, changelog/release notes, git commit/tag/push, and GitHub releases with `--skip-publish`.
+- Each published GitHub release triggers `.github/workflows/publish.yml` for its package tag. `publish.yml` is the npm Trusted Publisher workflow; do not add or use a long-lived npm publish token.
+- For publish retries after versioning succeeds, manually dispatch `publish.yml` with the existing package tag. Do not rerun versioning.
 - Do not run routine local `nx release` before merging PRs.
 
 ## New Domain Onboarding Rule

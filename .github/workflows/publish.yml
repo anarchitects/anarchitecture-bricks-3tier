@@ -1,44 +1,87 @@
-name: Publish Packages (Recovery)
+name: Publish
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish, for example auth-nest@0.9.0
+        required: true
+        type: string
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-
-on:
-  workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: publish-recovery
+  group: publish-${{ inputs.tag || github.event.release.tag_name }}
   cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Ensure workflow runs from main
-        if: github.ref != 'refs/heads/main'
+      - name: Resolve release ref
+        id: ref
+        shell: bash
         run: |
-          echo "This recovery workflow must run from main. Current ref: ${{ github.ref }}"
-          exit 1
+          ref_name='${{ inputs.tag || github.event.release.tag_name }}'
+
+          if [ -z "$ref_name" ]; then
+            echo "Unable to resolve a release tag from the event payload"
+            exit 1
+          fi
+
+          echo "ref_name=$ref_name" >> "$GITHUB_OUTPUT"
+
+      - name: Derive project from tag
+        id: tag
+        shell: bash
+        run: |
+          ref_name='${{ steps.ref.outputs.ref_name }}'
+          project="${ref_name%@*}"
+          version="${ref_name##*@}"
+
+          if [ -z "$project" ] || [ -z "$version" ] || [ "$project" = "$ref_name" ]; then
+            echo "Invalid release tag: $ref_name"
+            echo "Expected format: <nx-project-name>@<version>"
+            exit 1
+          fi
+
+          echo "project=$project" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          echo "Publishing project: $project"
+          echo "Version: $version"
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
+          ref: refs/tags/${{ steps.ref.outputs.ref_name }}
           fetch-depth: 0
           filter: tree:0
 
       - name: Prepare publish workspace
         uses: ./.github/actions/setup-release-env
+        with:
+          node-version: '24'
 
-      - name: Build release artifacts
-        run: yarn nx run-many -t build --skip-nx-cache
+      - name: Validate Nx project exists
+        shell: bash
+        run: yarn nx show project "${{ steps.tag.outputs.project }}" > /dev/null
 
-      - name: Publish packages
-        run: yarn nx release publish --yes
+      - name: Build project
+        run: yarn nx build "${{ steps.tag.outputs.project }}" --skip-nx-cache
+
+      - name: Test project
+        run: yarn nx test "${{ steps.tag.outputs.project }}" --skip-nx-cache
+
+      - name: Publish project
+        run: yarn nx release publish --projects "${{ steps.tag.outputs.project }}" --yes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
