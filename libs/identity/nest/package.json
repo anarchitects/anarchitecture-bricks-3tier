@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/identity-nest",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "type": "commonjs",
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24.11.0"
@@ -15,7 +15,7 @@
     "typeorm": "^1.1.0"
   },
   "dependencies": {
-    "@anarchitects/identity-ts": "^0.0.2",
+    "@anarchitects/identity-ts": "^0.1.0",
     "uuidv7": "^1.0.2",
     "tslib": "^2.3.0"
   },
