@@ -1,0 +1,8 @@
+@import '../../src/theme.css';
+@import '../../src/base.css';
+@import '../../src/utilities.css';
+@source inline("anx-cluster anx-focus-ring bg-anx-accent text-anx-foreground");
+
+@theme {
+  --color-anx-accent: oklch(0.72 0.18 145);
+}

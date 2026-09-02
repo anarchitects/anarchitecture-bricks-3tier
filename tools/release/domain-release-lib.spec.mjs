@@ -17,7 +17,10 @@ function buildReleaseGroup(name, projects) {
 }
 
 test('inferDomainFromProjectRoot resolves library domains from project roots', () => {
-  assert.equal(inferDomainFromProjectRoot('libs/common/angular/ui-layouts'), 'common');
+  assert.equal(
+    inferDomainFromProjectRoot('libs/common/angular/ui-layouts'),
+    'common',
+  );
   assert.equal(inferDomainFromProjectRoot('libs/auth/angular'), 'auth');
   assert.equal(inferDomainFromProjectRoot('libs/identity/nest'), 'identity');
   assert.equal(inferDomainFromProjectRoot('tools/release'), null);
@@ -27,9 +30,14 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
   const releaseGroups = [
     buildReleaseGroup('forms', ['forms-angular', 'forms-nest', 'forms-ts']),
     buildReleaseGroup('auth', ['auth-angular', 'auth-nest', 'auth-ts']),
-    buildReleaseGroup('identity', ['identity-angular', 'identity-nest', 'identity-ts']),
+    buildReleaseGroup('identity', [
+      'identity-angular',
+      'identity-nest',
+      'identity-ts',
+    ]),
     buildReleaseGroup('common-angular', ['common-angular-ui-layouts']),
     buildReleaseGroup('common-nest', ['common-nest-mailer']),
+    buildReleaseGroup('common-tailwind', ['tailwind']),
   ];
   const projectNodes = {
     'forms-angular': { data: { root: 'libs/forms/angular' } },
@@ -41,25 +49,38 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
     'identity-angular': { data: { root: 'libs/identity/angular' } },
     'identity-nest': { data: { root: 'libs/identity/nest' } },
     'identity-ts': { data: { root: 'libs/identity/ts' } },
-    'common-angular-ui-layouts': { data: { root: 'libs/common/angular/ui-layouts' } },
+    'common-angular-ui-layouts': {
+      data: { root: 'libs/common/angular/ui-layouts' },
+    },
     'common-nest-mailer': { data: { root: 'libs/common/nest/mailer' } },
+    tailwind: { data: { root: 'libs/common/tailwind' } },
   };
 
   assert.deepEqual(
-    resolveReleaseGroupsForDomain({ domain: 'identity', releaseGroups, projectNodes }),
+    resolveReleaseGroupsForDomain({
+      domain: 'identity',
+      releaseGroups,
+      projectNodes,
+    }),
     ['identity'],
   );
 
   assert.deepEqual(
-    resolveReleaseGroupsForDomain({ domain: 'common', releaseGroups, projectNodes }),
-    ['common-angular', 'common-nest'],
+    resolveReleaseGroupsForDomain({
+      domain: 'common',
+      releaseGroups,
+      projectNodes,
+    }),
+    ['common-angular', 'common-nest', 'common-tailwind'],
   );
 });
 
 test('expandReleaseGroupsByDependents cascades transitively through downstream release groups', () => {
   const formsGroup = buildReleaseGroup('forms', ['forms-angular', 'forms-ts']);
   const authGroup = buildReleaseGroup('auth', ['auth-angular']);
-  const storefrontGroup = buildReleaseGroup('storefront', ['storefront-angular']);
+  const storefrontGroup = buildReleaseGroup('storefront', [
+    'storefront-angular',
+  ]);
 
   assert.deepEqual(
     expandReleaseGroupsByDependents({
@@ -83,14 +104,32 @@ test('expandReleaseGroupsByDependents cascades transitively through downstream r
 });
 
 test('computeHybridReleasePlan promotes all peers to a shared minor bump', () => {
-  const authGroup = buildReleaseGroup('auth', ['auth-angular', 'auth-nest', 'auth-ts']);
+  const authGroup = buildReleaseGroup('auth', [
+    'auth-angular',
+    'auth-nest',
+    'auth-ts',
+  ]);
   const plan = computeHybridReleasePlan({
     releaseGroups: [authGroup],
-    releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+    releaseGroupToFilteredProjects: new Map([
+      [authGroup, new Set(authGroup.projects)],
+    ]),
     versionData: {
-      'auth-angular': { currentVersion: '0.3.0', newVersion: '0.4.0', dependentProjects: [] },
-      'auth-nest': { currentVersion: '0.3.2', newVersion: '0.4.0', dependentProjects: [] },
-      'auth-ts': { currentVersion: '0.3.4', newVersion: null, dependentProjects: [] },
+      'auth-angular': {
+        currentVersion: '0.3.0',
+        newVersion: '0.4.0',
+        dependentProjects: [],
+      },
+      'auth-nest': {
+        currentVersion: '0.3.2',
+        newVersion: '0.4.0',
+        dependentProjects: [],
+      },
+      'auth-ts': {
+        currentVersion: '0.3.4',
+        newVersion: null,
+        dependentProjects: [],
+      },
     },
   });
 
@@ -102,14 +141,32 @@ test('computeHybridReleasePlan promotes all peers to a shared minor bump', () =>
 });
 
 test('computeHybridReleasePlan keeps patch bumps independent', () => {
-  const formsGroup = buildReleaseGroup('forms', ['forms-angular', 'forms-nest', 'forms-ts']);
+  const formsGroup = buildReleaseGroup('forms', [
+    'forms-angular',
+    'forms-nest',
+    'forms-ts',
+  ]);
   const plan = computeHybridReleasePlan({
     releaseGroups: [formsGroup],
-    releaseGroupToFilteredProjects: new Map([[formsGroup, new Set(formsGroup.projects)]]),
+    releaseGroupToFilteredProjects: new Map([
+      [formsGroup, new Set(formsGroup.projects)],
+    ]),
     versionData: {
-      'forms-angular': { currentVersion: '0.3.1', newVersion: '0.3.2', dependentProjects: [] },
-      'forms-nest': { currentVersion: '0.3.4', newVersion: null, dependentProjects: [] },
-      'forms-ts': { currentVersion: '0.3.0', newVersion: '0.3.1', dependentProjects: [] },
+      'forms-angular': {
+        currentVersion: '0.3.1',
+        newVersion: '0.3.2',
+        dependentProjects: [],
+      },
+      'forms-nest': {
+        currentVersion: '0.3.4',
+        newVersion: null,
+        dependentProjects: [],
+      },
+      'forms-ts': {
+        currentVersion: '0.3.0',
+        newVersion: '0.3.1',
+        dependentProjects: [],
+      },
     },
   });
 
@@ -121,10 +178,16 @@ test('computeHybridReleasePlan keeps patch bumps independent', () => {
 });
 
 test('computeHybridReleasePlanFromBumps propagates dependency patch bumps to dependents', () => {
-  const authGroup = buildReleaseGroup('auth', ['auth-angular', 'auth-nest', 'auth-ts']);
+  const authGroup = buildReleaseGroup('auth', [
+    'auth-angular',
+    'auth-nest',
+    'auth-ts',
+  ]);
   const plan = computeHybridReleasePlanFromBumps({
     releaseGroups: [authGroup],
-    releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+    releaseGroupToFilteredProjects: new Map([
+      [authGroup, new Set(authGroup.projects)],
+    ]),
     currentVersions: {
       'auth-angular': '0.4.0',
       'auth-nest': '0.4.0',
@@ -157,7 +220,9 @@ test('computeHybridReleasePlanFromBumps promotes all fixed-group peers when one 
   };
   const plan = computeHybridReleasePlanFromBumps({
     releaseGroups: [fixedGroup],
-    releaseGroupToFilteredProjects: new Map([[fixedGroup, new Set(fixedGroup.projects)]]),
+    releaseGroupToFilteredProjects: new Map([
+      [fixedGroup, new Set(fixedGroup.projects)],
+    ]),
     currentVersions: {
       'common-a': '0.4.0',
       'common-b': '0.4.2',
@@ -179,10 +244,16 @@ test('computeHybridReleasePlanFromBumps promotes all fixed-group peers when one 
 });
 
 test('createForcedReleasePlan applies a manual bump to every project in the selected groups', () => {
-  const authGroup = buildReleaseGroup('auth', ['auth-angular', 'auth-declarations', 'auth-nest']);
+  const authGroup = buildReleaseGroup('auth', [
+    'auth-angular',
+    'auth-declarations',
+    'auth-nest',
+  ]);
   const plan = createForcedReleasePlan({
     releaseGroups: [authGroup],
-    releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+    releaseGroupToFilteredProjects: new Map([
+      [authGroup, new Set(authGroup.projects)],
+    ]),
     bump: 'patch',
   });
 
@@ -200,10 +271,14 @@ test('createForcedReleasePlan rejects unsupported manual bump values', () => {
     () =>
       createForcedReleasePlan({
         releaseGroups: [authGroup],
-        releaseGroupToFilteredProjects: new Map([[authGroup, new Set(authGroup.projects)]]),
+        releaseGroupToFilteredProjects: new Map([
+          [authGroup, new Set(authGroup.projects)],
+        ]),
         bump: 'banana',
       }),
-    new RegExp(`Expected one of: ${Array.from(SUPPORTED_RELEASE_BUMPS).join(', ')}`),
+    new RegExp(
+      `Expected one of: ${Array.from(SUPPORTED_RELEASE_BUMPS).join(', ')}`,
+    ),
   );
 });
 
@@ -248,7 +323,12 @@ test('createTransientVersionPlan renders only bumped projects', () => {
     },
   });
 
-  assert.equal(plan.filePath.startsWith('/tmp/workspace/.nx/version-plans/domain-release-plan-auth-'), true);
+  assert.equal(
+    plan.filePath.startsWith(
+      '/tmp/workspace/.nx/version-plans/domain-release-plan-auth-',
+    ),
+    true,
+  );
   assert.match(plan.content, /auth-angular: minor/);
   assert.match(plan.content, /auth-nest: minor/);
   assert.doesNotMatch(plan.content, /auth-ts:/);

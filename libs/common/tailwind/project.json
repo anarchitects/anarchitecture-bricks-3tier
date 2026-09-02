@@ -1,0 +1,55 @@
+{
+  "name": "tailwind",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/tailwind/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["npm:public", "domain:shared", "tech:css"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/libs/common/tailwind"],
+      "options": {
+        "command": "node libs/common/tailwind/tools/build.mjs"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/common/tailwind"],
+      "options": {
+        "command": "vitest run --config libs/common/tailwind/vitest.config.mts"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p libs/common/tailwind/tsconfig.spec.json"
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "dist/libs/common/tailwind",
+        "commands": [
+          "node ../../../../libs/common/tailwind/tools/validate-package.mjs",
+          "npm pack --dry-run --json --cache ../../../../.nx/cache/npm"
+        ],
+        "parallel": false
+      }
+    },
+    "nx-release-publish": {
+      "executor": "@nx/js:release-publish",
+      "dependsOn": ["build"],
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  }
+}
