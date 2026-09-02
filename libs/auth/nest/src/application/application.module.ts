@@ -120,6 +120,7 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
 
     if (resolvedOptions.plugins.jwt.enabled) {
       providers.push(BetterAuthJwtPluginService);
+      exports.push(BetterAuthJwtPluginService);
     }
 
     const baseModule = super.forRoot(resolvedOptions);

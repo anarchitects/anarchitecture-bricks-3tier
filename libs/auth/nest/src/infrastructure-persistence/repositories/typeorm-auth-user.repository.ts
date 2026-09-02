@@ -45,7 +45,7 @@ export class TypeormAuthUserRepository implements AuthUserRepository {
 
     const authUser = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['roles'],
+      relations: { roles: true },
     });
     if (!authUser) {
       throw new NotFoundException(`User with id #${userId} not found`);

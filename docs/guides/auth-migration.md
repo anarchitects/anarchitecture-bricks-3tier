@@ -75,6 +75,58 @@ Core auth persistence is now split like this:
 
 Do not assume password state lives on `users`. The credential account row is the canonical password source.
 
+### Better Auth 1.7 and TypeORM 1.1 persistence upgrade
+
+This is a breaking persistence upgrade. Consumers must use:
+
+- Node.js `^20.19.0 || ^22.13.0 || >=24.11.0`
+- Better Auth and `@better-auth/passkey` `~1.7.2`
+- `@anarchitects/better-auth-typeorm-adapter` `0.2.0`
+- TypeORM `^1.1.0` and `@nestjs/typeorm` `^11.0.1`
+
+Better Auth 1.7 derives provider-ID identities through its built-in issuer
+strategy. Credential accounts use `local:credential`; OAuth accounts without a
+trusted issuer use `local:oauth:${encodeURIComponent(providerId)}`. Better Auth
+1.7.2 does not expose an `account.identityStrategy` configuration property, so
+hosts must not add that unsupported option.
+
+Apply `AddBetterAuthAccountIssuer1788275931000` after the previously published
+core auth schema migration and before starting application instances running
+Better Auth 1.7. The migration adds and backfills `auth.accounts.issuer`, rejects
+invalid or colliding legacy identities, replaces uniqueness on
+`(providerId, accountId)` with `(issuer, accountId)`, and finally makes `issuer`
+required. Existing schema migrations are intentionally not rewritten.
+
+Plan a maintenance window for the database change:
+
+1. Stop auth writes and take a verified database backup.
+2. Check that every account has a non-empty `providerId` and that the derived
+   `(issuer, accountId)` pairs are unique.
+3. Upgrade Node, Better Auth, the adapter, TypeORM, and Nest TypeORM together.
+4. Apply core auth migrations in order, then passkey and other plugin migrations.
+5. Deploy the application only after the migration succeeds and verify register,
+   login, session, logout, passkey initialization, and JWT persistence.
+
+The rollback is guarded: it refuses to restore the old uniqueness rule if
+duplicate `(providerId, accountId)` rows exist. If rollback is required, stop
+writes, restore application packages first, run the guarded migration rollback,
+and restore the backup if its preconditions cannot be met.
+
+TypeORM 1 no longer accepts the legacy nested string relation syntax used by
+older repository calls; use relation objects and public `DataSource`, repository,
+query-builder, entity, and migration APIs. Audit queries that pass `null` or
+`undefined` explicitly—their filtering behavior changed—and do not rely on
+removed internal APIs.
+
+The adapter changed license from MIT to Apache-2.0 in `0.2.0`; downstream
+dependency and attribution reviews should record that change. See the official
+[Better Auth 1.7 upgrade guide](https://better-auth.com/docs/guides/1-7-upgrade-guide)
+and [TypeORM 1.0 upgrade guide](https://dev.typeorm.io/docs/releases/1.0/upgrading-from-0.3/).
+
+FitOverForty is the named downstream coordination case. Its host dependency
+upgrade must align Better Auth, the adapter, TypeORM, and Nest TypeORM, but its
+application source changes are intentionally outside this repository change.
+
 ### Config and environment changes
 
 Canonical auth config now lives under:
@@ -100,22 +152,13 @@ Legacy env aliases may still be tolerated for compatibility in some places, but 
 Core/session DTOs stay on the root DTO entrypoint:
 
 ```ts
-import {
-  LoginRequestDTO,
-  LoggedInUserInfoResponseDTO,
-  LogoutRequestDTO,
-} from '@anarchitects/auth-ts/dtos';
+import { LoginRequestDTO, LoggedInUserInfoResponseDTO, LogoutRequestDTO } from '@anarchitects/auth-ts/dtos';
 ```
 
 JWT DTOs moved to the JWT subpath:
 
 ```ts
-import {
-  JwtLogoutRequestDTO,
-  LoginResponseDTO,
-  RefreshTokenRequestDTO,
-  RefreshTokenResponseDTO,
-} from '@anarchitects/auth-ts/dtos/jwt';
+import { JwtLogoutRequestDTO, LoginResponseDTO, RefreshTokenRequestDTO, RefreshTokenResponseDTO } from '@anarchitects/auth-ts/dtos/jwt';
 ```
 
 Do not import JWT DTOs from `@anarchitects/auth-ts/dtos`.
@@ -166,6 +209,8 @@ Use this checklist when updating consumers or example apps:
 7. Treat `/auth/jwt/*` as optional plugin routes only.
 8. Use canonical `AUTH_BETTER_AUTH_*` and `AUTH_PLUGIN_*` env vars.
 9. Stop documenting or expecting multiple built-in auth engines.
+10. Upgrade the Better Auth/adapter/TypeORM stack together and apply
+    `AddBetterAuthAccountIssuer1788275931000` before restarting auth writes.
 
 ## Defaults And Assumptions
 

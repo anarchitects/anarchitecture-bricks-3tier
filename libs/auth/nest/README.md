@@ -110,12 +110,12 @@ Prefer symbol imports from `@anarchitects/auth-nest/infrastructure-persistence` 
 Recommended:
 
 ```ts
-import { AccountEntity, AuthUserEntity, CreateAuthSchema1720200000000, PermissionEntity, RoleEntity, SessionEntity, VerificationEntity } from '@anarchitects/auth-nest/infrastructure-persistence';
+import { AccountEntity, AddBetterAuthAccountIssuer1788275931000, AuthUserEntity, CreateAuthSchema1720200000000, PermissionEntity, RoleEntity, SessionEntity, VerificationEntity } from '@anarchitects/auth-nest/infrastructure-persistence';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  migrations: [CreateAuthSchema1720200000000],
+  migrations: [CreateAuthSchema1720200000000, AddBetterAuthAccountIssuer1788275931000],
   entities: [AccountEntity, AuthUserEntity, PermissionEntity, RoleEntity, SessionEntity, VerificationEntity],
 });
 ```
@@ -131,7 +131,14 @@ export const AppDataSource = new DataSource({
 });
 ```
 
-Use the symbol-based approach for production apps and reusable templates. Keep plugin-specific migrations with their owning plugin modules; the `infrastructure-persistence` entry point only exposes the core auth schema migration.
+Use the symbol-based approach for production apps and reusable templates. Keep plugin-specific migrations with their owning plugin modules. The `infrastructure-persistence` entry point exposes the core auth schema migration and the ordered Better Auth 1.7 account-issuer migration.
+
+The Better Auth 1.7 and TypeORM 1.1 line requires Node.js
+`^20.19.0 || ^22.13.0 || >=24.11.0`, Better Auth `~1.7.2`,
+`@anarchitects/better-auth-typeorm-adapter@0.2.0`, TypeORM `^1.1.0`, and
+`@nestjs/typeorm@^11.0.1`. Read the [auth migration guide](../../../docs/guides/auth-migration.md)
+before upgrading a populated database. The adapter's `0.2.0` license is
+Apache-2.0 rather than MIT.
 
 ## AuthUser migration and compatibility
 

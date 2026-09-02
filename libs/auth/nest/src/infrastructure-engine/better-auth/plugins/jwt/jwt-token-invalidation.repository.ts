@@ -5,6 +5,7 @@ export abstract class JwtTokenInvalidationRepository {
   abstract invalidateTokens(
     tokens: string[],
     userId: string | null,
+    expiresAt: Date,
   ): Promise<void>;
 
   abstract isTokenInvalidated(tokenId: string): Promise<boolean>;

@@ -31,14 +31,21 @@ describe('TypeormJwtTokenInvalidationRepository', () => {
   });
 
   it('invalidates token hashes', async () => {
-    mockInvalidatedTokenRepository.create.mockImplementation((entity) => entity);
+    mockInvalidatedTokenRepository.create.mockImplementation(
+      (entity) => entity,
+    );
+    const expiresAt = new Date('2026-09-01T18:00:00.000Z');
 
-    await repository.invalidateTokens(['token-1', 'token-2'], 'user-id');
+    await repository.invalidateTokens(
+      ['token-1', 'token-2'],
+      'user-id',
+      expiresAt,
+    );
 
     expect(mockInvalidatedTokenRepository.create).toHaveBeenCalledTimes(2);
     expect(mockInvalidatedTokenRepository.save).toHaveBeenCalledWith([
-      { tokenId: 'token-1', userId: 'user-id' },
-      { tokenId: 'token-2', userId: 'user-id' },
+      { tokenId: 'token-1', userId: 'user-id', expiresAt },
+      { tokenId: 'token-2', userId: 'user-id', expiresAt },
     ]);
   });
 
@@ -53,8 +60,6 @@ describe('TypeormJwtTokenInvalidationRepository', () => {
   it('returns false when a token hash is not invalidated', async () => {
     mockInvalidatedTokenRepository.findOne.mockResolvedValueOnce(null);
 
-    await expect(repository.isTokenInvalidated('token-2')).resolves.toBe(
-      false,
-    );
+    await expect(repository.isTokenInvalidated('token-2')).resolves.toBe(false);
   });
 });

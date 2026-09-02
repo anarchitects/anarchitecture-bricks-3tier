@@ -9,6 +9,7 @@ describe('TypeormAuthAccountRepository', () => {
   const existingAccount = Object.assign(new AccountEntity(), {
     id: 'user-id-credential',
     accountId: 'user-id',
+    issuer: 'local:credential',
     providerId: 'credential',
     userId: 'user-id',
     accessToken: null,
@@ -62,6 +63,7 @@ describe('TypeormAuthAccountRepository', () => {
     expect(mockAccountRepository.findOne).toHaveBeenCalledWith({
       where: {
         accountId: 'user-id',
+        issuer: 'local:credential',
         providerId: 'credential',
       },
     });
@@ -95,6 +97,7 @@ describe('TypeormAuthAccountRepository', () => {
       expect.objectContaining({
         id: 'user-id-credential',
         accountId: 'user-id',
+        issuer: 'local:credential',
         providerId: 'credential',
         userId: 'user-id',
         password: 'hashed-password',

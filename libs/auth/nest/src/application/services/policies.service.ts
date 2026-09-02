@@ -23,7 +23,7 @@ export class PoliciesService {
   async rulesForAuthUser(authUser: AuthUser): Promise<PolicyRule[]> {
     const loadedAuthUser = await this.authUserRepository.findOne({
       where: { id: authUser.id },
-      relations: ['roles', 'roles.permissions'],
+      relations: { roles: { permissions: true } },
     });
     if (!loadedAuthUser) {
       return [];

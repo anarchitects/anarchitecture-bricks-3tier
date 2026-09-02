@@ -82,7 +82,7 @@ describe('BetterAuthTypeormDatabaseAdapter', () => {
   });
 
   it('creates the external adapter with the expected core model map', async () => {
-    const dataSource = { name: 'test-data-source' } as DataSource;
+    const dataSource = { name: 'test-data-source' } as unknown as DataSource;
     const adapter = new BetterAuthTypeormDatabaseAdapter(
       baseOptions,
       dataSource,
@@ -107,7 +107,7 @@ describe('BetterAuthTypeormDatabaseAdapter', () => {
   });
 
   it('adds the passkeys model when the passkeys plugin is enabled', async () => {
-    const dataSource = { name: 'test-data-source' } as DataSource;
+    const dataSource = { name: 'test-data-source' } as unknown as DataSource;
     const adapter = new BetterAuthTypeormDatabaseAdapter(
       {
         ...baseOptions,

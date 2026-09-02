@@ -26,6 +26,10 @@ yarn add @anarchitects/identity-nest
 pnpm add @anarchitects/identity-nest
 ```
 
+The TypeORM 1 package line requires Node.js
+`^20.19.0 || ^22.13.0 || >=24.11.0`, `@nestjs/typeorm@^11.0.1`, and
+`typeorm@^1.1.0`.
+
 ## Exports
 
 | Import path                                              | Description                                                             |

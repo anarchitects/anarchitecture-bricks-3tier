@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, rm, symlink } from 'node:fs/promises';
+import { access, mkdir, rm, symlink } from 'node:fs/promises';
 import path from 'node:path';
 import Module, { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +10,7 @@ import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Client } from 'pg';
 import { GenericContainer, Wait } from 'testcontainers';
+import { DataSource } from 'typeorm';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,6 +65,35 @@ async function main() {
       '1720200000000-create-auth-schema.js',
     ),
   );
+  const { AddBetterAuthAccountIssuer1788275931000 } = require(
+    path.join(
+      workspaceRoot,
+      'dist',
+      'libs',
+      'auth',
+      'nest',
+      'src',
+      'infrastructure-persistence',
+      'migrations',
+      '1788275931000-add-better-auth-account-issuer.js',
+    ),
+  );
+  const { CreateBetterAuthPasskeysTable1760200001000 } = require(
+    path.join(
+      workspaceRoot,
+      'dist',
+      'libs',
+      'auth',
+      'nest',
+      'src',
+      'infrastructure-engine',
+      'better-auth',
+      'plugins',
+      'passkeys',
+      'migrations',
+      '1760200001000-create-better-auth-passkeys-table.js',
+    ),
+  );
 
   const adapterModule = await loadBetterAuthTypeormAdapterModule();
   assert.equal(
@@ -109,7 +139,11 @@ async function main() {
           autoLoadEntities: true,
           synchronize: false,
           migrationsRun: true,
-          migrations: [CreateAuthSchema1720200000000],
+          migrations: [
+            CreateAuthSchema1720200000000,
+            CreateBetterAuthPasskeysTable1760200001000,
+            AddBetterAuthAccountIssuer1788275931000,
+          ],
         }),
         AuthModule.forRoot({
           presentation: {
@@ -125,6 +159,21 @@ async function main() {
               encryption: {
                 algorithm: 'bcrypt',
                 key: 'integration-test-encryption-key',
+              },
+              plugins: {
+                jwt: {
+                  enabled: true,
+                  secret: 'integration-test-jwt-secret-32',
+                  expiration: '3600s',
+                  audience: 'integration-test',
+                  issuer: 'integration-test',
+                },
+                passkeys: {
+                  enabled: true,
+                  rpID: 'localhost',
+                  rpName: 'Anarchitects Integration Test',
+                  origin: 'http://localhost:3000',
+                },
               },
             },
           },
@@ -159,6 +208,19 @@ async function main() {
     );
     assert.deepEqual(registerResponse.json(), { success: true });
 
+    const dataSource = app.get(DataSource);
+    const accountRows = await dataSource.query(
+      `SELECT "issuer", "providerId" FROM "auth"."accounts"`,
+    );
+    assert.deepEqual(accountRows, [
+      { issuer: 'local:credential', providerId: 'credential' },
+    ]);
+
+    const passkeysTable = await dataSource.query(
+      `SELECT to_regclass('auth.passkeys') AS "tableName"`,
+    );
+    assert.equal(passkeysTable[0]?.tableName, 'auth.passkeys');
+
     const loginResponse = await app.inject({
       method: 'POST',
       url: '/auth/login',
@@ -192,6 +254,55 @@ async function main() {
     assert.equal(meBody.user.id, loginBody.user.id);
     assert.equal(meBody.user.email, 'integration@example.com');
     assert.ok(Array.isArray(meBody.rbac));
+
+    const jwtLoginResponse = await app.inject({
+      method: 'POST',
+      url: '/auth/jwt/login',
+      payload: {
+        credential: 'integration@example.com',
+        password: 'Password123!',
+      },
+    });
+    assertStatus(
+      jwtLoginResponse.statusCode,
+      200,
+      'JWT login',
+      jwtLoginResponse.body,
+    );
+    const jwtLoginBody = jwtLoginResponse.json();
+    assert.equal(typeof jwtLoginBody.accessToken, 'string');
+    assert.equal(typeof jwtLoginBody.refreshToken, 'string');
+
+    const jwtRefreshResponse = await app.inject({
+      method: 'POST',
+      url: '/auth/jwt/refresh',
+      payload: { refreshToken: jwtLoginBody.refreshToken },
+    });
+    assertStatus(
+      jwtRefreshResponse.statusCode,
+      200,
+      'JWT refresh',
+      jwtRefreshResponse.body,
+    );
+    const jwtRefreshBody = jwtRefreshResponse.json();
+    assert.equal(typeof jwtRefreshBody.accessToken, 'string');
+    assert.equal(typeof jwtRefreshBody.refreshToken, 'string');
+
+    const jwtLogoutResponse = await app.inject({
+      method: 'POST',
+      url: '/auth/jwt/logout',
+      payload: {
+        accessToken: jwtRefreshBody.accessToken,
+        refreshToken: jwtRefreshBody.refreshToken,
+      },
+    });
+    assertStatus(
+      jwtLogoutResponse.statusCode,
+      200,
+      'JWT logout',
+      jwtLogoutResponse.body,
+    );
+    assert.deepEqual(jwtLogoutResponse.json(), { success: true });
 
     const logoutResponse = await app.inject({
       method: 'POST',
@@ -266,6 +377,7 @@ async function prepareWorkspacePackageLinks() {
   ];
 
   for (const link of links) {
+    await access(path.join(link.target, 'package.json'));
     await symlink(
       link.target,
       path.join(nodeModulesRoot, link.name),

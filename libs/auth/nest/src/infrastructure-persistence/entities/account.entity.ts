@@ -12,7 +12,7 @@ import { AUTH_SCHEMA } from '../schema';
 
 @Entity({ schema: AUTH_SCHEMA, name: 'accounts' })
 @Index('IDX_auth_accounts_userId', ['userId'])
-@Index('UQ_auth_accounts_provider_account', ['providerId', 'accountId'], {
+@Index('UQ_auth_accounts_issuer_account', ['issuer', 'accountId'], {
   unique: true,
 })
 export class AccountEntity {
@@ -21,6 +21,9 @@ export class AccountEntity {
 
   @Column({ type: 'varchar', length: 255 })
   accountId!: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  issuer!: string;
 
   @Column({ type: 'varchar', length: 255 })
   providerId!: string;

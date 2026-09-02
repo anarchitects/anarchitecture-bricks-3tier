@@ -36,6 +36,30 @@
         "command": "node tools/release/validate-angular-package-compatibility.mjs --dist"
       }
     },
+    "validate-typeorm-package-compatibility": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        { "projects": "auth-nest", "target": "build" },
+        { "projects": "forms-nest", "target": "build" },
+        { "projects": "identity-nest", "target": "build" }
+      ],
+      "options": {
+        "command": "node tools/release/validate-typeorm-package-compatibility.mjs"
+      }
+    },
+    "test-typeorm-persistence": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        { "projects": "auth-nest", "target": "build" },
+        { "projects": "forms-nest", "target": "build" },
+        { "projects": "identity-nest", "target": "build" }
+      ],
+      "cache": true,
+      "parallelism": false,
+      "options": {
+        "command": "node tools/testing/run-typeorm-v1-persistence-smoke.mjs"
+      }
+    },
     "verify-domain-boundaries": {
       "executor": "nx:run-commands",
       "options": {

@@ -82,6 +82,9 @@ describe('AuthApplicationModule', () => {
     expect(moduleMetadata.providers).toEqual(
       expect.arrayContaining([BetterAuthJwtPluginService]),
     );
+    expect(moduleMetadata.exports).toEqual(
+      expect.arrayContaining([BetterAuthJwtPluginService]),
+    );
   });
 
   it('keeps jwt and passkey plugin wiring out of the core application module by default', () => {
@@ -94,6 +97,9 @@ describe('AuthApplicationModule', () => {
       ]),
     );
     expect(moduleMetadata.providers).not.toEqual(
+      expect.arrayContaining([BetterAuthJwtPluginService]),
+    );
+    expect(moduleMetadata.exports).not.toEqual(
       expect.arrayContaining([BetterAuthJwtPluginService]),
     );
   });

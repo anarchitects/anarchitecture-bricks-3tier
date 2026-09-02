@@ -13,7 +13,18 @@ export default [
             '{projectRoot}/tsconfig.integration.json',
             '{projectRoot}/src/integration/**/*',
           ],
-          ignoredDependencies: ['@opentelemetry/api'],
+          // Runtime peers required by Better Auth's passkey plugin are declared
+          // here so package-manager peer resolution also works for consumers.
+          ignoredDependencies: [
+            '@better-auth/core',
+            '@better-auth/utils',
+            '@better-fetch/fetch',
+            '@opentelemetry/api',
+            'better-call',
+            'jose',
+            'kysely',
+            'nanostores',
+          ],
         },
       ],
     },
