@@ -60,7 +60,7 @@ export class BetterAuthJwtPluginService {
         throw new BadRequestException('Invalid refresh token');
       });
 
-    if (!payload?.sub) {
+    if (!payload?.sub || typeof payload.exp !== 'number') {
       throw new BadRequestException('Invalid refresh token');
     }
 
@@ -81,6 +81,7 @@ export class BetterAuthJwtPluginService {
     await this.jwtTokenInvalidationRepository.invalidateTokens(
       tokenHashes,
       authUser.id,
+      new Date(payload.exp * 1_000),
     );
 
     return { success: true };

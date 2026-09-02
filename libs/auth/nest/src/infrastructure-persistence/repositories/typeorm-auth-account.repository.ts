@@ -8,6 +8,7 @@ import {
 import { AccountEntity } from '../entities/account.entity';
 
 const CREDENTIAL_PROVIDER_ID = 'credential' as const;
+const CREDENTIAL_ISSUER = 'local:credential';
 
 @Injectable()
 export class TypeormAuthAccountRepository implements AuthAccountRepository {
@@ -23,6 +24,7 @@ export class TypeormAuthAccountRepository implements AuthAccountRepository {
       where: {
         accountId: userId,
         providerId: CREDENTIAL_PROVIDER_ID,
+        issuer: CREDENTIAL_ISSUER,
       },
     });
 
@@ -39,6 +41,7 @@ export class TypeormAuthAccountRepository implements AuthAccountRepository {
       where: {
         accountId: input.userId,
         providerId: CREDENTIAL_PROVIDER_ID,
+        issuer: CREDENTIAL_ISSUER,
       },
     });
 
@@ -51,6 +54,7 @@ export class TypeormAuthAccountRepository implements AuthAccountRepository {
           id: `${input.userId}-${CREDENTIAL_PROVIDER_ID}`,
           accountId: input.userId,
           providerId: CREDENTIAL_PROVIDER_ID,
+          issuer: CREDENTIAL_ISSUER,
           userId: input.userId,
           password: input.passwordHash,
           createdAt: input.createdAt ?? new Date(),

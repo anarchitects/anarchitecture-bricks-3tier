@@ -112,7 +112,10 @@ describe('BetterAuthJwtPluginService', () => {
   });
 
   it('invalidates token hashes on logout through the JWT invalidation repository', async () => {
-    mockJwtService.verifyAsync.mockResolvedValueOnce({ sub: 'user-id' });
+    mockJwtService.verifyAsync.mockResolvedValueOnce({
+      sub: 'user-id',
+      exp: 1_788_307_200,
+    });
     mockAuthUserRepository.findOne.mockResolvedValueOnce({
       id: 'user-id',
       roles: [],
@@ -133,6 +136,7 @@ describe('BetterAuthJwtPluginService', () => {
     ).toHaveBeenCalledWith(
       ['hashed-access-token', 'hashed-refresh-token'],
       'user-id',
+      new Date('2026-09-02T00:00:00.000Z'),
     );
   });
 

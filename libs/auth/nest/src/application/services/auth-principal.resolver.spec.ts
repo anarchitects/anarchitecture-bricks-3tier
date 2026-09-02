@@ -57,7 +57,7 @@ describe('AuthPrincipalResolver', () => {
     expect(mockAuthEnginePort.getSession).toHaveBeenCalledWith(headers);
     expect(mockAuthUserRepository.findOne).toHaveBeenCalledWith({
       where: { id: 'user-1' },
-      relations: ['roles', 'roles.permissions'],
+      relations: { roles: { permissions: true } },
     });
   });
 

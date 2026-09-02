@@ -16,11 +16,13 @@ export class TypeormJwtTokenInvalidationRepository
   async invalidateTokens(
     tokens: string[],
     userId: string | null,
+    expiresAt: Date,
   ): Promise<void> {
     const invalidatedTokens = tokens.map((token) =>
       this.invalidatedTokenRepository.create({
         tokenId: token,
         userId,
+        expiresAt,
       }),
     );
     await this.invalidatedTokenRepository.save(invalidatedTokens);

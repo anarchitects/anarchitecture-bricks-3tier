@@ -3,7 +3,7 @@ import { TypeOrmSubmissionsRepository } from './typeorm-submissions.repository';
 import { faker } from '@faker-js/faker';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SubmissionEntity } from '../entities/submission.entity';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('SubmissionsRepository', () => {
   let provider: TypeOrmSubmissionsRepository;
@@ -37,7 +37,7 @@ describe('SubmissionsRepository', () => {
       .compile();
 
     provider = module.get<TypeOrmSubmissionsRepository>(
-      TypeOrmSubmissionsRepository
+      TypeOrmSubmissionsRepository,
     );
   });
 
@@ -65,6 +65,14 @@ describe('SubmissionsRepository', () => {
         expect(error).toBeInstanceOf(NotFoundException);
       }
     });
+    it.each([undefined, {}, { id: undefined }])(
+      'should reject unsafe TypeORM filters: %p',
+      async (options) => {
+        await expect(provider.getSubmission(options)).rejects.toBeInstanceOf(
+          BadRequestException,
+        );
+      },
+    );
   });
   describe('createSubmission', () => {
     it('should create and return a submission', async () => {

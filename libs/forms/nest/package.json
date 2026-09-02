@@ -2,14 +2,17 @@
   "name": "@anarchitects/forms-nest",
   "version": "0.6.0",
   "type": "commonjs",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24.11.0"
+  },
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/platform-fastify": "^11.1.6",
-    "@nestjs/typeorm": "^11.0.0",
-    "typeorm": "^0.3.27"
+    "@nestjs/typeorm": "^11.0.1",
+    "typeorm": "^1.1.0"
   },
   "dependencies": {
     "@anarchitects/common-nest-mailer": "^0.3.2",

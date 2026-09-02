@@ -56,7 +56,7 @@ export class AuthPrincipalResolver {
     try {
       return await this.authUserRepository.findOne({
         where: { id: userId },
-        relations: ['roles', 'roles.permissions'],
+        relations: { roles: { permissions: true } },
       });
     } catch (error) {
       if (error instanceof NotFoundException) {

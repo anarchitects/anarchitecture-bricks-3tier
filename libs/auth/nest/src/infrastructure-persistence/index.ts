@@ -9,6 +9,7 @@ export * from './entities/verification.entity';
 
 // Migrations
 export * from './migrations/1720200000000-create-auth-schema';
+export * from './migrations/1788275931000-add-better-auth-account-issuer';
 
 // Repositories & Ports
 export * from '../application/ports/auth-account.repository';
