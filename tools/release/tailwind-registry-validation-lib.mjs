@@ -10,7 +10,7 @@ export const LEGACY_COMMON_ANGULAR_PACKAGES = [
 ];
 
 export async function fetchRegistryPackument(packageName) {
-  const registryName = packageName.replace('/', '%2f');
+  const registryName = encodeURIComponent(packageName);
   const response = await fetch(`https://registry.npmjs.org/${registryName}`, {
     headers: { accept: 'application/json' },
   });

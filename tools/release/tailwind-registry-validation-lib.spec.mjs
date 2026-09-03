@@ -4,12 +4,13 @@ import test from 'node:test';
 import {
   TAILWIND_PACKAGE,
   TAILWIND_PROVENANCE_PREDICATE,
+  fetchRegistryPackument,
   validateLegacyPackageRegistryMetadata,
   validateTailwindRegistryMetadata,
   waitForPublishedVersion,
 } from './tailwind-registry-validation-lib.mjs';
 
-function createTailwindPackument(version = '0.1.0') {
+function createTailwindPackument(version = '0.0.1') {
   return {
     name: TAILWIND_PACKAGE,
     versions: {
@@ -28,7 +29,7 @@ function createTailwindPackument(version = '0.1.0') {
         publishConfig: { access: 'public' },
         dist: {
           tarball:
-            'https://registry.npmjs.org/@anarchitects/tailwind/-/tailwind-0.1.0.tgz',
+            'https://registry.npmjs.org/@anarchitects/tailwind/-/tailwind-0.0.1.tgz',
           integrity: 'sha512-example',
           shasum: '0123456789abcdef0123456789abcdef01234567',
           signatures: [{ keyid: 'key', sig: 'signature' }],
@@ -42,21 +43,43 @@ function createTailwindPackument(version = '0.1.0') {
   };
 }
 
+test('encodes the complete scoped package name in registry requests', async (t) => {
+  const originalFetch = globalThis.fetch;
+  let requestedUrl;
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+  globalThis.fetch = async (url) => {
+    requestedUrl = url;
+    return {
+      ok: true,
+      json: async () => ({ name: TAILWIND_PACKAGE }),
+    };
+  };
+
+  await fetchRegistryPackument(TAILWIND_PACKAGE);
+
+  assert.equal(
+    requestedUrl,
+    'https://registry.npmjs.org/%40anarchitects%2Ftailwind',
+  );
+});
+
 test('validates the initial Tailwind registry contract and provenance', () => {
   const metadata = validateTailwindRegistryMetadata(
     createTailwindPackument(),
-    '0.1.0',
+    '0.0.1',
   );
 
-  assert.equal(metadata.version, '0.1.0');
+  assert.equal(metadata.version, '0.0.1');
 });
 
 test('rejects a Tailwind release without Trusted Publisher provenance', () => {
   const packument = createTailwindPackument();
-  delete packument.versions['0.1.0'].dist.attestations;
+  delete packument.versions['0.0.1'].dist.attestations;
 
   assert.throws(
-    () => validateTailwindRegistryMetadata(packument, '0.1.0'),
+    () => validateTailwindRegistryMetadata(packument, '0.0.1'),
     /Trusted Publisher provenance/,
   );
 });
@@ -86,7 +109,7 @@ test('waits for the selected version to become visible', async () => {
   const packument = createTailwindPackument();
   const result = await waitForPublishedVersion({
     packageName: TAILWIND_PACKAGE,
-    version: '0.1.0',
+    version: '0.0.1',
     attempts: 2,
     delayMs: 0,
     sleep: async () => undefined,
@@ -105,12 +128,12 @@ test('waits for the selected version to become visible', async () => {
 test('waits for provenance metadata to become visible', async () => {
   let attempts = 0;
   const incomplete = createTailwindPackument();
-  delete incomplete.versions['0.1.0'].dist.attestations;
+  delete incomplete.versions['0.0.1'].dist.attestations;
   const complete = createTailwindPackument();
 
   const result = await waitForPublishedVersion({
     packageName: TAILWIND_PACKAGE,
-    version: '0.1.0',
+    version: '0.0.1',
     attempts: 2,
     delayMs: 0,
     sleep: async () => undefined,
@@ -119,7 +142,7 @@ test('waits for provenance metadata to become visible', async () => {
       return attempts === 1 ? incomplete : complete;
     },
     validatePackument: (packument) =>
-      validateTailwindRegistryMetadata(packument, '0.1.0'),
+      validateTailwindRegistryMetadata(packument, '0.0.1'),
   });
 
   assert.equal(result, complete);
