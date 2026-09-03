@@ -1,53 +1,39 @@
-<anarchitects-ui-layout-host
-  [kind]="'list'"
-  [layout]="layout()"
-  [model]="layoutModel()"
-  [layoutOptions]="layoutOptions()"
->
-  <ng-content select="ng-template[anxTemplate]"></ng-content>
+<section class="anx-forms-ui-submission-list__surface anx-stack">
   <ng-content select="[anxSlot]"></ng-content>
+  <h2>{{ title() }}</h2>
 
-  <ng-template anxTemplate="item" let-submission>
-    <article class="anx-forms-ui-submission-list__item anx-stack">
-      <header class="anx-forms-ui-submission-list__header anx-inline">
+  <div class="anx-forms-ui-submission-list__items">
+    @for (submission of submissions(); track submission.id) { @if (
+    template(layoutVariant() === 'table' ? 'cell' : 'item'); as customTemplate )
+    {
+    <ng-container
+      [ngTemplateOutlet]="customTemplate"
+      [ngTemplateOutletContext]="{ $implicit: submission }"
+    />
+    } @else {
+    <article class="anx-forms-ui-submission-list__item anx-stack anx-surface">
+      <header class="anx-forms-ui-submission-list__header anx-cluster">
         <strong>{{ submission.formId }}</strong>
-        <anarchitects-ui-badge [tone]="'neutral'" [appearance]="'outline'">
+        <span class="anx-forms-ui-submission-list__badge">
           v{{ submission.formVersion }}
-        </anarchitects-ui-badge>
+        </span>
       </header>
 
-      <p class="anx-forms-ui-submission-list__meta anx-text">
-        Submitted {{ formatDate(submission.createdAt) }}
-      </p>
+      <p>Submitted {{ formatDate(submission.createdAt) }}</p>
+      <p>{{ payloadFieldCount(submission) }} payload field(s)</p>
 
-      <p class="anx-forms-ui-submission-list__payload anx-text">
-        {{ payloadFieldCount(submission) }} payload field(s)
-      </p>
-
-      <div class="anx-forms-ui-submission-list__actions anx-inline">
-        <anarchitects-ui-button
-          [size]="'sm'"
-          [appearance]="'outline'"
-          (pressed)="onSelect(submission)"
+      <div class="anx-forms-ui-submission-list__actions anx-cluster">
+        <button
+          class="anx-forms-ui-submission-list__button anx-control"
+          type="button"
+          (click)="onSelect(submission)"
         >
           View details
-        </anarchitects-ui-button>
+        </button>
       </div>
     </article>
-  </ng-template>
-
-  <ng-template anxTemplate="cell" let-submission>
-    <div class="anx-forms-ui-submission-list__cell anx-inline">
-      <span>
-        {{ submission.formId }} (v{{ submission.formVersion }})
-      </span>
-      <anarchitects-ui-button
-        [size]="'sm'"
-        [appearance]="'ghost'"
-        (pressed)="onSelect(submission)"
-      >
-        Open
-      </anarchitects-ui-button>
-    </div>
-  </ng-template>
-</anarchitects-ui-layout-host>
+    } } @empty {
+    <p>No submissions found.</p>
+    }
+  </div>
+</section>

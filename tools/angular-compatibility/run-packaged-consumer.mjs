@@ -55,11 +55,13 @@ function run(command, args, cwd = temporaryRoot) {
 
 try {
   const localPackages = {};
+  const packageManifests = {};
   for (const relativeRoot of packageRoots) {
     const packageRoot = resolve(root, relativeRoot);
     const manifest = JSON.parse(
       readFileSync(join(packageRoot, 'package.json'), 'utf8'),
     );
+    packageManifests[manifest.name] = manifest;
     const angularPeer = manifest.peerDependencies?.['@angular/core'];
     const claimsMajor = !angularPeer || angularPeer.includes(`^${major}.`);
     console.log(
@@ -96,6 +98,13 @@ try {
 
   const angularVersion = major === '21' ? '21.2.4' : '22.0.8';
   const buildVersion = major === '21' ? '21.2.4' : '22.0.9';
+  const compatibleFormsDependency =
+    localPackages['@anarchitects/auth-angular'] &&
+    !localPackages['@anarchitects/forms-angular']
+      ? packageManifests['@anarchitects/auth-angular'].dependencies?.[
+          '@anarchitects/forms-angular'
+        ]
+      : null;
   const packageJson = {
     name: `anarchitects-angular-${major}-consumer`,
     private: true,
@@ -104,6 +113,9 @@ try {
     },
     dependencies: {
       ...localPackages,
+      ...(compatibleFormsDependency
+        ? { '@anarchitects/forms-angular': compatibleFormsDependency }
+        : {}),
       ...(tailwindRegistryVersion
         ? { '@anarchitects/tailwind': tailwindRegistryVersion }
         : {}),

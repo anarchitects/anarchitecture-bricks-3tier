@@ -1,7 +1,7 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
 import { Submission } from '@anarchitects/forms-ts/models';
 import { AnarchitectsFormsUiSubmissionDetail } from './submission-detail';
+import { AnarchitectsFormsTemplateDirective } from './projection';
 
 const sampleSubmission: Submission = {
   id: 'submission-1',
@@ -21,7 +21,7 @@ const meta: Meta<AnarchitectsFormsUiSubmissionDetail> = {
   title: 'Forms UI/Submission Detail',
   decorators: [
     moduleMetadata({
-      imports: [AnxTemplateDirective],
+      imports: [AnarchitectsFormsTemplateDirective],
     }),
   ],
 };

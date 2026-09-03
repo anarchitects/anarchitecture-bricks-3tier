@@ -1,35 +1,35 @@
-<anarchitects-ui-layout-host
-  [kind]="'detail'"
-  [layout]="layout()"
-  [model]="layoutModel()"
-  [layoutOptions]="layoutOptions()"
->
-  <ng-content select="ng-template[anxTemplate]"></ng-content>
+<section class="anx-forms-ui-submission-detail__surface anx-stack">
   <ng-content select="[anxSlot]"></ng-content>
+  <h2>{{ title() }}</h2>
 
-  <ng-template anxTemplate="content" let-model>
-    @if (model.data; as submission) {
-      <article class="anx-forms-ui-submission-detail__content anx-stack">
-        <header class="anx-forms-ui-submission-detail__header anx-stack">
-          <strong>{{ submission.formId }} (v{{ submission.formVersion }})</strong>
-          <span class="anx-text">
-            Submitted {{ formatDate(submission.createdAt) }}
-          </span>
-        </header>
+  @if (template('content'); as customTemplate) {
+  <ng-container
+    [ngTemplateOutlet]="customTemplate"
+    [ngTemplateOutletContext]="{ $implicit: layoutModel() }"
+  />
+  } @else if (submission(); as selectedSubmission) {
+  <article
+    class="anx-forms-ui-submission-detail__content anx-stack anx-surface"
+  >
+    <header class="anx-forms-ui-submission-detail__header anx-stack">
+      <strong>
+        {{ selectedSubmission.formId }} (v{{ selectedSubmission.formVersion }})
+      </strong>
+      <span>Submitted {{ formatDate(selectedSubmission.createdAt) }}</span>
+    </header>
 
-        <dl class="anx-forms-ui-submission-detail__payload anx-stack">
-          @for (entry of payloadEntries(submission); track entry.key) {
-            <div class="anx-forms-ui-submission-detail__row anx-grid">
-              <dt>{{ entry.key }}</dt>
-              <dd>{{ entry.value }}</dd>
-            </div>
-          }
-        </dl>
-      </article>
-    } @else {
-      <anarchitects-ui-alert [tone]="'neutral'" [appearance]="'ghost'">
-        Select a submission to view details.
-      </anarchitects-ui-alert>
-    }
-  </ng-template>
-</anarchitects-ui-layout-host>
+    <dl class="anx-forms-ui-submission-detail__payload anx-stack">
+      @for (entry of payloadEntries(selectedSubmission); track entry.key) {
+      <div class="anx-forms-ui-submission-detail__row">
+        <dt>{{ entry.key }}</dt>
+        <dd>{{ entry.value }}</dd>
+      </div>
+      }
+    </dl>
+  </article>
+  } @else {
+  <p class="anx-forms-ui-submission-detail__empty" role="status">
+    Select a submission to view details.
+  </p>
+  }
+</section>

@@ -1,18 +1,23 @@
-import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
 import { FormConfig } from '@anarchitects/forms-ts';
-import { ValidatorFn } from '@angular/forms';
+import { SchemaPath, validate } from '@angular/forms/signals';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { expect, userEvent, waitFor } from 'storybook/test';
-import { AnarchitectsUiForm } from './form';
+import { AnarchitectsUiForm, FormsSchemaExtension } from './form';
+import {
+  AnarchitectsFormsSlotDirective,
+  AnarchitectsFormsTemplateDirective,
+} from './projection';
 
 const meta: Meta<AnarchitectsUiForm> = {
   component: AnarchitectsUiForm,
   title: 'Forms UI/Form',
   decorators: [
     moduleMetadata({
-      imports: [AnxTemplateDirective, AnxSlotDirective],
+      imports: [
+        AnarchitectsFormsTemplateDirective,
+        AnarchitectsFormsSlotDirective,
+      ],
     }),
   ],
 };
@@ -97,10 +102,13 @@ const passwordValidationConfig: FormConfig = {
   ],
 };
 
-const blockedEmailValidator: ValidatorFn = (control) =>
-  control.get('email')?.value === 'blocked@example.com'
-    ? { runtimeBlocked: true }
-    : null;
+const blockedEmailSchema: FormsSchemaExtension = (path) => {
+  validate(path['email'] as SchemaPath<string>, ({ value }) =>
+    value() === 'blocked@example.com'
+      ? { kind: 'blockedEmail', message: 'This email is blocked.' }
+      : undefined,
+  );
+};
 
 export const Primary: Story = {
   args: {
@@ -322,10 +330,10 @@ export const CrossFieldValidation: Story = {
   },
 };
 
-export const RuntimeValidators: Story = {
+export const SchemaExtensions: Story = {
   args: {
     config: mockFormConfig,
-    runtimeValidators: [blockedEmailValidator],
+    schemaExtensions: [blockedEmailSchema],
   },
   play: async ({ canvas }) => {
     await userEvent.type(await canvas.findByLabelText(/name/i), 'Jane Doe');

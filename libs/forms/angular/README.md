@@ -17,6 +17,8 @@ contract-driven form definitions, render them dynamically, and submit responses.
 - Layered Angular integration for dynamic form retrieval, rendering, and submission
 - Shared DTO/model contracts aligned with generated OpenAPI clients
 - Composable secondary entry points for app-specific architecture choices
+- Angular 22 Signal Forms with contract-driven validation and host schema extensions
+- Forms-owned layout and projection contracts styled by `@anarchitects/tailwind`
 
 ## Entry points
 
@@ -36,15 +38,27 @@ Each layer can be consumed independently or as a combined stack, depending on wh
 ## Installation
 
 ```bash
-npm install @anarchitects/forms-angular @angular/common @angular/core @angular/forms @ngrx/operators @ngrx/signals rxjs
+npm install @anarchitects/forms-angular @anarchitects/tailwind @angular/common @angular/core @angular/forms @ngrx/operators @ngrx/signals rxjs
 ```
 
 Peer requirements:
 
-- `@angular/common`, `@angular/core`, `@angular/forms`
-- `@ngrx/operators`, `@ngrx/signals`, `rxjs`
+- Angular 22: `@angular/common`, `@angular/core`, and `@angular/forms`
+- NgRx 22: `@ngrx/operators` and `@ngrx/signals`
+- `@anarchitects/tailwind ^0.0.1` and RxJS 7.8
 
-The internal `@anarchitects/forms-ts` and common UI packages are installed transitively.
+Import the Tailwind foundation and tell Tailwind where your application and the
+published forms templates live:
+
+```css
+/* styles.css */
+@import '@anarchitects/tailwind';
+
+@source './app';
+@source '../node_modules/@anarchitects/forms-angular';
+```
+
+The internal `@anarchitects/forms-ts` contract package is installed transitively.
 
 ## Usage
 
@@ -68,13 +82,7 @@ import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
 @Component({
   selector: 'app-contact-form',
   imports: [AnarchitectsFeatureForm],
-  template: `
-    <anarchitects-forms-feature-form
-      [formId]="'contact_default'"
-      [formVersion]="1"
-      (submitted)="onSubmitted()"
-    />
-  `,
+  template: ` <anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" (submitted)="onSubmitted()" /> `,
 })
 export class ContactFormRoute {
   onSubmitted(): void {
@@ -85,6 +93,25 @@ export class ContactFormRoute {
 
 Behind the scenes the feature component uses the signal store to request the form definition, renders
 it with the UI layer, and posts submissions via the data-access service.
+
+### Extending validation
+
+`FormConfig.validationRules` remains the portable contract surface. For host-only
+rules, pass Signal Forms schema functions through `schemaExtensions`; the feature
+facade forwards them to the UI component.
+
+```typescript
+import { validate } from '@angular/forms/signals';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
+
+export const companyEmail: FormsSchemaExtension = (path) => {
+  validate(path['email'], ({ value }) => (value().endsWith('@example.com') ? undefined : { kind: 'companyEmail', message: 'Use your company email.' }));
+};
+```
+
+```html
+<anarchitects-forms-feature-form formId="contact_default" [schemaExtensions]="[companyEmail]" />
+```
 
 ### Batteries-Included Contact Form
 
@@ -110,9 +137,7 @@ import { AnarchitectsFeatureForm } from '@anarchitects/forms-angular/feature';
         actionAlignment: 'end',
       }"
       [pageTitle]="'Contact us'"
-      [pageCaption]="
-        'Get in touch and we will get back to you as soon as possible.'
-      "
+      [pageCaption]="'Get in touch and we will get back to you as soon as possible.'"
     />
   `,
 })
@@ -138,24 +163,12 @@ Available slot names:
 - `app-forms-caption-bottom`: render one or more caption blocks below the form
 
 ```html
-<anarchitects-forms-feature-form
-  [formId]="'contact_default'"
-  [formVersion]="1"
-  [pageTitle]="'Support request'"
->
-  <p anxSlot="app-forms-caption-top">
-    Top caption A: Product support and onboarding
-  </p>
-  <p anxSlot="app-forms-caption-top">
-    Top caption B: Billing and enterprise help
-  </p>
+<anarchitects-forms-feature-form [formId]="'contact_default'" [formVersion]="1" [pageTitle]="'Support request'">
+  <p anxSlot="app-forms-caption-top">Top caption A: Product support and onboarding</p>
+  <p anxSlot="app-forms-caption-top">Top caption B: Billing and enterprise help</p>
 
-  <p anxSlot="app-forms-caption-bottom">
-    Bottom caption A: Typical response in one business day
-  </p>
-  <p anxSlot="app-forms-caption-bottom">
-    Bottom caption B: Priority requests are triaged continuously
-  </p>
+  <p anxSlot="app-forms-caption-bottom">Bottom caption A: Typical response in one business day</p>
+  <p anxSlot="app-forms-caption-bottom">Bottom caption B: Priority requests are triaged continuously</p>
 </anarchitects-forms-feature-form>
 ```
 
@@ -174,6 +187,31 @@ You can opt into specific slices of the stack:
   for loading/error/submission status.
 - **UI** – use `AnarchitectsUiForm`, `AnarchitectsFormsUiSubmissionList`, and
   `AnarchitectsFormsUiSubmissionDetail` directly if you manage orchestration elsewhere.
+
+The advanced UI component exposes its writable `formModel` signal and generated
+`signalForm` field tree. Values start and reset to non-null defaults (`''` for text-like
+fields and `false` for booleans). Validation errors render after a field is touched or
+dirty. A successful submission emits the existing `SubmissionRequestDTO`, resets the
+field state and values, and never inserts `null` into the payload.
+
+## Migrating from the Reactive Forms release
+
+This is a breaking Angular 22-only release:
+
+- `formGroup` is replaced by `formModel` and `signalForm`.
+- `runtimeValidators: ValidatorFn[]` is replaced by
+  `schemaExtensions: FormsSchemaExtension[]`.
+- `FormGroup`, `FormBuilder`, `formControlName`, and Reactive Forms directives are no
+  longer part of the package implementation or public integration surface.
+- The forms package no longer depends on the Common Angular design, composition,
+  layout, or primitives packages. It owns its form behavior, layouts, slots, and
+  templates, while `@anarchitects/tailwind` owns the styling foundation.
+- Default controls are native semantic elements, so applications that targeted the
+  retired wrapper component DOM must update their selectors and visual snapshots.
+
+Use `AnarchitectsFormsSlotDirective` (`anxSlot`) for named content regions and
+`AnarchitectsFormsTemplateDirective` (`ng-template[anxTemplate]`) for `field` and
+`actions` template overrides. Both are exported from the root and `/ui` entry points.
 
 ## Publishing
 

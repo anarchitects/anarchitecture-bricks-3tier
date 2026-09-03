@@ -2,25 +2,45 @@
   display: block;
 }
 
+.anx-forms-ui-submission-list__surface h2,
+.anx-forms-ui-submission-list__item p {
+  margin: 0;
+}
+
+.anx-forms-ui-submission-list__items {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--anx-stack-gap, 1rem);
+}
+
+:host([data-anx-layout='grid']) .anx-forms-ui-submission-list__items,
+:host([data-anx-layout='card']) .anx-forms-ui-submission-list__items {
+  grid-template-columns: repeat(
+    var(--anx-forms-list-columns, 2),
+    minmax(0, 1fr)
+  );
+}
+
 .anx-forms-ui-submission-list__item {
-  gap: var(--anx-sys-space-sm);
+  padding: var(--anx-stack-gap, 1rem);
 }
 
 .anx-forms-ui-submission-list__header {
   justify-content: space-between;
 }
 
-.anx-forms-ui-submission-list__meta,
-.anx-forms-ui-submission-list__payload {
-  margin: 0;
+.anx-forms-ui-submission-list__badge {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--anx-color-border);
+  border-radius: 999px;
 }
 
 .anx-forms-ui-submission-list__actions {
   justify-content: flex-end;
 }
 
-.anx-forms-ui-submission-list__cell {
-  inline-size: 100%;
-  justify-content: space-between;
-  gap: var(--anx-sys-space-sm);
+.anx-forms-ui-submission-list__button {
+  padding-inline: 0.75rem;
+  background: var(--anx-color-surface);
+  cursor: pointer;
 }

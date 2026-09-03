@@ -3,6 +3,6 @@
 }
 
 p {
-  color: green;
+  color: var(--anx-color-accent);
   font-weight: bold;
 }
