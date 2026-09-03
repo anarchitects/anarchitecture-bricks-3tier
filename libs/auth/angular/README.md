@@ -21,7 +21,8 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 - `state`: signal-based store plus explicit provider helper for core session login/logout, eager session restore, and ability hydration; session user data aligns with the shared `AuthUser` contract from `@anarchitects/auth-ts`
 - `feature`: coarse route guard, resource-aware route guard, and orchestration components that delegate rendering to auth UI components
 - `util`: CASL ability helpers (`createAppAbility`, `canAccessResource`, `canAccessResourceField`, `AppAbility`)
-- `ui`: presentational auth domain form components built on `AnarchitectsUiForm`
+- `ui`: presentational Angular 22 Signal Forms components built on `AnarchitectsUiForm`
+  and styled through `@anarchitects/tailwind`
 
 ## Authorization Model
 
@@ -43,17 +44,33 @@ That mirrors the package split on the backend:
 ## Installation
 
 ```bash
-npm install @anarchitects/auth-angular @angular/common @angular/core @angular/router @ngrx/operators @ngrx/signals rxjs
+npm install @anarchitects/auth-angular @anarchitects/tailwind @angular/common @angular/core @angular/forms @angular/router @ngrx/operators @ngrx/signals rxjs
 # or
-yarn add @anarchitects/auth-angular @angular/common @angular/core @angular/router @ngrx/operators @ngrx/signals rxjs
+yarn add @anarchitects/auth-angular @anarchitects/tailwind @angular/common @angular/core @angular/forms @angular/router @ngrx/operators @ngrx/signals rxjs
 ```
 
 Peer requirements:
 
-- `@angular/common`, `@angular/core`, `@angular/router`
-- `@ngrx/operators`, `@ngrx/signals`, `rxjs`
+- Angular 22: `@angular/common`, `@angular/core`, `@angular/forms`, and
+  `@angular/router`
+- NgRx 22: `@ngrx/operators` and `@ngrx/signals`
+- `@anarchitects/tailwind ^0.0.1` and RxJS 7.8
 
-The internal `@anarchitects/auth-ts`, `@anarchitects/forms-angular`, `@anarchitects/forms-ts`, and shared layout packages are installed transitively. Runtime utilities such as `jwt-decode` and `@casl/ability` are bundled as direct dependencies of this package.
+Import the Tailwind foundation and include the published auth and forms templates in
+source detection:
+
+```css
+/* styles.css */
+@import '@anarchitects/tailwind';
+
+@source './app';
+@source '../node_modules/@anarchitects/auth-angular';
+@source '../node_modules/@anarchitects/forms-angular';
+```
+
+The internal `@anarchitects/auth-ts`, `@anarchitects/forms-angular`, and
+`@anarchitects/forms-ts` packages are installed transitively. Runtime utilities such
+as `jwt-decode` and `@casl/ability` are bundled as direct dependencies.
 
 ## Usage
 
@@ -177,6 +194,22 @@ export class RegisterPageComponent {}
 
 If you need the resolved contract object directly, use `injectAuthContracts()` from `@anarchitects/auth-angular/config`.
 
+All auth UI and feature form components also accept `schemaExtensions`. Use it for
+host-only Angular Signal Forms rules that do not belong in the portable auth contract:
+
+```ts
+import { validate } from '@angular/forms/signals';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
+
+export const rejectBlockedAccount: FormsSchemaExtension = (path) => {
+  validate(path['credential'], ({ value }) => (value() === 'blocked@example.com' ? { kind: 'blockedAccount', message: 'This account is blocked.' } : undefined));
+};
+```
+
+```html
+<anarchitects-auth-feature-login [schemaExtensions]="[rejectBlockedAccount]" />
+```
+
 ### Payload shaping
 
 Submit raw DTOs from components and let `AuthStore` apply the profile's `emptyStringPolicy` rules before the HTTP call.
@@ -271,7 +304,7 @@ export class PostActionsComponent {
 ## Nx scripts
 
 - `nx build auth-angular` – build the Angular package
-- `nx test auth-angular` – execute unit tests (Jest)
+- `nx test auth-angular` – execute unit tests (Vitest)
 - `nx lint auth-angular` – run ESLint against the library
 
 ## Development notes
@@ -286,6 +319,24 @@ export class PostActionsComponent {
 - Ability creation and concrete resource checks are centralised in `@anarchitects/auth-angular/util`; import the helpers instead of instantiating CASL directly.
 - `policyGuard` is coarse by design; use `resourcePolicyGuard` and backend instance checks for ownership-sensitive routes.
 - Keep UI, feature, data-access, state, and config layers decoupled per architecture guidelines.
+
+## Migrating to the Signal Forms release
+
+This is a breaking Angular 22-only release:
+
+- Auth form rendering, validation state, submission, and reset behavior now come from
+  the Signal Forms-based `@anarchitects/forms-angular` package.
+- `layout` now uses the forms-owned `FormsLayoutId` contract instead of the retired
+  Common Angular layouts type.
+- Auth no longer depends on Common Angular composition or layout packages. Template
+  and slot projection use the directives exported by `@anarchitects/forms-angular/ui`.
+- Applications must install and import `@anarchitects/tailwind`, including both auth
+  and forms package paths in Tailwind `@source` detection.
+- Default controls are native semantic elements. Custom CSS, DOM queries, and visual
+  snapshots that targeted the retired Common Angular wrappers must be updated.
+
+Auth DTOs, contract profiles, selectors, outputs, provider helpers, orchestration,
+explicit state scoping, and public workflows remain unchanged.
 
 ## License
 

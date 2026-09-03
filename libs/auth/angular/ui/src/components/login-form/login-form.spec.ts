@@ -2,7 +2,9 @@ import { Provider } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideAuthContracts } from '@anarchitects/auth-angular/config';
 import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import { SchemaPath, validate } from '@angular/forms/signals';
 import { AnarchitectsAuthUiLoginForm } from './login-form';
 
 describe('AnarchitectsAuthUiLoginForm', () => {
@@ -129,6 +131,63 @@ describe('AnarchitectsAuthUiLoginForm', () => {
     await fixture.whenStable();
 
     expect(nativeElement.textContent).toContain('Minimum length is 10.');
+    expect(submitButton.disabled).toBe(true);
+  });
+
+  it('should apply Signal Forms schema extensions', async () => {
+    const blockedCredential: FormsSchemaExtension = (path) => {
+      validate(path['credential'] as SchemaPath<string>, ({ value }) =>
+        value() === 'blocked@example.com'
+          ? {
+              kind: 'blockedCredential',
+              message: 'This account is blocked.',
+            }
+          : undefined,
+      );
+    };
+    fixture.componentRef.setInput('schemaExtensions', [blockedCredential]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const { nativeElement, credentialInput, passwordInput, submitButton } =
+      getLoginControls();
+    credentialInput.value = 'blocked@example.com';
+    credentialInput.dispatchEvent(new Event('input'));
+    credentialInput.dispatchEvent(new Event('blur'));
+    passwordInput.value = 'secret123';
+    passwordInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(nativeElement.textContent).toContain('This account is blocked.');
+    expect(submitButton.disabled).toBe(true);
+  });
+
+  it('should submit the mapped payload and reset Signal Forms state', async () => {
+    let emitted: LoginRequestDTO | undefined;
+    component.submitted.subscribe((value) => {
+      emitted = value;
+    });
+    const { credentialInput, passwordInput, submitButton } = getLoginControls();
+
+    credentialInput.value = 'user@example.com';
+    credentialInput.dispatchEvent(new Event('input'));
+    passwordInput.value = 'secret123';
+    passwordInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(submitButton.disabled).toBe(false);
+
+    submitButton.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    expect(emitted).toEqual({
+      credential: 'user@example.com',
+      password: 'secret123',
+    });
+    expect(credentialInput.value).toBe('');
+    expect(passwordInput.value).toBe('');
     expect(submitButton.disabled).toBe(true);
   });
 

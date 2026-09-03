@@ -1,4 +1,4 @@
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
+import { AnarchitectsFormsTemplateDirective } from '@anarchitects/forms-angular/ui';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { AnarchitectsAuthUiRegisterForm } from './register-form';
 
@@ -7,7 +7,7 @@ const meta: Meta<AnarchitectsAuthUiRegisterForm> = {
   title: 'Auth UI/Register Form',
   decorators: [
     moduleMetadata({
-      imports: [AnxTemplateDirective],
+      imports: [AnarchitectsFormsTemplateDirective],
     }),
   ],
 };

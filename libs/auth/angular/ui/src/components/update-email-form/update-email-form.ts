@@ -1,5 +1,6 @@
 import { UpdateEmailRequestDTO } from '@anarchitects/auth-ts/dtos';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
   ChangeDetectionStrategy,
@@ -8,7 +9,7 @@ import {
   input,
   output,
 } from '@angular/core';
-import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import type { FormsLayoutId } from '@anarchitects/forms-angular/config';
 import { updateEmailFormBridge } from '../../internal/auth-form-bridges';
 
 @Component({
@@ -23,11 +24,14 @@ import { updateEmailFormBridge } from '../../internal/auth-form-bridges';
   },
 })
 export class AnarchitectsAuthUiUpdateEmailForm {
-  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layout = input<FormsLayoutId | null>(null);
+  readonly schemaExtensions = input<readonly FormsSchemaExtension[]>([]);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<UpdateEmailRequestDTO>();
 
-  readonly formConfig = computed(() => updateEmailFormBridge.resolveFormConfig());
+  readonly formConfig = computed(() =>
+    updateEmailFormBridge.resolveFormConfig(),
+  );
 
   onSubmitted(input: SubmissionRequestDTO): void {
     const dto = updateEmailFormBridge.mapSubmission(input);

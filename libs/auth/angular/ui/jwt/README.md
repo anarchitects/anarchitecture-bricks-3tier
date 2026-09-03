@@ -8,4 +8,7 @@ Use this entrypoint only when the JWT plugin is enabled. The root `@anarchitects
 
 - `AnarchitectsAuthJwtUiRefreshTokensForm`
 
-The JWT UI layer remains presentational only. Submit handling and token storage belong to `feature/jwt` and `state/jwt`.
+The JWT UI layer remains presentational only. It composes the Signal Forms-based
+`AnarchitectsUiForm`, forwards forms-owned layout and `schemaExtensions` inputs, and is
+styled by the host application's `@anarchitects/tailwind` import. Submit handling and
+token storage belong to `feature/jwt` and `state/jwt`.

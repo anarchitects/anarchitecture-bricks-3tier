@@ -4,6 +4,10 @@ JWT plugin-specific feature orchestration for `@anarchitects/auth-angular`.
 
 Use this entrypoint only when the JWT plugin is enabled. It sits on top of `@anarchitects/auth-angular/state/jwt` and delegates rendering to `@anarchitects/auth-angular/ui/jwt`.
 
+The refresh-token feature forwards the forms-owned layout and Signal Forms
+`schemaExtensions` inputs. The host application supplies styling through
+`@anarchitects/tailwind`.
+
 ## Exports
 
 - `AnarchitectsAuthJwtRefreshTokens`

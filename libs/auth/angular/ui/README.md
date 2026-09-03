@@ -16,7 +16,14 @@ JWT-specific form components live under `@anarchitects/auth-angular/ui/jwt`, not
 - `AnarchitectsAuthUiUpdateEmailForm`
 - `AnarchitectsAuthUiLogoutForm`
 
-All components compose `AnarchitectsUiForm`, support layout passthrough, and forward canonical template/slot projection hooks.
+All components compose the Angular 22 Signal Forms-based `AnarchitectsUiForm`. They
+support forms-owned layout passthrough, forward `schemaExtensions`, and preserve the
+canonical template/slot projection hooks exported by
+`@anarchitects/forms-angular/ui`. Validation, non-null payload defaults, successful
+submission reset, and interaction state are owned by the forms capability.
+
+The UI uses `@anarchitects/tailwind` through host application CSS and has no dependency
+on the retired Common Angular composition or layout packages.
 
 ## License
 

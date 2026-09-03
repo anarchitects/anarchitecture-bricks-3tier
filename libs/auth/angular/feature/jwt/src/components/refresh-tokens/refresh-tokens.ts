@@ -1,4 +1,5 @@
-import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import type { FormsLayoutId } from '@anarchitects/forms-angular/config';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
 import { AuthJwtStore } from '@anarchitects/auth-angular/state/jwt';
 import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos/jwt';
 import {
@@ -19,7 +20,8 @@ import { AnarchitectsAuthJwtRefreshTokensForm } from '@anarchitects/auth-angular
 export class AnarchitectsAuthJwtRefreshTokens {
   private readonly authJwtStore = inject(AuthJwtStore);
 
-  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layout = input<FormsLayoutId | null>(null);
+  readonly schemaExtensions = input<readonly FormsSchemaExtension[]>([]);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
   async submitForm(input: RefreshTokenRequestDTO): Promise<void> {
