@@ -1,17 +1,17 @@
-import { AnxSlotDirective } from '@anarchitects/common-angular-ui-composition/projection';
 import { FormConfig } from '@anarchitects/forms-ts';
 import type { Meta, StoryObj } from '@storybook/angular';
 import { moduleMetadata } from '@storybook/angular';
 import { HttpResponse, http } from 'msw';
 import { expect, userEvent, waitFor } from 'storybook/test';
 import { AnarchitectsFeatureForm } from './form';
+import { AnarchitectsFormsSlotDirective } from '@anarchitects/forms-angular/ui';
 
 const meta: Meta<AnarchitectsFeatureForm> = {
   component: AnarchitectsFeatureForm,
   title: 'AnarchitectsFeatureForm',
   decorators: [
     moduleMetadata({
-      imports: [AnxSlotDirective],
+      imports: [AnarchitectsFormsSlotDirective],
     }),
   ],
 };

@@ -2,17 +2,15 @@
   "name": "@anarchitects/forms-angular",
   "version": "0.7.1",
   "dependencies": {
-    "@anarchitects/common-angular-ui-composition": "^0.1.1",
-    "@anarchitects/common-angular-ui-layouts": "^0.1.1",
-    "@anarchitects/common-angular-ui-primitives": "^0.1.1",
     "@anarchitects/forms-ts": "^0.7.1"
   },
   "peerDependencies": {
-    "@angular/common": "^21.0.0 || ^22.0.0",
-    "@angular/core": "^21.0.0 || ^22.0.0",
-    "@angular/forms": "^21.0.0 || ^22.0.0",
-    "@ngrx/operators": "^21.1.0 || ^22.0.0",
-    "@ngrx/signals": "^21.1.0 || ^22.0.0",
+    "@anarchitects/tailwind": "^0.0.1",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@ngrx/operators": "^22.0.0",
+    "@ngrx/signals": "^22.0.0",
     "rxjs": "~7.8.0"
   },
   "publishConfig": {

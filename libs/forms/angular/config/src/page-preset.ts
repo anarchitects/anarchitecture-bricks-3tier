@@ -3,6 +3,7 @@ import { InjectionToken, inject } from '@angular/core';
 export type FormsPageLayoutVariant = 'stacked' | 'grid' | 'inline' | 'card';
 export type FormsPageSpacing = 'compact' | 'comfortable' | 'relaxed';
 export type FormsPageActionAlignment = 'start' | 'center' | 'end' | 'between';
+export type FormsLayoutId = `${string}:${string}`;
 
 export type FormsPagePreset = {
   layoutVariant: FormsPageLayoutVariant;

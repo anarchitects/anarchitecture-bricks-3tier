@@ -1,5 +1,6 @@
 import { FormsStore } from '@anarchitects/forms-angular/state';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
 import { FormConfig } from '@anarchitects/forms-ts/models';
 import { ComponentRef, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -94,6 +95,17 @@ describe('AnarchitectsFeatureForm', () => {
       layoutVariant: 'card',
       actionAlignment: 'center',
     });
+  });
+
+  it('should forward schema extensions to the forms ui form', () => {
+    const extension = vi.fn() as unknown as FormsSchemaExtension;
+    ref.setInput('schemaExtensions', [extension]);
+    fixture.detectChanges();
+
+    const formUi = fixture.debugElement.query(By.directive(AnarchitectsUiForm))
+      .componentInstance as AnarchitectsUiForm;
+
+    expect(formUi.schemaExtensions()).toEqual([extension]);
   });
 
   it('should forward page header inputs to forms ui form', () => {

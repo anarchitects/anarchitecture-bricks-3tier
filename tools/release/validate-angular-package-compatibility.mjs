@@ -133,6 +133,9 @@ for (const projectJsonFile of findProjectJsonFiles(
   }
 
   const sourceManifest = readJson(sourceManifestPath);
+  const angularCorePeer = sourceManifest.peerDependencies?.['@angular/core'];
+  const supportsAngular21 =
+    !angularCorePeer || supportsMajor(angularCorePeer, 21);
   const isPublic = sourceManifest.private !== true;
   const groups = findReleaseGroups(
     releaseGroups,
@@ -158,10 +161,11 @@ for (const projectJsonFile of findProjectJsonFiles(
     if (
       (dependencyName.startsWith('@angular/') ||
         dependencyName.startsWith('@ngrx/')) &&
-      (!supportsMajor(range, 21) || !supportsMajor(range, 22))
+      (!supportsMajor(range, 22) ||
+        (supportsAngular21 && !supportsMajor(range, 21)))
     ) {
       errors.push(
-        `${projectConfig.name}: ${dependencyName} peer range "${range}" must cover majors 21 and 22`,
+        `${projectConfig.name}: ${dependencyName} peer range "${range}" must cover Angular 22${supportsAngular21 ? ' and retain Angular 21 consistently' : ''}`,
       );
     }
 

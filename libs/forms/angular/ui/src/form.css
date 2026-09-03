@@ -5,11 +5,13 @@
 .anx-forms-ui-form__surface {
   inline-size: min(100%, var(--anx-forms-ui-max-inline-size, 100%));
   margin-inline: auto;
+  padding: var(--anx-stack-gap, 1rem);
 }
 
 .anx-forms-ui-form__header,
-.anx-forms-ui-form__caption-region {
-  gap: var(--anx-sys-space-xs);
+.anx-forms-ui-form__caption-region,
+.anx-forms-ui-form__field {
+  gap: 0.375rem;
 }
 
 .anx-forms-ui-form__header:empty,
@@ -23,23 +25,78 @@
   margin: 0;
 }
 
-.anx-forms-ui-form__title {
-  color: var(--anx-sys-color-text-primary);
-}
-
-.anx-forms-ui-form__subtitle {
-  color: var(--anx-sys-color-text-secondary);
-}
-
+.anx-forms-ui-form__subtitle,
 .anx-forms-ui-form__caption,
-.anx-forms-ui-form__caption-region {
-  color: var(--anx-sys-color-text-secondary);
+.anx-forms-ui-form__caption-region,
+.anx-forms-ui-form__hint {
+  color: var(--anx-color-foreground-muted);
+}
+
+.anx-forms-ui-form__fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--anx-stack-gap, 1rem);
+}
+
+:host([data-anx-layout='grid']) .anx-forms-ui-form__fields {
+  grid-template-columns: repeat(
+    var(--anx-forms-layout-columns, 2),
+    minmax(0, 1fr)
+  );
+}
+
+:host([data-anx-layout='inline']) .anx-forms-ui-form__fields {
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+:host([data-anx-layout='card']) .anx-forms-ui-form__form {
+  padding: var(--anx-stack-gap, 1rem);
+  border: 1px solid var(--anx-color-border);
+  border-radius: var(--anx-radius-surface);
+  background: var(--anx-color-surface);
+  box-shadow: var(--anx-shadow-surface);
+}
+
+:host([data-anx-spacing='compact']) .anx-forms-ui-form__fields {
+  gap: 0.75rem;
+}
+
+:host([data-anx-spacing='relaxed']) .anx-forms-ui-form__fields {
+  gap: 1.5rem;
+}
+
+.anx-forms-ui-form__control {
+  inline-size: 100%;
+  padding-inline: 0.75rem;
+}
+
+textarea.anx-forms-ui-form__control {
+  padding-block: 0.75rem;
+}
+
+.anx-forms-ui-form__control[aria-invalid='true'] {
+  border-color: var(--anx-color-danger);
 }
 
 .anx-forms-ui-form__checkbox {
   display: inline-flex;
   align-items: center;
-  gap: var(--anx-sys-space-xs);
+  gap: 0.5rem;
+}
+
+.anx-forms-ui-form__error {
+  color: var(--anx-color-danger);
+}
+
+.anx-forms-ui-form__actions {
+  justify-content: var(--anx-forms-actions-justify, flex-end);
+}
+
+.anx-forms-ui-form__submit {
+  padding-inline: 1rem;
+  background: var(--anx-color-accent);
+  color: var(--anx-color-on-accent);
+  cursor: pointer;
 }
 
 .anx-forms-ui-form__honeypot {
@@ -48,4 +105,10 @@
   block-size: 0;
   opacity: 0;
   pointer-events: none;
+}
+
+@media (max-width: 40rem) {
+  :host([data-anx-layout='grid']) .anx-forms-ui-form__fields {
+    grid-template-columns: 1fr;
+  }
 }

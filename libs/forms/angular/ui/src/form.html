@@ -1,4 +1,4 @@
-<section class="anx-forms-ui-form__surface anx-stack">
+<section class="anx-forms-ui-form__surface anx-stack anx-surface">
   <div class="anx-forms-ui-form__caption-region anx-stack">
     <ng-content select="[anxSlot='app-forms-caption-top']"></ng-content>
   </div>
@@ -17,88 +17,104 @@
     <p class="anx-forms-ui-form__caption">{{ caption }}</p>
     }
   </header>
-  }
-
+  } @if (signalForm(); as currentForm) {
   <form
     class="anx-forms-ui-form__form anx-stack"
-    (ngSubmit)="onSubmit()"
-    [formGroup]="formGroup"
+    (submit)="onSubmit(); $event.preventDefault()"
+    novalidate
   >
-    <anarchitects-ui-layout-host
-      [kind]="'form'"
-      [layout]="resolvedLayout().layout"
-      [model]="layoutModel()"
-      [layoutOptions]="resolvedLayout().layoutOptions"
-    >
-      <ng-content select="ng-template[anxTemplate]"></ng-content>
-      <ng-content
-        select="[anxSlot]:not([anxSlot='app-forms-caption-top']):not([anxSlot='app-forms-caption-bottom']):not([anxSlot='app-forms-page-header'])"
-      ></ng-content>
+    <div class="anx-forms-ui-form__fields">
+      @for (field of config().fields; track field.name; let index = $index) {
+      @if (fieldTree(field.name); as control) { @if (template('field'); as
+      fieldTemplate) {
+      <ng-container
+        [ngTemplateOutlet]="fieldTemplate"
+        [ngTemplateOutletContext]="{
+                  $implicit: field,
+                  index,
+                  fieldTree: control,
+                }"
+      />
+      } @else {
+      <div class="anx-forms-ui-form__field anx-stack">
+        <label [for]="fieldId(field.name)">
+          {{ field.ui?.label ?? field.name }}
+        </label>
 
-      <ng-template anxTemplate="field" let-field let-index="index">
         @switch (field.kind) { @case ('textarea') {
         <textarea
-          anxSlot="content"
-          anarchitectsUiTextarea
+          class="anx-forms-ui-form__control anx-control"
           [id]="fieldId(field.name)"
-          [formControlName]="field.name"
+          [formField]="stringFieldTree(field.name)!"
           [rows]="field.ui?.rows ?? 4"
           [placeholder]="field.ui?.placeholder ?? ''"
-          [invalid]="isFieldInvalid(field.name)"
+          [attr.aria-invalid]="isFieldInvalid(field.name)"
         ></textarea>
         } @case ('select') {
         <select
-          anxSlot="content"
-          anarchitectsUiSelect
+          class="anx-forms-ui-form__control anx-control"
           [id]="fieldId(field.name)"
-          [formControlName]="field.name"
-          [invalid]="isFieldInvalid(field.name)"
+          [formField]="stringFieldTree(field.name)!"
+          [attr.aria-invalid]="isFieldInvalid(field.name)"
         >
+          <option value="">Select an option</option>
           @for (option of field.options ?? []; track option.value) {
           <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
         } @case ('boolean') {
-        <label anxSlot="content" class="anx-forms-ui-form__checkbox">
+        <label class="anx-forms-ui-form__checkbox">
           <input
             type="checkbox"
             [id]="fieldId(field.name)"
-            [formControlName]="field.name"
+            [formField]="booleanFieldTree(field.name)!"
+            [attr.aria-invalid]="isFieldInvalid(field.name)"
           />
           <span>{{ field.ui?.placeholder ?? 'Enabled' }}</span>
         </label>
         } @default {
         <input
-          anxSlot="content"
-          anarchitectsUiInput
+          class="anx-forms-ui-form__control anx-control"
           [attr.type]="
-              field.kind === 'email'
-                ? 'email'
-                : field.kind === 'password'
-                  ? 'password'
-                  : 'text'
-            "
+                        field.kind === 'email'
+                          ? 'email'
+                          : field.kind === 'password'
+                            ? 'password'
+                            : 'text'
+                      "
           [id]="fieldId(field.name)"
-          [formControlName]="field.name"
+          [formField]="stringFieldTree(field.name)!"
           [placeholder]="field.ui?.placeholder ?? ''"
-          [invalid]="isFieldInvalid(field.name)"
+          [attr.aria-invalid]="isFieldInvalid(field.name)"
         />
         } } @if (fieldHelpText(field); as helpText) {
-        <span anxSlot="hint">{{ helpText }}</span>
+        <span class="anx-forms-ui-form__hint">{{ helpText }}</span>
         } @if (fieldErrorMessage(field.name); as errorText) {
-        <span anxSlot="error">{{ errorText }}</span>
+        <span class="anx-forms-ui-form__error" role="alert">
+          {{ errorText }}
+        </span>
         }
-      </ng-template>
+      </div>
+      } } }
+    </div>
 
-      <ng-template anxTemplate="actions">
-        <anarchitects-ui-button
-          [type]="'submit'"
-          [disabled]="formGroup.invalid"
-        >
-          Submit
-        </anarchitects-ui-button>
-      </ng-template>
-    </anarchitects-ui-layout-host>
+    <div class="anx-forms-ui-form__actions anx-cluster">
+      @if (template('actions'); as actionsTemplate) {
+      <ng-container [ngTemplateOutlet]="actionsTemplate" />
+      } @else {
+      <button
+        class="anx-forms-ui-form__submit anx-control"
+        type="submit"
+        [disabled]="currentForm().pending()"
+      >
+        Submit
+      </button>
+      }
+    </div>
+
+    <ng-content
+      select="[anxSlot]:not([anxSlot='app-forms-caption-top']):not([anxSlot='app-forms-caption-bottom']):not([anxSlot='app-forms-page-header'])"
+    ></ng-content>
 
     @if (config().security?.honeypot) {
     <input
@@ -110,6 +126,7 @@
     />
     }
   </form>
+  }
 
   <div class="anx-forms-ui-form__caption-region anx-stack">
     <ng-content select="[anxSlot='app-forms-caption-bottom']"></ng-content>

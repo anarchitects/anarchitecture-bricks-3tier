@@ -9,6 +9,9 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
+          // The forms components consume the Tailwind foundation through host CSS.
+          // dependency-checks cannot follow consumer-owned CSS imports.
+          ignoredDependencies: ['@anarchitects/tailwind'],
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
         },
       ],
@@ -26,7 +29,7 @@ export default [
         'error',
         {
           type: 'attribute',
-          prefix: 'anarchitects',
+          prefix: ['anarchitects', 'anx'],
           style: 'camelCase',
         },
       ],

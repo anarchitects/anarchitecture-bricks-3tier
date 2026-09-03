@@ -10,7 +10,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import { FormsLayoutId } from '@anarchitects/forms-angular/config';
 
 @Component({
   selector: 'anarchitects-forms-feature-submission-detail',
@@ -29,7 +29,7 @@ export class AnarchitectsFeatureSubmissionDetail {
 
   readonly submissionId = input<string | null>(null);
   readonly title = input('Submission details');
-  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layout = input<FormsLayoutId | null>(null);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
   readonly submission = computed(() => {
