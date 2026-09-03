@@ -16,14 +16,19 @@ import {
   expandReleaseGroupsByDependents,
   hasAnyVersionPlanBumps,
   resolveReleaseGroupsForDomain,
+  selectReleaseGroupsForDomain,
 } from './domain-release-lib.mjs';
 
 const require = createRequire(import.meta.url);
 const semver = require('semver');
 const { ReleaseClient } = require('nx/release');
 const { FsTree } = require('nx/src/generators/tree.js');
-const { createProjectFileMapUsingProjectGraph } = require('nx/src/project-graph/file-map-utils.js');
-const { createProjectGraphAsync } = require('nx/src/project-graph/project-graph.js');
+const {
+  createProjectFileMapUsingProjectGraph,
+} = require('nx/src/project-graph/file-map-utils.js');
+const {
+  createProjectGraphAsync,
+} = require('nx/src/project-graph/project-graph.js');
 const {
   createNxReleaseConfig,
   handleNxReleaseConfigError,
@@ -55,7 +60,9 @@ const {
 
 const workspaceRoot = process.cwd();
 const versionPlansDir = join(workspaceRoot, '.nx', 'version-plans');
-const rawNxJson = JSON.parse(readFileSync(join(workspaceRoot, 'nx.json'), 'utf8'));
+const rawNxJson = JSON.parse(
+  readFileSync(join(workspaceRoot, 'nx.json'), 'utf8'),
+);
 const releaseGitConfig = rawNxJson.release?.git ?? {};
 
 async function main() {
@@ -64,10 +71,15 @@ async function main() {
     firstRelease: options.firstRelease,
     verbose: options.verbose,
   });
-  const initialGroups = resolveReleaseGroupsForDomain({
+  const domainGroups = resolveReleaseGroupsForDomain({
     domain: options.domain,
     releaseGroups: releaseContext.releaseGraph.releaseGroups,
     projectNodes: releaseContext.projectGraph.nodes,
+  });
+  const initialGroups = selectReleaseGroupsForDomain({
+    domain: options.domain,
+    domainGroupNames: domainGroups,
+    requestedGroup: options.group,
   });
   const internalGroups = expandReleaseGroupsByDependents({
     initialGroupNames: initialGroups,
@@ -77,21 +89,38 @@ async function main() {
     sortedReleaseGroups: releaseContext.releaseGraph.sortedReleaseGroups,
   });
 
-  console.log(`Running domain release for "${options.domain}" via groups: ${internalGroups.join(', ')}`);
+  console.log(
+    `Running domain release for "${options.domain}" via groups: ${internalGroups.join(', ')}`,
+  );
   if (internalGroups.length > initialGroups.length) {
-    const cascadedGroups = internalGroups.filter((groupName) => !initialGroups.includes(groupName));
-    console.log(`Expanded release groups due to downstream workspace dependencies: ${cascadedGroups.join(', ')}`);
+    const cascadedGroups = internalGroups.filter(
+      (groupName) => !initialGroups.includes(groupName),
+    );
+    console.log(
+      `Expanded release groups due to downstream workspace dependencies: ${cascadedGroups.join(', ')}`,
+    );
   }
 
   assertNoExistingVersionPlans();
 
   const baseClient = new ReleaseClient({});
-  const selectedReleaseGroups = filterReleaseGroups(releaseContext.releaseGraph, internalGroups);
+  const selectedReleaseGroups = filterReleaseGroups(
+    releaseContext.releaseGraph,
+    internalGroups,
+  );
   const projectBumps = options.bump
     ? createForcedReleasePlan({
         releaseGroups: selectedReleaseGroups,
-        releaseGroupToFilteredProjects: releaseContext.releaseGraph.releaseGroupToFilteredProjects,
+        releaseGroupToFilteredProjects:
+          releaseContext.releaseGraph.releaseGroupToFilteredProjects,
         bump: options.bump,
+        currentVersions: readCurrentProjectVersions({
+          releaseGroups: selectedReleaseGroups,
+          releaseGroupToFilteredProjects:
+            releaseContext.releaseGraph.releaseGroupToFilteredProjects,
+          projectNodes: releaseContext.projectGraph.nodes,
+        }),
+        firstRelease: options.firstRelease,
       })
     : await discoverHybridReleasePlan({
         groups: internalGroups,
@@ -100,28 +129,41 @@ async function main() {
 
   logComputedPlan(projectBumps, options.bump);
 
-  const transientPlan = hasAnyVersionPlanBumps(projectBumps)
-    ? createTransientVersionPlan({
-        workspaceRoot,
-        projectBumps,
-        domain: options.domain,
-      })
-    : null;
+  const isInitialVersionRelease = options.bump === 'init';
+  const transientPlan =
+    !isInitialVersionRelease && hasAnyVersionPlanBumps(projectBumps)
+      ? createTransientVersionPlan({
+          workspaceRoot,
+          projectBumps,
+          domain: options.domain,
+        })
+      : null;
 
   if (transientPlan) {
     mkdirSync(dirname(transientPlan.filePath), { recursive: true });
     writeFileSync(transientPlan.filePath, transientPlan.content);
-    console.log(`Created transient version plan ${basename(transientPlan.filePath)}`);
+    console.log(
+      `Created transient version plan ${basename(transientPlan.filePath)}`,
+    );
+  } else if (isInitialVersionRelease) {
+    console.log(
+      'No transient version plan file was needed because init uses the declared 0.0.1 version directly.',
+    );
   } else {
-    console.log('No transient version plan file was needed because no version bumps were selected.');
+    console.log(
+      'No transient version plan file was needed because no version bumps were selected.',
+    );
   }
 
-  const versionPlanClient = new ReleaseClient(buildVersionPlansOverride(internalGroups));
+  const versionPlanClient = new ReleaseClient(
+    buildVersionPlansOverride(internalGroups),
+  );
   let versionResult;
 
   try {
     versionResult = await versionPlanClient.releaseVersion({
       groups: internalGroups,
+      specifier: isInitialVersionRelease ? '0.0.1' : undefined,
       dryRun: options.dryRun,
       verbose: options.verbose,
       firstRelease: options.firstRelease,
@@ -134,7 +176,9 @@ async function main() {
     cleanupTransientPlan(transientPlan);
   }
 
-  const changelogClient = new ReleaseClient(buildChangelogOverride(internalGroups));
+  const changelogClient = new ReleaseClient(
+    buildChangelogOverride(internalGroups),
+  );
   const changelogResult = await changelogClient.releaseChangelog({
     groups: internalGroups,
     versionData: versionResult.projectsVersionData,
@@ -148,25 +192,34 @@ async function main() {
     stageChanges: true,
   });
 
-  const selectedVersionGroups = filterReleaseGroups(versionResult.releaseGraph, internalGroups);
+  const selectedVersionGroups = filterReleaseGroups(
+    versionResult.releaseGraph,
+    internalGroups,
+  );
   const hasNewVersion = Object.values(versionResult.projectsVersionData).some(
     (version) => version.newVersion !== null || version.dockerVersion !== null,
   );
 
   if (hasNewVersion) {
-    const commitMessages = createCommitMessageValues(
-      selectedVersionGroups,
-      versionResult.releaseGraph.releaseGroupToFilteredProjects,
-      versionResult.projectsVersionData,
-      releaseGitConfig.commitMessage ?? 'chore(release): publish {version}',
-    );
+    if (isInitialVersionRelease) {
+      console.log(
+        'Skipping the release commit because init publishes the version already declared on disk; the release tag will point at the accepted current commit.',
+      );
+    } else {
+      const commitMessages = createCommitMessageValues(
+        selectedVersionGroups,
+        versionResult.releaseGraph.releaseGroupToFilteredProjects,
+        versionResult.projectsVersionData,
+        releaseGitConfig.commitMessage ?? 'chore(release): publish {version}',
+      );
 
-    await gitCommit({
-      messages: commitMessages,
-      additionalArgs: releaseGitConfig.commitArgs ?? '',
-      dryRun: options.dryRun,
-      verbose: options.verbose,
-    });
+      await gitCommit({
+        messages: commitMessages,
+        additionalArgs: releaseGitConfig.commitArgs ?? '',
+        dryRun: options.dryRun,
+        verbose: options.verbose,
+      });
+    }
 
     const gitTagValues = createGitTagValues(
       selectedVersionGroups,
@@ -186,7 +239,8 @@ async function main() {
     }
 
     const shouldPush = selectedVersionGroups.some(
-      (group) => group.changelog !== false && group.changelog.createRelease !== false,
+      (group) =>
+        group.changelog !== false && group.changelog.createRelease !== false,
     );
 
     if (shouldPush) {
@@ -215,13 +269,49 @@ async function main() {
       firstRelease: options.firstRelease,
       versionData: versionResult.projectsVersionData,
     });
-    const allExitOk = Object.values(publishResults).every((result) => result.code === 0);
+    const allExitOk = Object.values(publishResults).every(
+      (result) => result.code === 0,
+    );
     if (!allExitOk) {
       process.exit(1);
     }
   } else {
     console.log('Skipped publishing packages.');
   }
+}
+
+function readCurrentProjectVersions({
+  releaseGroups,
+  releaseGroupToFilteredProjects,
+  projectNodes,
+}) {
+  const versions = {};
+
+  for (const releaseGroup of releaseGroups) {
+    const projectNames = Array.from(
+      releaseGroupToFilteredProjects.get(releaseGroup) ??
+        releaseGroup.projects ??
+        [],
+    );
+
+    for (const projectName of projectNames) {
+      const projectRoot = projectNodes[projectName]?.data.root;
+      if (!projectRoot) {
+        continue;
+      }
+
+      const manifestPath = join(workspaceRoot, projectRoot, 'package.json');
+      if (!existsSync(manifestPath)) {
+        continue;
+      }
+
+      versions[projectName] = JSON.parse(
+        readFileSync(manifestPath, 'utf8'),
+      ).version;
+    }
+  }
+
+  return versions;
 }
 
 async function createReleaseContext({ firstRelease, verbose }) {
@@ -262,7 +352,9 @@ async function discoverHybridReleasePlan({ groups, releaseContext }) {
 
   for (const releaseGroup of selectedReleaseGroups) {
     const filteredProjects = Array.from(
-      releaseGraph.releaseGroupToFilteredProjects.get(releaseGroup) ?? releaseGroup.projects ?? [],
+      releaseGraph.releaseGroupToFilteredProjects.get(releaseGroup) ??
+        releaseGroup.projects ??
+        [],
     );
 
     for (const projectName of filteredProjects) {
@@ -272,7 +364,9 @@ async function discoverHybridReleasePlan({ groups, releaseContext }) {
 
       const finalConfig = releaseGraph.finalConfigsByProject.get(projectName);
       if (!finalConfig) {
-        throw new Error(`Unable to resolve release config for project "${projectName}".`);
+        throw new Error(
+          `Unable to resolve release config for project "${projectName}".`,
+        );
       }
 
       if (finalConfig.specifierSource !== 'conventional-commits') {
@@ -281,9 +375,12 @@ async function discoverHybridReleasePlan({ groups, releaseContext }) {
         );
       }
 
-      const currentVersion = releaseGraph.cachedCurrentVersions.get(projectName);
+      const currentVersion =
+        releaseGraph.cachedCurrentVersions.get(projectName);
       if (currentVersion === undefined) {
-        throw new Error(`Unable to resolve the current version for project "${projectName}".`);
+        throw new Error(
+          `Unable to resolve the current version for project "${projectName}".`,
+        );
       }
 
       currentVersions[projectName] = currentVersion;
@@ -317,6 +414,7 @@ async function discoverHybridReleasePlan({ groups, releaseContext }) {
 function parseArgs(argv) {
   const options = {
     domain: null,
+    group: null,
     bump: null,
     dryRun: false,
     verbose: false,
@@ -336,6 +434,17 @@ function parseArgs(argv) {
 
     if (arg.startsWith('--domain=')) {
       options.domain = arg.slice('--domain='.length);
+      continue;
+    }
+
+    if (arg === '--group') {
+      options.group = argv[index + 1] ?? null;
+      index += 1;
+      continue;
+    }
+
+    if (arg.startsWith('--group=')) {
+      options.group = arg.slice('--group='.length);
       continue;
     }
 
@@ -390,6 +499,10 @@ function parseArgs(argv) {
     throw new Error('Missing required value for --bump.');
   }
 
+  if (options.group === '') {
+    throw new Error('Missing required value for --group.');
+  }
+
   return options;
 }
 
@@ -410,20 +523,27 @@ function assertNoExistingVersionPlans() {
 
 function buildVersionPlansOverride(groupNames) {
   return {
-    groups: Object.fromEntries(groupNames.map((groupName) => [groupName, { versionPlans: true }])),
+    groups: Object.fromEntries(
+      groupNames.map((groupName) => [groupName, { versionPlans: true }]),
+    ),
   };
 }
 
 function buildChangelogOverride(groupNames) {
   return {
     groups: Object.fromEntries(
-      groupNames.map((groupName) => [groupName, { changelog: { createRelease: false } }]),
+      groupNames.map((groupName) => [
+        groupName,
+        { changelog: { createRelease: false } },
+      ]),
     ),
   };
 }
 
 function filterReleaseGroups(releaseGraph, groupNames) {
-  const selected = releaseGraph.releaseGroups.filter((group) => groupNames.includes(group.name));
+  const selected = releaseGraph.releaseGroups.filter((group) =>
+    groupNames.includes(group.name),
+  );
   if (selected.length !== groupNames.length) {
     const found = new Set(selected.map((group) => group.name));
     const missing = groupNames.filter((groupName) => !found.has(groupName));
@@ -440,7 +560,10 @@ function cleanupTransientPlan(transientPlan) {
 
   rmSync(transientPlan.filePath, { force: true });
 
-  if (existsSync(versionPlansDir) && readdirSync(versionPlansDir).length === 0) {
+  if (
+    existsSync(versionPlansDir) &&
+    readdirSync(versionPlansDir).length === 0
+  ) {
     rmSync(versionPlansDir, { recursive: true, force: true });
   }
 }
@@ -453,7 +576,9 @@ function logComputedPlan(projectBumps, forcedBump = null) {
   }
 
   if (forcedBump) {
-    console.log(`Computed hybrid release bumps from manual override --bump=${forcedBump}:`);
+    console.log(
+      `Computed hybrid release bumps from manual override --bump=${forcedBump}:`,
+    );
   } else {
     console.log('Computed hybrid release bumps:');
   }
@@ -475,14 +600,21 @@ async function createProjectRemoteReleases({
   const latestCommit = await getCommitHash('HEAD');
 
   for (const releaseGroup of releaseGroups) {
-    if (releaseGroup.changelog === false || releaseGroup.changelog.createRelease === false) {
+    if (
+      releaseGroup.changelog === false ||
+      releaseGroup.changelog.createRelease === false
+    ) {
       continue;
     }
 
-    const projects = Array.from(releaseGraph.releaseGroupToFilteredProjects.get(releaseGroup) ?? []);
+    const projects = Array.from(
+      releaseGraph.releaseGroupToFilteredProjects.get(releaseGroup) ?? [],
+    );
 
     if (dryRun) {
-      const repoData = GithubRemoteReleaseClient.resolveRepoData(releaseGroup.changelog.createRelease);
+      const repoData = GithubRemoteReleaseClient.resolveRepoData(
+        releaseGroup.changelog.createRelease,
+      );
       for (const projectName of projects) {
         const changelog = projectChangelogs[projectName];
         if (!changelog || !repoData) {
@@ -504,14 +636,18 @@ async function createProjectRemoteReleases({
       continue;
     }
 
-    const remoteReleaseClient = await createRemoteReleaseClient(releaseGroup.changelog.createRelease);
+    const remoteReleaseClient = await createRemoteReleaseClient(
+      releaseGroup.changelog.createRelease,
+    );
     for (const projectName of projects) {
       const changelog = projectChangelogs[projectName];
       if (!changelog) {
         continue;
       }
 
-      console.log(`Creating ${remoteReleaseClient.remoteReleaseProviderName} Release`);
+      console.log(
+        `Creating ${remoteReleaseClient.remoteReleaseProviderName} Release`,
+      );
       await remoteReleaseClient.createOrUpdateRelease(
         changelog.releaseVersion,
         changelog.contents,

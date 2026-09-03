@@ -74,13 +74,14 @@ nx run release-tools:validate-non-bumping-commits
 ## Pull Requests
 
 - Use Conventional Commits (`feat`, `fix`, `refactor`, `chore`, `docs`, etc.).
+- For a new publishable project's implementation PR, use `init(<project-or-domain>): <description>` as the final or squash commit subject. The `init` type is configured with `semverBump: none`, so creating the package does not infer an additional release bump before its explicitly selected first release.
 - Document API-impacting changes with generated OpenAPI diff output.
 - Include contract-test updates when endpoints or response schemas change.
-- For docs-surface PRs (`docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root docs files, docs workflows), use non-bumping commit types only: `docs`, `chore`, `ci`, `style`.
+- For docs-surface PRs (`docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root docs files, docs workflows), use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
 - Docs-surface PR commits must not contain `!` or `BREAKING CHANGE`.
 - CI enforces docs commit policy via `nx run release-tools:validate-non-bumping-commits`.
 - CI also enforces docs completeness via `nx run docs-hub:validate-content` (required headings for publishable package READMEs and Angular/Nest markdown guides).
-- Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, or `style:`.
+- Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, `style:`, or `init(<project-or-domain>):` when introducing a new publishable project.
 
 ## Human-In-The-Loop Shortlist
 
@@ -99,9 +100,11 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Select exactly one domain group input: `forms`, `auth`, `identity`, or `common`.
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
+- A first release is prepared from an `init(<project-or-domain>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.
 - The `common` domain dynamically includes the `common-angular`, `common-nest`, and `common-tailwind` release groups.
+- Use the optional `common_group` selector when a common release must target only one subgroup. The initial Tailwind release uses `common-tailwind`; leaving it at `all` preserves full-domain behavior.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`.
-- The repo runner also supports `--bump=<patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference.
+- The repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference. `init` is restricted to a first release whose selected projects already declare `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.
 - Do not run local `nx release` before merging PRs; use the repo runner instead.
 - Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.
 - For a publish-only retry, manually run **Publish** with the existing package tag. Do not rerun versioning.
@@ -121,6 +124,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - For local dry-run validation, use the repo runner (for example `yarn nx run release-tools:domain-release -- --domain=forms -d`).
 - If you need to override the inferred bump for a single release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
 - If that release also introduces a package with no prior tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --first-release -d`.
+- To rehearse the initial Tailwind release without touching other common groups, run `yarn nx run release-tools:domain-release -- --domain=common --group=common-tailwind --bump=init --first-release -d`. The guarded `init` bump publishes Tailwind's already-declared `0.0.1` without incrementing it. Its already-merged implementation used `feat(tailwind)` before the `init` convention was documented; do not rewrite shared history to correct that historical exception.
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`

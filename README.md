@@ -144,9 +144,11 @@ Run releases via the **Release (Manual)** GitHub workflow:
 - Workflow input `domain` must be one of: `forms`, `auth`, `identity`, `common`.
 - Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
 - Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
+- Introduce a new publishable project with an `init(<project-or-domain>): <description>` implementation commit. `init` has `semverBump: none` in `nx.json`; the workflow's `first_release` and explicit `bump` inputs choose the initial published version without also inferring a feature bump.
 - The `common` domain dynamically includes the `common-angular`, `common-nest`, and `common-tailwind` release groups.
+- The optional `common_group` selector narrows a common release to `common-angular`, `common-nest`, or `common-tailwind`; its default `all` keeps full-domain behavior.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`, which handles versioning, changelog generation, git/tagging, and GitHub releases.
-- When conventional-commit inference needs a one-off override, the repo runner also supports `--bump=<patch|minor|major|prepatch|preminor|premajor|prerelease>`.
+- When conventional-commit inference needs a one-off override, the repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>`. The guarded `init` value only applies to first releases already declaring `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.
 - Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.
 - For a publish-only retry, manually run **Publish** with the existing package tag, for example `auth-nest@0.9.0`. Do not rerun versioning.
 - Domain major and minor lines stay synchronized while patch versions may diverge. With Nx's pre-1.0 adjustment, use `bump=major` to advance a `0.x` domain to its next minor line.
@@ -158,6 +160,7 @@ Avoid routine local `yarn nx release`; use the workflow or the repo runner for a
 If local dry-runs are needed, use the repo runner, for example `yarn nx run release-tools:domain-release -- --domain=forms -d`.
 If you need to override bump inference for a one-time release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
 If the release also includes a package with no prior release tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=identity --bump=patch --first-release -d`.
+For the initial Tailwind release, use `yarn nx run release-tools:domain-release -- --domain=common --group=common-tailwind --bump=init --first-release -d`; the guarded `init` bump publishes the already-declared `tailwind@0.0.1` without selecting the other common groups or incrementing the version. Tailwind's implementation predates the documented `init` convention and was merged as `feat(tailwind)`; preserve shared history and use the explicit `init` bump for this first release.
 
 ## Layering Rules
 
@@ -222,10 +225,10 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 ## Docs PR Commit Policy
 
-- Docs-surface pull requests must use non-bumping commit types only: `docs`, `chore`, `ci`, `style`.
+- Docs-surface pull requests must use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
 - Do not use `!` or `BREAKING CHANGE` markers in docs-surface commits.
 - CI enforces this via `nx run release-tools:validate-non-bumping-commits`.
-- For squash merges of docs-surface PRs, use a non-bumping squash subject (`docs:`, `chore:`, `ci:`, or `style:`).
+- For squash merges of docs-surface PRs, use a non-bumping squash subject (`docs:`, `chore:`, `ci:`, `style:`, or `init(<project-or-domain>):` for a new publishable project).
 
 ## Human-In-The-Loop Shortlist
 
