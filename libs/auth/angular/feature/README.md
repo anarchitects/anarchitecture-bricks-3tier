@@ -2,6 +2,10 @@
 
 Feature-level orchestration for Angular auth. It ships route guards plus standalone feature components that orchestrate auth actions via state-layer entrypoints and delegate rendering to `@anarchitects/auth-angular/ui`.
 
+Every auth form feature forwards the forms-owned `layout`, `layoutOptions`, and Signal
+Forms `schemaExtensions` inputs without changing auth DTOs or orchestration. Styling is
+provided by the host application's `@anarchitects/tailwind` import.
+
 JWT-specific feature components live under `@anarchitects/auth-angular/feature/jwt`, not the root feature entry point. They should orchestrate through `@anarchitects/auth-angular/state/jwt`, never `data-access/jwt` directly.
 
 ## Exports
@@ -22,10 +26,7 @@ JWT-specific feature components live under `@anarchitects/auth-angular/feature/j
 
 ```ts
 import { Routes } from '@angular/router';
-import {
-  policyGuard,
-  resourcePolicyGuard,
-} from '@anarchitects/auth-angular/feature';
+import { policyGuard, resourcePolicyGuard } from '@anarchitects/auth-angular/feature';
 
 export const routes: Routes = [
   {
@@ -107,9 +108,7 @@ import { AnarchitectsFeatureLogout } from '@anarchitects/auth-angular/feature';
 @Component({
   selector: 'app-session-page',
   imports: [AnarchitectsFeatureLogout],
-  template: `
-    <anarchitects-auth-feature-logout />
-  `,
+  template: ` <anarchitects-auth-feature-logout /> `,
 })
 export class SessionPageComponent {
   userId = 'current-user-id';

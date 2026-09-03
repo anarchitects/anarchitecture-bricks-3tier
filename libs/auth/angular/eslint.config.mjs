@@ -9,6 +9,9 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
+          // Auth form components consume Tailwind through host application CSS.
+          // dependency-checks cannot follow consumer-owned CSS imports.
+          ignoredDependencies: ['@anarchitects/tailwind'],
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
         },
       ],

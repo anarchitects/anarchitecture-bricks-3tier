@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthStore } from '@anarchitects/auth-angular/state';
+import { AnarchitectsAuthUiLoginForm } from '@anarchitects/auth-angular/ui';
 import { LoginRequestDTO } from '@anarchitects/auth-ts/dtos';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
+import { By } from '@angular/platform-browser';
 import { AnarchitectsFeatureLogin } from './login';
 
 describe('AnarchitectsFeatureLogin', () => {
@@ -38,5 +41,18 @@ describe('AnarchitectsFeatureLogin', () => {
     await component.submitForm(input);
 
     expect(mockAuthStore.login).toHaveBeenCalledWith(input);
+  });
+
+  it('should forward Signal Forms schema extensions to the UI form', async () => {
+    const extension: FormsSchemaExtension = () => undefined;
+    fixture.componentRef.setInput('schemaExtensions', [extension]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const uiForm = fixture.debugElement.query(
+      By.directive(AnarchitectsAuthUiLoginForm),
+    ).componentInstance as AnarchitectsAuthUiLoginForm;
+
+    expect(uiForm.schemaExtensions()).toEqual([extension]);
   });
 });

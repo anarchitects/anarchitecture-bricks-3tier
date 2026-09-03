@@ -1,6 +1,7 @@
-import type { AnxLayoutId } from '@anarchitects/common-angular-ui-layouts/contracts';
+import type { FormsLayoutId } from '@anarchitects/forms-angular/config';
 import { RefreshTokenRequestDTO } from '@anarchitects/auth-ts/dtos/jwt';
 import { AnarchitectsUiForm } from '@anarchitects/forms-angular/ui';
+import type { FormsSchemaExtension } from '@anarchitects/forms-angular/ui';
 import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
 import {
   ChangeDetectionStrategy,
@@ -23,7 +24,8 @@ import { refreshTokensFormBridge } from '../../internal/refresh-tokens-form-brid
   },
 })
 export class AnarchitectsAuthJwtRefreshTokensForm {
-  readonly layout = input<AnxLayoutId | null>(null);
+  readonly layout = input<FormsLayoutId | null>(null);
+  readonly schemaExtensions = input<readonly FormsSchemaExtension[]>([]);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
   readonly submitted = output<RefreshTokenRequestDTO>();
 

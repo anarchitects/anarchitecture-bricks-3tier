@@ -1,4 +1,4 @@
-import { AnxTemplateDirective } from '@anarchitects/common-angular-ui-composition/templates';
+import { AnarchitectsFormsTemplateDirective } from '@anarchitects/forms-angular/ui';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular';
 import { AnarchitectsAuthUiResetPasswordForm } from './reset-password-form';
 
@@ -7,7 +7,7 @@ const meta: Meta<AnarchitectsAuthUiResetPasswordForm> = {
   title: 'Auth UI/Reset Password Form',
   decorators: [
     moduleMetadata({
-      imports: [AnxTemplateDirective],
+      imports: [AnarchitectsFormsTemplateDirective],
     }),
   ],
 };
