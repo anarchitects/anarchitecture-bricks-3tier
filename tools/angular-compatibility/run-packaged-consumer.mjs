@@ -14,6 +14,17 @@ if (!['21', '22'].includes(major)) {
   throw new Error('Expected Angular major 21 or 22');
 }
 
+const tailwindRegistryVersion =
+  process.env.ANARCHITECTS_TAILWIND_VERSION?.trim() || null;
+if (
+  tailwindRegistryVersion &&
+  !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(tailwindRegistryVersion)
+) {
+  throw new Error(
+    `Invalid ANARCHITECTS_TAILWIND_VERSION "${tailwindRegistryVersion}"`,
+  );
+}
+
 const root = process.cwd();
 const temporaryRoot = mkdtempSync(
   join(tmpdir(), `anarchitects-angular-${major}-`),
@@ -23,7 +34,7 @@ const isolatedEnvironment = {
   npm_config_cache: join(temporaryRoot, 'npm-cache'),
 };
 const packageRoots = [
-  'dist/libs/common/tailwind',
+  ...(tailwindRegistryVersion ? [] : ['dist/libs/common/tailwind']),
   'dist/libs/common/angular/design',
   'dist/libs/common/angular/ui-composition',
   'dist/libs/common/angular/ui-layouts',
@@ -72,6 +83,12 @@ try {
     localPackages[manifest.name] = `file:${join(temporaryRoot, output)}`;
   }
 
+  if (tailwindRegistryVersion) {
+    console.log(
+      `REGISTRY @anarchitects/tailwind@${tailwindRegistryVersion}: installed artifact`,
+    );
+  }
+
   const consumers = [
     localPackages['@anarchitects/forms-angular'] && 'forms-angular-example',
     localPackages['@anarchitects/auth-angular'] && 'auth-angular-example',
@@ -87,6 +104,9 @@ try {
     },
     dependencies: {
       ...localPackages,
+      ...(tailwindRegistryVersion
+        ? { '@anarchitects/tailwind': tailwindRegistryVersion }
+        : {}),
       '@angular/common': angularVersion,
       '@angular/compiler': angularVersion,
       '@angular/core': angularVersion,

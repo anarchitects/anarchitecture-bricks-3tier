@@ -85,3 +85,16 @@ jobs:
         run: yarn nx release publish --projects "${{ steps.tag.outputs.project }}" --yes
         env:
           NPM_CONFIG_PROVENANCE: true
+
+      - name: Validate Tailwind registry release
+        if: steps.tag.outputs.project == 'tailwind'
+        run: yarn nx run release-tools:validate-tailwind-registry --skip-nx-cache
+        env:
+          ANARCHITECTS_TAILWIND_VERSION: ${{ steps.tag.outputs.version }}
+
+      - name: Validate Tailwind registry package in Angular consumers
+        if: steps.tag.outputs.project == 'tailwind'
+        run: yarn nx run angular-consumer-compatibility:test-22 --skip-nx-cache
+        env:
+          ANARCHITECTS_TAILWIND_VERSION: ${{ steps.tag.outputs.version }}
+          NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'

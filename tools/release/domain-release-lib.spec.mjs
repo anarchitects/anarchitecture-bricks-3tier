@@ -9,6 +9,7 @@ import {
   expandReleaseGroupsByDependents,
   inferDomainFromProjectRoot,
   resolveReleaseGroupsForDomain,
+  selectReleaseGroupsForDomain,
   SUPPORTED_RELEASE_BUMPS,
 } from './domain-release-lib.mjs';
 
@@ -72,6 +73,36 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
       projectNodes,
     }),
     ['common-angular', 'common-nest', 'common-tailwind'],
+  );
+});
+
+test('selectReleaseGroupsForDomain safely narrows a multi-group domain', () => {
+  const domainGroupNames = ['common-angular', 'common-nest', 'common-tailwind'];
+
+  assert.deepEqual(
+    selectReleaseGroupsForDomain({
+      domain: 'common',
+      domainGroupNames,
+      requestedGroup: 'common-tailwind',
+    }),
+    ['common-tailwind'],
+  );
+  assert.deepEqual(
+    selectReleaseGroupsForDomain({
+      domain: 'common',
+      domainGroupNames,
+      requestedGroup: null,
+    }),
+    domainGroupNames,
+  );
+  assert.throws(
+    () =>
+      selectReleaseGroupsForDomain({
+        domain: 'forms',
+        domainGroupNames: ['forms'],
+        requestedGroup: 'common-tailwind',
+      }),
+    /does not belong to domain "forms"/,
   );
 });
 
@@ -279,6 +310,64 @@ test('createForcedReleasePlan rejects unsupported manual bump values', () => {
     new RegExp(
       `Expected one of: ${Array.from(SUPPORTED_RELEASE_BUMPS).join(', ')}`,
     ),
+  );
+});
+
+test('createForcedReleasePlan keeps declared 0.0.1 versions for coordinated first releases', () => {
+  const commonAngularGroup = buildReleaseGroup('common-angular', [
+    'common-angular-a',
+  ]);
+  const commonTailwindGroup = buildReleaseGroup('common-tailwind', [
+    'tailwind',
+  ]);
+  const releaseGroups = [commonAngularGroup, commonTailwindGroup];
+
+  assert.deepEqual(
+    createForcedReleasePlan({
+      releaseGroups,
+      releaseGroupToFilteredProjects: new Map(
+        releaseGroups.map((group) => [group, new Set(group.projects)]),
+      ),
+      bump: 'init',
+      currentVersions: {
+        'common-angular-a': '0.0.1',
+        tailwind: '0.0.1',
+      },
+      firstRelease: true,
+    }),
+    {
+      'common-angular-a': '0.0.1',
+      tailwind: '0.0.1',
+    },
+  );
+});
+
+test('createForcedReleasePlan guards init releases', () => {
+  const tailwindGroup = buildReleaseGroup('common-tailwind', ['tailwind']);
+  const releaseGroupToFilteredProjects = new Map([
+    [tailwindGroup, new Set(tailwindGroup.projects)],
+  ]);
+
+  assert.throws(
+    () =>
+      createForcedReleasePlan({
+        releaseGroups: [tailwindGroup],
+        releaseGroupToFilteredProjects,
+        bump: 'init',
+        currentVersions: { tailwind: '0.0.1' },
+      }),
+    /requires --first-release/,
+  );
+  assert.throws(
+    () =>
+      createForcedReleasePlan({
+        releaseGroups: [tailwindGroup],
+        releaseGroupToFilteredProjects,
+        bump: 'init',
+        currentVersions: { tailwind: '0.1.0' },
+        firstRelease: true,
+      }),
+    /declare version "0\.0\.1".*found "0\.1\.0"/,
   );
 });
 

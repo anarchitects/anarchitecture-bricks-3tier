@@ -4,6 +4,7 @@ import semver from 'semver';
 
 export const TRANSIENT_VERSION_PLAN_PREFIX = 'domain-release-plan-';
 export const SUPPORTED_RELEASE_BUMPS = new Set([
+  'init',
   'major',
   'premajor',
   'minor',
@@ -36,19 +37,46 @@ export function inferDomainFromProjectRoot(projectRoot) {
   return domain || null;
 }
 
-export function resolveReleaseGroupsForDomain({ domain, releaseGroups, projectNodes }) {
+export function resolveReleaseGroupsForDomain({
+  domain,
+  releaseGroups,
+  projectNodes,
+}) {
   const groups = releaseGroups.filter((releaseGroup) =>
     releaseGroup.projects.some((projectName) => {
       const projectNode = projectNodes[projectName];
-      return projectNode && inferDomainFromProjectRoot(projectNode.data.root) === domain;
+      return (
+        projectNode &&
+        inferDomainFromProjectRoot(projectNode.data.root) === domain
+      );
     }),
   );
 
   if (groups.length === 0) {
-    throw new Error(`Unsupported domain "${domain}". No release groups matched that domain.`);
+    throw new Error(
+      `Unsupported domain "${domain}". No release groups matched that domain.`,
+    );
   }
 
   return groups.map((group) => group.name);
+}
+
+export function selectReleaseGroupsForDomain({
+  domain,
+  domainGroupNames,
+  requestedGroup,
+}) {
+  if (!requestedGroup) {
+    return domainGroupNames;
+  }
+
+  if (!domainGroupNames.includes(requestedGroup)) {
+    throw new Error(
+      `Release group "${requestedGroup}" does not belong to domain "${domain}". Expected one of: ${domainGroupNames.join(', ')}.`,
+    );
+  }
+
+  return [requestedGroup];
 }
 
 export function expandReleaseGroupsByDependents({
@@ -58,7 +86,9 @@ export function expandReleaseGroupsByDependents({
   projectToReleaseGroup,
   sortedReleaseGroups = [],
 }) {
-  const groupByName = new Map(releaseGroups.map((releaseGroup) => [releaseGroup.name, releaseGroup]));
+  const groupByName = new Map(
+    releaseGroups.map((releaseGroup) => [releaseGroup.name, releaseGroup]),
+  );
   const selectedGroups = new Set(initialGroupNames);
   const queue = [...initialGroupNames];
 
@@ -72,7 +102,8 @@ export function expandReleaseGroupsByDependents({
     for (const projectName of releaseGroup.projects) {
       const dependents = projectToDependents.get(projectName) ?? new Set();
       for (const dependentProjectName of dependents) {
-        const dependentGroupName = projectToReleaseGroup.get(dependentProjectName)?.name;
+        const dependentGroupName =
+          projectToReleaseGroup.get(dependentProjectName)?.name;
         if (!dependentGroupName || selectedGroups.has(dependentGroupName)) {
           continue;
         }
@@ -87,7 +118,9 @@ export function expandReleaseGroupsByDependents({
     return Array.from(selectedGroups);
   }
 
-  return sortedReleaseGroups.filter((groupName) => selectedGroups.has(groupName));
+  return sortedReleaseGroups.filter((groupName) =>
+    selectedGroups.has(groupName),
+  );
 }
 
 export function detectBumpType(currentVersion, newVersion) {
@@ -147,12 +180,18 @@ export function validateSharedMajorMinor(groupName, projectEntries) {
   );
 }
 
-export function computeHybridReleasePlan({ releaseGroups, releaseGroupToFilteredProjects, versionData }) {
+export function computeHybridReleasePlan({
+  releaseGroups,
+  releaseGroupToFilteredProjects,
+  versionData,
+}) {
   const projectBumps = {};
 
   for (const releaseGroup of releaseGroups) {
     const filteredProjects = releaseGroupToFilteredProjects.get(releaseGroup);
-    const projectNames = Array.from(filteredProjects ?? releaseGroup.projects ?? []);
+    const projectNames = Array.from(
+      filteredProjects ?? releaseGroup.projects ?? [],
+    );
 
     const projectEntries = projectNames.map((projectName) => {
       const data = versionData[projectName];
@@ -173,7 +212,9 @@ export function computeHybridReleasePlan({ releaseGroups, releaseGroupToFiltered
     validateSharedMajorMinor(releaseGroup.name, projectEntries);
 
     const groupBump = projectEntries.reduce((highest, entry) => {
-      return BUMP_ORDER[entry.bumpType] > BUMP_ORDER[highest] ? entry.bumpType : highest;
+      return BUMP_ORDER[entry.bumpType] > BUMP_ORDER[highest]
+        ? entry.bumpType
+        : highest;
     }, 'none');
 
     if (groupBump === 'major' || groupBump === 'minor') {
@@ -199,10 +240,17 @@ function normalizeBumpType(bump) {
   return BUMP_TYPE_NORMALIZATION[bump] ?? 'none';
 }
 
-export function applyDependentPatchBumps({ projectBumps, projectToDependents, projectsToProcess }) {
+export function applyDependentPatchBumps({
+  projectBumps,
+  projectToDependents,
+  projectsToProcess,
+}) {
   const selectedProjects = new Set(projectsToProcess);
   const resolvedProjectBumps = Object.fromEntries(
-    Array.from(selectedProjects, (projectName) => [projectName, normalizeBumpType(projectBumps[projectName])]),
+    Array.from(selectedProjects, (projectName) => [
+      projectName,
+      normalizeBumpType(projectBumps[projectName]),
+    ]),
   );
   const queue = Array.from(selectedProjects).filter(
     (projectName) => resolvedProjectBumps[projectName] !== 'none',
@@ -237,7 +285,11 @@ export function computeHybridReleasePlanFromBumps({
   projectToDependents,
 }) {
   const projectsToProcess = releaseGroups.flatMap((releaseGroup) =>
-    Array.from(releaseGroupToFilteredProjects.get(releaseGroup) ?? releaseGroup.projects ?? []),
+    Array.from(
+      releaseGroupToFilteredProjects.get(releaseGroup) ??
+        releaseGroup.projects ??
+        [],
+    ),
   );
   const propagatedProjectBumps = applyDependentPatchBumps({
     projectBumps: directProjectBumps,
@@ -248,7 +300,9 @@ export function computeHybridReleasePlanFromBumps({
 
   for (const releaseGroup of releaseGroups) {
     const filteredProjects = releaseGroupToFilteredProjects.get(releaseGroup);
-    const projectNames = Array.from(filteredProjects ?? releaseGroup.projects ?? []);
+    const projectNames = Array.from(
+      filteredProjects ?? releaseGroup.projects ?? [],
+    );
 
     const projectEntries = projectNames.map((projectName) => {
       const currentVersion = currentVersions[projectName];
@@ -268,7 +322,9 @@ export function computeHybridReleasePlanFromBumps({
     validateSharedMajorMinor(releaseGroup.name, projectEntries);
 
     const groupBump = projectEntries.reduce((highest, entry) => {
-      return BUMP_ORDER[entry.bumpType] > BUMP_ORDER[highest] ? entry.bumpType : highest;
+      return BUMP_ORDER[entry.bumpType] > BUMP_ORDER[highest]
+        ? entry.bumpType
+        : highest;
     }, 'none');
 
     if (releaseGroup.projectsRelationship === 'fixed' && groupBump !== 'none') {
@@ -301,6 +357,8 @@ export function createForcedReleasePlan({
   releaseGroups,
   releaseGroupToFilteredProjects,
   bump,
+  currentVersions = {},
+  firstRelease = false,
 }) {
   if (!SUPPORTED_RELEASE_BUMPS.has(bump)) {
     throw new Error(
@@ -310,13 +368,32 @@ export function createForcedReleasePlan({
     );
   }
 
+  if (bump === 'init' && !firstRelease) {
+    throw new Error(
+      'The "init" release bump requires --first-release because it publishes the version already declared on disk.',
+    );
+  }
+
   const projectBumps = {};
 
   for (const releaseGroup of releaseGroups) {
     const filteredProjects = releaseGroupToFilteredProjects.get(releaseGroup);
-    const projectNames = Array.from(filteredProjects ?? releaseGroup.projects ?? []);
+    const projectNames = Array.from(
+      filteredProjects ?? releaseGroup.projects ?? [],
+    );
 
     for (const projectName of projectNames) {
+      if (bump === 'init') {
+        const currentVersion = currentVersions[projectName];
+        if (currentVersion !== '0.0.1') {
+          throw new Error(
+            `The "init" release bump requires project "${projectName}" to declare version "0.0.1" on disk, but found "${currentVersion ?? 'unknown'}".`,
+          );
+        }
+        projectBumps[projectName] = currentVersion;
+        continue;
+      }
+
       projectBumps[projectName] = bump;
     }
   }
@@ -333,7 +410,11 @@ export function buildVersionPlanContent(projectBumps, message) {
   return `---\n${frontMatter}\n---\n\n${message}\n`;
 }
 
-export function createTransientVersionPlan({ workspaceRoot, projectBumps, domain }) {
+export function createTransientVersionPlan({
+  workspaceRoot,
+  projectBumps,
+  domain,
+}) {
   const fileName = `${TRANSIENT_VERSION_PLAN_PREFIX}${domain}-${Date.now()}.md`;
 
   return {

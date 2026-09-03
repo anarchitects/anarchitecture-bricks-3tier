@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process';
 
 const workspaceRoot = process.cwd();
-const allowedTypes = new Set(['docs', 'chore', 'ci', 'style']);
+const allowedTypes = new Set(['docs', 'chore', 'ci', 'style', 'init']);
 const docsPathMatchers = [
   /^docs\//,
   /^tools\/angular-docs\//,
@@ -209,7 +209,7 @@ if (violations.length > 0) {
     console.error(`- ${violation}`);
   }
   console.error(
-    'Use docs/chore/ci/style commit types only and avoid "!" / BREAKING CHANGE markers.',
+    'Use docs/chore/ci/style/init commit types only and avoid "!" / BREAKING CHANGE markers.',
   );
   process.exit(1);
 }

@@ -96,10 +96,17 @@
         "command": "node tools/release/run-domain-release.mjs"
       }
     },
+    "validate-tailwind-registry": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node tools/release/validate-tailwind-registry-release.mjs"
+      }
+    },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs"
       }
     }
   }

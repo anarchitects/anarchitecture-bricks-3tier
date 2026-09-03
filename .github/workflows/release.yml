@@ -15,11 +15,22 @@ on:
           - auth
           - identity
           - common
+      common_group:
+        description: Optional common subgroup; use all for the full common domain
+        required: false
+        default: all
+        type: choice
+        options:
+          - all
+          - common-angular
+          - common-nest
+          - common-tailwind
       bump:
         description: Optional semver override for the selected domain release
         required: false
         type: choice
         options:
+          - init
           - patch
           - minor
           - major
@@ -75,6 +86,7 @@ jobs:
       - name: Run release for selected domain group
         run: |
           bump_args=""
+          group_args=""
           first_release_args=""
           if [ -n "${{ inputs.bump }}" ]; then
             bump_args="--bump=${{ inputs.bump }}"
@@ -82,6 +94,9 @@ jobs:
           if [ "${{ inputs.first_release }}" = "true" ]; then
             first_release_args="--first-release"
           fi
-          yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} $bump_args $first_release_args --skip-publish --yes
+          if [ "${{ inputs.common_group }}" != "all" ]; then
+            group_args="--group=${{ inputs.common_group }}"
+          fi
+          yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} $group_args $bump_args $first_release_args --skip-publish --yes
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
