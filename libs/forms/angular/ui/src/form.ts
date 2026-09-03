@@ -227,7 +227,7 @@ export class AnarchitectsUiForm {
   }
 
   fieldId(fieldName: string): string {
-    return `${this.config().id}-${fieldName}`;
+    return fieldName;
   }
 
   fieldErrorMessage(fieldName: string): string | null {

@@ -268,8 +268,21 @@ describe('AnarchitectsUiForm Signal Forms', () => {
       host.style.getPropertyValue('--anx-forms-actions-justify').trim(),
     ).toBe('center');
     expect(host.querySelectorAll('.anx-forms-ui-form__field')).toHaveLength(3);
-    expect(host.querySelector('input[type="email"]')).toBeTruthy();
+    expect(host.querySelector('input#email[type="email"]')).toBeTruthy();
     expect(host.querySelector('input[type="checkbox"]')).toBeTruthy();
+
+    const submitButton = host.querySelector<HTMLButtonElement>(
+      'button[type="submit"]',
+    );
+    expect(submitButton?.disabled).toBe(true);
+
+    component.formModel.set({
+      email: 'person@example.com',
+      name: 'Jane',
+      consent: false,
+    });
+    fixture.detectChanges();
+    expect(submitButton?.disabled).toBe(false);
   });
 
   it('renders semantic header inputs', () => {

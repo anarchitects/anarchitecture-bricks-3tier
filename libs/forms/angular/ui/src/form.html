@@ -105,7 +105,7 @@
       <button
         class="anx-forms-ui-form__submit anx-control"
         type="submit"
-        [disabled]="currentForm().pending()"
+        [disabled]="currentForm().invalid() || currentForm().pending()"
       >
         Submit
       </button>

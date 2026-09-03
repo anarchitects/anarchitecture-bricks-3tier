@@ -123,7 +123,7 @@ export const Primary: Story = {
     ).toBeTruthy();
 
     const submitButton = await canvas.findByRole('button', { name: /submit/i });
-    expect((submitButton as HTMLButtonElement).disabled).toBe(false);
+    expect((submitButton as HTMLButtonElement).disabled).toBe(true);
   },
 };
 
@@ -273,7 +273,7 @@ export const InvalidEmailKeepsFormInvalid: Story = {
     );
 
     const submitButton = await canvas.findByRole('button', { name: /submit/i });
-    expect((submitButton as HTMLButtonElement).disabled).toBe(false);
+    expect((submitButton as HTMLButtonElement).disabled).toBe(true);
   },
 };
 
