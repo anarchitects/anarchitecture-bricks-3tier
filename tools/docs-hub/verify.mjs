@@ -8,6 +8,7 @@ const requiredFiles = [
   'index.html',
   'packages/index.html',
   'guides/angular.html',
+  'guides/angular-22-signal-forms-tailwind-migration.html',
   'guides/nest.html',
   'guides/ts-contracts.html',
   'guides/design-ui-systems.html',
@@ -59,6 +60,9 @@ if (missingPackagePages.length > 0) {
 const homePage = readFileSync(join(docsRoot, 'index.html'), 'utf8');
 if (
   !homePage.includes('/storybook/') ||
+  !homePage.includes(
+    '/guides/angular-22-signal-forms-tailwind-migration.html',
+  ) ||
   !homePage.includes('/openapi/openapi.yaml') ||
   !homePage.includes('/guides/ts-contracts.html') ||
   !homePage.includes('/guides/design-ui-systems.html') ||

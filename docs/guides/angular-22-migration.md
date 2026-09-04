@@ -88,3 +88,7 @@ yarn nx run api-specs:generate --skipNxCache
 ```
 
 The Browserslist stale-data notice is advisory and unrelated to Angular compiler compatibility.
+
+For consumer-facing migration from the final compatibility line to the Angular 22-only Signal Forms,
+auth, and Tailwind line, follow the
+[Angular 22, Signal Forms, and Tailwind v4 Migration Guide](angular-22-signal-forms-tailwind-migration.md).

@@ -150,6 +150,7 @@ other repositories.
 ## Related
 
 - [Frontend Foundation Guide](../guides/design-ui-systems.md)
+- [Angular 22, Signal Forms, and Tailwind v4 Migration Guide](../guides/angular-22-signal-forms-tailwind-migration.md)
 - [Legacy Theme Migration Reference](../guides/theme-migration.md)
 - [ADR-0001: Align With `anarchitecture-bricks-ddd` And Support Migration](0001-align-with-bricks-ddd-and-support-migration.md)
 - [ADR-0002: Do Not Split Libraries By Audience Until Workflow Divergence Is Real](0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md)

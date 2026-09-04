@@ -5,6 +5,10 @@ const workspaceRoot = process.cwd();
 const libsRoot = join(workspaceRoot, 'libs');
 const guideFiles = [
   { path: 'docs/guides/angular.md', key: 'angular' },
+  {
+    path: 'docs/guides/angular-22-signal-forms-tailwind-migration.md',
+    key: 'angularFrontendMigration',
+  },
   { path: 'docs/guides/nest.md', key: 'nest' },
   { path: 'docs/guides/ts-contracts.md', key: 'tsContracts' },
   { path: 'docs/guides/design-ui-systems.md', key: 'designUiSystems' },
@@ -12,6 +16,26 @@ const guideFiles = [
 ];
 
 const guideRequirements = {
+  angularFrontendMigration: [
+    'scope and breaking boundary',
+    'compatibility and prerequisites',
+    'migration sequence',
+    'package migration',
+    'tailwind installation and css entry points',
+    'source detection',
+    'design tokens and runtime theme migration',
+    'slots and templates migration',
+    'layouts migration',
+    'primitives and accessibility migration',
+    'signal forms migration',
+    'validation and schema extensions',
+    'state errors submission reset and payload defaults',
+    'auth forms migration',
+    'visual and dom migration',
+    'fitoverforty downstream checklist',
+    'cross repository follow ups',
+    'validation and removal checklist',
+  ],
   angular: [
     'intent',
     'architecture',
@@ -116,6 +140,27 @@ const designUiSystemsRequiredTokens = [
   '@anarchitects/auth-angular',
   'ui <- feature -> state -> data-access',
   'presentation -> application <- infrastructure',
+];
+
+const angularFrontendMigrationRequiredTokens = [
+  '@anarchitects/common-angular-design',
+  '@anarchitects/common-angular-ui-composition',
+  '@anarchitects/common-angular-ui-layouts',
+  '@anarchitects/common-angular-ui-primitives',
+  '@anarchitects/tailwind',
+  '@anarchitects/forms-angular',
+  '@anarchitects/auth-angular',
+  'formGroup',
+  'runtimeValidators',
+  'formModel',
+  'signalForm',
+  'schemaExtensions',
+  '@source',
+  'FitOverForty',
+  'anarchitecture-meta',
+  'anarchitecture-community',
+  'anarchitecture-plugins',
+  'anarchitecture-bricks-ddd',
 ];
 
 const requiredDesignGuideLink = '/guides/design-ui-systems.html';
@@ -342,6 +387,22 @@ const missingCoverageTokens = designUiSystemsRequiredTokens
 if (missingCoverageTokens.length > 0) {
   failures.push(
     `docs/guides/design-ui-systems.md: missing required canonical design/ui coverage tokens -> ${missingCoverageTokens.join(', ')}`,
+  );
+}
+
+const angularFrontendMigrationContent = (
+  guideContents.get('angularFrontendMigration') ?? ''
+).toLowerCase();
+const missingAngularFrontendMigrationTokens =
+  angularFrontendMigrationRequiredTokens
+    .filter(
+      (token) => !angularFrontendMigrationContent.includes(token.toLowerCase()),
+    )
+    .map((token) => `"${token}"`);
+
+if (missingAngularFrontendMigrationTokens.length > 0) {
+  failures.push(
+    `docs/guides/angular-22-signal-forms-tailwind-migration.md: missing required migration coverage tokens -> ${missingAngularFrontendMigrationTokens.join(', ')}`,
   );
 }
 

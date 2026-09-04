@@ -15,8 +15,8 @@ adopts Tailwind CSS v4 and retired the source projects for:
 - `@anarchitects/common-angular-ui-primitives`
 
 Use the [Frontend Foundation Guide](/guides/design-ui-systems.html) for the target ownership and CSS entry
-points. The complete Tailwind and Signal Forms consumer migration steps will be published after those APIs
-are implemented under epic #362.
+points. Follow the [Angular 22, Signal Forms, and Tailwind v4 Migration Guide](/guides/angular-22-signal-forms-tailwind-migration.html)
+for the complete consumer transition.
 
 ## Maintaining The Final Legacy Line
 
@@ -63,6 +63,7 @@ preserve its interaction, focus, ARIA, validation, and state semantics in the ow
 
 ## Publication Policy
 
-The legacy packages stay downloadable. After the replacement is accepted and workspace dependencies are
-removed, npm versions will be marked deprecated with a pointer to `@anarchitects/tailwind` and the final
-migration guide. They will never be unpublished.
+The legacy packages stay downloadable. After explicit human approval, npm versions will be marked
+deprecated with a pointer to `@anarchitects/tailwind` and the
+[complete migration guide](/guides/angular-22-signal-forms-tailwind-migration.html). They will never be
+unpublished.

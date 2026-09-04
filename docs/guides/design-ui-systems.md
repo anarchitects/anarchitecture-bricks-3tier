@@ -158,8 +158,9 @@ versions remain downloadable and will be deprecated only through the separately 
 step. Published versions will not be unpublished.
 
 The [Legacy Theme Migration Reference](/guides/theme-migration.html) documents the old system for teams
-maintaining or migrating from the final legacy line. The complete consumer migration guide is tracked by
-epic #362.
+maintaining the final legacy line. The
+[Angular 22, Signal Forms, and Tailwind v4 Migration Guide](/guides/angular-22-signal-forms-tailwind-migration.html)
+is the complete consumer transition and the deprecation destination.
 
 ## Repository Alignment
 

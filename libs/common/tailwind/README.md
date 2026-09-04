@@ -138,6 +138,8 @@ prove the CSS contract. It intentionally remains framework-neutral so it can lat
 
 See [ADR-0003](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md)
 and [ADR-0004](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0004-define-common-as-platform-foundation-not-shared-dumping-ground.md).
+Applications moving from the retired Common Angular UI packages should follow the
+[Angular 22, Signal Forms, and Tailwind v4 migration guide](../../../docs/guides/angular-22-signal-forms-tailwind-migration.md).
 
 ## Nx targets
 
