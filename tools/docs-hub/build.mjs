@@ -3,13 +3,26 @@ import { join } from 'node:path';
 import { marked } from 'marked';
 
 const workspaceRoot = process.cwd();
-const catalogFile = join(workspaceRoot, 'dist/docs-hub/data/packages.catalog.json');
+const catalogFile = join(
+  workspaceRoot,
+  'dist/docs-hub/data/packages.catalog.json',
+);
 const outputRoot = join(workspaceRoot, 'dist/docs-hub');
 const angularGuidePath = join(workspaceRoot, 'docs/guides/angular.md');
+const angularFrontendMigrationGuidePath = join(
+  workspaceRoot,
+  'docs/guides/angular-22-signal-forms-tailwind-migration.md',
+);
 const nestGuidePath = join(workspaceRoot, 'docs/guides/nest.md');
-const authMigrationGuidePath = join(workspaceRoot, 'docs/guides/auth-migration.md');
+const authMigrationGuidePath = join(
+  workspaceRoot,
+  'docs/guides/auth-migration.md',
+);
 const aiAgentsGuidePath = join(workspaceRoot, 'docs/guides/ai-agents.md');
-const designUiSystemsGuidePath = join(workspaceRoot, 'docs/guides/design-ui-systems.md');
+const designUiSystemsGuidePath = join(
+  workspaceRoot,
+  'docs/guides/design-ui-systems.md',
+);
 const tsContractsGuidePath = join(workspaceRoot, 'docs/guides/ts-contracts.md');
 
 marked.setOptions({
@@ -39,10 +52,17 @@ function pageTemplate(title, activePath, content, generatedAt) {
     { href: '/', label: 'Home' },
     { href: '/packages/', label: 'Packages' },
     { href: '/guides/angular.html', label: 'Angular Guide' },
+    {
+      href: '/guides/angular-22-signal-forms-tailwind-migration.html',
+      label: 'Frontend Migration',
+    },
     { href: '/guides/nest.html', label: 'Nest Guide' },
     { href: '/guides/auth-migration.html', label: 'Auth Migration Guide' },
     { href: '/guides/ts-contracts.html', label: 'TS Contracts Guide' },
-    { href: '/guides/design-ui-systems.html', label: 'Design/UI Systems Guide' },
+    {
+      href: '/guides/design-ui-systems.html',
+      label: 'Design/UI Systems Guide',
+    },
     { href: '/guides/ai-agents.html', label: 'AI Agents Guide' },
     { href: '/release/', label: 'Release' },
     { href: '/storybook/', label: 'Storybook' },
@@ -187,10 +207,17 @@ function renderMarkdownPage(title, activePath, markdownContent, generatedAt) {
 const catalog = JSON.parse(readFileSync(catalogFile, 'utf8'));
 const generatedAt = new Date().toISOString();
 const angularGuideMarkdown = readFileSync(angularGuidePath, 'utf8');
+const angularFrontendMigrationGuideMarkdown = readFileSync(
+  angularFrontendMigrationGuidePath,
+  'utf8',
+);
 const nestGuideMarkdown = readFileSync(nestGuidePath, 'utf8');
 const authMigrationGuideMarkdown = readFileSync(authMigrationGuidePath, 'utf8');
 const aiAgentsGuideMarkdown = readFileSync(aiAgentsGuidePath, 'utf8');
-const designUiSystemsGuideMarkdown = readFileSync(designUiSystemsGuidePath, 'utf8');
+const designUiSystemsGuideMarkdown = readFileSync(
+  designUiSystemsGuidePath,
+  'utf8',
+);
 const tsContractsGuideMarkdown = readFileSync(tsContractsGuidePath, 'utf8');
 
 rmSync(outputRoot, { recursive: true, force: true });
@@ -244,6 +271,7 @@ writeFile(
   <ul>
     <li><a href="/packages/">Publishable package catalog</a></li>
     <li><a href="/guides/angular.html">Angular application guide</a></li>
+    <li><a href="/guides/angular-22-signal-forms-tailwind-migration.html">Angular 22, Signal Forms, and Tailwind migration guide</a></li>
     <li><a href="/guides/nest.html">Nest application guide</a></li>
     <li><a href="/guides/auth-migration.html">Auth migration guide</a></li>
     <li><a href="/guides/ts-contracts.html">TS contracts guide</a></li>
@@ -265,7 +293,12 @@ writeFile(
 
 writeFile(
   'packages/index.html',
-  pageTemplate('Packages', '/packages/', renderPackagesPage(catalog), generatedAt),
+  pageTemplate(
+    'Packages',
+    '/packages/',
+    renderPackagesPage(catalog),
+    generatedAt,
+  ),
 );
 
 for (const pkg of catalog.packages) {
@@ -273,7 +306,10 @@ for (const pkg of catalog.packages) {
     continue;
   }
 
-  const readmeMarkdown = readFileSync(join(workspaceRoot, pkg.readmePath), 'utf8');
+  const readmeMarkdown = readFileSync(
+    join(workspaceRoot, pkg.readmePath),
+    'utf8',
+  );
   const body = `<article class="markdown-body">${markdownToHtml(readmeMarkdown)}</article>
 <section>
   <h2>Source Links</h2>
@@ -303,8 +339,23 @@ writeFile(
 );
 
 writeFile(
+  'guides/angular-22-signal-forms-tailwind-migration.html',
+  renderMarkdownPage(
+    'Angular 22, Signal Forms, and Tailwind v4 Migration Guide',
+    '/guides/angular-22-signal-forms-tailwind-migration.html',
+    angularFrontendMigrationGuideMarkdown,
+    generatedAt,
+  ),
+);
+
+writeFile(
   'guides/nest.html',
-  renderMarkdownPage('Nest Guide', '/guides/nest.html', nestGuideMarkdown, generatedAt),
+  renderMarkdownPage(
+    'Nest Guide',
+    '/guides/nest.html',
+    nestGuideMarkdown,
+    generatedAt,
+  ),
 );
 
 writeFile(
@@ -366,8 +417,15 @@ writeFile(
   ),
 );
 
-writeFile('data/packages.catalog.json', `${JSON.stringify(catalog, null, 2)}\n`);
+writeFile(
+  'data/packages.catalog.json',
+  `${JSON.stringify(catalog, null, 2)}\n`,
+);
 writeFile('guides/angular.md', angularGuideMarkdown);
+writeFile(
+  'guides/angular-22-signal-forms-tailwind-migration.md',
+  angularFrontendMigrationGuideMarkdown,
+);
 writeFile('guides/nest.md', nestGuideMarkdown);
 writeFile('guides/auth-migration.md', authMigrationGuideMarkdown);
 writeFile('guides/ts-contracts.md', tsContractsGuideMarkdown);

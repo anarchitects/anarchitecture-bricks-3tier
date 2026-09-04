@@ -4,6 +4,8 @@ Angular domain libraries for the Anarchitecture auth domain. The package is orga
 
 Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
 Migration guidance for the contract-driven auth profile model lives in the [auth contract migration guide](../../../docs/guides/auth-contracts-migration.md).
+Migration guidance for the Angular 22 Signal Forms and Tailwind transition lives in the
+[frontend migration guide](../../../docs/guides/angular-22-signal-forms-tailwind-migration.md).
 
 ## Developer + AI Agent Start Here
 

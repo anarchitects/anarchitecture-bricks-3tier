@@ -4,6 +4,9 @@ Angular domain UI components for consuming the Anarchitecture Forms platform. Th
 configuration, data-access, state, feature, and UI layers so Angular applications can request
 contract-driven form definitions, render them dynamically, and submit responses.
 
+Applications moving from the Reactive Forms and Common Angular UI line should follow the
+[Angular 22, Signal Forms, and Tailwind v4 migration guide](../../../docs/guides/angular-22-signal-forms-tailwind-migration.md).
+
 ## Developer + AI Agent Start Here
 
 - Read this README before generating integration code for `@anarchitects/forms-angular`.
