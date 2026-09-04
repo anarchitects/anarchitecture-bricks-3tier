@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/auth-ts",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "TypeBox DTO schemas and RBAC domain models for the Anarchitecture auth stack.",
   "type": "module",
   "main": "./index.js",
