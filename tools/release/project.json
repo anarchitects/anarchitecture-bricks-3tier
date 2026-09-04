@@ -23,14 +23,7 @@
       "dependsOn": [
         { "projects": "auth-angular", "target": "build" },
         { "projects": "forms-angular", "target": "build" },
-        { "projects": "identity-angular", "target": "build" },
-        { "projects": "common-angular-design", "target": "build" },
-        {
-          "projects": "common-angular-ui-composition",
-          "target": "build"
-        },
-        { "projects": "common-angular-ui-layouts", "target": "build" },
-        { "projects": "common-angular-ui-primitives", "target": "build" }
+        { "projects": "identity-angular", "target": "build" }
       ],
       "options": {
         "command": "node tools/release/validate-angular-package-compatibility.mjs --dist"

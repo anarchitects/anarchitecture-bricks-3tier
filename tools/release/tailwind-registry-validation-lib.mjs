@@ -103,18 +103,10 @@ export function validateTailwindRegistryMetadata(packument, expectedVersion) {
   return metadata;
 }
 
-export function validateLegacyPackageRegistryMetadata(packageName, packument) {
+export function validateRetiredPackageRegistryMetadata(packageName, packument) {
   assert.equal(packument.name, packageName);
   const versions = Object.entries(packument.versions ?? {});
   assert.ok(versions.length > 0, `${packageName} must remain downloadable`);
-
-  for (const [version, metadata] of versions) {
-    assert.equal(
-      metadata.deprecated,
-      undefined,
-      `${packageName}@${version} must remain non-deprecated during the Tailwind foundation wave`,
-    );
-  }
 
   return versions.map(([version]) => version);
 }

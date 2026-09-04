@@ -65,9 +65,10 @@ For new work, keep domain-specific layout behavior in the Angular domain capabil
 shells in the host application. Use Tailwind utilities for styling; do not introduce a generic runtime
 layout registry merely to select CSS arrangements.
 
-`@anarchitects/common-angular-ui-layouts` remains available for the final legacy compatibility line but is
-scheduled for removal under [ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html).
-Follow the [Frontend Foundation Guide](/guides/design-ui-systems.html) for target ownership.
+The legacy Common Angular layout source has been removed under
+[ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html).
+Published versions remain downloadable for migration only. Follow the
+[Frontend Foundation Guide](/guides/design-ui-systems.html) for current ownership.
 
 ## Batteries-Included Forms Pages
 

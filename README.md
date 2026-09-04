@@ -145,8 +145,8 @@ Run releases via the **Release (Manual)** GitHub workflow:
 - Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
 - Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
 - Introduce a new publishable project with an `init(<project-or-domain>): <description>` implementation commit. `init` has `semverBump: none` in `nx.json`; the workflow's `first_release` and explicit `bump` inputs choose the initial published version without also inferring a feature bump.
-- The `common` domain dynamically includes the `common-angular`, `common-nest`, and `common-tailwind` release groups.
-- The optional `common_group` selector narrows a common release to `common-angular`, `common-nest`, or `common-tailwind`; its default `all` keeps full-domain behavior.
+- The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
+- The optional `common_group` selector narrows a common release to `common-nest` or `common-tailwind`; its default `all` keeps full-domain behavior.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`, which handles versioning, changelog generation, git/tagging, and GitHub releases.
 - When conventional-commit inference needs a one-off override, the repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>`. The guarded `init` value only applies to first releases already declaring `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.
 - Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.

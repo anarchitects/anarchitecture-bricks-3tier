@@ -8,15 +8,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": [
-            "tailwind",
-            "common-angular-design",
-            "common-angular-ui-composition",
-            "common-angular-ui-layouts",
-            "common-angular-ui-primitives",
-            "forms-angular",
-            "auth-angular"
-          ],
+          "projects": ["tailwind", "forms-angular", "auth-angular"],
           "target": "build"
         }
       ],
@@ -28,15 +20,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": [
-            "tailwind",
-            "common-angular-design",
-            "common-angular-ui-composition",
-            "common-angular-ui-layouts",
-            "common-angular-ui-primitives",
-            "forms-angular",
-            "auth-angular"
-          ],
+          "projects": ["tailwind", "forms-angular", "auth-angular"],
           "target": "build"
         }
       ],
