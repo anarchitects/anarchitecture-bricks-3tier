@@ -231,24 +231,6 @@
           ]
         }
       },
-      "common-angular": {
-        "projectsRelationship": "independent",
-        "projects": [
-          "common-angular-ui-composition",
-          "common-angular-design",
-          "common-angular-ui-primitives",
-          "common-angular-ui-layouts"
-        ],
-        "version": {
-          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts && yarn nx run-many -t build -p common-angular-ui-composition,common-angular-design,common-angular-ui-primitives,common-angular-ui-layouts",
-          "updateDependents": "auto",
-          "preserveMatchingDependencyRanges": [
-            "devDependencies",
-            "peerDependencies",
-            "optionalDependencies"
-          ]
-        }
-      },
       "common-nest": {
         "projectsRelationship": "independent",
         "projects": ["common-nest-mailer"],

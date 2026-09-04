@@ -6,15 +6,10 @@ Accepted
 
 ## Context
 
-The repository contains a `libs/common` area with reusable packages such as:
-
-- `common-angular-design`
-- `common-angular-ui-composition`
-- `common-angular-ui-layouts`
-- `common-angular-ui-primitives`
-- `common-nest-mailer`
-
-These packages are currently useful across multiple domains, especially `auth` and `forms`.
+The repository contains a `libs/common` area for reusable platform capabilities. Its current packages
+include the framework-neutral Tailwind foundation and the shared Nest mailer. Earlier Common Angular UI
+projects informed this decision but were later retired by ADR-0003 after their retained behavior moved to
+domain capabilities and host applications.
 
 However, a `common` area can easily degrade into a shared dumping ground when reusable code is moved there merely because more than one package needs it. That weakens domain boundaries, obscures ownership, and makes future DDD alignment harder.
 
@@ -44,9 +39,7 @@ Domains provide business vocabulary.
 
 The following categories are acceptable in `libs/common`:
 
-- design tokens and semantic design hooks
-- UI primitives such as buttons, badges, alerts, cards, field wrappers, and inputs
-- UI composition mechanisms such as slots, template projection, and generic layout hosting
+- framework-neutral design tokens, base styles, and semantic CSS utilities
 - technical infrastructure seams such as generic mail transport provider wiring
 - framework-neutral utilities only when they are genuinely domain-neutral and stable
 
@@ -68,17 +61,16 @@ If a concept has business language, lifecycle, ownership, policies, or workflows
 
 ## Examples
 
-| Candidate                      | Decision                | Rationale                                                          |
-| ------------------------------ | ----------------------- | ------------------------------------------------------------------ |
-| Button, badge, alert, card     | Common                  | Domain-neutral UI primitive                                        |
-| Design tokens                  | Common                  | Cross-domain design foundation                                     |
-| Slot/template directives       | Common                  | Domain-neutral UI composition                                      |
-| Layout host                    | Common with constraints | Generic UI layout orchestration                                    |
-| Mail transport setup           | Common                  | Technical infrastructure seam                                      |
-| Contact message handling       | Not common              | Belongs to forms, site, contact, or support depending on semantics |
-| Password reset email semantics | Not common              | Belongs to auth                                                    |
-| Booking confirmation           | Not common              | Belongs to booking                                                 |
-| Role management UI             | Not common              | Belongs to auth or a future IAM/access-control capability          |
+| Candidate                      | Decision              | Rationale                                                          |
+| ------------------------------ | --------------------- | ------------------------------------------------------------------ |
+| Tailwind theme and utilities   | Common                | Framework-neutral frontend foundation                              |
+| Domain slots and templates     | Not common            | Belong to the Angular capability that renders them                 |
+| Generic Angular UI wrappers    | Not common by default | Require proven shared behavior, not visual consistency alone       |
+| Mail transport setup           | Common                | Technical infrastructure seam                                      |
+| Contact message handling       | Not common            | Belongs to forms, site, contact, or support depending on semantics |
+| Password reset email semantics | Not common            | Belongs to auth                                                    |
+| Booking confirmation           | Not common            | Belongs to booking                                                 |
+| Role management UI             | Not common            | Belongs to auth or a future IAM/access-control capability          |
 
 ## Consequences
 

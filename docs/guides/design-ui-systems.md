@@ -4,8 +4,8 @@
 
 This guide defines the target frontend foundation for Anarchitecture Bricks.
 [ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html)
-supersedes the previous layered Common Angular UI-system direction. The current packages remain supported
-through the staged transition, but new frontend-foundation work targets Tailwind CSS v4.
+supersedes the previous layered Common Angular UI-system direction. The legacy source projects have been
+removed; current frontend-foundation work targets Tailwind CSS v4.
 
 Contract ownership for DTOs and domain models remains canonical in the
 [TS Contracts Guide](/guides/ts-contracts.html).
@@ -76,8 +76,8 @@ Angular content projection and template APIs locally in `@anarchitects/forms-ang
 `@anarchitects/auth-angular`, or another owning capability. Do not create a workspace-wide composition
 schema merely to standardize styling.
 
-`@anarchitects/common-angular-ui-composition` remains available during the final compatibility wave. Its
-necessary domain behavior moves to the relevant domain before the shared package is removed.
+The legacy Common Angular composition source has been removed. Necessary projection behavior now lives in
+the Angular domain capability that owns it.
 
 ## Primitive Contracts
 
@@ -85,8 +85,8 @@ Behavior-bearing controls belong in domain Angular UI or the consuming applicati
 responsible for interaction, focus, ARIA, validation, and state semantics. General presentation should use
 Tailwind utilities directly instead of wrapping every visual element in an Anarchitects component.
 
-`@anarchitects/common-angular-ui-primitives` remains available during the final compatibility wave but is
-not the target for new primitives. Tailwind replaces its styling infrastructure, not its Angular behavior.
+The legacy Common Angular primitives source has been removed. Tailwind replaces its styling
+infrastructure, not Angular behavior owned by domains or host applications.
 
 ## Layout Runtime Contracts
 
@@ -94,8 +94,8 @@ Domain-specific runtime layout behavior belongs to the domain that needs it. Rou
 and audience-specific composition belong to the host application. A generic runtime registry is warranted
 only when cross-domain behavioral reuse is demonstrated, not simply to select a CSS arrangement.
 
-`@anarchitects/common-angular-ui-layouts` remains available during the final compatibility wave. Required
-form behavior moves into `@anarchitects/forms-angular`; generic page composition moves to consumers.
+The legacy Common Angular layouts source has been removed. Required form behavior lives in
+`@anarchitects/forms-angular`; generic page composition belongs to consumers.
 
 ## Domain Integration Matrix
 
@@ -142,7 +142,7 @@ The full retained/retired mapping is canonical in
 - Keep domain-specific slots and runtime behaviors in their Angular domain package.
 - Keep generic page/layout composition in the host application.
 - Validate theme overrides, dark mode, density, accessibility, and production CSS output.
-- Do not add new dependencies on the four retiring Common Angular packages.
+- Do not add dependencies on the four retired Common Angular packages.
 
 ## Legacy Package Transition
 
@@ -153,13 +153,13 @@ The packages being retired are:
 - `@anarchitects/common-angular-ui-layouts`
 - `@anarchitects/common-angular-ui-primitives`
 
-They remain available for compatibility while the three release waves complete. After forms and auth no
-longer depend on them, their source projects will be removed and their published npm versions will be
-deprecated with migration guidance. Published versions will not be unpublished.
+Their source projects have been removed after forms and auth stopped depending on them. Published npm
+versions remain downloadable and will be deprecated only through the separately approved deprecation
+step. Published versions will not be unpublished.
 
 The [Legacy Theme Migration Reference](/guides/theme-migration.html) documents the old system for teams
-maintaining the final legacy line. A complete consumer migration guide will follow after the Tailwind and
-Signal Forms APIs exist.
+maintaining or migrating from the final legacy line. The complete consumer migration guide is tracked by
+epic #362.
 
 ## Repository Alignment
 

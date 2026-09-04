@@ -5,7 +5,7 @@ import {
   TAILWIND_PACKAGE,
   TAILWIND_PROVENANCE_PREDICATE,
   fetchRegistryPackument,
-  validateLegacyPackageRegistryMetadata,
+  validateRetiredPackageRegistryMetadata,
   validateTailwindRegistryMetadata,
   waitForPublishedVersion,
 } from './tailwind-registry-validation-lib.mjs';
@@ -84,23 +84,26 @@ test('rejects a Tailwind release without Trusted Publisher provenance', () => {
   );
 });
 
-test('requires every legacy Common Angular version to remain non-deprecated', () => {
+test('requires retired Common Angular versions to remain downloadable', () => {
   const packageName = '@anarchitects/common-angular-design';
   assert.deepEqual(
-    validateLegacyPackageRegistryMetadata(packageName, {
+    validateRetiredPackageRegistryMetadata(packageName, {
       name: packageName,
-      versions: { '0.1.0': {}, '0.1.1': {} },
+      versions: {
+        '0.1.0': {},
+        '0.1.1': { deprecated: 'Use @anarchitects/tailwind' },
+      },
     }),
     ['0.1.0', '0.1.1'],
   );
 
   assert.throws(
     () =>
-      validateLegacyPackageRegistryMetadata(packageName, {
+      validateRetiredPackageRegistryMetadata(packageName, {
         name: packageName,
-        versions: { '0.1.0': { deprecated: 'Use another package' } },
+        versions: {},
       }),
-    /must remain non-deprecated/,
+    /must remain downloadable/,
   );
 });
 

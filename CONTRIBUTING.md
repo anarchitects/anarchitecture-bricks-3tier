@@ -101,7 +101,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
 - A first release is prepared from an `init(<project-or-domain>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.
-- The `common` domain dynamically includes the `common-angular`, `common-nest`, and `common-tailwind` release groups.
+- The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
 - Use the optional `common_group` selector when a common release must target only one subgroup. The initial Tailwind release uses `common-tailwind`; leaving it at `all` preserves full-domain behavior.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`.
 - The repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference. `init` is restricted to a first release whose selected projects already declare `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.

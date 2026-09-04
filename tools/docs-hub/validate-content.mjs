@@ -112,10 +112,6 @@ const aiGuideRequiredBlocks = [
 
 const designUiSystemsRequiredTokens = [
   '@anarchitects/tailwind',
-  '@anarchitects/common-angular-design',
-  '@anarchitects/common-angular-ui-composition',
-  '@anarchitects/common-angular-ui-primitives',
-  '@anarchitects/common-angular-ui-layouts',
   '@anarchitects/forms-angular',
   '@anarchitects/auth-angular',
   'ui <- feature -> state -> data-access',

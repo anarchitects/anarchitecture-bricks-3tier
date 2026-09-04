@@ -35,10 +35,6 @@ const isolatedEnvironment = {
 };
 const packageRoots = [
   ...(tailwindRegistryVersion ? [] : ['dist/libs/common/tailwind']),
-  'dist/libs/common/angular/design',
-  'dist/libs/common/angular/ui-composition',
-  'dist/libs/common/angular/ui-layouts',
-  'dist/libs/common/angular/ui-primitives',
   'dist/libs/forms/ts',
   'dist/libs/forms/angular',
   'dist/libs/auth/ts',
@@ -213,9 +209,19 @@ try {
     `${JSON.stringify({ version: 1, newProjectRoot: 'projects', projects }, null, 2)}\n`,
   );
 
-  run('npm', ['install', '--strict-peer-deps', '--ignore-scripts']);
   if (consumers.length > 0) {
+    run('npm', [
+      'install',
+      '--strict-peer-deps',
+      '--ignore-scripts',
+      '--no-audit',
+      '--no-fund',
+    ]);
     run('npm', ['run', 'build']);
+  } else {
+    console.log(
+      `No packaged Angular applications claim Angular ${major}; install and build skipped.`,
+    );
   }
   console.log(`Angular ${major} packaged-consumer compatibility passed.`);
 } finally {

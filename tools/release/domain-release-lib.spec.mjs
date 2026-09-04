@@ -18,10 +18,7 @@ function buildReleaseGroup(name, projects) {
 }
 
 test('inferDomainFromProjectRoot resolves library domains from project roots', () => {
-  assert.equal(
-    inferDomainFromProjectRoot('libs/common/angular/ui-layouts'),
-    'common',
-  );
+  assert.equal(inferDomainFromProjectRoot('libs/common/tailwind'), 'common');
   assert.equal(inferDomainFromProjectRoot('libs/auth/angular'), 'auth');
   assert.equal(inferDomainFromProjectRoot('libs/identity/nest'), 'identity');
   assert.equal(inferDomainFromProjectRoot('tools/release'), null);
@@ -36,7 +33,6 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
       'identity-nest',
       'identity-ts',
     ]),
-    buildReleaseGroup('common-angular', ['common-angular-ui-layouts']),
     buildReleaseGroup('common-nest', ['common-nest-mailer']),
     buildReleaseGroup('common-tailwind', ['tailwind']),
   ];
@@ -50,9 +46,6 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
     'identity-angular': { data: { root: 'libs/identity/angular' } },
     'identity-nest': { data: { root: 'libs/identity/nest' } },
     'identity-ts': { data: { root: 'libs/identity/ts' } },
-    'common-angular-ui-layouts': {
-      data: { root: 'libs/common/angular/ui-layouts' },
-    },
     'common-nest-mailer': { data: { root: 'libs/common/nest/mailer' } },
     tailwind: { data: { root: 'libs/common/tailwind' } },
   };
@@ -72,12 +65,12 @@ test('resolveReleaseGroupsForDomain maps a domain to all matching release groups
       releaseGroups,
       projectNodes,
     }),
-    ['common-angular', 'common-nest', 'common-tailwind'],
+    ['common-nest', 'common-tailwind'],
   );
 });
 
 test('selectReleaseGroupsForDomain safely narrows a multi-group domain', () => {
-  const domainGroupNames = ['common-angular', 'common-nest', 'common-tailwind'];
+  const domainGroupNames = ['common-nest', 'common-tailwind'];
 
   assert.deepEqual(
     selectReleaseGroupsForDomain({
@@ -314,13 +307,11 @@ test('createForcedReleasePlan rejects unsupported manual bump values', () => {
 });
 
 test('createForcedReleasePlan keeps declared 0.0.1 versions for coordinated first releases', () => {
-  const commonAngularGroup = buildReleaseGroup('common-angular', [
-    'common-angular-a',
-  ]);
+  const commonNestGroup = buildReleaseGroup('common-nest', ['mailer']);
   const commonTailwindGroup = buildReleaseGroup('common-tailwind', [
     'tailwind',
   ]);
-  const releaseGroups = [commonAngularGroup, commonTailwindGroup];
+  const releaseGroups = [commonNestGroup, commonTailwindGroup];
 
   assert.deepEqual(
     createForcedReleasePlan({
@@ -330,13 +321,13 @@ test('createForcedReleasePlan keeps declared 0.0.1 versions for coordinated firs
       ),
       bump: 'init',
       currentVersions: {
-        'common-angular-a': '0.0.1',
+        mailer: '0.0.1',
         tailwind: '0.0.1',
       },
       firstRelease: true,
     }),
     {
-      'common-angular-a': '0.0.1',
+      mailer: '0.0.1',
       tailwind: '0.0.1',
     },
   );
@@ -372,25 +363,25 @@ test('createForcedReleasePlan guards init releases', () => {
 });
 
 test('computeHybridReleasePlan throws when a multi-project group does not share major.minor', () => {
-  const commonAngularGroup = buildReleaseGroup('common-angular', [
-    'common-angular-design',
-    'common-angular-ui-primitives',
+  const componentGroup = buildReleaseGroup('components', [
+    'component-a',
+    'component-b',
   ]);
 
   assert.throws(
     () =>
       computeHybridReleasePlan({
-        releaseGroups: [commonAngularGroup],
+        releaseGroups: [componentGroup],
         releaseGroupToFilteredProjects: new Map([
-          [commonAngularGroup, new Set(commonAngularGroup.projects)],
+          [componentGroup, new Set(componentGroup.projects)],
         ]),
         versionData: {
-          'common-angular-design': {
+          'component-a': {
             currentVersion: '0.0.1',
             newVersion: '0.0.2',
             dependentProjects: [],
           },
-          'common-angular-ui-primitives': {
+          'component-b': {
             currentVersion: '0.1.0',
             newVersion: null,
             dependentProjects: [],

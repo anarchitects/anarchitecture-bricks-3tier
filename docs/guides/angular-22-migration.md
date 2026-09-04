@@ -40,7 +40,8 @@ peer audit.
 ## Published package compatibility
 
 Issue #369 validates the final compatibility line on the Angular 22 workspace and records the release
-status of every Angular project:
+status of every Angular project at that historical checkpoint. The four Common Angular source projects
+were subsequently removed by issue #377; their published compatibility artifacts remain downloadable:
 
 | Project                         | Angular peers    | Adjacent peers       | Release status                  |
 | ------------------------------- | ---------------- | -------------------- | ------------------------------- |

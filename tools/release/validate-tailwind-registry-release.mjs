@@ -2,7 +2,7 @@ import {
   LEGACY_COMMON_ANGULAR_PACKAGES,
   TAILWIND_PACKAGE,
   fetchRegistryPackument,
-  validateLegacyPackageRegistryMetadata,
+  validateRetiredPackageRegistryMetadata,
   validateTailwindRegistryMetadata,
   waitForPublishedVersion,
 } from './tailwind-registry-validation-lib.mjs';
@@ -27,12 +27,12 @@ validateTailwindRegistryMetadata(tailwindPackument, expectedVersion);
 
 for (const packageName of LEGACY_COMMON_ANGULAR_PACKAGES) {
   const packument = await fetchRegistryPackument(packageName);
-  const versions = validateLegacyPackageRegistryMetadata(
+  const versions = validateRetiredPackageRegistryMetadata(
     packageName,
     packument,
   );
   console.log(
-    `${packageName}: ${versions.length} published version(s), none deprecated`,
+    `${packageName}: ${versions.length} published version(s) remain downloadable`,
   );
 }
 

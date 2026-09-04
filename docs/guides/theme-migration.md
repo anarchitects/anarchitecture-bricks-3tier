@@ -2,11 +2,12 @@
 
 ## Status
 
-This document describes the legacy `@anarchitects/common-angular-design` path only. It is retained for
-applications consuming the final Common Angular compatibility line; it is not the target for new work.
+This document describes the removed `@anarchitects/common-angular-design` source path only. It is retained
+as a historical reference for applications consuming or migrating from the final published Common Angular
+compatibility line; it is not the target for new work.
 
 [ADR-0003](/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.html)
-adopts Tailwind CSS v4 and schedules removal of:
+adopts Tailwind CSS v4 and retired the source projects for:
 
 - `@anarchitects/common-angular-design`
 - `@anarchitects/common-angular-ui-composition`
