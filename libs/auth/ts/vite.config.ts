@@ -38,6 +38,7 @@ export default defineConfig(() => ({
         'contracts/index': 'src/contracts/index.ts',
         'dtos/index': 'src/dtos/index.ts',
         'dtos/jwt/index': 'src/dtos/jwt/index.ts',
+        'dtos/passkeys/index': 'src/dtos/passkeys/index.ts',
         'models/index': 'src/models/index.ts',
         'mappers/index': 'src/mappers/index.ts',
       },

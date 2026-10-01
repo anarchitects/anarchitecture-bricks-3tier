@@ -67,13 +67,78 @@ pnpm add @anarchitects/auth-ts
 
 ## Entry points
 
-| Import path                       | Description                                                                           |
-| --------------------------------- | ------------------------------------------------------------------------------------- |
-| `@anarchitects/auth-ts`           | Barrel re-export for core models plus the core/session DTO surface                    |
-| `@anarchitects/auth-ts/contracts` | Contract profile config, schema factories, compatibility helpers, and payload shaping |
-| `@anarchitects/auth-ts/dtos`      | Core/session request-response schemas and DTO types (TypeBox)                         |
-| `@anarchitects/auth-ts/dtos/jwt`  | JWT plugin-specific DTO types and schemas                                             |
-| `@anarchitects/auth-ts/models`    | Domain models used for user/session/RBAC composition                                  |
+| Import path                           | Description                                                                           |
+| ------------------------------------- | ------------------------------------------------------------------------------------- |
+| `@anarchitects/auth-ts`               | Barrel re-export for core models plus the core/session DTO surface                    |
+| `@anarchitects/auth-ts/contracts`     | Contract profile config, schema factories, compatibility helpers, and payload shaping |
+| `@anarchitects/auth-ts/dtos`          | Core/session request-response schemas and DTO types (TypeBox)                         |
+| `@anarchitects/auth-ts/dtos/jwt`      | JWT plugin-specific DTO types and schemas                                             |
+| `@anarchitects/auth-ts/dtos/passkeys` | Versioned passkey registration/authentication DTOs and route schemas                  |
+| `@anarchitects/auth-ts/models`        | Domain models used for user/session/RBAC composition                                  |
+
+## Passkey ceremony contracts
+
+Import the optional passkey contracts from `@anarchitects/auth-ts/dtos/passkeys`.
+They are not re-exported by the root or core DTO entry point. This package supplies
+shared schemas and inferred TypeScript types; Nest endpoints, verification,
+persistence, and Angular browser orchestration are separate implementation work
+under [epic #105](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/105).
+
+| Operation             | Request                                                         | Successful response                        |
+| --------------------- | --------------------------------------------------------------- | ------------------------------------------ |
+| Registration begin    | `{ authenticatorAttachment?: 'platform' \| 'cross-platform' }`  | WebAuthn creation options in JSON form     |
+| Registration finish   | `{ response: PasskeyRegistrationCredentialDTO, name?: string }` | Existing `{ success: boolean }` envelope   |
+| Authentication begin  | `{}` for discoverable credentials                               | WebAuthn request options in JSON form      |
+| Authentication finish | `{ response: PasskeyAuthenticationCredentialDTO }`              | Existing `{ user, rbac }` session envelope |
+
+Each operation exports a request schema, response schema, their `DTO` types, and a
+route schema. For example:
+
+```ts
+import { PASSKEY_CONTRACT_VERSION, PasskeyRegistrationFinishRequestSchema, PasskeyRegistrationFinishRouteSchema, type PasskeyRegistrationFinishRequestDTO } from '@anarchitects/auth-ts/dtos/passkeys';
+import { Value } from '@sinclair/typebox/value';
+
+function validateRegistration(payload: unknown): payload is PasskeyRegistrationFinishRequestDTO {
+  return Value.Check(PasskeyRegistrationFinishRequestSchema, payload);
+}
+
+// Nest presentation can pass this directly to @RouteSchema once routes exist.
+PasskeyRegistrationFinishRouteSchema;
+PASSKEY_CONTRACT_VERSION; // '1.0.0'
+```
+
+The route schemas contain only `body` and `response` fields. HTTP paths and methods
+belong to Nest presentation; OpenAPI operation IDs and tags belong to the central
+spec tooling. Angular and Nest should import these types and schemas rather than
+copying them or exposing an authentication engine's internal types.
+
+Registration requires an authenticated user. The server derives user identity,
+relying-party policy, and the expected challenge. Begin/finish correlation uses
+cookies, so adapters must preserve them across both requests. Authentication finish
+establishes the normal session and returns the shared user/RBAC envelope.
+Client-controlled user IDs, expected challenges, and verification policy are not
+accepted in request envelopes. A registration label is optional; supplied labels
+must contain a non-whitespace character and be at most 255 characters.
+
+Binary fields use non-empty, unpadded base64url strings. Browser adapters must
+convert JSON options to browser inputs and serialize credentials before sending
+them. The shapes follow the [WebAuthn JSON representations](https://www.w3.org/TR/webauthn-3/)
+and accommodate [SimpleWebAuthn browser serializers](https://simplewebauthn.dev/docs/packages/browser).
+Registration convenience fields are optional for older serializers; an assertion's
+`userHandle` may be absent or null. Adapters should normalize null when their verifier
+expects an omitted value. Transport hints accept future string values, and extension
+objects remain opaque to allow extension-specific data.
+
+Schema validation checks transport structure. The server must still verify the
+challenge, origin, RP ID, credential ownership, signature, user verification, and
+counter policy, including consistency between `id` and `rawId`. These schemas do
+not perform cryptographic verification or enforce decoded binary lengths.
+
+`PASSKEY_CONTRACT_VERSION` versions this surface independently of password form
+profiles; it is not a field sent in ceremony bodies. The initial version is `1.0.0`.
+Consumers should agree on that version when wiring their adapters. Tightening
+constraints or changing required fields is a breaking contract change. Package
+versioning and publication continue through the normal CI release workflow.
 
 ## Contract Profiles
 
