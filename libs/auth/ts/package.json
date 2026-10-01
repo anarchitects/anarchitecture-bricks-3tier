@@ -41,6 +41,11 @@
       "import": "./dtos/jwt/index.js",
       "require": "./dtos/jwt/index.cjs"
     },
+    "./dtos/passkeys": {
+      "types": "./dtos/passkeys/index.d.ts",
+      "import": "./dtos/passkeys/index.js",
+      "require": "./dtos/passkeys/index.cjs"
+    },
     "./models": {
       "types": "./models/index.d.ts",
       "import": "./models/index.js",
