@@ -117,6 +117,10 @@ export class AppComponent {
 }
 ```
 
+`AuthStore.login()` is a reactive trigger, not a completion promise. For
+redirect-after-login flows, observe the state signals using the
+[scoped redirect recipe](state/README.md#reactive-login-and-redirects).
+
 ```ts
 // app.routes.ts
 import { Routes } from '@angular/router';

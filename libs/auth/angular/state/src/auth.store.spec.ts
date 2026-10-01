@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { delay, of, throwError } from 'rxjs';
+import { Subject, delay, of, throwError } from 'rxjs';
 import {
   AuthConfig,
   AuthContractConfigOverrides,
@@ -157,6 +157,79 @@ describe('AuthStore', () => {
     expect(mockAuthApi.getLoggedInUserInfo).not.toHaveBeenCalled();
     expect(store.initialized()).toBe(true);
     expect(store.isLoggedIn()).toBe(false);
+  });
+
+  it('returns a reactive handle while asynchronous login is still pending', () => {
+    const response = new Subject<typeof hydratedSession>();
+    const { store } = setup({
+      stateOptions: { restoreOnInit: false },
+      authApiOverrides: { login: vi.fn(() => response) },
+    });
+
+    const handle = store.login({
+      credential: 'testuser',
+      password: 'password',
+    });
+
+    expect(typeof handle.destroy).toBe('function');
+    expect(handle).not.toHaveProperty('then');
+    expect(store.loading()).toBe(true);
+    expect(store.isLoggedIn()).toBe(false);
+
+    response.next(hydratedSession);
+    response.complete();
+    expect(store.loading()).toBe(false);
+    expect(store.loggedInUser()?.id).toBe(hydratedSession.user.id);
+    expect(store.rbac()).toEqual(hydratedSession.rbac);
+    expect(store.ability()?.can('update', 'Post')).toBe(true);
+  });
+
+  it('keeps observable inputs and latest-request cancellation with accurate loading state', () => {
+    const firstResponse = new Subject<typeof hydratedSession>();
+    const secondResponse = new Subject<typeof hydratedSession>();
+    const { store, mockAuthApi } = setup({
+      stateOptions: { restoreOnInit: false },
+      authApiOverrides: {
+        login: vi
+          .fn()
+          .mockReturnValueOnce(firstResponse)
+          .mockReturnValueOnce(secondResponse),
+      },
+    });
+    const requests = new Subject<{ credential: string; password: string }>();
+    const handle = TestBed.runInInjectionContext(() => store.login(requests));
+
+    requests.next({ credential: 'first', password: 'password' });
+    requests.next({ credential: 'second', password: 'password' });
+
+    expect(firstResponse.observed).toBe(false);
+    expect(store.loading()).toBe(true);
+    firstResponse.next(hydratedSession);
+    expect(store.isLoggedIn()).toBe(false);
+
+    secondResponse.next(hydratedSession);
+    secondResponse.complete();
+    expect(store.isLoggedIn()).toBe(true);
+    expect(store.loading()).toBe(false);
+
+    handle.destroy();
+    requests.next({ credential: 'third', password: 'password' });
+    expect(mockAuthApi.login).toHaveBeenCalledTimes(2);
+  });
+
+  it('clears a previous success when starting a new login', () => {
+    const response = new Subject<typeof hydratedSession>();
+    const { store } = setup({
+      authApiOverrides: { login: vi.fn(() => response) },
+    });
+    expect(store.success()).toBe(true);
+
+    store.login({ credential: 'testuser', password: 'wrong' });
+    expect(store.success()).toBe(false);
+    response.error(new Error('Invalid credentials'));
+    expect(store.error()).toBe('Invalid credentials');
+    expect(store.loading()).toBe(false);
+    expect(store.success()).toBe(false);
   });
 
   it('hydrates raw rbac and ability on login', async () => {

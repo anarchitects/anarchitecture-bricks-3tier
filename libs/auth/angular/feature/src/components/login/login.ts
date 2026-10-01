@@ -24,7 +24,7 @@ export class AnarchitectsFeatureLogin {
   readonly schemaExtensions = input<readonly FormsSchemaExtension[]>([]);
   readonly layoutOptions = input<Readonly<Record<string, unknown>>>({});
 
-  async submitForm(input: LoginRequestDTO): Promise<void> {
-    await this.authStore.login(input);
+  submitForm(input: LoginRequestDTO): void {
+    this.authStore.login(input);
   }
 }
