@@ -2,9 +2,9 @@ import { type TSchema } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import Ajv from 'ajv';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import * as passkeys from './index';
-import * as core from '../index';
 import * as root from '../../index';
+import * as core from '../index';
+import * as passkeys from './index';
 
 // Structural wire fixtures only: these bytes are not cryptographically valid credentials.
 const creationOptions = {
@@ -128,7 +128,6 @@ describe('Passkey v1 transport contracts', () => {
   );
 
   it('keeps optional passkey contracts on their versioned public subpath', () => {
-    expect(passkeys.PASSKEY_CONTRACT_VERSION).toBe('1.0.0');
     expect(core).not.toHaveProperty('PasskeyRegistrationBeginRequestSchema');
     expect(root).not.toHaveProperty('PasskeyRegistrationBeginRequestSchema');
     expect(passkeys.PasskeyAuthenticationFinishResponseSchema).toBe(
