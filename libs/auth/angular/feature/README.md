@@ -6,6 +6,12 @@ Every auth form feature forwards the forms-owned `layout`, `layoutOptions`, and 
 Forms `schemaExtensions` inputs without changing auth DTOs or orchestration. Styling is
 provided by the host application's `@anarchitects/tailwind` import.
 
+`AnarchitectsFeatureLogin.submitForm()` synchronously triggers the store's reactive
+login method and returns `void`. It does not report HTTP completion. Request errors
+are available through `AuthStore.error()`. Hosts own redirects; see the
+[reactive login recipe](../state/README.md#reactive-login-and-redirects) for a scoped
+effect that avoids redirects from failed attempts or bootstrap restoration alone.
+
 JWT-specific feature components live under `@anarchitects/auth-angular/feature/jwt`, not the root feature entry point. They should orchestrate through `@anarchitects/auth-angular/state/jwt`, never `data-access/jwt` directly.
 
 ## Exports

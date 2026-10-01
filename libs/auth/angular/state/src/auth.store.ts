@@ -242,11 +242,16 @@ export const AuthStore = signalStore(
         ),
       ),
     ),
+    /**
+     * Triggers reactive login; the returned handle is not an awaitable result.
+     * Observe loading/error and authenticated session signals for completion.
+     */
     login: rxMethod<LoginRequestDTO>(
       pipe(
-        tap(() => patchState(store, { loading: true, error: null })),
         switchMap((dto) =>
           defer(() => {
+            // A superseded request must finalize before the new one is loading.
+            patchState(store, { loading: true, error: null, success: false });
             const shapedDto = shapePayloadForSubmit(
               dto,
               store._authContracts.loginFormMeta,

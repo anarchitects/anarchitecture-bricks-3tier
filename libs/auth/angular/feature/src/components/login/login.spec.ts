@@ -10,7 +10,7 @@ describe('AnarchitectsFeatureLogin', () => {
   let component: AnarchitectsFeatureLogin;
   let fixture: ComponentFixture<AnarchitectsFeatureLogin>;
   const mockAuthStore = {
-    login: vi.fn().mockResolvedValue(undefined),
+    login: vi.fn().mockReturnValue({ destroy: vi.fn() }),
   };
 
   beforeEach(async () => {
@@ -32,13 +32,13 @@ describe('AnarchitectsFeatureLogin', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should delegate login to AuthStore', async () => {
+  it('triggers reactive login without returning a completion promise', () => {
     const input: LoginRequestDTO = {
       credential: 'user@example.com',
       password: 'secret123',
     };
 
-    await component.submitForm(input);
+    expect(component.submitForm(input)).toBeUndefined();
 
     expect(mockAuthStore.login).toHaveBeenCalledWith(input);
   });
