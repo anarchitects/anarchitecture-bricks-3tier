@@ -127,6 +127,42 @@ FitOverForty is the named downstream coordination case. Its host dependency
 upgrade must align Better Auth, the adapter, TypeORM, and Nest TypeORM, but its
 application source changes are intentionally outside this repository change.
 
+### Passkey credential storage expansion
+
+Passkey-enabled hosts must add `ExpandPasskeyCredentialStorage1790899200000`
+after `CreateBetterAuthPasskeysTable1760200001000`. Both migrations and
+`PasskeyEntity` are exported from
+`@anarchitects/auth-nest/infrastructure-persistence`; no package-internal imports
+are required. Hosts that leave passkeys disabled do not need these plugin migrations.
+
+The new migration widens `auth.passkeys.credentialID` from 500 to 1,364 characters
+and `counter` from PostgreSQL `integer` to `bigint`, adding a check for the unsigned
+32-bit range. It preserves IDs, public keys, ownership, labels, metadata, uniqueness,
+the user index, and the user-deletion foreign key. The TypeORM entity still exposes
+`counter` as a JavaScript `number`; all values in the permitted range are exact.
+
+For a populated passkey table:
+
+1. Stop passkey writes, take a backup, and allow for the table lock/type conversion.
+2. Check for negative counters. The migration rejects invalid data; investigate
+   affected credentials instead of resetting counters automatically.
+3. Apply the expansion through the host's migration DataSource before deploying
+   the updated entity. Keep `synchronize: false`.
+4. Verify enrollment and repeat authentication, including access to previously
+   enrolled credentials, before resuming normal traffic.
+
+Rollback refuses any credential ID longer than 500 characters or counter above
+2,147,483,647. Stop writes before attempting rollback. If the guard fails, retain
+the expanded schema and compatible application version while deciding a recovery
+plan; do not truncate credential IDs or reset counters to make rollback succeed.
+When the guard passes, the down migration restores the legacy column types without
+changing enrolled credential values.
+
+`yarn nx run auth-nest:test-published-adapter` exercises clean installation,
+populated upgrade, invalid-data rejection, guarded rollback/reapply, and real
+enrollment/authentication against disposable PostgreSQL. It also verifies that
+credentials, counters, and pending challenges survive an application restart.
+
 ### Config and environment changes
 
 Canonical auth config now lives under:

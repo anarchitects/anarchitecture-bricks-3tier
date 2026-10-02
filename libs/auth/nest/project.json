@@ -51,7 +51,8 @@
       "inputs": [
         "default",
         "^production",
-        "{workspaceRoot}/tools/testing/auth-nest-passkeys.test.mjs"
+        "{workspaceRoot}/tools/testing/auth-nest-passkeys.test.mjs",
+        "{workspaceRoot}/tools/testing/webauthn-fixture.mjs"
       ],
       "options": {
         "command": "node --test tools/testing/auth-nest-passkeys.test.mjs"

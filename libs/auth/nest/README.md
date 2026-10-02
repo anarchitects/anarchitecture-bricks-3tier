@@ -427,15 +427,56 @@ fragment, or credentials, and its hostname must match or be a subdomain of the
 RP ID. The configured origin is included in Better Auth's trusted origins.
 This tightens the previous implicit request-origin fallback.
 
-This is the server application/engine implementation for #125. It does not mount
-package-owned passkey HTTP routes or add browser orchestration. Those integration
-surfaces remain follow-up work under #105/#364. TypeORM persistence and migration
-coverage remain #126; the verification suite uses an in-memory database with the
-real cryptographic verifier. No new database migration is introduced here.
+Package-owned passkey HTTP routes and browser orchestration remain follow-up work
+under #105/#364. The server service uses the optional TypeORM passkey table through
+the published Better Auth adapter.
 
 Run `yarn nx run auth-nest:test-passkeys` for real registration/assertion tests,
 including replay, expiry, wrong origin/RP ID, signature, session ownership, and
 counter rejection. This target also runs as a dependency of `auth-nest:test`.
+
+### Passkey persistence and migration
+
+When enabling passkeys, add the plugin migrations to the host's existing core
+migration list. Both migrations and `PasskeyEntity` are public exports:
+
+```ts
+import { CreateAuthSchema1720200000000, CreateBetterAuthPasskeysTable1760200001000, AddBetterAuthAccountIssuer1788275931000, ExpandPasskeyCredentialStorage1790899200000, PasskeyEntity } from '@anarchitects/auth-nest/infrastructure-persistence';
+
+const migrations = [CreateAuthSchema1720200000000, CreateBetterAuthPasskeysTable1760200001000, AddBetterAuthAccountIssuer1788275931000, ExpandPasskeyCredentialStorage1790899200000];
+```
+
+The enabled plugin registers `PasskeyEntity` with Nest TypeORM. Hosts using
+`autoLoadEntities: true` pick it up automatically; standalone runtime and migration
+DataSources must include it alongside their core auth entities. Importing the
+symbol alone does not enable the plugin. Use migrations with `synchronize: false`.
+
+Stored credentials retain the owning auth user, credential ID, COSE public key,
+counter, optional label, transports, device type, backup status, AAGUID, and creation
+time. Credential IDs are globally unique, user lookups are indexed, and deleting
+an auth user cascades to that user's passkeys. No cross-domain entity relations
+are introduced.
+
+The storage expansion supports the [WebAuthn credential and counter limits](https://www.w3.org/TR/webauthn-3/):
+1,023-byte credential IDs (1,364 base64url characters) and unsigned 32-bit counters.
+PostgreSQL stores the counter as `bigint` with a `0..4294967295` check constraint;
+the entity converts it to an exact JavaScript `number` for the verifier. Zero-only
+counters remain valid. Existing enrolled keys and metadata are preserved in place.
+
+**Upgrade requirement:** run `ExpandPasskeyCredentialStorage1790899200000` after
+the passkey table creation migration and before deploying this entity definition.
+It rejects invalid existing counters rather than repairing them silently. The
+original creation migration is unchanged. Rollback refuses credentials longer
+than the old 500-character limit or counters above the old signed-integer limit;
+it never truncates IDs or resets counters. See the [migration guide](../../../docs/guides/auth-migration.md)
+for deployment and rollback guidance.
+
+`yarn nx run auth-nest:test-published-adapter` tests this flow against disposable
+PostgreSQL using the public package exports, real Nest service, and published
+adapter. It covers populated upgrades, rollback guards, metadata retention,
+authentication across application restart, counter boundaries, duplicate/orphan
+rejection, concurrent challenge replay, and user-deletion cascade. CI already runs
+this target for affected auth code; Docker is required locally.
 
 ## Mailer Migration Note
 

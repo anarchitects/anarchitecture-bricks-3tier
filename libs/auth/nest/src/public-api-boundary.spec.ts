@@ -35,4 +35,14 @@ describe('auth-nest public entrypoints', () => {
       persistenceEntryPoint.AuthUserEntity,
     );
   });
+
+  it('exports optional passkey persistence for host entity and migration wiring', () => {
+    expect(persistenceEntryPoint).toHaveProperty('PasskeyEntity');
+    expect(persistenceEntryPoint).toHaveProperty(
+      'CreateBetterAuthPasskeysTable1760200001000',
+    );
+    expect(persistenceEntryPoint).toHaveProperty(
+      'ExpandPasskeyCredentialStorage1790899200000',
+    );
+  });
 });

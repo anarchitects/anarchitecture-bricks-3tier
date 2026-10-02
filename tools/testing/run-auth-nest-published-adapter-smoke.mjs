@@ -1,3 +1,7 @@
+import {
+  validatePasskeyPersistence,
+  validatePasskeyStorageMigration,
+} from './auth-nest-passkey-persistence.mjs';
 import assert from 'node:assert/strict';
 import { access, mkdir, rm, symlink } from 'node:fs/promises';
 import path from 'node:path';
@@ -28,17 +32,7 @@ const nodeModulesRoot = path.join(
 async function main() {
   await prepareWorkspacePackageLinks();
 
-  const { AuthModule } = require(
-    path.join(
-      workspaceRoot,
-      'dist',
-      'libs',
-      'auth',
-      'nest',
-      'src',
-      'auth.module.js',
-    ),
-  );
+  const { AuthModule, AuthPasskeyService } = require('@anarchitects/auth-nest');
   const { loadBetterAuthTypeormAdapterModule } = require(
     path.join(
       workspaceRoot,
@@ -52,48 +46,13 @@ async function main() {
       'better-auth.module-loader.js',
     ),
   );
-  const { CreateAuthSchema1720200000000 } = require(
-    path.join(
-      workspaceRoot,
-      'dist',
-      'libs',
-      'auth',
-      'nest',
-      'src',
-      'infrastructure-persistence',
-      'migrations',
-      '1720200000000-create-auth-schema.js',
-    ),
-  );
-  const { AddBetterAuthAccountIssuer1788275931000 } = require(
-    path.join(
-      workspaceRoot,
-      'dist',
-      'libs',
-      'auth',
-      'nest',
-      'src',
-      'infrastructure-persistence',
-      'migrations',
-      '1788275931000-add-better-auth-account-issuer.js',
-    ),
-  );
-  const { CreateBetterAuthPasskeysTable1760200001000 } = require(
-    path.join(
-      workspaceRoot,
-      'dist',
-      'libs',
-      'auth',
-      'nest',
-      'src',
-      'infrastructure-engine',
-      'better-auth',
-      'plugins',
-      'passkeys',
-      'migrations',
-      '1760200001000-create-better-auth-passkeys-table.js',
-    ),
-  );
+  const {
+    CreateAuthSchema1720200000000,
+    AddBetterAuthAccountIssuer1788275931000,
+    CreateBetterAuthPasskeysTable1760200001000,
+    ExpandPasskeyCredentialStorage1790899200000,
+    PasskeyEntity,
+  } = require('@anarchitects/auth-nest/infrastructure-persistence');
 
   const adapterModule = await loadBetterAuthTypeormAdapterModule();
   assert.equal(
@@ -126,69 +85,74 @@ async function main() {
       'anarchitecture_auth',
     );
 
-    const moduleRef = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        TypeOrmModule.forRoot({
-          type: 'postgres',
-          host,
-          port,
-          username: 'postgres',
-          password: 'postgres',
-          database: 'anarchitecture_auth',
-          autoLoadEntities: true,
-          synchronize: false,
-          migrationsRun: true,
-          migrations: [
-            CreateAuthSchema1720200000000,
-            CreateBetterAuthPasskeysTable1760200001000,
-            AddBetterAuthAccountIssuer1788275931000,
-          ],
-        }),
-        AuthModule.forRoot({
-          presentation: {
-            application: {
-              betterAuth: {
-                baseUrl: 'http://localhost:3000/api/auth',
-                secret: 'integration-test-better-auth-secret-32',
-                callbackUrls: {
-                  verifyEmail: 'http://localhost:3000/verify-email',
-                  resetPassword: 'http://localhost:3000/reset-password',
+    const createApp = async () => {
+      const moduleRef = await Test.createTestingModule({
+        imports: [
+          ConfigModule.forRoot({ isGlobal: true }),
+          TypeOrmModule.forRoot({
+            type: 'postgres',
+            host,
+            port,
+            username: 'postgres',
+            password: 'postgres',
+            database: 'anarchitecture_auth',
+            autoLoadEntities: true,
+            synchronize: false,
+            migrationsRun: true,
+            migrations: [
+              CreateAuthSchema1720200000000,
+              CreateBetterAuthPasskeysTable1760200001000,
+              AddBetterAuthAccountIssuer1788275931000,
+              ExpandPasskeyCredentialStorage1790899200000,
+            ],
+          }),
+          AuthModule.forRoot({
+            presentation: {
+              application: {
+                betterAuth: {
+                  baseUrl: 'http://localhost:3000/api/auth',
+                  secret: 'integration-test-better-auth-secret-32',
+                  callbackUrls: {
+                    verifyEmail: 'http://localhost:3000/verify-email',
+                    resetPassword: 'http://localhost:3000/reset-password',
+                  },
                 },
-              },
-              encryption: {
-                algorithm: 'bcrypt',
-                key: 'integration-test-encryption-key',
-              },
-              plugins: {
-                jwt: {
-                  enabled: true,
-                  secret: 'integration-test-jwt-secret-32',
-                  expiration: '3600s',
-                  audience: 'integration-test',
-                  issuer: 'integration-test',
+                encryption: {
+                  algorithm: 'bcrypt',
+                  key: 'integration-test-encryption-key',
                 },
-                passkeys: {
-                  enabled: true,
-                  rpID: 'localhost',
-                  rpName: 'Anarchitects Integration Test',
-                  origin: 'http://localhost:3000',
+                plugins: {
+                  jwt: {
+                    enabled: true,
+                    secret: 'integration-test-jwt-secret-32',
+                    expiration: '3600s',
+                    audience: 'integration-test',
+                    issuer: 'integration-test',
+                  },
+                  passkeys: {
+                    enabled: true,
+                    rpID: 'localhost',
+                    rpName: 'Anarchitects Integration Test',
+                    origin: 'http://localhost:3000',
+                  },
                 },
               },
             },
-          },
-          mailer: {
-            provider: 'noop',
-          },
-        }),
-      ],
-    }).compile();
+            mailer: {
+              provider: 'noop',
+            },
+          }),
+        ],
+      }).compile();
 
-    app = moduleRef.createNestApplication(
-      new FastifyAdapter({ logger: false }),
-    );
-    await app.init();
-    await app.getHttpAdapter().getInstance().ready();
+      const nextApp = moduleRef.createNestApplication(
+        new FastifyAdapter({ logger: false }),
+      );
+      await nextApp.init();
+      await nextApp.getHttpAdapter().getInstance().ready();
+      return nextApp;
+    };
+    app = await createApp();
 
     const registerResponse = await app.inject({
       method: 'POST',
@@ -240,6 +204,27 @@ async function main() {
     assert.equal(loginBody.user.email, 'integration@example.com');
     assert.equal(loginBody.user.name, 'Integration User');
     assert.ok(Array.isArray(loginBody.rbac));
+
+    await validatePasskeyStorageMigration(
+      { host, port, username: 'postgres', password: 'postgres' },
+      {
+        CreateAuthSchema1720200000000,
+        CreateBetterAuthPasskeysTable1760200001000,
+        ExpandPasskeyCredentialStorage1790899200000,
+      },
+    );
+    await validatePasskeyPersistence({
+      app,
+      AuthPasskeyService,
+      PasskeyEntity,
+      userId: loginBody.user.id,
+      sessionCookie,
+      restart: async () => {
+        await app.close();
+        app = await createApp();
+        return app;
+      },
+    });
 
     const meResponse = await app.inject({
       method: 'GET',
@@ -355,6 +340,10 @@ async function prepareWorkspacePackageLinks() {
   await mkdir(nodeModulesRoot, { recursive: true });
 
   const links = [
+    {
+      name: 'auth-nest',
+      target: path.join(workspaceRoot, 'dist', 'libs', 'auth', 'nest'),
+    },
     {
       name: 'auth-declarations',
       target: path.join(workspaceRoot, 'dist', 'libs', 'auth', 'declarations'),

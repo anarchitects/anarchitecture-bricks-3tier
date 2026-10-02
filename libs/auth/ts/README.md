@@ -81,8 +81,8 @@ pnpm add @anarchitects/auth-ts
 Import the optional passkey contracts from `@anarchitects/auth-ts/dtos/passkeys`.
 They are not re-exported by the root or core DTO entry point. This package supplies
 shared schemas and inferred TypeScript types. Nest server verification consumes
-these contracts through `AuthPasskeyService`; package-owned HTTP endpoints,
-persistence integration coverage, and Angular browser orchestration remain work
+these contracts through `AuthPasskeyService`; package-owned HTTP endpoints
+and Angular browser orchestration remain work
 under [epic #105](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/105).
 
 | Operation             | Request                                                         | Successful response                        |
