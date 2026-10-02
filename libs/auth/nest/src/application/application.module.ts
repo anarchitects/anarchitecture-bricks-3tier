@@ -25,6 +25,7 @@ import { BetterAuthDatabasePort } from './services/better-auth-database.port';
 import { AuthOrchestrationService } from './services/auth-orchestration.service';
 import { AuthPrincipalResolver } from './services/auth-principal.resolver';
 import { AuthService } from './services/auth.service';
+import { AuthPasskeyService } from './services/auth-passkey.service';
 import { BcryptHashService } from './services/bcrypt-hash.service';
 import { HashService } from './services/hash.service';
 import { PoliciesService } from './services/policies.service';
@@ -97,6 +98,8 @@ export class AuthApplicationModule extends ConfigurableModuleClass {
 
     if (resolvedOptions.plugins.passkeys.enabled) {
       imports.push(BetterAuthPasskeysTypeormSupportModule);
+      providers.push(AuthPasskeyService);
+      exports.push(AuthPasskeyService);
     }
 
     providers.push(

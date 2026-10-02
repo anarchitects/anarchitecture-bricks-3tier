@@ -41,6 +41,20 @@
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "libs/auth/nest/jest.config.ts"
+      },
+      "dependsOn": ["test-passkeys"]
+    },
+    "test-passkeys": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/tools/testing/auth-nest-passkeys.test.mjs"
+      ],
+      "options": {
+        "command": "node --test tools/testing/auth-nest-passkeys.test.mjs"
       }
     }
   }

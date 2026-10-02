@@ -1,5 +1,28 @@
 import { MailerPort } from '@anarchitects/common-nest-mailer';
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotImplementedException,
+  Optional,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Value } from '@sinclair/typebox/value';
+import type { Static, TSchema } from '@sinclair/typebox';
+import {
+  PasskeyRegistrationBeginRequestSchema,
+  PasskeyRegistrationBeginResponseSchema,
+  PasskeyRegistrationFinishRequestSchema,
+  PasskeyAuthenticationBeginRequestSchema,
+  PasskeyAuthenticationBeginResponseSchema,
+  PasskeyAuthenticationFinishRequestSchema,
+  type PasskeyRegistrationBeginRequestDTO,
+  type PasskeyRegistrationFinishRequestDTO,
+  type PasskeyAuthenticationBeginRequestDTO,
+  type PasskeyAuthenticationFinishRequestDTO,
+} from '@anarchitects/auth-ts/dtos/passkeys';
 import type {
   ForgotPasswordRequestDTO,
   LoginRequestDTO,
@@ -14,14 +37,35 @@ import {
   AuthEngineMutationResult,
   AuthEngineCapabilityReport,
   AuthEnginePort,
-  AuthPasskeySignInInput,
   AuthSocialSignInInput,
 } from '../../application/services/auth-engine.port';
 import { HashService } from '../../application/services/hash.service';
 import { loadBetterAuthRuntimeModules } from './better-auth.module-loader';
 import { createBetterAuthOptions } from './better-auth-options';
 
-type BetterAuthApi = {
+type PasskeyApi = {
+  generatePasskeyRegistrationOptions: (input: {
+    query: PasskeyRegistrationBeginRequestDTO;
+    headers: Headers;
+    returnHeaders: true;
+  }) => Promise<{ headers: Headers; response: unknown }>;
+  verifyPasskeyRegistration: (input: {
+    body: PasskeyRegistrationFinishRequestDTO;
+    headers: Headers;
+    returnHeaders: true;
+  }) => Promise<{ headers: Headers; response: unknown }>;
+  generatePasskeyAuthenticationOptions: (input: {
+    headers: Headers;
+    returnHeaders: true;
+  }) => Promise<{ headers: Headers; response: unknown }>;
+  verifyPasskeyAuthentication: (input: {
+    body: PasskeyAuthenticationFinishRequestDTO;
+    headers: Headers;
+    returnHeaders: true;
+  }) => Promise<{ headers: Headers; response: unknown }>;
+};
+
+type BetterAuthApi = Partial<PasskeyApi> & {
   signUpEmail?: (input: {
     body: {
       email: string;
@@ -46,11 +90,6 @@ type BetterAuthApi = {
     headers?: Headers;
     returnHeaders?: true;
   }) => Promise<{ headers?: Headers; response?: unknown } | unknown>;
-  signInPasskey?: (input: {
-    body: { autoFill?: boolean };
-    headers?: HeadersInit;
-    returnHeaders?: true;
-  }) => Promise<{ headers: Headers; response: unknown }>;
   signInSocial?: (input: {
     body: {
       provider: string;
@@ -227,10 +266,7 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
     };
   }
 
-  async passwordSignIn(
-    dto: LoginRequestDTO,
-    headers?: HeadersInit,
-  ) {
+  async passwordSignIn(dto: LoginRequestDTO, headers?: HeadersInit) {
     const auth = await this.getAuthInstance();
 
     if (!auth.api?.signInEmail) {
@@ -323,28 +359,113 @@ export class BetterAuthAuthEngineAdapter implements AuthEnginePort {
     };
   }
 
-  async passkeySignIn(input: AuthPasskeySignInInput) {
-    const auth = await this.getAuthInstance();
-
-    if (!auth.api?.signInPasskey) {
-      throw new Error('Better Auth passkey API is unavailable.');
-    }
-
-    const result = await auth.api.signInPasskey({
-      body: { autoFill: input.autoFill },
-      headers: input.headers,
-      returnHeaders: true,
-    });
-
-    const userId = extractUserId(result.response);
-    if (!userId) {
-      throw new Error('Better Auth passkey sign-in did not return a user id.');
-    }
-
+  async beginPasskeyRegistration(
+    dto: PasskeyRegistrationBeginRequestDTO,
+    headers?: HeadersInit,
+  ) {
+    assertPasskeyRequest(PasskeyRegistrationBeginRequestSchema, dto);
+    const api = await this.getPasskeyApi();
+    const result = await runPasskeyOperation(() =>
+      api.generatePasskeyRegistrationOptions({
+        query: { authenticatorAttachment: dto.authenticatorAttachment },
+        headers: toHeaders(headers),
+        returnHeaders: true,
+      }),
+    );
     return {
-      userId,
+      body: passkeyOptions(
+        PasskeyRegistrationBeginResponseSchema,
+        result.response,
+      ),
       headers: result.headers,
     };
+  }
+
+  async finishPasskeyRegistration(
+    dto: PasskeyRegistrationFinishRequestDTO,
+    headers?: HeadersInit,
+  ) {
+    assertPasskeyRequest(PasskeyRegistrationFinishRequestSchema, dto);
+    assertCredentialId(dto.response);
+    const api = await this.getPasskeyApi();
+    const result = await runPasskeyOperation(() =>
+      api.verifyPasskeyRegistration({
+        body: { response: dto.response, name: dto.name },
+        headers: toHeaders(headers),
+        returnHeaders: true,
+      }),
+    );
+    return { success: true, headers: result.headers };
+  }
+
+  async beginPasskeyAuthentication(
+    dto: PasskeyAuthenticationBeginRequestDTO,
+    headers?: HeadersInit,
+  ) {
+    assertPasskeyRequest(PasskeyAuthenticationBeginRequestSchema, dto);
+    const api = await this.getPasskeyApi();
+    const result = await runPasskeyOperation(() =>
+      api.generatePasskeyAuthenticationOptions({
+        headers: toHeaders(headers),
+        returnHeaders: true,
+      }),
+    );
+    return {
+      body: passkeyOptions(
+        PasskeyAuthenticationBeginResponseSchema,
+        result.response,
+      ),
+      headers: result.headers,
+    };
+  }
+
+  async finishPasskeyAuthentication(
+    dto: PasskeyAuthenticationFinishRequestDTO,
+    headers?: HeadersInit,
+  ) {
+    assertPasskeyRequest(PasskeyAuthenticationFinishRequestSchema, dto);
+    assertCredentialId(dto.response);
+    const api = await this.getPasskeyApi();
+    // Some browser serializers emit null; the verifier expects an absent handle.
+    const response = {
+      ...dto.response,
+      response: {
+        ...dto.response.response,
+        userHandle: dto.response.response.userHandle ?? undefined,
+      },
+    };
+    const result = await runPasskeyOperation(() =>
+      api.verifyPasskeyAuthentication({
+        body: { response },
+        headers: toHeaders(headers),
+        returnHeaders: true,
+      }),
+    );
+    const userId = extractUserId(result.response);
+    if (!userId) {
+      throw new InternalServerErrorException(
+        'Passkey verification did not return a user.',
+      );
+    }
+    return { userId, headers: result.headers };
+  }
+
+  private async getPasskeyApi(): Promise<PasskeyApi> {
+    if (!this.options.plugins.passkeys.enabled) {
+      throw new NotImplementedException('Passkeys are not enabled.');
+    }
+    const { api } = await this.getAuthInstance();
+    if (
+      !api?.generatePasskeyRegistrationOptions ||
+      !api.verifyPasskeyRegistration ||
+      !api.generatePasskeyAuthenticationOptions ||
+      !api.verifyPasskeyAuthentication
+    ) {
+      throw new InternalServerErrorException(
+        'Better Auth passkey APIs are unavailable.',
+      );
+    }
+    return api as PasskeyApi;
   }
 
   async socialSignIn(input: AuthSocialSignInInput): Promise<unknown> {
@@ -456,3 +577,57 @@ const buildVerificationEmailHtml = (url: string): string =>
 
 const buildResetPasswordEmailHtml = (url: string): string =>
   `<p>Reset your password by following this link:</p><p><a href="${url}">${url}</a></p>`;
+
+function assertPasskeyRequest(schema: TSchema, value: unknown): void {
+  if (!Value.Check(schema, value)) {
+    throw new BadRequestException('Invalid passkey request.');
+  }
+}
+
+function assertCredentialId(credential: { id: string; rawId: string }): void {
+  if (credential.id !== credential.rawId) {
+    throw new BadRequestException(
+      'Passkey credential identifiers do not match.',
+    );
+  }
+}
+
+function passkeyOptions<T extends TSchema>(
+  schema: T,
+  value: unknown,
+): Static<T> {
+  if (!Value.Check(schema, value)) {
+    throw new InternalServerErrorException(
+      'Invalid passkey options from the authentication engine.',
+    );
+  }
+  return value;
+}
+
+async function runPasskeyOperation<T>(operation: () => Promise<T>): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    // Better Auth APIErrors are ESM runtime objects; preserve infrastructure errors
+    // while translating known ceremony failures into Nest HTTP exceptions.
+    const failure = error as {
+      statusCode?: number;
+      body?: { code?: string };
+    } | null;
+    if (failure?.statusCode === 401)
+      throw new UnauthorizedException(
+        'Passkey authentication required or failed.',
+      );
+    if (failure?.statusCode === 403)
+      throw new ForbiddenException('Passkey operation is not allowed.');
+    if (
+      failure?.statusCode === 400 ||
+      failure?.body?.code === 'FAILED_TO_VERIFY_REGISTRATION'
+    ) {
+      throw new BadRequestException(
+        'Passkey verification failed. Start a new ceremony.',
+      );
+    }
+    throw error;
+  }
+}

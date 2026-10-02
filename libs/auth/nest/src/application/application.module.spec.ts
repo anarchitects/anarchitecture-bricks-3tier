@@ -1,3 +1,4 @@
+import { AuthPasskeyService } from './services/auth-passkey.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthApplicationModule } from './application.module';
 import { AUTH_RESOURCE_AUTHORIZATION_LOADERS } from './resource-authorization.tokens';
@@ -116,6 +117,16 @@ describe('AuthApplicationModule', () => {
     expect(moduleMetadata.imports).toContain(
       BetterAuthPasskeysTypeormSupportModule,
     );
+    expect(moduleMetadata.providers).toContain(AuthPasskeyService);
+    expect(moduleMetadata.exports).toContain(AuthPasskeyService);
+    expect(AuthApplicationModule.forRoot({}).providers).not.toContain(
+      AuthPasskeyService,
+    );
+    expect(
+      AuthApplicationModule.forRootFromConfig({
+        plugins: { passkeys: { enabled: true } },
+      }).exports,
+    ).toContain(AuthPasskeyService);
   });
 
   it('lets explicit forRootFromConfig overrides win over config defaults', () => {

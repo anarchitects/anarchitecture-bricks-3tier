@@ -6,6 +6,7 @@ export * from './resource-authorization.types';
 export * from './services/auth-headers';
 export * from './services/auth-principal.resolver';
 export * from './services/auth.service';
+export * from './services/auth-passkey.service';
 export * from './services/bcrypt-hash.service';
 export * from './services/hash.service';
 export * from './services/policies.service';

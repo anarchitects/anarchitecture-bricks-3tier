@@ -5,6 +5,7 @@ import * as presentationEntryPoint from './presentation';
 describe('auth-nest public entrypoints', () => {
   it('keeps the root entrypoint focused on runtime composition APIs', () => {
     expect(rootEntryPoint).toHaveProperty('AuthModule');
+    expect(rootEntryPoint).toHaveProperty('AuthPasskeyService');
     expect(rootEntryPoint).toHaveProperty('provideAuthRuntimeGuards');
     expect(rootEntryPoint).toHaveProperty('AuthorizedResource');
 

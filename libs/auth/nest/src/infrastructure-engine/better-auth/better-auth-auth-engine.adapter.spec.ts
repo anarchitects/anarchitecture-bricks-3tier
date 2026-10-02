@@ -17,7 +17,6 @@ describe('BetterAuthAuthEngineAdapter', () => {
   const signOut = jest.fn();
   const verifyEmail = jest.fn();
   const getSession = jest.fn();
-  const signInPasskey = jest.fn();
   const signInSocial = jest.fn();
   const betterAuthFactory = jest.fn();
 
@@ -95,10 +94,6 @@ describe('BetterAuthAuthEngineAdapter', () => {
       headers: new Headers({ 'set-cookie': 'better-auth.session=abc' }),
       response: { user: { id: 'user-id' } },
     });
-    signInPasskey.mockResolvedValue({
-      headers: new Headers(),
-      response: { user: { id: 'user-id' } },
-    });
     signInSocial.mockResolvedValue({ url: 'https://example.test' });
     betterAuthFactory.mockReturnValue({
       api: {
@@ -109,7 +104,6 @@ describe('BetterAuthAuthEngineAdapter', () => {
         signOut,
         verifyEmail,
         getSession,
-        signInPasskey,
         signInSocial,
       },
       handler: jest.fn(),
@@ -189,7 +183,9 @@ describe('BetterAuthAuthEngineAdapter', () => {
         credential: 'user@example.com',
         password: 'password',
       }),
-    ).rejects.toThrow('Better Auth TypeORM adapter persistence is unavailable.');
+    ).rejects.toThrow(
+      'Better Auth TypeORM adapter persistence is unavailable.',
+    );
     expect(betterAuthFactory).not.toHaveBeenCalled();
   });
 

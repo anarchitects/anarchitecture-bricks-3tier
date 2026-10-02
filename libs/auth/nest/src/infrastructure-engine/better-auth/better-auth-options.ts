@@ -1,5 +1,6 @@
 import type { BetterAuthOptions } from 'better-auth';
 import type { ResolvedAuthApplicationModuleOptions } from '../../config';
+import { resolveAuthPasskeyOrigin } from '../../config';
 import type { BetterAuthRuntimeModules } from './better-auth.module-loader';
 
 export type BetterAuthLifecycleOptions = {
@@ -87,7 +88,8 @@ export function createBetterAuthOptions(
           runtimeModules.betterAuthPasskey.passkey({
             rpID: options.plugins.passkeys.rpID,
             rpName: options.plugins.passkeys.rpName,
-            origin: options.plugins.passkeys.origin,
+            origin: resolveAuthPasskeyOrigin(options),
+            registration: { requireSession: true },
             schema: {
               passkey: {
                 modelName: 'passkeys',
@@ -106,6 +108,9 @@ function collectTrustedOrigins(
     options.betterAuth.baseUrl,
     options.betterAuth.callbackUrls.verifyEmail,
     options.betterAuth.callbackUrls.resetPassword,
+    ...(options.plugins.passkeys.enabled
+      ? [resolveAuthPasskeyOrigin(options)]
+      : []),
   ]
     .map((value) => {
       try {
