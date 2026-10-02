@@ -64,6 +64,7 @@ export type AuthPasskeysPluginOptions = {
   enabled?: boolean;
   rpID?: string;
   rpName?: string;
+  /** Expected browser origin. Defaults to the origin of betterAuth.baseUrl. */
   origin?: string;
 };
 
@@ -73,6 +74,32 @@ export type ResolvedAuthPasskeysPluginOptions = {
   rpName: string;
   origin?: string;
 };
+
+/** Resolve server-owned WebAuthn policy; never derive expected origin from request headers. */
+export function resolveAuthPasskeyOrigin(
+  options: ResolvedAuthApplicationModuleOptions,
+): string {
+  const configured = options.plugins.passkeys.origin;
+  const url = new URL(configured ?? options.betterAuth.baseUrl);
+  if (
+    !['http:', 'https:'].includes(url.protocol) ||
+    url.username ||
+    url.password ||
+    (configured !== undefined &&
+      (url.pathname !== '/' || url.search || url.hash))
+  ) {
+    throw new Error(
+      'Passkey origin must be an HTTP(S) origin without credentials, path, query, or fragment.',
+    );
+  }
+  const rpID = options.plugins.passkeys.rpID;
+  if (!rpID || (url.hostname !== rpID && !url.hostname.endsWith(`.${rpID}`))) {
+    throw new Error(
+      'Passkey RP ID must match the configured origin hostname or its parent domain.',
+    );
+  }
+  return url.origin;
+}
 
 export type AuthSocialProviderConfig = {
   clientId?: string;

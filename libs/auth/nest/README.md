@@ -167,7 +167,7 @@ The library reads configuration through `@nestjs/config` using a namespaced `aut
 | `AUTH_PLUGIN_PASSKEYS_ENABLED`                 | Enables the passkeys plugin.                                            | `false`                               |
 | `AUTH_PLUGIN_PASSKEY_RP_ID`                    | Passkey relying-party ID.                                               | `localhost`                           |
 | `AUTH_PLUGIN_PASSKEY_RP_NAME`                  | Passkey relying-party display name.                                     | `Anarchitecture Auth`                 |
-| `AUTH_PLUGIN_PASSKEY_ORIGIN`                   | Explicit passkey origin when needed.                                    | unset                                 |
+| `AUTH_PLUGIN_PASSKEY_ORIGIN`                   | Expected passkey browser origin.                                        | Origin of Better Auth base URL        |
 | `AUTH_PLUGIN_SOCIAL_ENABLED`                   | Enables social auth plugins.                                            | `false`                               |
 | `AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_ID`          | GitHub social sign-in client ID.                                        | unset                                 |
 | `AUTH_PLUGIN_SOCIAL_GITHUB_CLIENT_SECRET`      | GitHub social sign-in client secret.                                    | unset                                 |
@@ -366,6 +366,76 @@ AuthModule.forRoot({
 ```
 
 That mounts the plugin-owned `/auth/jwt/login`, `/auth/jwt/logout`, and `/auth/jwt/refresh` routes alongside the package-owned core session routes.
+
+### Optional passkey server ceremonies
+
+Enable passkeys to provide `AuthPasskeyService`, exported from the root and
+`@anarchitects/auth-nest/application` entry points:
+
+```ts
+AuthModule.forRoot({
+  presentation: {
+    application: {
+      plugins: {
+        passkeys: {
+          enabled: true,
+          rpID: 'example.com',
+          rpName: 'Example',
+          origin: 'https://login.example.com',
+        },
+      },
+    },
+  },
+});
+```
+
+Advanced composition uses the same `plugins.passkeys` options on
+`AuthApplicationModule.forRoot(...)`. Both facade and application modules also
+support `forRootFromConfig(...)` with explicit overrides taking precedence.
+The service is registered only when the plugin is enabled. Core `AuthService`
+and password authentication are unchanged.
+
+| Service method                       | Contract from `@anarchitects/auth-ts/dtos/passkeys` | Returned body                     |
+| ------------------------------------ | --------------------------------------------------- | --------------------------------- |
+| `beginRegistration(dto, headers)`    | `PasskeyRegistrationBeginRequestDTO`                | JSON creation options             |
+| `finishRegistration(dto, headers)`   | `PasskeyRegistrationFinishRequestDTO`               | `{ success: true }`               |
+| `beginAuthentication(dto, headers)`  | `PasskeyAuthenticationBeginRequestDTO`              | JSON request options              |
+| `finishAuthentication(dto, headers)` | `PasskeyAuthenticationFinishRequestDTO`             | Repository-owned `{ user, rbac }` |
+
+All methods return `{ body, headers }`. Pass incoming request cookies to each
+method and forward every returned `Set-Cookie` header. Registration requires a
+fresh authenticated session at both steps and binds the challenge to that user.
+Authentication can begin without a session and establishes one after verification.
+The service validates request DTOs even when called outside a controller.
+
+The adapter calls the [Better Auth passkey server APIs](https://better-auth.com/docs/plugins/passkey),
+which use SimpleWebAuthn for verification. Better Auth stores challenges in its
+verification store, correlates them with signed cookies, expires them after five
+minutes, and consumes them before cryptographic verification. Challenge types
+prevent registration/authentication substitution. Verification checks the stored
+challenge, configured origin and RP ID, credential signature, and stored counter;
+the successful counter is persisted before session creation. Zero-only counters
+remain supported for authenticators that do not implement a signature counter.
+User verification follows the plugin's `preferred` policy; a biometric/PIN check
+is not mandatory in this implementation.
+
+**Origin configuration:** the expected origin defaults to the origin of
+`betterAuth.baseUrl`, never the request's `Origin` header. For a frontend on a
+different origin, explicitly set `plugins.passkeys.origin` (or
+`AUTH_PLUGIN_PASSKEY_ORIGIN`). It must be an HTTP(S) origin without a path, query,
+fragment, or credentials, and its hostname must match or be a subdomain of the
+RP ID. The configured origin is included in Better Auth's trusted origins.
+This tightens the previous implicit request-origin fallback.
+
+This is the server application/engine implementation for #125. It does not mount
+package-owned passkey HTTP routes or add browser orchestration. Those integration
+surfaces remain follow-up work under #105/#364. TypeORM persistence and migration
+coverage remain #126; the verification suite uses an in-memory database with the
+real cryptographic verifier. No new database migration is introduced here.
+
+Run `yarn nx run auth-nest:test-passkeys` for real registration/assertion tests,
+including replay, expiry, wrong origin/RP ID, signature, session ownership, and
+counter rejection. This target also runs as a dependency of `auth-nest:test`.
 
 ## Mailer Migration Note
 

@@ -216,7 +216,6 @@ describe('runtime security app-shell activation', () => {
           verifyEmail: jest.fn(),
           describeCapabilities: jest.fn(),
           passwordSignIn: jest.fn(),
-          passkeySignIn: jest.fn(),
           socialSignIn: jest.fn(),
           ...mockAuthEnginePort,
         } satisfies Partial<AuthEnginePort>,

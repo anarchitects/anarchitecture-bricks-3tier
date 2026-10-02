@@ -73,15 +73,16 @@ pnpm add @anarchitects/auth-ts
 | `@anarchitects/auth-ts/contracts`     | Contract profile config, schema factories, compatibility helpers, and payload shaping |
 | `@anarchitects/auth-ts/dtos`          | Core/session request-response schemas and DTO types (TypeBox)                         |
 | `@anarchitects/auth-ts/dtos/jwt`      | JWT plugin-specific DTO types and schemas                                             |
-| `@anarchitects/auth-ts/dtos/passkeys` | Versioned passkey registration/authentication DTOs and route schemas                  |
+| `@anarchitects/auth-ts/dtos/passkeys` | Passkey registration/authentication DTOs and route schemas                            |
 | `@anarchitects/auth-ts/models`        | Domain models used for user/session/RBAC composition                                  |
 
 ## Passkey ceremony contracts
 
 Import the optional passkey contracts from `@anarchitects/auth-ts/dtos/passkeys`.
 They are not re-exported by the root or core DTO entry point. This package supplies
-shared schemas and inferred TypeScript types; Nest endpoints, verification,
-persistence, and Angular browser orchestration are separate implementation work
+shared schemas and inferred TypeScript types. Nest server verification consumes
+these contracts through `AuthPasskeyService`; package-owned HTTP endpoints,
+persistence integration coverage, and Angular browser orchestration remain work
 under [epic #105](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/105).
 
 | Operation             | Request                                                         | Successful response                        |
@@ -95,7 +96,7 @@ Each operation exports a request schema, response schema, their `DTO` types, and
 route schema. For example:
 
 ```ts
-import { PASSKEY_CONTRACT_VERSION, PasskeyRegistrationFinishRequestSchema, PasskeyRegistrationFinishRouteSchema, type PasskeyRegistrationFinishRequestDTO } from '@anarchitects/auth-ts/dtos/passkeys';
+import { PasskeyRegistrationFinishRequestSchema, PasskeyRegistrationFinishRouteSchema, type PasskeyRegistrationFinishRequestDTO } from '@anarchitects/auth-ts/dtos/passkeys';
 import { Value } from '@sinclair/typebox/value';
 
 function validateRegistration(payload: unknown): payload is PasskeyRegistrationFinishRequestDTO {
@@ -104,7 +105,6 @@ function validateRegistration(payload: unknown): payload is PasskeyRegistrationF
 
 // Nest presentation can pass this directly to @RouteSchema once routes exist.
 PasskeyRegistrationFinishRouteSchema;
-PASSKEY_CONTRACT_VERSION; // '1.0.0'
 ```
 
 The route schemas contain only `body` and `response` fields. HTTP paths and methods
@@ -134,11 +134,9 @@ challenge, origin, RP ID, credential ownership, signature, user verification, an
 counter policy, including consistency between `id` and `rawId`. These schemas do
 not perform cryptographic verification or enforce decoded binary lengths.
 
-`PASSKEY_CONTRACT_VERSION` versions this surface independently of password form
-profiles; it is not a field sent in ceremony bodies. The initial version is `1.0.0`.
-Consumers should agree on that version when wiring their adapters. Tightening
-constraints or changing required fields is a breaking contract change. Package
-versioning and publication continue through the normal CI release workflow.
+Passkey contracts follow the package's versioning and normal CI release workflow.
+There is no separate runtime contract-version constant or ceremony-body version.
+Tightening constraints or changing required fields is a breaking contract change.
 
 ## Contract Profiles
 

@@ -1,4 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import type {
+  PasskeyRegistrationBeginRequestDTO,
+  PasskeyRegistrationBeginResponseDTO,
+  PasskeyRegistrationFinishRequestDTO,
+  PasskeyAuthenticationBeginRequestDTO,
+  PasskeyAuthenticationBeginResponseDTO,
+  PasskeyAuthenticationFinishRequestDTO,
+} from '@anarchitects/auth-ts/dtos/passkeys';
+import type { AuthHttpResult } from './auth.service';
 import {
   ForgotPasswordRequestDTO,
   LoginRequestDTO,
@@ -33,11 +42,6 @@ export type AuthEngineMutationResult = {
   success: boolean;
   headers?: Headers;
   userId?: string;
-};
-
-export type AuthPasskeySignInInput = {
-  autoFill?: boolean;
-  headers?: HeadersInit;
 };
 
 export type AuthSocialSignInInput = {
@@ -81,8 +85,21 @@ export abstract class AuthEnginePort {
     dto: LoginRequestDTO,
     headers?: HeadersInit,
   ): Promise<AuthEngineSessionResult>;
-  abstract passkeySignIn(
-    input: AuthPasskeySignInInput,
+  abstract beginPasskeyRegistration(
+    dto: PasskeyRegistrationBeginRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthHttpResult<PasskeyRegistrationBeginResponseDTO>>;
+  abstract finishPasskeyRegistration(
+    dto: PasskeyRegistrationFinishRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthEngineMutationResult>;
+  abstract beginPasskeyAuthentication(
+    dto: PasskeyAuthenticationBeginRequestDTO,
+    headers?: HeadersInit,
+  ): Promise<AuthHttpResult<PasskeyAuthenticationBeginResponseDTO>>;
+  abstract finishPasskeyAuthentication(
+    dto: PasskeyAuthenticationFinishRequestDTO,
+    headers?: HeadersInit,
   ): Promise<AuthEngineSessionResult>;
   abstract socialSignIn(input: AuthSocialSignInInput): Promise<unknown>;
 }
