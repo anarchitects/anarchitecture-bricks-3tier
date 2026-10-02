@@ -83,7 +83,10 @@
         "inputs": [
           "default",
           "^production",
-          "{workspaceRoot}/jest.preset.js"
+          "{workspaceRoot}/jest.preset.js",
+          "{workspaceRoot}/tools/testing/run-auth-nest-published-adapter-smoke.mjs",
+          "{workspaceRoot}/tools/testing/auth-nest-passkey-persistence.mjs",
+          "{workspaceRoot}/tools/testing/webauthn-fixture.mjs"
         ]
       }
     }
