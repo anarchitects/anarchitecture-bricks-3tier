@@ -333,6 +333,608 @@
         "tags": ["Auth"]
       }
     },
+    "/auth/passkeys/authentication/begin": {
+      "post": {
+        "operationId": "beginAuthentication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {},
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "allowCredentials": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "id": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "transports": {
+                            "items": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "type": {
+                            "enum": ["public-key"],
+                            "type": "string"
+                          }
+                        },
+                        "required": ["id", "type"],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "challenge": {
+                      "minLength": 1,
+                      "pattern": "^[A-Za-z0-9_-]+$",
+                      "type": "string"
+                    },
+                    "extensions": {
+                      "additionalProperties": {},
+                      "type": "object"
+                    },
+                    "hints": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "rpId": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "timeout": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "userVerification": {
+                      "anyOf": [
+                        {
+                          "enum": ["required"],
+                          "type": "string"
+                        },
+                        {
+                          "enum": ["preferred"],
+                          "type": "string"
+                        },
+                        {
+                          "enum": ["discouraged"],
+                          "type": "string"
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["challenge"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/passkeys/authentication/finish": {
+      "post": {
+        "operationId": "finishAuthentication",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "response": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "authenticatorAttachment": {
+                        "anyOf": [
+                          {
+                            "enum": ["platform"],
+                            "type": "string"
+                          },
+                          {
+                            "enum": ["cross-platform"],
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "clientExtensionResults": {
+                        "additionalProperties": {},
+                        "type": "object"
+                      },
+                      "id": {
+                        "minLength": 1,
+                        "pattern": "^[A-Za-z0-9_-]+$",
+                        "type": "string"
+                      },
+                      "rawId": {
+                        "minLength": 1,
+                        "pattern": "^[A-Za-z0-9_-]+$",
+                        "type": "string"
+                      },
+                      "response": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "authenticatorData": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "clientDataJSON": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "signature": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "userHandle": {
+                            "anyOf": [
+                              {
+                                "minLength": 1,
+                                "pattern": "^[A-Za-z0-9_-]+$",
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "clientDataJSON",
+                          "authenticatorData",
+                          "signature"
+                        ],
+                        "type": "object"
+                      },
+                      "type": {
+                        "enum": ["public-key"],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "rawId",
+                      "type",
+                      "clientExtensionResults",
+                      "response"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": ["response"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "rbac": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "action": {
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "conditions": {
+                            "additionalProperties": {},
+                            "type": "object"
+                          },
+                          "fields": {
+                            "items": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "inverted": {
+                            "type": "boolean"
+                          },
+                          "reason": {
+                            "minLength": 1,
+                            "type": "string"
+                          },
+                          "subject": {
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "required": ["action", "subject"],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "user": {}
+                  },
+                  "required": ["user", "rbac"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/passkeys/registration/begin": {
+      "post": {
+        "operationId": "beginRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "authenticatorAttachment": {
+                    "anyOf": [
+                      {
+                        "enum": ["platform"],
+                        "type": "string"
+                      },
+                      {
+                        "enum": ["cross-platform"],
+                        "type": "string"
+                      }
+                    ]
+                  }
+                },
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "attestation": {
+                      "anyOf": [
+                        {
+                          "enum": ["none"],
+                          "type": "string"
+                        },
+                        {
+                          "enum": ["indirect"],
+                          "type": "string"
+                        },
+                        {
+                          "enum": ["direct"],
+                          "type": "string"
+                        },
+                        {
+                          "enum": ["enterprise"],
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "attestationFormats": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "authenticatorSelection": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "authenticatorAttachment": {
+                          "anyOf": [
+                            {
+                              "enum": ["platform"],
+                              "type": "string"
+                            },
+                            {
+                              "enum": ["cross-platform"],
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "requireResidentKey": {
+                          "type": "boolean"
+                        },
+                        "residentKey": {
+                          "anyOf": [
+                            {
+                              "enum": ["required"],
+                              "type": "string"
+                            },
+                            {
+                              "enum": ["preferred"],
+                              "type": "string"
+                            },
+                            {
+                              "enum": ["discouraged"],
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "userVerification": {
+                          "anyOf": [
+                            {
+                              "enum": ["required"],
+                              "type": "string"
+                            },
+                            {
+                              "enum": ["preferred"],
+                              "type": "string"
+                            },
+                            {
+                              "enum": ["discouraged"],
+                              "type": "string"
+                            }
+                          ]
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "challenge": {
+                      "minLength": 1,
+                      "pattern": "^[A-Za-z0-9_-]+$",
+                      "type": "string"
+                    },
+                    "excludeCredentials": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "id": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "transports": {
+                            "items": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          },
+                          "type": {
+                            "enum": ["public-key"],
+                            "type": "string"
+                          }
+                        },
+                        "required": ["id", "type"],
+                        "type": "object"
+                      },
+                      "type": "array"
+                    },
+                    "extensions": {
+                      "additionalProperties": {},
+                      "type": "object"
+                    },
+                    "hints": {
+                      "items": {
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "pubKeyCredParams": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "alg": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "enum": ["public-key"],
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "alg"],
+                        "type": "object"
+                      },
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "rp": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "id": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "name": {
+                          "minLength": 1,
+                          "type": "string"
+                        }
+                      },
+                      "required": ["name"],
+                      "type": "object"
+                    },
+                    "timeout": {
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "user": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "maxLength": 86,
+                          "minLength": 1,
+                          "pattern": "^[A-Za-z0-9_-]+$",
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["id", "name", "displayName"],
+                      "type": "object"
+                    }
+                  },
+                  "required": ["rp", "user", "challenge", "pubKeyCredParams"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/passkeys/registration/finish": {
+      "post": {
+        "operationId": "finishRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "maxLength": 255,
+                    "minLength": 1,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "response": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "authenticatorAttachment": {
+                        "anyOf": [
+                          {
+                            "enum": ["platform"],
+                            "type": "string"
+                          },
+                          {
+                            "enum": ["cross-platform"],
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "clientExtensionResults": {
+                        "additionalProperties": {},
+                        "type": "object"
+                      },
+                      "id": {
+                        "minLength": 1,
+                        "pattern": "^[A-Za-z0-9_-]+$",
+                        "type": "string"
+                      },
+                      "rawId": {
+                        "minLength": 1,
+                        "pattern": "^[A-Za-z0-9_-]+$",
+                        "type": "string"
+                      },
+                      "response": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "attestationObject": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "authenticatorData": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "clientDataJSON": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "publicKey": {
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9_-]+$",
+                            "type": "string"
+                          },
+                          "publicKeyAlgorithm": {
+                            "type": "integer"
+                          },
+                          "transports": {
+                            "items": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": ["clientDataJSON", "attestationObject"],
+                        "type": "object"
+                      },
+                      "type": {
+                        "enum": ["public-key"],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "rawId",
+                      "type",
+                      "clientExtensionResults",
+                      "response"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "required": ["response"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["success"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
     "/auth/register": {
       "post": {
         "operationId": "registerUser",

@@ -427,9 +427,25 @@ fragment, or credentials, and its hostname must match or be a subdomain of the
 RP ID. The configured origin is included in Better Auth's trusted origins.
 This tightens the previous implicit request-origin fallback.
 
-Package-owned passkey HTTP routes and browser orchestration remain follow-up work
-under #105/#364. The server service uses the optional TypeORM passkey table through
-the published Better Auth adapter.
+The facade/presentation module mounts these opt-in POST routes when
+`plugins.passkeys.enabled` is true (200 on success):
+
+| Route                                  | Service method         |
+| -------------------------------------- | ---------------------- |
+| `/auth/passkeys/registration/begin`    | `beginRegistration`    |
+| `/auth/passkeys/registration/finish`   | `finishRegistration`   |
+| `/auth/passkeys/authentication/begin`  | `beginAuthentication`  |
+| `/auth/passkeys/authentication/finish` | `finishAuthentication` |
+
+They validate shared DTOs and forward challenge/session cookies. Sign-in routes
+are marked `@Public()`; enrollment remains protected by host guards and the engine's
+fresh-session checks. Disabled plugins expose no passkey routes. Paths above omit
+any host global prefix, such as `/api`.
+
+Angular browser orchestration is available through
+`@anarchitects/auth-angular/state/passkeys`; see its
+[usage guide](../angular/state/passkeys/README.md). The server service uses the
+optional TypeORM passkey table through the published Better Auth adapter.
 
 Run `yarn nx run auth-nest:test-passkeys` for real registration/assertion tests,
 including replay, expiry, wrong origin/RP ID, signature, session ownership, and

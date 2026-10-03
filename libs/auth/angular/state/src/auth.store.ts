@@ -137,6 +137,16 @@ export const AuthStore = signalStore(
     loggedInUser: computed(() => store.entities()[0]),
   })),
   withMethods((store) => ({
+    /** Accept a server-verified session from an optional authentication capability. */
+    acceptSession(session: {
+      user: AuthSessionUser;
+      rbac: PolicyRule[];
+    }): void {
+      patchAuthenticatedSession(store, session);
+      patchState(store, { initialized: true, restoring: false });
+    },
+  })),
+  withMethods((store) => ({
     restoreSession: rxMethod<void>(
       pipe(
         tap(() => {
@@ -164,6 +174,8 @@ export const AuthStore = signalStore(
             .pipe(
               tapResponse({
                 next: ({ user, rbac }) => {
+                  // A completed login/logout takes precedence over an older restore.
+                  if (store.initialized()) return;
                   patchAuthenticatedSession(store, {
                     user: {
                       email: user.email,
@@ -177,6 +189,7 @@ export const AuthStore = signalStore(
                   });
                 },
                 error: (error: unknown) => {
+                  if (store.initialized()) return;
                   clearAuthenticatedSession(store, {
                     error: toErrorMessage(error),
                     initialized: true,
@@ -262,14 +275,13 @@ export const AuthStore = signalStore(
             tapResponse({
               next: ({ user, rbac }) => {
                 const authenticatedUser = user as { email: string; id: string };
-                patchAuthenticatedSession(store, {
+                store.acceptSession({
                   user: {
                     email: authenticatedUser.email,
                     id: authenticatedUser.id,
                   },
                   rbac,
                 });
-                patchState(store, { initialized: true });
               },
               error: (error: unknown) => {
                 patchState(store, {

@@ -33,6 +33,7 @@ import {
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { toAuthHeaders } from '../../application/services/auth-headers';
 import { AuthService } from '../../application/services/auth.service';
+import { applyResponseHeaders } from '../auth-response-headers';
 import { AUTH_CONTRACT_ROUTE_SCHEMA_PLACEHOLDER } from '../auth-controller-route-schemas';
 
 @Controller('auth')
@@ -183,26 +184,3 @@ export class AuthController {
     return result.body;
   }
 }
-
-const applyResponseHeaders = (
-  reply: { header(name: string, value: string | string[]): unknown },
-  headers?: Headers,
-): void => {
-  if (!headers) {
-    return;
-  }
-
-  const setCookie =
-    'getSetCookie' in headers && typeof headers.getSetCookie === 'function'
-      ? headers.getSetCookie()
-      : headers.get('set-cookie');
-
-  if (Array.isArray(setCookie) && setCookie.length > 0) {
-    reply.header('set-cookie', setCookie);
-    return;
-  }
-
-  if (typeof setCookie === 'string' && setCookie.length > 0) {
-    reply.header('set-cookie', setCookie);
-  }
-};

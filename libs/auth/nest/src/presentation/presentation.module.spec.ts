@@ -3,6 +3,7 @@ import { FASTIFY_ROUTE_SCHEMA_METADATA } from '@nestjs/platform-fastify/constant
 import { AuthApplicationModule } from '../application';
 import { JwtAuthPluginController } from '../infrastructure-engine/better-auth/plugins/jwt/jwt-auth-plugin.controller';
 import { applyAuthControllerContractRouteSchemas } from './auth-controller-route-schemas';
+import { PasskeyAuthController } from './controllers/passkey-auth.controller';
 import { AuthController } from './controllers/auth.controller';
 import {
   AUTH_CONTRACTS,
@@ -114,6 +115,22 @@ describe('AuthPresentationModule', () => {
     expect(enabled.controllers).toContain(JwtAuthPluginController);
     expect(disabled.controllers).toEqual([]);
   });
+
+  it.each(['forRoot', 'forRootFromConfig'] as const)(
+    'mounts passkey routes only when enabled via %s',
+    (method) => {
+      expect(
+        AuthPresentationModule[method]({
+          application: { plugins: { passkeys: { enabled: true } } },
+        }).controllers,
+      ).toContain(PasskeyAuthController);
+      expect(
+        AuthPresentationModule[method]({
+          application: { plugins: { passkeys: { enabled: false } } },
+        }).controllers,
+      ).not.toContain(PasskeyAuthController);
+    },
+  );
 
   it('merges config-backed plugin overrides through forRootFromConfig', () => {
     const moduleMetadata = AuthPresentationModule.forRootFromConfig({

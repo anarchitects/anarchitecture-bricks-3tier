@@ -20,6 +20,8 @@ import {
   resolveTags,
   toRouteKey,
 } from './route-metadata';
+import { PasskeyAuthController } from '../../libs/auth/nest/src/presentation/controllers/passkey-auth.controller';
+import { AuthPasskeyService } from '../../libs/auth/nest/src/application/services/auth-passkey.service';
 import { AuthService } from '../../libs/auth/nest/src/application/services/auth.service';
 import { applyAuthControllerContractRouteSchemas } from '../../libs/auth/nest/src/presentation/auth-controller-route-schemas';
 import { createDefaultAuthContracts } from '../../libs/auth/nest/src/presentation/auth-contracts';
@@ -132,11 +134,13 @@ applyAuthControllerContractRouteSchemas(
 @Module({
   controllers: [
     AuthController,
+    PasskeyAuthController,
     FormsController,
     SubmissionsController,
     UserProfilesController,
   ],
   providers: [
+    { provide: AuthPasskeyService, useValue: {} },
     {
       provide: AuthService,
       useValue: authServiceStub,

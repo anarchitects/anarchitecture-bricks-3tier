@@ -1,12 +1,13 @@
 # @anarchitects/auth-angular/data-access
 
-HTTP adapters that bridge Angular apps to the auth Nest API using the OpenAPI-generated DTOs. Import from `@anarchitects/auth-angular/data-access` for the session-first core auth surface.
+HTTP adapters that bridge Angular apps to the auth Nest API using the shared auth DTOs. Import from `@anarchitects/auth-angular/data-access` for the session-first core auth surface.
 
 ## Exports
 
 - `AuthApi`: injectable service backed by Angular `HttpClient`
 - Uses configuration from `@anarchitects/auth-angular/config` to resolve the `/api/{resource}` path
 - Methods map to the core session-oriented auth surface (`registerUser`, `login`, `logout`, `getLoggedInUserInfo`, etc.)
+- Passkey HTTP and browser adapters live under `@anarchitects/auth-angular/data-access/passkeys` and require explicit providers
 - JWT plugin helpers live under `@anarchitects/auth-angular/data-access/jwt`
 
 ## Usage
