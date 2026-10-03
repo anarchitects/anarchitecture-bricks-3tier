@@ -30,26 +30,40 @@ export async function validatePasskeyPersistence({
       headers: requestHeaders(cookie(result.headers)),
     };
   };
+  // Exercise the package HTTP boundary, including challenge/session Set-Cookie forwarding.
+  const post = async (path, payload, cookies = '') => {
+    const result = await app.inject({
+      method: 'POST',
+      url: `/auth/passkeys/${path}`,
+      payload,
+      headers: { cookie: cookies },
+    });
+    assert.equal(result.statusCode, 200, result.body);
+    const headers = new Headers();
+    const values = result.headers['set-cookie'];
+    for (const value of Array.isArray(values) ? values : values ? [values] : [])
+      headers.append('set-cookie', value);
+    return { body: result.json(), headers };
+  };
   const enroll = async (authenticator, name) => {
-    const begin = await service.beginRegistration(
-      {},
-      requestHeaders(sessionCookie),
-    );
+    const begin = await post('registration/begin', {}, sessionCookie);
     const dto = authenticator.register(begin.body.challenge);
     if (name === null) delete dto.name;
     else dto.name = name;
-    const result = await service.finishRegistration(
+    const result = await post(
+      'registration/finish',
       dto,
-      requestHeaders(sessionCookie, cookie(begin.headers)),
+      [sessionCookie, cookie(begin.headers)].join('; '),
     );
     assert.deepEqual(result.body, { success: true });
     return load(authenticator.id);
   };
   const authenticate = async (authenticator, counter) => {
-    const begin = await beginAuthentication();
-    const result = await service.finishAuthentication(
-      authenticator.authenticate(begin.challenge, counter),
-      begin.headers,
+    const begin = await post('authentication/begin', {});
+    const result = await post(
+      'authentication/finish',
+      authenticator.authenticate(begin.body.challenge, counter),
+      cookie(begin.headers),
     );
     assert.equal(result.body.user.id, userId);
     assert.ok(Array.isArray(result.body.rbac));
@@ -62,6 +76,13 @@ export async function validatePasskeyPersistence({
     assert.equal(me.json().user.id, userId);
     assert.equal((await load(authenticator.id)).counter, counter);
   };
+
+  const anonymousEnrollment = await app.inject({
+    method: 'POST',
+    url: '/auth/passkeys/registration/begin',
+    payload: {},
+  });
+  assert.equal(anonymousEnrollment.statusCode, 401, anonymousEnrollment.body);
 
   const stored = await enroll(device, 'Laptop passkey');
   assert.equal(stored.userId, userId);

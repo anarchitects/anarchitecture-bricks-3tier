@@ -5,6 +5,7 @@ import {
   createAuthContractsProvider,
   createAuthContractsFromConfig,
 } from './auth-contracts';
+import { PasskeyAuthController } from './controllers/passkey-auth.controller';
 import { AuthController } from './controllers/auth.controller';
 import { AuthApplicationModule } from '../application';
 import { AuthenticationGuard } from './guards/authentication.guard';
@@ -49,7 +50,12 @@ export class AuthPresentationModule {
     return {
       module: AuthPresentationModule,
       imports: [AuthApplicationModule.forRoot(options.application)],
-      controllers: jwtPluginController,
+      controllers: [
+        ...jwtPluginController,
+        ...(options.application?.plugins?.passkeys?.enabled
+          ? [PasskeyAuthController]
+          : []),
+      ],
       providers: [createAuthContractsProvider(authContracts)],
       exports: [
         AuthApplicationModule,

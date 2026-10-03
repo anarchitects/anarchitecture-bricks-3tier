@@ -21,6 +21,18 @@
     "/auth/me": {
       "get": "getLoggedInUserInfo"
     },
+    "/auth/passkeys/authentication/begin": {
+      "post": "beginAuthentication"
+    },
+    "/auth/passkeys/authentication/finish": {
+      "post": "finishAuthentication"
+    },
+    "/auth/passkeys/registration/begin": {
+      "post": "beginRegistration"
+    },
+    "/auth/passkeys/registration/finish": {
+      "post": "finishRegistration"
+    },
     "/auth/register": {
       "post": "registerUser"
     },

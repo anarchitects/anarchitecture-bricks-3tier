@@ -19,12 +19,33 @@ Migration guidance for the Angular 22 Signal Forms and Tailwind transition lives
 
 - `config`: DI tokens and provider helpers (API resource path, defaults)
 - `config`: DI tokens and provider helpers for auth contract profiles via `provideAuthContracts(...)`
-- `data-access`: generated OpenAPI clients plus adapters over the Nest API
+- `data-access`: typed HttpClient adapters over the Nest API using shared auth DTOs
 - `state`: signal-based store plus explicit provider helper for core session login/logout, eager session restore, and ability hydration; session user data aligns with the shared `AuthUser` contract from `@anarchitects/auth-ts`
 - `feature`: coarse route guard, resource-aware route guard, and orchestration components that delegate rendering to auth UI components
 - `util`: CASL ability helpers (`createAppAbility`, `canAccessResource`, `canAccessResourceField`, `AppAbility`)
 - `ui`: presentational Angular 22 Signal Forms components built on `AnarchitectsUiForm`
   and styled through `@anarchitects/tailwind`
+
+## Optional passkeys
+
+Import `AuthPasskeyStore` and `provideAuthPasskeyState` from
+`@anarchitects/auth-angular/state/passkeys`. Register core `provideAuthState()` at
+your chosen session scope, then add `...provideAuthPasskeyState()` to the feature
+route or component providers. The passkey store inherits that core session and
+provides its own HTTP/browser adapters explicitly.
+
+Trigger `enroll({ name: 'My laptop' })` or `signIn()` from a user action. Observe
+`loading()`, `success()`, `cancelled()`, and `error()`; the commands are reactive,
+not awaitable. `cancel()` aborts pending browser work, as does destruction of the
+providing scope. Enrollment keeps the current session; verified sign-in hydrates
+the core user, RBAC, and CASL ability.
+
+The browser must support secure-context WebAuthn and its native JSON conversion
+APIs. Check `isSupported()` and retain a password fallback for unsupported browsers
+and SSR. Enable the Nest passkeys plugin and run its migrations before use.
+See the [state usage guide](state/passkeys/README.md) for scope, cancellation, and
+host UX responsibilities, and the [adapters guide](data-access/passkeys/README.md)
+for advanced composition. This capability does not add passkey UI components.
 
 ## Authorization Model
 
@@ -316,7 +337,7 @@ export class PostActionsComponent {
 ## Development notes
 
 - DTOs live in `@anarchitects/auth-ts`; regenerate OpenAPI docs when route schemas change (`nx run api-specs:generate`).
-- Data-access layer should always use the generated OpenAPI clients—no manual HTTP calls.
+- Keep typed HttpClient calls in data-access adapters, using shared auth DTOs; feature and state layers consume those adapters.
 - State layer uses Angular signals via `@ngrx/signals` for reactive updates, hydrates raw RBAC rules plus the derived CASL ability, and restores Better Auth-backed sessions eagerly when provided.
 - `AuthStore.initialized()` and `AuthStore.restoring()` let apps avoid auth flicker while bootstrap restore completes.
 - `/auth/me` RBAC payloads are parsed at the frontend trust boundary; malformed authorization data fails closed instead of producing a partially trusted ability.
