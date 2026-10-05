@@ -1,7 +1,9 @@
+import type { ConfigType } from '@nestjs/config';
 import {
   DEFAULT_MAILER_PROVIDER,
   InjectMailerConfig,
   MAILER_CONFIG_KEY,
+  MailerConfig,
   mailerConfig,
 } from './mailer.config';
 
@@ -15,6 +17,7 @@ const MAILER_ENV_KEYS = [
   'MAILER_DEFAULT',
   'MAILER_IGNORE_TLS',
   'MAILER_TEMPLATE_DIR',
+  'MAILER_TEMPLATE_BASE_DIR',
 ] as const;
 
 type MailerEnvKey = (typeof MAILER_ENV_KEYS)[number];
@@ -49,7 +52,8 @@ describe('mailerConfig', () => {
   it('returns default values when no environment variables are set', () => {
     const config = mailerConfig();
 
-    expect(config).toEqual({
+    // Existing consumers can still supply the original configuration shape.
+    const legacyConfig: MailerConfig = {
       provider: DEFAULT_MAILER_PROVIDER,
       host: 'smtp.example.com',
       port: 587,
@@ -59,7 +63,11 @@ describe('mailerConfig', () => {
       default: 'default@example.com',
       ignoreTLS: false,
       templateDir: 'templates',
-    });
+    };
+    const inferredConfig: ConfigType<typeof mailerConfig> = legacyConfig;
+
+    expect(config).toEqual(inferredConfig);
+    expect(config.templateBaseDir).toBeUndefined();
   });
 
   it('uses provided environment variables when available', () => {
@@ -72,6 +80,7 @@ describe('mailerConfig', () => {
     process.env['MAILER_DEFAULT'] = 'noreply@domain.test';
     process.env['MAILER_IGNORE_TLS'] = 'true';
     process.env['MAILER_TEMPLATE_DIR'] = 'custom-templates';
+    process.env['MAILER_TEMPLATE_BASE_DIR'] = 'deployment';
 
     const config = mailerConfig();
 
@@ -85,7 +94,14 @@ describe('mailerConfig', () => {
       default: 'noreply@domain.test',
       ignoreTLS: true,
       templateDir: 'custom-templates',
+      templateBaseDir: 'deployment',
     });
+  });
+
+  it('preserves an empty template base directory for cwd fallback', () => {
+    process.env['MAILER_TEMPLATE_BASE_DIR'] = '';
+
+    expect(mailerConfig().templateBaseDir).toBe('');
   });
 
   it('throws when MAILER_PROVIDER is unsupported', () => {
