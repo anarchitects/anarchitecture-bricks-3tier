@@ -133,6 +133,7 @@ nx run forms-angular-example:contract-test
 | `nx run release-tools:domain-release -- --domain=forms -d`    | Dry-run the supported domain release workflow         |
 | `nx run auth-nest-example:contract-test`                      | Validate auth Nest runtime responses against OpenAPI  |
 | `nx run auth-angular-example:contract-test`                   | Validate auth Angular data-access against Prism mock  |
+| `yarn nx run auth-angular-example-e2e:passkey-contract-test`  | Validate browser passkeys through Nest and PostgreSQL |
 | `nx run forms-nest-example:contract-test`                     | Validate Nest runtime responses against OpenAPI       |
 | `nx run forms-angular-example:contract-test`                  | Validate Angular data-access calls against Prism mock |
 | `nx affected -t lint test build`                              | Standard affected checks                              |
@@ -245,3 +246,5 @@ See the contributor workflow context in [CONTRIBUTING.md](CONTRIBUTING.md#human-
 ## License
 
 MIT
+
+Passkey host composition and validation: [consumer integration guide](docs/guides/auth-passkeys.md).

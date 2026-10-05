@@ -369,6 +369,9 @@ That mounts the plugin-owned `/auth/jwt/login`, `/auth/jwt/logout`, and `/auth/j
 
 ### Optional passkey server ceremonies
 
+See the [consumer integration and contract-test guide](../../../docs/guides/auth-passkeys.md) for public
+composition, deployment requirements, supported routes, and failure behavior.
+
 Enable passkeys to provide `AuthPasskeyService`, exported from the root and
 `@anarchitects/auth-nest/application` entry points:
 

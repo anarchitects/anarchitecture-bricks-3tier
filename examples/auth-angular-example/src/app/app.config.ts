@@ -18,6 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(appRoutes),
     provideAuthConfig({ apiResourcePath: 'auth' }),
     provideAuthContracts(),
-    provideAuthState({ restoreOnInit: false }),
+    provideAuthState(),
   ],
 };

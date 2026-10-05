@@ -8,6 +8,7 @@ const requiredFiles = [
   'index.html',
   'packages/index.html',
   'guides/angular.html',
+  'guides/auth-passkeys.html',
   'guides/angular-22-signal-forms-tailwind-migration.html',
   'guides/nest.html',
   'guides/ts-contracts.html',
