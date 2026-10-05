@@ -30,15 +30,17 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   /*
-   * Keep this declaration stable during graph inference and task execution.
-   * Nx infers the serve dependency and readiness gate from it, including on
-   * CI agents. Playwright reuses the server after Nx's gate reports it ready;
-   * when run directly, Playwright starts and waits for the server itself.
+   * In CI, Playwright owns startup, readiness, and teardown on the test agent.
+   * Disabling reuse prevents Nx from inferring a competing serve dependency.
+   * Keep webServer declared in task processes as well as graph inference.
    */
   webServer: {
     command: 'yarn nx run forms-angular-example:serve',
     url: 'http://localhost:4200',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env['CI'],
+    env: process.env['CI']
+      ? { NX_CLOUD_DISTRIBUTED_EXECUTION: 'false' }
+      : undefined,
     cwd: workspaceRoot,
   },
   projects: [
