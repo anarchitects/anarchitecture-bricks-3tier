@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/auth-nest",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "type": "commonjs",
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24.11.0"
@@ -16,7 +16,7 @@
     "@sinclair/typebox": "^0.34.41",
     "@better-auth/passkey": "~1.7.2",
     "@anarchitects/auth-ts": "^0.10.1",
-    "@anarchitects/common-nest-mailer": "^0.3.3",
+    "@anarchitects/common-nest-mailer": "^0.3.4",
     "@casl/ability": "^6.7.3",
     "@opentelemetry/api": "^1.9.0",
     "bcrypt": "^6.0.0",
