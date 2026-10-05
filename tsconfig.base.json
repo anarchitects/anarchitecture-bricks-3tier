@@ -153,6 +153,12 @@
       ],
       "@anarchitects/auth-angular/state/passkeys": [
         "./libs/auth/angular/state/passkeys/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/feature/passkeys": [
+        "./libs/auth/angular/feature/passkeys/src/index.ts"
+      ],
+      "@anarchitects/auth-angular/ui/passkeys": [
+        "./libs/auth/angular/ui/passkeys/src/index.ts"
       ]
     },
     "strict": false,

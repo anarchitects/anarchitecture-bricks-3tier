@@ -1,0 +1,30 @@
+@if (!supported()) {
+<p role="status">{{ text().unsupported }}</p>
+} @else {
+<div class="anx-cluster">
+  <button
+    class="anx-control px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:anx-focus-ring"
+    type="button"
+    [disabled]="disabled() || loading()"
+    (click)="requested.emit()"
+  >
+    {{ mode() === 'enroll' ? text().enroll : text().signIn }}
+  </button>
+  @if (loading()) {
+  <button
+    class="anx-control px-4 py-2 focus-visible:anx-focus-ring"
+    type="button"
+    (click)="cancelRequested.emit()"
+  >
+    {{ text().cancel }}
+  </button>
+  }
+</div>
+<p role="status" aria-live="polite">
+  @if (loading()) { {{ text().pending }} } @else if (cancelled()) { {{
+  text().cancelled }} } @else if (success()) { {{ text().completed }} }
+</p>
+@if (error()) {
+<p role="alert">{{ error() }}</p>
+} }
+<ng-content select="[passkeyFallback]" />

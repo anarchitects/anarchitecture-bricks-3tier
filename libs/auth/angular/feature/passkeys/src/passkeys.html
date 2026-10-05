@@ -1,0 +1,16 @@
+<anarchitects-auth-ui-passkeys
+  [mode]="mode()"
+  [supported]="passkeys.isSupported()"
+  [disabled]="actionDisabled()"
+  [loading]="passkeys.loading()"
+  [success]="passkeys.success()"
+  [cancelled]="passkeys.cancelled()"
+  [error]="passkeys.error()"
+  [labels]="labels()"
+  (requested)="request()"
+  (cancelRequested)="passkeys.cancel()"
+>
+  <ng-container ngProjectAs="[passkeyFallback]">
+    <ng-content select="[passkeyFallback]" />
+  </ng-container>
+</anarchitects-auth-ui-passkeys>
