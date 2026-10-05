@@ -80,7 +80,8 @@ Use this overlay to keep docs/package workflow safe:
 ## Release Safety Overlay
 
 - Do not introduce version bumps as part of docs-only work.
-- For docs-surface changes, keep commit types non-bumping (`docs`, `chore`, `ci`, `style`).
+- For PRs containing only docs-surface changes, keep commit types non-bumping (`docs`, `chore`, `ci`, `style`, `init`).
+- For mixed code/documentation PRs, choose the commit type and breaking-change markers based on the code changes.
 - Avoid `feat`, `fix`, `refactor`, `perf`, `revert`, `!`, or `BREAKING CHANGE` in docs-only PR commit subjects.
 ```
 

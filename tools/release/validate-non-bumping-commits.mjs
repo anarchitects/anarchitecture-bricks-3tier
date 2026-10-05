@@ -1,16 +1,8 @@
 import { spawnSync } from 'node:child_process';
+import { isDocsOnlyChange } from './docs-surface-lib.mjs';
 
 const workspaceRoot = process.cwd();
 const allowedTypes = new Set(['docs', 'chore', 'ci', 'style', 'init']);
-const docsPathMatchers = [
-  /^docs\//,
-  /^tools\/angular-docs\//,
-  /^tools\/docs-hub\//,
-  /^libs\/.+\/README\.md$/,
-  /^README\.md$/,
-  /^CONTRIBUTING\.md$/,
-  /^\.github\/workflows\/docs-pages\.yml$/,
-];
 
 function runGit(args) {
   const result = spawnSync('git', args, {
@@ -91,12 +83,6 @@ function resolveBaseCommit() {
   return null;
 }
 
-function changedDocsSurface(files) {
-  return files.some((filePath) =>
-    docsPathMatchers.some((matcher) => matcher.test(filePath)),
-  );
-}
-
 function parseCommitBlocks(rawLog) {
   if (!rawLog) {
     return [];
@@ -147,10 +133,8 @@ if (changedFiles.length === 0) {
   process.exit(0);
 }
 
-if (!changedDocsSurface(changedFiles)) {
-  console.log(
-    'No docs-surface file changes detected; skipping non-bumping commit validation.',
-  );
+if (!isDocsOnlyChange(changedFiles)) {
+  console.log('PR is not docs-only; skipping non-bumping commit validation.');
   process.exit(0);
 }
 

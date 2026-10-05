@@ -3,8 +3,51 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { isDocsOnlyChange } from './docs-surface-lib.mjs';
 
 const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+
+test('non-bumping policy applies to PRs containing only docs-surface files', () => {
+  const files = [
+    'docs/guides/ai-agents.md',
+    'tools/angular-docs/generate.mjs',
+    'tools/docs-hub/src/index.ts',
+    'libs/forms/angular/feature/README.md',
+    'README.md',
+    'CONTRIBUTING.md',
+    '.github/workflows/docs-pages.yml',
+  ];
+
+  for (const file of files) {
+    assert.equal(isDocsOnlyChange([file]), true, file);
+  }
+  assert.equal(isDocsOnlyChange(files), true);
+});
+
+test('feature changes retain release semantics when accompanied by a README', () => {
+  const files = [
+    'libs/forms/angular/feature/README.md',
+    'libs/forms/angular/feature/src/forms-submissions-feature.provider.spec.ts',
+    'libs/forms/angular/feature/src/forms-submissions-feature.provider.ts',
+    'libs/forms/angular/feature/src/index.ts',
+  ];
+
+  assert.equal(isDocsOnlyChange(files), false);
+  assert.equal(isDocsOnlyChange([...files].reverse()), false);
+});
+
+test('non-bumping policy skips empty and non-docs changes', () => {
+  assert.equal(isDocsOnlyChange([]), false);
+  assert.equal(
+    isDocsOnlyChange(['libs/forms/angular/state/src/forms.store.ts']),
+    false,
+  );
+  assert.equal(isDocsOnlyChange(['README.md', 'package.json']), false);
+  assert.equal(
+    isDocsOnlyChange(['docs/guide.md', '.github/workflows/main-ci.yml']),
+    false,
+  );
+});
 
 test('release workflows separate versioning from OIDC trusted publishing', () => {
   const releaseWorkflow = readFileSync(
