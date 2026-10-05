@@ -227,6 +227,10 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 ## Docs PR Commit Policy
 
+This policy applies only when every changed file is in the documentation surface
+(see [Pull Requests](CONTRIBUTING.md#pull-requests)). Mixed code/documentation PRs
+retain the commit types and breaking-change markers appropriate to their code changes.
+
 - Docs-surface pull requests must use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
 - Do not use `!` or `BREAKING CHANGE` markers in docs-surface commits.
 - CI enforces this via `nx run release-tools:validate-non-bumping-commits`.

@@ -77,7 +77,8 @@ nx run release-tools:validate-non-bumping-commits
 - For a new publishable project's implementation PR, use `init(<project-or-domain>): <description>` as the final or squash commit subject. The `init` type is configured with `semverBump: none`, so creating the package does not infer an additional release bump before its explicitly selected first release.
 - Document API-impacting changes with generated OpenAPI diff output.
 - Include contract-test updates when endpoints or response schemas change.
-- For docs-surface PRs (`docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root docs files, docs workflows), use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
+- A docs-surface PR changes only files in `docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root `README.md`/`CONTRIBUTING.md`, or `.github/workflows/docs-pages.yml`. For these PRs, use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
+- Mixed code/documentation PRs use the commit type and breaking-change markers appropriate to the code changes; updating a README does not make a feature or fix non-bumping.
 - Docs-surface PR commits must not contain `!` or `BREAKING CHANGE`.
 - CI enforces docs commit policy via `nx run release-tools:validate-non-bumping-commits`.
 - CI also enforces docs completeness via `nx run docs-hub:validate-content` (required headings for publishable package READMEs and Angular/Nest markdown guides).
