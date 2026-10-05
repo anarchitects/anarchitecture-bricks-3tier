@@ -16,6 +16,7 @@ import {
   resolveCommonMailerModuleOptions,
 } from './config/mailer.config';
 import { resolveTemplateDir } from './config/resolve-template-dir';
+import { validateTemplateDir } from './config/validate-template-dir';
 import { MailerPort } from './ports/mailer.port';
 
 export type CommonMailerModuleAsyncOptions = Parameters<
@@ -80,25 +81,33 @@ export class CommonMailerModule extends ConfigurableModuleClass {
     return CommonMailerModule.forRootAsync({
       imports: [ConfigModule.forFeature(mailerConfig)],
       inject: [mailerConfig.KEY],
-      useFactory: (config: MailerConfig) => ({
-        transport: {
-          host: config.host,
-          port: config.port,
-          secure: config.secure,
-          ignoreTLS: config.ignoreTLS,
-          auth: {
-            user: config.user,
-            pass: config.pass,
+      useFactory: (config: MailerConfig) => {
+        const templateDir = resolveTemplateDir(
+          config.templateDir,
+          config.templateBaseDir,
+        );
+        validateTemplateDir(templateDir);
+
+        return {
+          transport: {
+            host: config.host,
+            port: config.port,
+            secure: config.secure,
+            ignoreTLS: config.ignoreTLS,
+            auth: {
+              user: config.user,
+              pass: config.pass,
+            },
           },
-        },
-        defaults: {
-          from: config.default,
-        },
-        template: {
-          dir: resolveTemplateDir(config.templateDir, config.templateBaseDir),
-          adapter: new HandlebarsAdapter(),
-        },
-      }),
+          defaults: {
+            from: config.default,
+          },
+          template: {
+            dir: templateDir,
+            adapter: new HandlebarsAdapter(),
+          },
+        };
+      },
     });
   }
 
