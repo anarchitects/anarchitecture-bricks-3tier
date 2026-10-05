@@ -30,21 +30,17 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   /*
-   * Run your local dev server before starting the tests. Nx's playwright
-   * plugin parses this command and already starts + waits for the server via
-   * an inferred task dependency whenever this config runs as an Nx task, so
-   * invoking it again here would re-run the same `serve` task from a second
-   * process and trip Nx's recursive task invocation guard. Only let
-   * Playwright manage the server when running outside Nx.
+   * Keep this declaration stable during graph inference and task execution.
+   * Nx infers the serve dependency and readiness gate from it, including on
+   * CI agents. Playwright reuses the server after Nx's gate reports it ready;
+   * when run directly, Playwright starts and waits for the server itself.
    */
-  webServer: process.env['NX_TASK_TARGET_PROJECT']
-    ? undefined
-    : {
-        command: 'yarn nx run auth-angular-example:serve',
-        url: 'http://localhost:4201',
-        reuseExistingServer: true,
-        cwd: workspaceRoot,
-      },
+  webServer: {
+    command: 'yarn nx run auth-angular-example:serve',
+    url: 'http://localhost:4201',
+    reuseExistingServer: true,
+    cwd: workspaceRoot,
+  },
   projects: [
     {
       name: 'chromium',
