@@ -1,8 +1,8 @@
 {
   "name": "@anarchitects/auth-angular",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "dependencies": {
-    "@anarchitects/auth-ts": "^0.10.0",
+    "@anarchitects/auth-ts": "^0.10.1",
     "@anarchitects/forms-angular": "^0.8.0",
     "@anarchitects/forms-ts": "^0.8.0",
     "@casl/ability": "^6.7.3",
