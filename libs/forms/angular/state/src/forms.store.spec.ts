@@ -44,7 +44,7 @@ const setup = () => {
 
   TestBed.configureTestingModule({
     providers: [
-      provideFormsState(),
+      ...provideFormsState(),
       { provide: FormsApi, useValue: mockFormsApi },
     ],
   });
