@@ -13,6 +13,11 @@ import {
 
 export const appRoutes: Route[] = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
+  {
+    path: 'passkeys',
+    loadComponent: () =>
+      import('./passkeys/passkey-page/passkey-page').then((m) => m.PasskeyPage),
+  },
   { path: 'login', component: AnarchitectsFeatureLogin },
   { path: 'register', component: AnarchitectsFeatureRegister },
   { path: 'activate', component: AnarchitectsFeatureActivateUser },

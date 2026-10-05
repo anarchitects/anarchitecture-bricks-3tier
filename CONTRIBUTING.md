@@ -139,3 +139,11 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
   - Nest runtime responses validated against generated OpenAPI.
   - Angular data-access validated against Prism mock built from generated OpenAPI.
 - E2E checks run from Nx example applications.
+
+### Passkey browser contracts
+
+With Docker running, install Chromium using `yarn playwright install chromium`, then
+run `yarn nx run auth-angular-example-e2e:passkey-contract-test`. This uses a
+disposable PostgreSQL database and the native Chromium virtual authenticator. See
+the [passkey integration guide](docs/guides/auth-passkeys.md#contract-validation) for
+coverage, the default port, and related verifier/persistence tests.

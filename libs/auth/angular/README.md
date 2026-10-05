@@ -28,6 +28,9 @@ Migration guidance for the Angular 22 Signal Forms and Tailwind transition lives
 
 ## Optional passkeys
 
+See the [consumer integration and contract-test guide](../../../docs/guides/auth-passkeys.md) for public
+composition, deployment requirements, supported routes, and failure behavior.
+
 Import `AuthPasskeyStore` and `provideAuthPasskeyState` from
 `@anarchitects/auth-angular/state/passkeys`. Register core `provideAuthState()` at
 your chosen session scope, then add `...provideAuthPasskeyState()` to the feature

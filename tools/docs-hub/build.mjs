@@ -14,6 +14,10 @@ const angularFrontendMigrationGuidePath = join(
   'docs/guides/angular-22-signal-forms-tailwind-migration.md',
 );
 const nestGuidePath = join(workspaceRoot, 'docs/guides/nest.md');
+const authPasskeysGuidePath = join(
+  workspaceRoot,
+  'docs/guides/auth-passkeys.md',
+);
 const authMigrationGuidePath = join(
   workspaceRoot,
   'docs/guides/auth-migration.md',
@@ -58,6 +62,7 @@ function pageTemplate(title, activePath, content, generatedAt) {
     },
     { href: '/guides/nest.html', label: 'Nest Guide' },
     { href: '/guides/auth-migration.html', label: 'Auth Migration Guide' },
+    { href: '/guides/auth-passkeys.html', label: 'Passkey Integration' },
     { href: '/guides/ts-contracts.html', label: 'TS Contracts Guide' },
     {
       href: '/guides/design-ui-systems.html',
@@ -212,6 +217,7 @@ const angularFrontendMigrationGuideMarkdown = readFileSync(
   'utf8',
 );
 const nestGuideMarkdown = readFileSync(nestGuidePath, 'utf8');
+const authPasskeysGuideMarkdown = readFileSync(authPasskeysGuidePath, 'utf8');
 const authMigrationGuideMarkdown = readFileSync(authMigrationGuidePath, 'utf8');
 const aiAgentsGuideMarkdown = readFileSync(aiAgentsGuidePath, 'utf8');
 const designUiSystemsGuideMarkdown = readFileSync(
@@ -274,6 +280,7 @@ writeFile(
     <li><a href="/guides/angular-22-signal-forms-tailwind-migration.html">Angular 22, Signal Forms, and Tailwind migration guide</a></li>
     <li><a href="/guides/nest.html">Nest application guide</a></li>
     <li><a href="/guides/auth-migration.html">Auth migration guide</a></li>
+    <li><a href="/guides/auth-passkeys.html">Passkey integration guide</a></li>
     <li><a href="/guides/ts-contracts.html">TS contracts guide</a></li>
     <li><a href="/guides/design-ui-systems.html">Design/UI systems guide</a></li>
     <li><a href="/guides/ai-agents.html">AI coding agents templates</a></li>
@@ -359,6 +366,16 @@ writeFile(
 );
 
 writeFile(
+  'guides/auth-passkeys.html',
+  renderMarkdownPage(
+    'Passkey Integration',
+    '/guides/auth-passkeys.html',
+    authPasskeysGuideMarkdown,
+    generatedAt,
+  ),
+);
+
+writeFile(
   'guides/auth-migration.html',
   renderMarkdownPage(
     'Auth Migration Guide',
@@ -427,6 +444,7 @@ writeFile(
   angularFrontendMigrationGuideMarkdown,
 );
 writeFile('guides/nest.md', nestGuideMarkdown);
+writeFile('guides/auth-passkeys.md', authPasskeysGuideMarkdown);
 writeFile('guides/auth-migration.md', authMigrationGuideMarkdown);
 writeFile('guides/ts-contracts.md', tsContractsGuideMarkdown);
 writeFile('guides/ai-agents.md', aiAgentsGuideMarkdown);

@@ -1,0 +1,57 @@
+<section class="anx-stack" aria-labelledby="passkey-heading">
+  <h1 id="passkey-heading" class="text-2xl font-bold">Passkeys</h1>
+  <p>Use your device to sign in without a password.</p>
+  <p data-testid="session">
+    @if (auth.restoring()) { Restoring your session… } @else if
+    (auth.isLoggedIn()) { Signed in as {{ auth.loggedInUser()?.email }} } @else
+    { Signed out }
+  </p>
+  @if (!passkeys.isSupported()) {
+  <p role="status">
+    Passkeys are not supported in this browser. Use password sign-in instead.
+  </p>
+  } @else {
+  <div class="anx-cluster">
+    @if (auth.isLoggedIn()) {
+    <button
+      class="anx-button"
+      type="button"
+      [disabled]="passkeys.loading() || auth.loading()"
+      (click)="passkeys.enroll({ name: 'This device' })"
+    >
+      Add a passkey
+    </button>
+    } @else {
+    <button
+      class="anx-button"
+      type="button"
+      [disabled]="passkeys.loading() || auth.restoring() || auth.loading()"
+      (click)="passkeys.signIn()"
+    >
+      Sign in with a passkey
+    </button>
+    } @if (passkeys.loading()) {
+    <button class="anx-button" type="button" (click)="passkeys.cancel()">
+      Cancel
+    </button>
+    }
+  </div>
+  <p role="status" aria-live="polite">
+    @if (passkeys.loading()) { Follow your browser's passkey prompt. } @else if
+    (passkeys.cancelled()) { Passkey request cancelled. You can try again. }
+    @else if (passkeys.success()) { Passkey request completed. }
+  </p>
+  @if (passkeys.error()) {
+  <p role="alert">{{ passkeys.error() }}</p>
+  } } @if (auth.isLoggedIn()) {
+  <button
+    class="anx-button"
+    type="button"
+    [disabled]="auth.loading()"
+    (click)="signOut()"
+  >
+    Sign out
+  </button>
+  }
+  <a routerLink="/login">Use password sign-in</a>
+</section>
