@@ -12,6 +12,12 @@ another scope creates a separate instance.
 
 The helper registers only state. Supply HTTP and forms configuration separately for `FormsApi`.
 
+For shared submission list/detail composition, the recommended high-level helper is
+`provideFormsSubmissionsFeature()` from `@anarchitects/forms-angular/feature`. It delegates
+to `provideFormsState()` and returns the same provider-array contract. Direct registration
+here remains supported for custom composition; choose one helper per intended scope.
+See the [feature guide](../feature/README.md) for shared master/detail examples.
+
 ### App-wide state
 
 ```ts
@@ -48,7 +54,14 @@ export const routes: Routes = [
 The helper also composes inside other `Provider[]` helpers and component `providers` arrays.
 A descendant that provides its own `FormsStore` uses that local instance instead of the parent
 store. Submission list/detail feature components consume the enclosing store scope.
-`AnarchitectsFeatureForm` still provides its own local state.
+`AnarchitectsFeatureForm` still provides its own local state, which shadows an enclosing
+store. This form component is not part of the submission-feature scoping migration.
+Registering a provider does not fetch saved submissions; the list and detail reflect
+entities already present in their shared store.
+
+Consumers upgrading from self-providing submission components must now add either helper
+to an enclosing scope. Follow the [submission migration steps](../feature/README.md#migration-from-self-providing-submission-components)
+to choose shared or isolated state deliberately.
 
 ### Return-shape migration
 
