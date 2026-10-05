@@ -6,7 +6,9 @@ import {
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/adapters/handlebars.adapter';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { join, parse, sep } from 'node:path';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, relative, sep } from 'node:path';
 import { NodeMailerAdapter } from './adapters/node-mailer.adapter';
 import { NoopMailerAdapter } from './adapters/noop-mailer.adapter';
 import { CommonMailerModule } from './common-mailer.module';
@@ -14,16 +16,22 @@ import { MailerConfig, mailerConfig } from './config/mailer.config';
 import { MailerPort } from './ports/mailer.port';
 import * as commonMailerExports from './index';
 
-const ORIGINAL_MAILER_PROVIDER = process.env['MAILER_PROVIDER'];
-
 describe('CommonMailerModule', () => {
-  afterEach(() => {
-    if (ORIGINAL_MAILER_PROVIDER === undefined) {
-      delete process.env['MAILER_PROVIDER'];
-      return;
-    }
+  let baseDir: string;
 
-    process.env['MAILER_PROVIDER'] = ORIGINAL_MAILER_PROVIDER;
+  beforeEach(() => {
+    baseDir = mkdtempSync(join(tmpdir(), 'mailer-module-'));
+    mkdirSync(join(baseDir, 'mail', 'templates'), { recursive: true });
+    mkdirSync(join(baseDir, 'unused'));
+    jest.replaceProperty(process, 'env', { ...process.env });
+    process.env['MAILER_PROVIDER'] = 'node';
+    process.env['MAILER_TEMPLATE_DIR'] = 'mail/templates';
+    process.env['MAILER_TEMPLATE_BASE_DIR'] = baseDir;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    rmSync(baseDir, { recursive: true, force: true });
   });
 
   it('compiles using forRootFromConfig', async () => {
@@ -37,88 +45,113 @@ describe('CommonMailerModule', () => {
       ],
     }).compile();
 
-    expect(moduleRef.get(MailerService, { strict: false })).toBeDefined();
+    try {
+      expect(moduleRef.get(MailerService, { strict: false })).toBeDefined();
+    } finally {
+      await moduleRef.close();
+    }
   });
 
   describe.each(['environment', 'injected config'] as const)(
     'template paths from %s',
     (source) => {
-      const baseDir = join(parse(process.cwd()).root, 'deployment');
-      const absoluteDir = `${baseDir}${sep}unused${sep}..${sep}templates${sep}`;
-
       beforeEach(() => {
-        jest.replaceProperty(process, 'env', { ...process.env });
-        process.env['MAILER_PROVIDER'] = 'node';
         delete process.env['MAILER_TEMPLATE_DIR'];
         delete process.env['MAILER_TEMPLATE_BASE_DIR'];
       });
 
-      afterEach(() => {
-        jest.restoreAllMocks();
-      });
+      it.each(['explicit base', 'omitted base', 'empty base', 'absolute path'])(
+        '%s',
+        async (scenario) => {
+          const absoluteDir = `${baseDir}${sep}unused${sep}..${sep}mail${sep}templates${sep}`;
+          const usesCwd =
+            scenario === 'omitted base' || scenario === 'empty base';
+          const templateBaseDir =
+            scenario === 'omitted base'
+              ? undefined
+              : scenario === 'empty base'
+                ? ''
+                : baseDir;
+          const templateDir =
+            scenario === 'absolute path'
+              ? absoluteDir
+              : usesCwd
+                ? relative(process.cwd(), join(baseDir, 'mail', 'templates'))
+                : 'mail/templates';
+          const expected =
+            scenario === 'absolute path'
+              ? absoluteDir
+              : join(baseDir, 'mail', 'templates');
+          const builder = Test.createTestingModule({
+            imports: [CommonMailerModule.forRootFromConfig()],
+          });
 
-      it.each([
-        {
-          name: 'explicit base directory',
-          templateDir: 'mail/templates',
-          templateBaseDir: baseDir,
-          expected: join(baseDir, 'mail', 'templates'),
-        },
-        {
-          name: 'cwd fallback without a base directory',
-          templateDir: 'mail/templates',
-          templateBaseDir: undefined,
-          expected: join(process.cwd(), 'mail', 'templates'),
-        },
-        {
-          name: 'cwd fallback with an empty base directory',
-          templateDir: 'mail/templates',
-          templateBaseDir: '',
-          expected: join(process.cwd(), 'mail', 'templates'),
-        },
-        {
-          name: 'absolute path passthrough',
-          templateDir: absoluteDir,
-          templateBaseDir: baseDir,
-          expected: absoluteDir,
-        },
-      ])('$name', async ({ templateDir, templateBaseDir, expected }) => {
-        const builder = Test.createTestingModule({
-          imports: [CommonMailerModule.forRootFromConfig()],
-        });
-
-        if (source === 'environment') {
-          process.env['MAILER_TEMPLATE_DIR'] = templateDir;
-          if (templateBaseDir !== undefined) {
-            process.env['MAILER_TEMPLATE_BASE_DIR'] = templateBaseDir;
+          if (source === 'environment') {
+            process.env['MAILER_TEMPLATE_DIR'] = templateDir;
+            if (templateBaseDir !== undefined) {
+              process.env['MAILER_TEMPLATE_BASE_DIR'] = templateBaseDir;
+            }
+          } else {
+            const config: MailerConfig = {
+              provider: 'node',
+              host: 'localhost',
+              port: 2525,
+              secure: false,
+              user: 'user',
+              pass: 'password',
+              default: 'noreply@example.com',
+              ignoreTLS: true,
+              templateDir,
+              ...(templateBaseDir === undefined ? {} : { templateBaseDir }),
+            };
+            builder.overrideProvider(mailerConfig.KEY).useValue(config);
           }
-        } else {
-          const config: MailerConfig = {
-            provider: 'node',
-            host: 'localhost',
-            port: 2525,
-            secure: false,
-            user: 'user',
-            pass: 'password',
-            default: 'noreply@example.com',
-            ignoreTLS: true,
-            templateDir,
-            ...(templateBaseDir === undefined ? {} : { templateBaseDir }),
-          };
-          builder.overrideProvider(mailerConfig.KEY).useValue(config);
-        }
 
-        const moduleRef = await builder.compile();
-        try {
-          const options = moduleRef.get<MailerOptions>(MAILER_OPTIONS);
+          const moduleRef = await builder.compile();
+          try {
+            const options = moduleRef.get<MailerOptions>(MAILER_OPTIONS);
 
-          expect(options.template?.dir).toBe(expected);
-          expect(options.template?.adapter).toBeInstanceOf(HandlebarsAdapter);
-          expect(moduleRef.get(MailerService)).toBeDefined();
-        } finally {
-          await moduleRef.close();
-        }
-      });
+            expect(options.template?.dir).toBe(expected);
+            expect(options.template?.adapter).toBeInstanceOf(HandlebarsAdapter);
+            expect(moduleRef.get(MailerService)).toBeDefined();
+          } finally {
+            await moduleRef.close();
+          }
+        },
+      );
+
+      it.each(['missing', 'file'])(
+        'rejects a %s template directory before sending mail',
+        async (kind) => {
+          const templateDir = 'invalid-templates';
+          const resolvedDir = join(baseDir, templateDir);
+          if (kind === 'file') {
+            writeFileSync(resolvedDir, 'not a directory');
+          }
+
+          process.env['MAILER_TEMPLATE_DIR'] = templateDir;
+          process.env['MAILER_TEMPLATE_BASE_DIR'] = baseDir;
+          process.env['MAILER_PASS'] = 'smtp-secret-must-not-appear';
+          const sendMail = jest.spyOn(MailerService.prototype, 'sendMail');
+          const builder = Test.createTestingModule({
+            imports: [CommonMailerModule.forRootFromConfig()],
+          });
+          if (source === 'injected config') {
+            builder.overrideProvider(mailerConfig.KEY).useValue(mailerConfig());
+          }
+
+          await expect(builder.compile()).rejects.toThrow(
+            new Error(
+              `Invalid mailer template directory "${resolvedDir}": ${
+                kind === 'file'
+                  ? 'path is not a directory.'
+                  : 'path does not exist or cannot be accessed.'
+              }`,
+            ),
+          );
+          expect(sendMail).not.toHaveBeenCalled();
+        },
+      );
     },
   );
 
