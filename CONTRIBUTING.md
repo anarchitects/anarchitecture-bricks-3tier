@@ -147,3 +147,9 @@ run `yarn nx run auth-angular-example-e2e:passkey-contract-test`. This uses a
 disposable PostgreSQL database and the native Chromium virtual authenticator. See
 the [passkey integration guide](docs/guides/auth-passkeys.md#contract-validation) for
 coverage, the default port, and related verifier/persistence tests.
+
+## CI checks and optional local hooks
+
+See [CI and Nx execution policy](docs/ci-strategy.md) for check placement,
+remote caching and distribution boundaries, and optional pre-commit/pre-push
+feedback. CI remains authoritative; no hooks are installed automatically.

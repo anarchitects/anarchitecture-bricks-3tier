@@ -1,6 +1,9 @@
 name: Feature CI
+
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  # Fork PRs run the same checks without requiring an Nx Cloud credential.
+  NX_NO_CLOUD: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
 
 on:
   pull_request:
@@ -11,9 +14,14 @@ permissions:
   actions: read
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   features:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
         with:
@@ -21,51 +29,68 @@ jobs:
           fetch-depth: 0
 
       - run: corepack enable
-
-      # This enables task distribution via Nx Cloud
-      # Run this command as early as possible, before dependencies are installed
-      # Learn more at https://nx.dev/ci/reference/nx-cloud-cli#npx-nxcloud-startcirun
-      # Uncomment this line to enable task distribution
-      - run: yarn dlx nx start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="contract-test"
-
-      # Cache node_modules
+      # setup-node caches Yarn downloads, not node_modules or Nx task results.
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
-          cache: 'yarn'
-
-      - uses: nrwl/nx-set-shas@v4
-
+          node-version: 22
+          cache: yarn
+      - uses: nrwl/nx-set-shas@v5
+        with:
+          main-branch-name: ${{ github.base_ref }}
       - run: yarn install --immutable
-      - run: yarn nx run release-tools:validate-non-bumping-commits
+
+      - name: Repository policy and fast checks (GitHub only)
         env:
+          NX_NO_CLOUD: 'true'
+          NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-      - run: yarn nx run release-tools:verify-domain-boundaries
-      - run: yarn nx run release-tools:validate-angular-package-compatibility
-      - run: yarn nx run release-tools:validate-typeorm-package-compatibility
-      - run: yarn nx run release-tools:test-typeorm-persistence
+        run: |
+          yarn nx run-many -p release-tools -t validate-domain-tags,validate-non-bumping-commits,verify-domain-boundaries,validate-angular-package-compatibility --parallel=1
+          yarn nx run-many -p guardrails,release-tools -t test --parallel=1
+          yarn nx run docs-hub:validate-content
+          yarn nx format:check
+
+      # Start before the first cloud-enabled Nx invocation, using the locked Nx version.
+      - name: Start Nx agents
+        id: nx-cloud
+        if: env.NX_NO_CLOUD != 'true'
+        run: yarn nx start-ci-run --distribute-on=".nx/workflows/distribution-config.yaml" --stop-agents-after="lint,test,build"
+
+      # Keep generated preview files on this runner; reuse remote task artifacts.
+      - name: Generate and validate documentation
         env:
           NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
-      - run: yarn nx run docs-hub:validate-content
-      - run: yarn nx run api-specs:lint
-      - run: yarn nx run angular-docs:generate
-      # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      - run: yarn nx format:check
+        run: |
+          yarn nx run api-specs:lint
+          yarn nx run angular-docs:generate
+
       - run: yarn nx affected -t lint --parallel=3
-      - run: yarn nx affected -t test --parallel=1
-      - run: yarn nx affected -t test-published-adapter --parallel=1
-        env:
-          NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
-      # Cap per-agent concurrency for memory-heavy distributed builds.
+      # These tooling tests already ran unconditionally in the GitHub-only step.
+      - run: yarn nx affected -t test --exclude=guardrails,release-tools --parallel=1
+      # Keep the existing per-agent memory limit for builds and browser tests.
       - run: yarn nx affected -t build --parallel=1
-      #- run: yarn nx run-many -t contract-test --projects=forms-nest-example,forms-angular-example
+
+      - name: Package and database integration checks (GitHub only)
+        env:
+          NX_NO_CLOUD: 'true'
+          NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
+        run: |
+          yarn nx run-many -p release-tools -t validate-typeorm-package-compatibility,test-typeorm-persistence --parallel=1
+          yarn nx affected -t test-published-adapter --parallel=1
+
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: docs-preview
+          retention-days: 7
           path: |
             docs/openapi
             dist/docs/compodoc
-      # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
-      - run: yarn nx fix-ci
-        if: always()
+
+      - name: Suggest fixes for failed cloud tasks
+        if: always() && steps.nx-cloud.outcome == 'success'
+        run: yarn nx fix-ci
+      # Also closes runs with no affected tasks or an earlier failed step.
+      - name: Complete Nx Cloud run
+        if: always() && steps.nx-cloud.outcome == 'success'
+        run: yarn nx complete-ci-run

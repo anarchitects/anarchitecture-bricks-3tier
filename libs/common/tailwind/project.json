@@ -14,6 +14,8 @@
   "targets": {
     "build": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
       "outputs": ["{workspaceRoot}/dist/libs/common/tailwind"],
       "options": {
         "command": "node libs/common/tailwind/tools/build.mjs"
@@ -21,6 +23,8 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
       "outputs": ["{workspaceRoot}/coverage/libs/common/tailwind"],
       "options": {
         "command": "vitest run --config libs/common/tailwind/vitest.config.mts"
@@ -28,6 +32,8 @@
     },
     "typecheck": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
       "options": {
         "command": "tsc --noEmit -p libs/common/tailwind/tsconfig.spec.json"
       }
