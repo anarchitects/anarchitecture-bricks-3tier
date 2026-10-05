@@ -15,6 +15,7 @@ import {
   mapMailerConfigToModuleOptions,
   resolveCommonMailerModuleOptions,
 } from './config/mailer.config';
+import { resolveTemplateDir } from './config/resolve-template-dir';
 import { MailerPort } from './ports/mailer.port';
 
 export type CommonMailerModuleAsyncOptions = Parameters<
@@ -94,7 +95,7 @@ export class CommonMailerModule extends ConfigurableModuleClass {
           from: config.default,
         },
         template: {
-          dir: config.templateDir,
+          dir: resolveTemplateDir(config.templateDir, config.templateBaseDir),
           adapter: new HandlebarsAdapter(),
         },
       }),
