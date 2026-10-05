@@ -47,7 +47,7 @@
         { "projects": "forms-nest", "target": "build" },
         { "projects": "identity-nest", "target": "build" }
       ],
-      "cache": true,
+      "cache": false,
       "parallelism": false,
       "options": {
         "command": "node tools/testing/run-typeorm-v1-persistence-smoke.mjs"

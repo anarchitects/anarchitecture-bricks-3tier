@@ -79,7 +79,7 @@
           "command": "yarn node tools/testing/run-auth-nest-published-adapter-smoke.mjs"
         },
         "parallelism": false,
-        "cache": true,
+        "cache": false,
         "inputs": [
           "default",
           "^production",

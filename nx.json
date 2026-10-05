@@ -15,7 +15,10 @@
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/tsconfig.storybook.json"
     ],
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci.yml"]
+    "sharedGlobals": [
+      "{workspaceRoot}/.yarnrc.yml",
+      { "runtime": "node --version" }
+    ]
   },
   "nxCloudId": "68df993ae28f6906ea159ef3",
   "targetDefaults": {
@@ -68,7 +71,12 @@
     },
     "@nx/angular:unit-test": {
       "cache": true,
-      "inputs": ["default", "^production"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/vitest.angular.config.ts",
+        "{workspaceRoot}/tools/testing/setup-angular-tests.ts"
+      ],
       "options": {
         "runnerConfig": "vitest.angular.config.ts",
         "setupFiles": ["tools/testing/setup-angular-tests.ts"]
@@ -80,7 +88,12 @@
     },
     "@angular/build:unit-test": {
       "cache": true,
-      "inputs": ["default", "^production"]
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/vitest.angular.config.ts",
+        "{workspaceRoot}/tools/testing/setup-angular-tests.ts"
+      ]
     }
   },
   "plugins": [
