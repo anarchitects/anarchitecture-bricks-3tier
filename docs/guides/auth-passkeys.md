@@ -15,10 +15,10 @@ create a second Better Auth instance or import package internals.
 | `@anarchitects/auth-nest/infrastructure-persistence` | `PasskeyEntity` and passkey migrations alongside core auth entities/migrations |
 | `@anarchitects/auth-angular/data-access/passkeys`    | `PasskeyApi`, `WebAuthnClient`, `PasskeyBrowserError`                          |
 | `@anarchitects/auth-angular/state/passkeys`          | `AuthPasskeyStore`, `provideAuthPasskeyState`, `PasskeyEnrollmentOptions`      |
+| `@anarchitects/auth-angular/feature/passkeys`        | `AnarchitectsAuthPasskeys`, `provideAuthPasskeyFeature`                        |
+| `@anarchitects/auth-angular/ui/passkeys`             | `AnarchitectsAuthUiPasskeys`, `PasskeyMode`, `PasskeyUiLabels`                 |
 
-There are currently no `feature/passkeys` or `ui/passkeys` package entry points.
-Use the host-owned component composition below; dedicated reusable feature/UI
-surfaces remain tracked under #364. Passkey listing, rename, and removal are not
+Passkey listing, rename, and removal are not
 exposed by the package's public HTTP surface. Do not assume Better Auth's internal
 management endpoints are mounted by `AuthModule`.
 
@@ -146,49 +146,42 @@ import { provideAuthState } from '@anarchitects/auth-angular/state';
 const providers = [provideHttpClient(), ...provideAuthConfig({ apiResourcePath: 'auth' }), ...provideAuthState()];
 ```
 
-Provide the passkey store in the host feature component or route. A component
-scope is useful when an active browser prompt must end as the component is destroyed.
-It inherits the nearest `AuthStore`; do not provide a second core store accidentally.
+Use the public feature and explicitly scope its state on the host component. The
+helper inherits the nearest core `AuthStore` and includes the passkey adapters.
 
 ```ts
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AuthPasskeyStore, provideAuthPasskeyState } from '@anarchitects/auth-angular/state/passkeys';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AnarchitectsAuthPasskeys, provideAuthPasskeyFeature } from '@anarchitects/auth-angular/feature/passkeys';
 
 @Component({
   selector: 'app-passkey-sign-in',
-  providers: [...provideAuthPasskeyState()],
+  imports: [AnarchitectsAuthPasskeys],
+  providers: [...provideAuthPasskeyFeature()],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    @if (passkeys.isSupported()) {
-      <button type="button" [disabled]="passkeys.loading()" (click)="passkeys.signIn()">Sign in with a passkey</button>
-      @if (passkeys.loading()) {
-        <button type="button" (click)="passkeys.cancel()">Cancel</button>
-      }
-      <p role="status">
-        @if (passkeys.loading()) {
-          Follow your browser's prompt.
-        } @else if (passkeys.cancelled()) {
-          Cancelled. You can try again.
-        } @else if (passkeys.success()) {
-          Signed in.
-        }
-      </p>
-      @if (passkeys.error()) {
-        <p role="alert">{{ passkeys.error() }}</p>
-      }
-    } @else {
-      <p>Passkeys are unavailable in this browser.</p>
-    }
-    <a href="/login">Use password sign-in</a>
+    <anarchitects-auth-passkeys>
+      <a passkeyFallback href="/login">Use password sign-in</a>
+    </anarchitects-auth-passkeys>
   `,
 })
-export class PasskeySignIn {
-  readonly passkeys = inject(AuthPasskeyStore);
-}
+export class PasskeySignIn {}
 ```
 
-For enrollment, authenticate first, then call `passkeys.enroll({ name: 'This device' })`
-from a user action. Enrollment leaves the existing session intact; verified sign-in
+For enrollment, use `mode="enroll"` and
+`[enrollmentOptions]="{ name: 'This device' }"`. Enrollment is disabled until a
+session is present; the backend enforces freshness. Both modes wait during core
+auth loading/restoration. Use `labels` for text overrides and `disabled` for host
+conditions. The host owns fallback routing and navigation after success. Observe
+`AuthStore`/`AuthPasskeyStore` signals; the component never prompts on startup.
+
+Advanced consumers can use `provideAuthPasskeyState()` with custom UI, or bind
+`AnarchitectsAuthUiPasskeys` inputs/outputs directly. Components introduce no
+hidden providers that mask host adapter overrides. Component-scoped providers
+abort pending prompts on destruction. Longer-lived route/application scopes can
+outlive a view; explicitly cancel pending work when leaving that view.
+
+When composing state directly, authenticate first and call
+`passkeys.enroll({ name: 'This device' })` from a user action. Enrollment leaves the existing session intact; verified sign-in
 hydrates the core user, RBAC, and CASL ability. The commands are reactive and are
 not awaitable promises. Observe signals for completion and own navigation in the host.
 
@@ -229,6 +222,7 @@ dependencies and runs the target without distributed execution.
 | `auth-nest:test-passkeys`                        | Real verifier checks for challenge/origin/RP ID, expiry, ownership, signature, replay, counters, and disabled capability, using memory persistence                                                                                                                                                                                               |
 | `auth-nest:test-published-adapter`               | PostgreSQL persistence, restart, concurrent replay, uniqueness, migration upgrade/rollback, counter limits and user cascade                                                                                                                                                                                                                      |
 | `auth-angular:test`                              | SSR/unsupported API handling, scoped stores, duplicate commands, cancellation, malformed session/RBAC and stale restoration                                                                                                                                                                                                                      |
+| `angular-consumer-compatibility:test-22`         | Packs the libraries, asserts all four passkey exports, and compiles the example in an isolated npm consumer without workspace aliases                                                                                                                                                                                                            |
 | `api-specs:lint` and `api-specs:verify`          | Generated route/schema consistency                                                                                                                                                                                                                                                                                                               |
 
 The browser suite uses [Playwright CDP sessions](https://playwright.dev/docs/api/class-cdpsession)

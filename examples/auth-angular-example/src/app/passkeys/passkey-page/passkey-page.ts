@@ -1,16 +1,18 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '@anarchitects/auth-angular/state';
+import { AuthPasskeyStore } from '@anarchitects/auth-angular/state/passkeys';
+
 import {
-  AuthPasskeyStore,
-  provideAuthPasskeyState,
-} from '@anarchitects/auth-angular/state/passkeys';
+  AnarchitectsAuthPasskeys,
+  provideAuthPasskeyFeature,
+} from '@anarchitects/auth-angular/feature/passkeys';
 
 /** Host-owned composition; all auth behavior comes from public package entry points. */
 @Component({
   selector: 'app-passkey-page',
-  imports: [RouterLink],
-  providers: [...provideAuthPasskeyState()],
+  imports: [RouterLink, AnarchitectsAuthPasskeys],
+  providers: [...provideAuthPasskeyFeature()],
   templateUrl: './passkey-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

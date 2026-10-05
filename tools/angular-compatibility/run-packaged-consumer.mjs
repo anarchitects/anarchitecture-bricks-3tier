@@ -66,6 +66,15 @@ try {
     if (!claimsMajor) {
       continue;
     }
+    if (manifest.name === '@anarchitects/auth-angular') {
+      for (const layer of ['data-access', 'state', 'feature', 'ui']) {
+        if (!manifest.exports?.[`./${layer}/passkeys`]) {
+          throw new Error(
+            `Missing public passkey entry point: ${layer}/passkeys`,
+          );
+        }
+      }
+    }
     const output = execFileSync(
       'npm',
       ['pack', packageRoot, '--pack-destination', temporaryRoot],

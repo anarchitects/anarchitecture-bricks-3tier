@@ -48,7 +48,10 @@ APIs. Check `isSupported()` and retain a password fallback for unsupported brows
 and SSR. Enable the Nest passkeys plugin and run its migrations before use.
 See the [state usage guide](state/passkeys/README.md) for scope, cancellation, and
 host UX responsibilities, and the [adapters guide](data-access/passkeys/README.md)
-for advanced composition. This capability does not add passkey UI components.
+for advanced composition. The public [feature](feature/passkeys/README.md) provides
+`AnarchitectsAuthPasskeys` and `provideAuthPasskeyFeature()` for ready-to-use orchestration.
+The [UI entry point](ui/passkeys/README.md) exports `AnarchitectsAuthUiPasskeys` for
+custom state composition. Both preserve explicit state scope and host-owned navigation.
 
 ## Authorization Model
 
@@ -318,18 +321,22 @@ export class PostActionsComponent {
 
 ## Entry points
 
-| Import path                                  | Description                                    |
-| -------------------------------------------- | ---------------------------------------------- |
-| `@anarchitects/auth-angular/config`          | DI tokens and providers                        |
-| `@anarchitects/auth-angular/data-access`     | Generated API clients and HTTP adapters        |
-| `@anarchitects/auth-angular/data-access/jwt` | JWT plugin APIs and interceptor helpers        |
-| `@anarchitects/auth-angular/state`           | Signal store, eager restore, CASL ability sync |
-| `@anarchitects/auth-angular/state/jwt`       | JWT refresh-token state orchestration          |
-| `@anarchitects/auth-angular/feature`         | Coarse and resource-aware router guards        |
-| `@anarchitects/auth-angular/feature/jwt`     | JWT refresh-token orchestration components     |
-| `@anarchitects/auth-angular/ui`              | Auth domain form UI components                 |
-| `@anarchitects/auth-angular/ui/jwt`          | JWT refresh-token form components              |
-| `@anarchitects/auth-angular/util`            | CASL ability/resource helpers and typings      |
+| Import path                                       | Description                                      |
+| ------------------------------------------------- | ------------------------------------------------ |
+| `@anarchitects/auth-angular/config`               | DI tokens and providers                          |
+| `@anarchitects/auth-angular/data-access`          | Generated API clients and HTTP adapters          |
+| `@anarchitects/auth-angular/data-access/jwt`      | JWT plugin APIs and interceptor helpers          |
+| `@anarchitects/auth-angular/state`                | Signal store, eager restore, CASL ability sync   |
+| `@anarchitects/auth-angular/state/jwt`            | JWT refresh-token state orchestration            |
+| `@anarchitects/auth-angular/feature`              | Coarse and resource-aware router guards          |
+| `@anarchitects/auth-angular/feature/jwt`          | JWT refresh-token orchestration components       |
+| `@anarchitects/auth-angular/ui`                   | Auth domain form UI components                   |
+| `@anarchitects/auth-angular/ui/jwt`               | JWT refresh-token form components                |
+| `@anarchitects/auth-angular/util`                 | CASL ability/resource helpers and typings        |
+| `@anarchitects/auth-angular/data-access/passkeys` | Passkey HTTP and browser adapters                |
+| `@anarchitects/auth-angular/state/passkeys`       | Explicitly scoped passkey state                  |
+| `@anarchitects/auth-angular/feature/passkeys`     | Enrollment/sign-in component and provider helper |
+| `@anarchitects/auth-angular/ui/passkeys`          | Presentational passkey actions and status        |
 
 ## Nx scripts
 
