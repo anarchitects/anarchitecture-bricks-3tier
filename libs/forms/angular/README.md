@@ -73,7 +73,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideFormsDefaults } from '@anarchitects/forms-angular/config';
 
 export const appConfig = {
-  providers: [provideHttpClient(withFetch()), provideFormsDefaults()],
+  providers: [provideHttpClient(withFetch()), ...provideFormsDefaults()],
 };
 ```
 
@@ -96,6 +96,36 @@ export class ContactFormRoute {
 
 Behind the scenes the feature component uses the signal store to request the form definition, renders
 it with the UI layer, and posts submissions via the data-access service.
+
+This quick start uses `AnarchitectsFeatureForm`, which retains its component-local store.
+Submission list/detail components require the explicit enclosing scope described below.
+
+### Shared submission list/detail state
+
+`AnarchitectsFeatureSubmissionList` and `AnarchitectsFeatureSubmissionDetail` consume an
+enclosing `FormsStore`; importing these components does not register state. Choose one of
+these supported provider helpers and spread it into app, route, or feature-host providers:
+
+| Registration                          | Import                                | Use                                                           |
+| ------------------------------------- | ------------------------------------- | ------------------------------------------------------------- |
+| `...provideFormsSubmissionsFeature()` | `@anarchitects/forms-angular/feature` | Recommended for shared submissions/master-detail composition. |
+| `...provideFormsState()`              | `@anarchitects/forms-angular/state`   | Low-level explicit registration for custom state composition. |
+
+Both helpers return `Provider[]`; the feature helper composes the state helper. Put list,
+detail, and the orchestration that populates state under the same provider scope to share
+one store. Separate host scopes get independent stores. Registering another store in a
+descendant shadows the parent store. Neither helper registers a global singleton or fetches
+saved submissions, and HTTP/API configuration remains an app responsibility.
+
+See the feature guide for a [shared master/detail page](feature/README.md#shared-masterdetail-page),
+[route-level registration](feature/README.md#route-level-registration), and
+[feature-level registration](feature/README.md#feature-level-registration).
+
+**Migration:** Submission list/detail previously self-provided isolated stores. Consumers
+must now register one of the helpers in an enclosing scope, or Angular reports a missing
+store provider. See the [migration steps](feature/README.md#migration-from-self-providing-submission-components).
+`AnarchitectsFeatureForm` is unchanged: it still owns a local store and does not automatically
+share state with an enclosing submissions feature.
 
 ### Extending validation
 
@@ -186,8 +216,8 @@ You can opt into specific slices of the stack:
   resource segment.
 - **Data-access** – inject `FormsApi` from the data-access entry point to integrate the OpenAPI client
   with custom facades or state.
-- **State** – inject the `FormsStore` signal store to orchestrate requests and expose reactive signals
-  for loading/error/submission status.
+- **State** – register `...provideFormsState()` explicitly, then inject `FormsStore` to orchestrate
+  requests and expose reactive signals for loading/error/submission status.
 - **UI** – use `AnarchitectsUiForm`, `AnarchitectsFormsUiSubmissionList`, and
   `AnarchitectsFormsUiSubmissionDetail` directly if you manage orchestration elsewhere.
 
