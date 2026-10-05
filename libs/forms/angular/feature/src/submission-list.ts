@@ -1,7 +1,4 @@
-import {
-  FormsStore,
-  provideFormsState,
-} from '@anarchitects/forms-angular/state';
+import { FormsStore } from '@anarchitects/forms-angular/state';
 import { AnarchitectsFormsUiSubmissionList } from '@anarchitects/forms-angular/ui';
 import { Submission } from '@anarchitects/forms-ts/models';
 import {
@@ -17,7 +14,6 @@ import { FormsLayoutId } from '@anarchitects/forms-angular/config';
 @Component({
   selector: 'anarchitects-forms-feature-submission-list',
   imports: [AnarchitectsFormsUiSubmissionList],
-  providers: [provideFormsState()],
   templateUrl: './submission-list.html',
   styleUrl: './submission-list.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

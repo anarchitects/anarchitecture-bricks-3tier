@@ -47,8 +47,8 @@ export const routes: Routes = [
 
 The helper also composes inside other `Provider[]` helpers and component `providers` arrays.
 A descendant that provides its own `FormsStore` uses that local instance instead of the parent
-store. The existing form and submission feature components still provide local state; this
-provider-helper normalization does not change their scoping or behavior.
+store. Submission list/detail feature components consume the enclosing store scope.
+`AnarchitectsFeatureForm` still provides its own local state.
 
 ### Return-shape migration
 
