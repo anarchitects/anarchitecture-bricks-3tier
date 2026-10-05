@@ -22,6 +22,8 @@ export const OPERATION_ID_MAP: Record<string, string> = {
   'POST /auth/verify-email': 'verifyEmail',
   'GET /forms/{formId}': 'getFormDefinition',
   'POST /forms/submit': 'submitForm',
+  'GET /forms/submissions': 'getSubmissions',
+  'GET /forms/submissions/{submissionId}': 'getSubmission',
   'POST /identity/profiles': 'createUserProfile',
   'GET /identity/profiles/by-auth-user/{authUserId}':
     'getUserProfileByAuthUserId',

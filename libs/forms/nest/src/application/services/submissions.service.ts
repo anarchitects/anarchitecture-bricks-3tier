@@ -1,7 +1,12 @@
-import { Inject, Injectable, Optional } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  Optional,
+} from '@nestjs/common';
 import { MailerPort } from '@anarchitects/common-nest-mailer';
 import { SubmissionsRepository } from '../../infrastructure-persistence/repositories/submissions.repository';
-import { Submission } from '@anarchitects/forms-ts/models';
+import { Submission, SubmissionFilters } from '@anarchitects/forms-ts/models';
 import { FormsService } from './forms.service';
 
 const NOOP_MAILER_PORT: MailerPort = {
@@ -18,6 +23,18 @@ export class SubmissionsService {
     private readonly mailer: MailerPort | undefined,
     private readonly formsService: FormsService,
   ) {}
+
+  getSubmissions(filters: SubmissionFilters = {}): Promise<Submission[]> {
+    return this.repo.getSubmissions(filters);
+  }
+
+  async getSubmission(submissionId: string): Promise<Submission> {
+    const submission = await this.repo.getSubmission({ id: submissionId });
+    if (!submission) {
+      throw new NotFoundException(`Submission ${submissionId} not found`);
+    }
+    return submission;
+  }
 
   async submit(input: Partial<Submission>) {
     const { formId, formVersion = 1 } = input;

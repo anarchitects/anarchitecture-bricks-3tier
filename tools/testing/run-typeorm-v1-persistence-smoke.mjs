@@ -305,6 +305,40 @@ async function validateFormsPersistence(dataSource, artifacts) {
     (await submissions.getSubmission({ id: created.id })).id,
     created.id,
   );
+  const newer = await submissions.createSubmission({
+    formId: 'contact',
+    formVersion: 2,
+    payload: { message: 'Version 2' },
+  });
+  const other = await submissions.createSubmission({
+    formId: 'feedback',
+    formVersion: 1,
+    payload: {},
+  });
+  const ids = (rows) => rows.map((row) => row.id).sort();
+  assert.deepEqual(
+    ids(await submissions.getSubmissions()),
+    [created.id, newer.id, other.id].sort(),
+  );
+  assert.deepEqual(
+    ids(await submissions.getSubmissions({ formId: 'contact' })),
+    [created.id, newer.id].sort(),
+  );
+  assert.deepEqual(
+    ids(
+      await submissions.getSubmissions({ formId: 'contact', formVersion: 2 }),
+    ),
+    [newer.id],
+  );
+  assert.deepEqual(
+    ids(await submissions.getSubmissions({ formVersion: 1 })),
+    [created.id, other.id].sort(),
+  );
+  assert.deepEqual(await submissions.getSubmissions({ formId: 'missing' }), []);
+  await assert.rejects(
+    submissions.getSubmission({ id: '01900000-0000-7000-8000-000000000099' }),
+    (error) => error.getStatus() === 404,
+  );
 }
 
 async function validateIdentityPersistence(dataSource, artifacts) {

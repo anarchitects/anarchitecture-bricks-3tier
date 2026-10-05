@@ -6,3 +6,7 @@ export type Submission = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type SubmissionFilters = Partial<
+  Pick<Submission, 'formId' | 'formVersion'>
+>;

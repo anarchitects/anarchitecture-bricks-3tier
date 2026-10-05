@@ -69,6 +69,21 @@ const errors = [...Value.Errors(schema, formData)];
 console.log(errors); // []
 ```
 
+## Submissions read contracts
+
+The `/dtos` entry point exports the backend read contracts:
+
+- `SubmissionsQueryDTO` / `SubmissionsQuerySchema`: optional nonempty `formId` and
+  positive-integer `formVersion` filters; omit both to list all submissions.
+- `SubmissionIdParamsDTO` / `SubmissionIdParamsSchema`: a UUID `submissionId` path parameter.
+- `SubmissionsResponseDTO` / `SubmissionsResponseSchema`: an array of the existing
+  `SubmissionResponseDTO` / `SubmissionResponseSchema`, also used for detail responses.
+
+Transport responses contain ISO date strings. Use `fromSubmissionResponseDTO` from
+`/mappers` to obtain the `Submission` model with `Date` fields. Domain repository filters
+use `SubmissionFilters` from `/models`. HTTP query strings are coerced and validated by
+the Fastify route schema; direct TypeBox value checks expect a numeric `formVersion`.
+
 ## Field Types
 
 ### String Field

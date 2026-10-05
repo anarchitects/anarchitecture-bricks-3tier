@@ -25,6 +25,7 @@ describe('SubmissionsRepository', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [TypeOrmSubmissionsRepository],
     })
@@ -49,6 +50,33 @@ describe('SubmissionsRepository', () => {
       const result = await provider.getSubmissions();
       expect(result).toEqual([mockSubmission]);
       expect(mockContactsRepository.find).toHaveBeenCalledTimes(1);
+      expect(mockContactsRepository.find).toHaveBeenCalledWith();
+    });
+
+    it.each([
+      { formId: 'contact' },
+      { formId: 'contact', formVersion: 2 },
+      { formVersion: 2 },
+    ])('passes defined filters to TypeORM: %p', async (filters) => {
+      await provider.getSubmissions(filters);
+      expect(mockContactsRepository.find).toHaveBeenCalledWith({
+        where: filters,
+      });
+    });
+
+    it('omits undefined filters from TypeORM queries', async () => {
+      await provider.getSubmissions({
+        formId: 'contact',
+        formVersion: undefined,
+      });
+      expect(mockContactsRepository.find).toHaveBeenCalledWith({
+        where: { formId: 'contact' },
+      });
+    });
+
+    it('returns an empty collection when no submissions match', async () => {
+      mockContactsRepository.find.mockResolvedValueOnce([]);
+      expect(await provider.getSubmissions({ formId: 'missing' })).toEqual([]);
     });
   });
   describe('getSubmission', () => {

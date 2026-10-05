@@ -48,6 +48,12 @@
     "/forms/{formId}": {
       "get": "getFormDefinition"
     },
+    "/forms/submissions": {
+      "get": "getSubmissions"
+    },
+    "/forms/submissions/{submissionId}": {
+      "get": "getSubmission"
+    },
     "/forms/submit": {
       "post": "submitForm"
     },
