@@ -19,14 +19,14 @@ definitions and accept submissions without re-implementing domain logic.
 
 ## Entry points
 
-| Entry point                                           | Responsibility                                                                                                       |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` and `FormsModule.forRootFromConfig(...)` facade for full-stack composition                |
-| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.           |
-| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers that serve `/forms/:formId` and `POST /forms/submit`, delegating to the application layer. |
-| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.       |
-| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule`, `NestMailerAdapter` — domain wrapper over shared common mailer provider wiring.   |
-| `@anarchitects/forms-nest/config`                     | `formsConfig`, `FormsConfig`, `InjectFormsConfig()`, and public module option types for root + secondary modules.    |
+| Entry point                                           | Responsibility                                                                                                     |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `@anarchitects/forms-nest`                            | `FormsModule.forRoot(...)` and `FormsModule.forRootFromConfig(...)` facade for full-stack composition              |
+| `@anarchitects/forms-nest/application`                | Use-case services plus the `FormsApplicationModule`, along with DI tokens for repository and mailer ports.         |
+| `@anarchitects/forms-nest/presentation`               | Fastify-ready controllers for form definitions, submission writes, and submission list/detail reads.               |
+| `@anarchitects/forms-nest/infrastructure-persistence` | `FormsInfrastructurePersistenceModule.forRoot({ persistence: 'typeorm' })` — configurable persistence adapter.     |
+| `@anarchitects/forms-nest/infrastructure-mailer`      | `FormsInfrastructureMailerModule`, `NestMailerAdapter` — domain wrapper over shared common mailer provider wiring. |
+| `@anarchitects/forms-nest/config`                     | `formsConfig`, `FormsConfig`, `InjectFormsConfig()`, and public module option types for root + secondary modules.  |
 
 You can combine these layers or swap infrastructure modules with custom implementations that respect
 the exported tokens.
@@ -95,6 +95,22 @@ and root mailer setup when the mailer feature is enabled). The presentation cont
 - `GET /forms/:formId` – resolves form definitions and JSON schema payloads.
 - `POST /forms/submit` – validates the request body against `SubmissionRequestSchema`, stores
   the payload, and triggers mail notifications through the mailer port.
+- `GET /forms/submissions` – returns an array of submission response DTOs. Optional `formId`
+  and positive-integer `formVersion` query parameters filter the collection, individually
+  or together. No matches return `[]`; omitted filters list all submissions.
+- `GET /forms/submissions/:submissionId` – returns one submission response DTO by UUID,
+  or 404 when absent. Invalid UUIDs and invalid list filters return 400.
+
+Read responses use ISO date strings for `createdAt` and `updatedAt`, and include `id`,
+`formId`, `formVersion`, and `payload`. For example, use
+`GET /forms/submissions?formId=contact&formVersion=2` to inspect one form version.
+The read routes do not load form definitions or trigger delivery notifications.
+Host applications own authorization for accessing stored submission payloads.
+
+**Compatibility:** `submissions` is now reserved under `/forms`, so it cannot also be used
+as a form-definition ID at `GET /forms/:formId`. Custom `SubmissionsRepository` adapters
+must honor the optional `SubmissionFilters` argument to `getSubmissions()`; existing calls
+without filters continue to list all submissions. Submission writes are unchanged.
 
 ## Layered composition (advanced)
 

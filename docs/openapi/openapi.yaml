@@ -1025,6 +1025,100 @@ paths:
           description: Default Response
       tags:
         - Forms
+  /forms/submissions:
+    get:
+      operationId: getSubmissions
+      parameters:
+        - in: query
+          name: formId
+          required: false
+          schema:
+            minLength: 1
+            type: string
+        - in: query
+          name: formVersion
+          required: false
+          schema:
+            minimum: 1
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    createdAt:
+                      format: date-time
+                      type: string
+                    formId:
+                      type: string
+                    formVersion:
+                      minimum: 1
+                      type: integer
+                    id:
+                      type: string
+                    payload:
+                      additionalProperties: {}
+                      type: object
+                    updatedAt:
+                      format: date-time
+                      type: string
+                  required:
+                    - id
+                    - formId
+                    - formVersion
+                    - payload
+                    - createdAt
+                    - updatedAt
+                  type: object
+                type: array
+          description: Default Response
+      tags:
+        - Forms
+  /forms/submissions/{submissionId}:
+    get:
+      operationId: getSubmission
+      parameters:
+        - in: path
+          name: submissionId
+          required: true
+          schema:
+            format: uuid
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  createdAt:
+                    format: date-time
+                    type: string
+                  formId:
+                    type: string
+                  formVersion:
+                    minimum: 1
+                    type: integer
+                  id:
+                    type: string
+                  payload:
+                    additionalProperties: {}
+                    type: object
+                  updatedAt:
+                    format: date-time
+                    type: string
+                required:
+                  - id
+                  - formId
+                  - formVersion
+                  - payload
+                  - createdAt
+                  - updatedAt
+                type: object
+          description: Default Response
+      tags:
+        - Forms
   /forms/submit:
     post:
       operationId: submitForm

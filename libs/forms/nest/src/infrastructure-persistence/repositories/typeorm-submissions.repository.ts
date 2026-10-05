@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Submission } from '@anarchitects/forms-ts/models';
+import { Submission, SubmissionFilters } from '@anarchitects/forms-ts/models';
 import { SubmissionsRepository } from './submissions.repository';
 import { SubmissionEntity } from '../entities/submission.entity';
 
@@ -21,8 +21,17 @@ export class TypeOrmSubmissionsRepository implements SubmissionsRepository {
     return this.repo.save(submission);
   }
 
-  async getSubmissions(): Promise<Submission[]> {
-    return this.repo.find();
+  async getSubmissions(filters: SubmissionFilters = {}): Promise<Submission[]> {
+    const where: SubmissionFilters = {};
+    if (filters.formId !== undefined) {
+      where.formId = filters.formId;
+    }
+    if (filters.formVersion !== undefined) {
+      where.formVersion = filters.formVersion;
+    }
+    return Object.keys(where).length > 0
+      ? this.repo.find({ where })
+      : this.repo.find();
   }
   async getSubmission(options?: Partial<Submission>): Promise<Submission> {
     if (

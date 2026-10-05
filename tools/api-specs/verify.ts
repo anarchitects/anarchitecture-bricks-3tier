@@ -22,6 +22,8 @@ const REQUIRED_PATHS: Array<{ path: string; methods: string[] }> = [
   { path: '/auth/me', methods: ['get'] },
   { path: '/forms/{formId}', methods: ['get'] },
   { path: '/forms/submit', methods: ['post'] },
+  { path: '/forms/submissions', methods: ['get'] },
+  { path: '/forms/submissions/{submissionId}', methods: ['get'] },
   { path: '/identity/profiles', methods: ['post'] },
   { path: '/identity/profiles/{profileId}', methods: ['get', 'patch'] },
   {

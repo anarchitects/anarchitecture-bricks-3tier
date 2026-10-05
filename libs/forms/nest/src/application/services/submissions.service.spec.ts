@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
 import { SubmissionsService } from './submissions.service';
 import { FormConfig, Submission } from '@anarchitects/forms-ts/models';
@@ -19,6 +20,8 @@ describe('SubmissionsService', () => {
   };
   const mockSubmissionsRepository = {
     createSubmission: jest.fn().mockResolvedValue(mockSubmission),
+    getSubmissions: jest.fn().mockResolvedValue([mockSubmission]),
+    getSubmission: jest.fn().mockResolvedValue(mockSubmission),
   };
 
   const mockMailerPort = {
@@ -49,6 +52,7 @@ describe('SubmissionsService', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SubmissionsService,
@@ -66,6 +70,33 @@ describe('SubmissionsService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it.each([
+    undefined,
+    { formId: 'contact_default' },
+    { formId: 'contact_default', formVersion: 2 },
+  ])('lists submissions with filters %p', async (filters) => {
+    expect(await service.getSubmissions(filters)).toEqual([mockSubmission]);
+    expect(mockSubmissionsRepository.getSubmissions).toHaveBeenCalledWith(
+      filters ?? {},
+    );
+    expect(mockFormsService.getDefinition).not.toHaveBeenCalled();
+    expect(mockMailerPort.sendTemplate).not.toHaveBeenCalled();
+  });
+
+  it('retrieves a submission by id', async () => {
+    expect(await service.getSubmission(mockSubmission.id)).toBe(mockSubmission);
+    expect(mockSubmissionsRepository.getSubmission).toHaveBeenCalledWith({
+      id: mockSubmission.id,
+    });
+  });
+
+  it('returns 404 when an adapter returns no submission', async () => {
+    mockSubmissionsRepository.getSubmission.mockResolvedValueOnce(null);
+    await expect(service.getSubmission('missing')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
   describe('submit', () => {
     it('should create a submission using the repository', async () => {
