@@ -12,10 +12,25 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 - Optional MailerLite subscriber and signed withdrawal-webhook adapters.
 - Fastify HTTP controllers, explicit rate-limiter selection, and configurable Nest facade.
 
+## Native implementation roadmap
+
+[ADR-0010's #445 amendment](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md#first-class-native-implementation-and-portability)
+defines a production-usable native subscriber implementation, with mutable
+pending/active/unsubscribed state distinct from append-only consent evidence.
+Newsletter will own native double opt-in, unsubscribe and message semantics;
+Common `MailerPort` will supply replaceable delivery. MailerLite remains optional.
+
+This is intended architecture, not an available `mode: 'native'` configuration:
+#446 adds lifecycle/persistence/tokens, #447 adds mail flow and #448 adds native
+HTTP/facade composition. Until those land, the available subscriber selections are
+`custom`, `mailerlite` and explicit `noop`. No-op does not deliver the native
+capability or provide production double opt-in. Existing runtime APIs are unchanged
+by #445. Campaign management, bulk delivery and ESP operations remain outside #428.
+
 ## Installation
 
 Do not publish this package independently. Newsletter packages await one coordinated
-release after #429–#438 are merged and epic acceptance is complete.
+release after #429–#438 and #445–#448 are merged and epic acceptance is complete.
 
 ## Usage
 
@@ -209,8 +224,9 @@ grant and returns a generic retryable error. Repeating a subscription attempt ma
 append another grant and call the provider again. There is no distributed
 transaction, provider rollback or exactly-once delivery promise.
 
-The subscriber adapter must request provider-managed double opt-in, preserve
-existing opt-outs, and resolve identically for new/existing/opted-out addresses.
+The subscriber adapter must request double opt-in through the selected
+implementation, preserve existing opt-outs, and resolve identically for
+new/existing/opted-out addresses.
 It returns no account, subscriber ID or status. Adapters own timeouts, bounded
 retry/backoff and private operational diagnostics. Only operational failures may
 reject; subscriber-existence errors must not escape as an enumeration channel.

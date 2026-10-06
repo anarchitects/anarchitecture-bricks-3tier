@@ -99,7 +99,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
 - Select exactly one domain group input: `forms`, `auth`, `identity`, `newsletter`, or `common`.
-- Newsletter publication is gated by epic #428: merge #429–#438 and complete epic acceptance before one coordinated Newsletter release. Scaffolding and intermediate implementation PRs must not publish Newsletter packages.
+- Newsletter publication is gated by epic #428: merge #429–#438 and #445–#448 and complete epic acceptance before one coordinated Newsletter release. Scaffolding and intermediate implementation PRs must not publish Newsletter packages.
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
 - A first release is prepared from an `init(<project-or-domain>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.

@@ -15,7 +15,7 @@ Unreleased Newsletter Angular signup UI, client and state for [epic #428](https:
 
 ## Installation
 
-Newsletter packages await one coordinated release after #429–#438 are merged and
+Newsletter packages await one coordinated release after #429–#438 and #445–#448 are merged and
 epic acceptance is complete. Angular common/core/forms `^22.0.0` and RxJS
 `~7.8.0` are peers. The Forms renderer uses Angular 22 Signal Forms, so the
 previous unreleased Angular 21 compatibility range is narrowed to Angular 22.
