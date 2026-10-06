@@ -40,6 +40,10 @@ try {
     import type { NewsletterSubscriptionResponseDTO } from '@anarchitects/newsletter-ts';
     import { NewsletterConsentEntity, TypeOrmConsentRepository, CreateNewsletterConsentEvents1791244800000 } from '@anarchitects/newsletter-nest/infrastructure-persistence';
     import type { DataSource } from 'typeorm';
+    import { MailerLiteSubscriberAdapter, MailerLiteWebhookAdapter } from '@anarchitects/newsletter-nest/infrastructure-mailerlite';
+    const mailerLite: SubscriberPort = new MailerLiteSubscriberAdapter({apiKey:'test-key',groupId:'123'});
+    const webhook = new MailerLiteWebhookAdapter({webhookSecret:'test-secret',accountId:'123'}, {process:async()=>({recorded:0,duplicates:0})});
+    void [mailerLite, webhook];
     declare const dataSource: DataSource;
     const adapter: ConsentRepositoryPort = new TypeOrmConsentRepository(dataSource);
     void [adapter, NewsletterConsentEntity, CreateNewsletterConsentEvents1791244800000];
@@ -77,6 +81,12 @@ try {
   );
   const requireConsumer = createRequire(consumers[0]);
   const api = requireConsumer('@anarchitects/newsletter-nest/application');
+  const mailerLite = requireConsumer(
+    '@anarchitects/newsletter-nest/infrastructure-mailerlite',
+  );
+  assert.equal(typeof mailerLite.MailerLiteSubscriberAdapter, 'function');
+  assert.equal(typeof mailerLite.MailerLiteWebhookAdapter, 'function');
+  assert.equal(mailerLite.MAILERLITE_SIGNATURE_HEADER, 'signature');
   const persistence = requireConsumer(
     '@anarchitects/newsletter-nest/infrastructure-persistence',
   );

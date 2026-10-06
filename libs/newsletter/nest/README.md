@@ -9,6 +9,7 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 - Withdrawal processing with atomic repository deduplication and safe partial-batch retries.
 - Framework-independent application services, composition tokens and fake-port unit tests.
 - PostgreSQL/TypeORM consent persistence with a migration and concurrent-delivery integration tests.
+- Optional MailerLite subscriber and signed withdrawal-webhook adapters.
 
 ## Installation
 
@@ -159,6 +160,85 @@ Rolling back this migration drops the consent table and its evidence, but leaves
 the namespace and other host tables intact. Use forward migrations for deployed
 evidence that must be retained; keep `synchronize: false` in production.
 
+### MailerLite adapters
+
+The `infrastructure-mailerlite` entry point provides explicit composition without
+an SDK dependency or environment access:
+
+```ts
+import { MailerLiteSubscriberAdapter, MailerLiteWebhookAdapter } from '@anarchitects/newsletter-nest/infrastructure-mailerlite';
+import type { NewsletterWithdrawalService } from '@anarchitects/newsletter-nest/application';
+
+function createMailerLite(host: { apiKey: string; groupId: string; accountId: string; webhookSecret: string }, withdrawals: NewsletterWithdrawalService) {
+  return {
+    subscriber: new MailerLiteSubscriberAdapter({ apiKey: host.apiKey, groupId: host.groupId }),
+    webhook: new MailerLiteWebhookAdapter({ webhookSecret: host.webhookSecret, accountId: host.accountId }, withdrawals),
+  };
+}
+```
+
+Supply `subscriber` to `NewsletterSubscriptionService` through its `SubscriberPort`.
+The adapter posts to the fixed MailerLite Connect endpoint with `status: unconfirmed`
+and `resubscribe: false`; it never requests active status or forced resubscription.
+**Enable Double opt-in for API and integrations in the MailerLite account first.**
+This setting and confirmation-email delivery cannot be verified by local tests.
+See MailerLite's [double opt-in guidance](https://www.mailerlite.com/help/how-to-use-double-opt-in-when-collecting-subscribers)
+and [subscriber API](https://developers.mailerlite.com/api/subscribers).
+
+Set `sourceField` only when an existing MailerLite custom field should receive
+the request's optional source. Otherwise no custom fields are sent. Configuration
+is copied on construction; missing credentials/group IDs fail closed. There is no
+automatic logging/no-op fallback or controller registration.
+
+All 2xx and 422 responses resolve without provider data, preserving the reference
+adapter's anti-enumeration policy. A 422 is a general provider validation response,
+not proof of an existing subscriber; this policy can also mask invalid provider
+field configuration. Other failures become generic `NewsletterUnavailableError`
+values without provider bodies, credentials or submitted emails.
+
+Network failures, timeouts, 408, 429 and 5xx receive bounded retries. Defaults are
+two total attempts, 5000ms per attempt, 250ms exponential backoff and a 2000ms
+maximum retry delay. Options cap attempts at three and timeout/delay at 30000ms.
+`Retry-After` seconds or HTTP dates are respected; a delay beyond the configured
+budget fails for a later caller retry instead of retrying too soon. Redirects
+are rejected. An optional second constructor argument injects `fetch` and `sleep`
+for tests; production uses native fetch. No response body is interpreted or exposed.
+
+#### Signed webhook ingress
+
+Pass the **captured raw `Buffer`/`Uint8Array`** and the single `Signature` header
+value to `webhook.receive(rawBody, signature)`. The adapter verifies a strict
+64-character hex HMAC-SHA256 signature using the webhook secret, then parses those
+same bytes. It does not accept parsed objects or reserialized JSON, and does not
+implement the Classic API's signature scheme. Missing bytes, malformed signatures,
+invalid UTF-8/JSON and invalid configuration fail closed. Ingress must also impose
+its own body-size limit. See the [MailerLite webhook contract](https://developers.mailerlite.com/api/webhooks).
+
+Supported deliveries are single flat events, nested subscriber events and
+`{ events: [...] }` batches. Unsubscribe/delete events become neutral withdrawals;
+other named events are ignored. Every relevant event must have a valid email,
+subscriber ID and occurrence timestamp. The entire batch is normalized before
+dispatch, so a malformed later event cannot commit a valid prefix. Defaults limit
+input to 1 MiB and 1000 events, configurable within fixed upper bounds.
+
+The host's numeric-string `accountId` sets the stable `mailerlite:<accountId>`
+namespace. Any supplied payload account ID must match. The `v1:` dedupe key hashes
+a JSON tuple of event name, subscriber ID and timestamp. Unsubscriptions use
+`unsubscribed_at`, deletions use `deleted_at`/`forget_at`, with `updated_at` as the
+fallback. Timestamp text retains microsecond precision. Subscriber IDs alone do
+not identify an occurrence; absent identity data is rejected rather than collapsed
+into a permanent dedupe key. Stable provider occurrence fields are required across
+retries; distinct events with the same type, subscriber and timestamp are not
+distinguishable by this provider-derived identity. Keep account namespace/key rules
+stable when redeploying or rotating webhook secrets.
+
+Storage failures propagate for retry, while duplicates return the application's
+processing summary. Presentation must acknowledge only after `receive` succeeds,
+or after a separately designed durable handoff. Signature verification alone does
+not prevent replay: durable repository deduplication provides that protection.
+`MailerLiteWebhookError.code` distinguishes missing raw bytes, signature, payload
+and size failures for future HTTP mapping without leaking provider payloads.
+
 ## Entry points
 
 `application` exports `NewsletterSubscriptionService`, `NewsletterWithdrawalService`,
@@ -166,10 +246,9 @@ their context/result/clock types, error classes, and the `SubscriberPort` and
 `ConsentRepositoryPort` interfaces with `SUBSCRIBER_PORT` and
 `CONSENT_REPOSITORY_PORT` symbols for future composition.
 
-The root facade, `config`, `presentation` and
-`infrastructure-mailerlite` entry points remain empty until their respective epic
+The root facade, `config` and `presentation` entry points remain empty until their respective epic
 issues. Easy-mode `NewsletterModule.forRoot`/`forRootFromConfig` arrives with #435;
-the application and persistence entry points support explicit composition today.
+the application and infrastructure entry points support explicit composition today.
 
 ## Development notes
 
@@ -191,6 +270,9 @@ migration with synchronization disabled, and tests exact evidence, concurrent an
 reconnected duplicate delivery, unrelated constraint failures, partial-batch retry,
 metadata/schema agreement and rollback. The target is uncached and runs for affected
 projects in the GitHub-hosted integration step in both CI workflows.
+
+MailerLite tests use mocked fetch responses and locally signed fixtures, including
+application-service integration. No live MailerLite network calls are needed.
 
 `package-smoke` checks built runtime exports and strict Node16 declaration
 resolution from isolated CommonJS and ESM consumers without workspace aliases.
