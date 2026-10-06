@@ -8,6 +8,8 @@ import { FormConfig } from '@anarchitects/forms-ts/models';
 import {
   SubmissionRequestDTO,
   SubmissionResponseDTO,
+  SubmissionsQueryDTO,
+  SubmissionsResponseDTO,
 } from '@anarchitects/forms-ts/dtos';
 
 @Injectable({
@@ -26,6 +28,27 @@ export class FormsApi {
     return this.http.get<{ config: FormConfig; schema: unknown }>(
       `${this.resourceUrl}/${formId}`,
       { params },
+    );
+  }
+
+  getSubmissions(filters: SubmissionsQueryDTO = {}) {
+    let params = new HttpParams();
+    if (filters.formId !== undefined) {
+      params = params.set('formId', filters.formId);
+    }
+    if (filters.formVersion !== undefined) {
+      params = params.set('formVersion', String(filters.formVersion));
+    }
+
+    return this.http.get<SubmissionsResponseDTO>(
+      `${this.resourceUrl}/submissions`,
+      { params },
+    );
+  }
+
+  getSubmission(submissionId: string) {
+    return this.http.get<SubmissionResponseDTO>(
+      `${this.resourceUrl}/submissions/${encodeURIComponent(submissionId)}`,
     );
   }
 
