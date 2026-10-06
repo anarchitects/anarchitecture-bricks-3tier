@@ -9,12 +9,20 @@ and is implemented under [epic #428](https://github.com/anarchitects/anarchitect
 - TypeBox subscription request and response schemas with inferred DTO types.
 - A subscription route schema containing only `body` and `response` fields.
 - Consumer-owned consent policy configuration and distinct grant/withdrawal models.
+- Native operational subscriber/status types, separate from consent evidence.
 - Identical acknowledgement shape for new and existing addresses, without subscriber
   IDs, provider status or confirmation status.
 - ESM, CommonJS and TypeScript declarations at the root and secondary entry points.
 
 The only runtime dependency is TypeBox. There are no Angular, Nest, TypeORM,
 provider SDK, Blog or other business-domain dependencies.
+
+`NewsletterNativeSubscriber` and `NewsletterNativeSubscriberStatus` are exported
+from `models` and the root. They describe internal operational identity, scope,
+`pending_confirmation`/`active`/`unsubscribed` status, lifecycle generation and server
+timestamps. They are not public subscription-response DTOs, confirmation proof,
+or replacements for append-only consent events. Raw token secrets are never part
+of these models; backend token and repository contracts belong to Nest application ports.
 
 ## Installation
 

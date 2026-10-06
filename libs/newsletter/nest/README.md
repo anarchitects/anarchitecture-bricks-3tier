@@ -20,12 +20,13 @@ pending/active/unsubscribed state distinct from append-only consent evidence.
 Newsletter will own native double opt-in, unsubscribe and message semantics;
 Common `MailerPort` will supply replaceable delivery. MailerLite remains optional.
 
-This is intended architecture, not an available `mode: 'native'` configuration:
-#446 adds lifecycle/persistence/tokens, #447 adds mail flow and #448 adds native
-HTTP/facade composition. Until those land, the available subscriber selections are
-`custom`, `mailerlite` and explicit `noop`. No-op does not deliver the native
-capability or provide production double opt-in. Existing runtime APIs are unchanged
-by #445. Campaign management, bulk delivery and ESP operations remain outside #428.
+#446 supplies the operational core, secure tokens and PostgreSQL persistence described
+below. This is not yet an available `mode: 'native'` facade configuration: #447
+adds mail delivery and #448 adds native HTTP/facade composition. Until then the root
+facade selections remain `custom`, `mailerlite` and explicit `noop`. The native core
+adapter implements `SubscriberPort` but sends no mail by itself. It is an implementation
+stage, not a complete production signup flow or a silent fallback. No-op is not
+production double opt-in. Campaign delivery remains outside #428.
 
 ## Installation
 
@@ -323,6 +324,98 @@ Rolling back this migration drops the consent table and its evidence, but leaves
 the namespace and other host tables intact. Use forward migrations for deployed
 evidence that must be retained; keep `synchronize: false` in production.
 
+### Native operational core (#446)
+
+`NewsletterNativeLifecycleService` in `application` owns lifecycle decisions.
+`NativeSubscriberAdapter` in `infrastructure-native` implements `SubscriberPort`
+by invoking that service; `CryptoNativeToken` supplies cryptography. Persistence
+is a separate `TypeOrmNativeSubscriberRepository` adapter. No MailerLite client,
+credentials or Nest container is required for these classes.
+
+Register all three entities and both migrations with the host PostgreSQL DataSource:
+
+```ts
+import { NewsletterConsentEntity, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity, CreateNewsletterConsentEvents1791244800000, CreateNewsletterNativeSubscribers1791288000000, TypeOrmConsentRepository, TypeOrmNativeSubscriberRepository } from '@anarchitects/newsletter-nest/infrastructure-persistence';
+import { NewsletterNativeLifecycleService, NewsletterSubscriptionService } from '@anarchitects/newsletter-nest/application';
+import { CryptoNativeToken, NativeSubscriberAdapter } from '@anarchitects/newsletter-nest/infrastructure-native';
+
+// In the host DataSource options; initialize and run migrations through host deployment tooling.
+const entities = [NewsletterConsentEntity, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity];
+const migrations = [CreateNewsletterConsentEvents1791244800000, CreateNewsletterNativeSubscribers1791288000000];
+
+// dataSource is the host's initialized DataSource with these entities/migrations.
+const lifecycle = new NewsletterNativeLifecycleService(new TypeOrmNativeSubscriberRepository(dataSource), new CryptoNativeToken(), { scope: 'host-newsletter', confirmationTtlMs: 86_400_000, unsubscribeTtlMs: 2_592_000_000, resendCooldownMs: 60_000 });
+const subscriber = new NativeSubscriberAdapter(lifecycle);
+const subscriptions = new NewsletterSubscriptionService(new TypeOrmConsentRepository(dataSource), subscriber, hostConsentPolicy);
+```
+
+This constructs the **core only**. It records pending state without sending mail;
+#447 will compose delivery and #448 will expose native facade/HTTP flows. Never
+expose `prepareSubscription` as a public endpoint: it is an internal adapter seam
+invoked after `NewsletterSubscriptionService` validates and commits affirmative
+consent. It returns a transient `NewsletterNativePreparation` containing raw
+confirmation/unsubscribe tokens for the future trusted mail handoff, or `undefined`
+for active subscribers and suppressed resends. The core `NativeSubscriberAdapter`
+discards that handoff and resolves `void`, preserving the existing subscriber port.
+Preparation does not grant consent or authorize itself; bypassing the subscription
+use case would bypass consent validation. Do not log, persist or return handoff
+tokens in subscription acknowledgements.
+
+Options live in `NewsletterNativeOptions` in `config`. `scope` is required, nonblank
+and at most 128 characters; keep it stable across deployments and use separate
+scopes for independently managed lists. Email canonicalization matches the existing
+subscription use case (lowercase, no implicit trim). Durations are positive integer
+milliseconds, capped at one year. The resend cooldown must not exceed either token
+TTL. Defaults are 24-hour confirmation, 30-day unsubscribe and a 60-second cooldown.
+Host clocks must be synchronized; tests can inject the existing `NewsletterClock`.
+The cooldown supplements, rather than replaces, presentation/gateway abuse controls.
+
+| Operation                               | State and token behavior                                                                                                          |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| First accepted subscription             | Creates one `pending_confirmation` record and one token for each purpose                                                          |
+| Repeat pending subscription             | Suppressed during cooldown; afterwards rotates both tokens atomically, preserving the subscriber and generation                   |
+| Confirmation                            | A valid unconsumed current-generation token changes pending to active and is consumed atomically                                  |
+| Repeat active subscription/confirmation | No new activation, token issuance or state change                                                                                 |
+| Unsubscribe                             | Pending or active becomes unsubscribed; confirmation authority is removed and withdrawal evidence commits in the same transaction |
+| Repeat unsubscribe                      | No state change or duplicate evidence                                                                                             |
+| Fresh consent after unsubscribe         | Reuses the subscriber identity with a new generation and requires fresh confirmation; old links are invalid                       |
+
+`confirm(secret)` and `unsubscribe(secret)` return `Promise<void>` for both valid
+and ineffective attempts. Malformed, wrong-purpose, unknown, expired, consumed,
+superseded and wrong-scope tokens cause no side effects and disclose no membership
+status. Operational failure throws only neutral `NewsletterUnavailableError`.
+These backend operations do not expose routes; #448 owns HTTP mapping and abuse
+controls. An expired unsubscribe link does not change subscriber state; any future
+renewal flow must establish authorization and must not silently resubscribe.
+
+Bearer tokens contain 32 cryptographically random bytes (256 bits), a version and
+a purpose prefix. PostgreSQL stores only SHA-256 verifiers, purpose, subscriber ID,
+generation, expiry and consumption time. At most two token rows per subscriber are
+retained; resends replace obsolete rows. Raw secrets cannot be recovered from the
+repository. Once a preparation is lost, a later bounded resend must mint new tokens.
+
+The migration creates `newsletter.native_subscribers` and `newsletter.native_tokens`;
+consent remains in `newsletter.consent_events`. Operational rows may change, evidence
+is insert-only. Native withdrawal identity is `native:<scope>` plus subscriber ID
+and generation, so one lifecycle withdrawal is evidenced once. No cross-domain
+entity relation is added; the token FK references a Newsletter subscriber only.
+
+The repository uses PostgreSQL transaction-scoped advisory locks for absent/existing
+scoped identities and row locks for existing subscribers. It rereads token authority
+after locking. All mutations and native withdrawal evidence use the transaction's
+manager; failed evidence/token writes roll back state and token consumption. No mail
+or external network call belongs inside the transaction. These semantics follow
+[PostgreSQL transaction-level locking](https://www.postgresql.org/docs/17/explicit-locking.html#ADVISORY-LOCKS)
+and [TypeORM transaction-manager ownership](https://typeorm.io/docs/data-source/data-source-api/).
+A grant already committed by the subscription service remains intact if native
+persistence fails, preserving the existing evidence-before-subscriber contract.
+
+Run the native migration after the consent migration with `synchronize: false`.
+Its down migration drops only the two native tables, preserving consent and
+host-owned objects; it deliberately destroys operational subscriber/token data.
+Back up that state and plan rollback with the host before invoking a down migration.
+The implementation adds no automatic migrations, mail transport or facade mode.
+
 ### MailerLite adapters
 
 The `infrastructure-mailerlite` entry point provides explicit composition without
@@ -405,9 +498,12 @@ and size failures for HTTP mapping without leaking provider payloads.
 ## Entry points
 
 `application` exports `NewsletterSubscriptionService`, `NewsletterWithdrawalService`,
-their context/result/clock types, error classes, and the `SubscriberPort` and
+`NewsletterNativeLifecycleService`, their context/result/clock types, error classes, and the `SubscriberPort` and
 `ConsentRepositoryPort` interfaces with `SUBSCRIBER_PORT` and
-`CONSENT_REPOSITORY_PORT` symbols for host composition.
+`CONSENT_REPOSITORY_PORT` symbols for host composition. Native repository and token
+ports have separate `NATIVE_SUBSCRIBER_REPOSITORY_PORT` and `NATIVE_TOKEN_PORT` symbols.
+`infrastructure-native` exports the native core adapter and cryptographic token
+implementation; `infrastructure-persistence` exports both consent and native storage.
 
 The root exports `NewsletterModule` and its host-facing option types. `config`
 exports the typed namespace, config mapper, validation and adapter option types.

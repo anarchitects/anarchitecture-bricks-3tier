@@ -59,7 +59,13 @@ try {
     const mailerLite: SubscriberPort = new MailerLiteSubscriberAdapter({apiKey:'test-key',groupId:'123'});
     const webhook = new MailerLiteWebhookAdapter({webhookSecret:'test-secret',accountId:'123'}, {process:async()=>({recorded:0,duplicates:0})});
     void [mailerLite, webhook];
+    import {NativeSubscriberAdapter, CryptoNativeToken} from '@anarchitects/newsletter-nest/infrastructure-native';
+    import {NewsletterNativeLifecycleService} from '@anarchitects/newsletter-nest/application';
+    import {TypeOrmNativeSubscriberRepository, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity, CreateNewsletterNativeSubscribers1791288000000} from '@anarchitects/newsletter-nest/infrastructure-persistence';
     declare const dataSource: DataSource;
+    const native = new NewsletterNativeLifecycleService(new TypeOrmNativeSubscriberRepository(dataSource),new CryptoNativeToken(),{scope:'host'});
+    const nativeAdapter: SubscriberPort = new NativeSubscriberAdapter(native);
+    void [nativeAdapter, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity, CreateNewsletterNativeSubscribers1791288000000];
     const adapter: ConsentRepositoryPort = new TypeOrmConsentRepository(dataSource);
     void [adapter, NewsletterConsentEntity, CreateNewsletterConsentEvents1791244800000];
     const policy: NewsletterConsentPolicy = {version:'v1',text:'Wording'};
@@ -165,6 +171,9 @@ try {
     [
       '-e',
       `
+    const {CryptoNativeToken,NativeSubscriberAdapter} = require('@anarchitects/newsletter-nest/infrastructure-native');
+    const token = new CryptoNativeToken().issue('confirm');
+    if (!token.hash || !NativeSubscriberAdapter) throw new Error('Missing native export');
     const { NewsletterModule } = require('@anarchitects/newsletter-nest');
     NewsletterModule.forRoot({consent:{version:'v1',text:'wording'},persistence:{mode:'custom',provider:{useValue:{appendGrant:async()=>{},appendWithdrawalOnce:async()=> 'recorded'}}},subscriber:{mode:'noop'},rateLimit:{mode:'disabled'}});
   `,
