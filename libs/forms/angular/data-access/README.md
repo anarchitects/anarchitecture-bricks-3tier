@@ -31,7 +31,9 @@ domain model with `Date` values is needed.
 
 Reads use the configured API base URL and resource path (by default `/api/forms`). They require
 the submissions read endpoints introduced in #278. Host applications supply authorization
-and any state or feature orchestration.
+and any state or feature orchestration. For the supported higher-level path, see
+[`FormsStore` read orchestration](../state/README.md#submission-reads-and-selection) and the
+[`AnarchitectsFeatureSubmissionsAdmin` composition](../feature/README.md#shared-masterdetail-page).
 
 ## License
 

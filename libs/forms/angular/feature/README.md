@@ -1,17 +1,19 @@
 # @anarchitects/forms-angular/feature
 
 Feature-level orchestration for the forms Angular stack. Import components such as
-`AnarchitectsFeatureForm`, `AnarchitectsFeatureSubmissionList`, and
-`AnarchitectsFeatureSubmissionDetail` from this entry point to combine the signal store,
+`AnarchitectsFeatureForm`, `AnarchitectsFeatureSubmissionsAdmin`,
+`AnarchitectsFeatureSubmissionList`, and `AnarchitectsFeatureSubmissionDetail` from this entry point to combine the signal store,
 data access, and UI layers. Submission list/detail components consume state provided by the host;
 `AnarchitectsFeatureForm` provides its own component-local state.
 
-These components remain layout-compatible and forward canonical template/slot hooks to
-the underlying UI layer.
+The standalone form/list/detail features forward canonical template/slot hooks to the UI layer.
+The admin composition exposes list/detail titles, layouts, and layout options; use the standalone
+features or UI components when custom projection is needed.
 
 ## Submission state registration
 
-`AnarchitectsFeatureSubmissionList` and `AnarchitectsFeatureSubmissionDetail` require
+`AnarchitectsFeatureSubmissionsAdmin`, `AnarchitectsFeatureSubmissionList`, and
+`AnarchitectsFeatureSubmissionDetail` require
 `FormsStore` from an enclosing injector. The recommended helper for shared submissions/admin
 composition is `provideFormsSubmissionsFeature()` from this entry point.
 
@@ -25,32 +27,70 @@ app and route configuration, including HTTP and forms configuration dependencies
 
 ### Shared master/detail page
 
-This host connects the list's `selected` output to the detail's `submissionId` input.
-It deliberately has no state provider: choose one of the enclosing scopes below.
+`AnarchitectsFeatureSubmissionsAdmin` is the ready-made read-side composition. It loads the
+submission list on initialization and when `formId` or `formVersion` changes, then fetches a
+selected submission's detail. Both panes reuse the existing UI components and one enclosing
+`FormsStore`. This page deliberately has no provider: choose a route or feature scope below.
 
 ```ts
 // submissions-page.ts
-import { Component, signal } from '@angular/core';
-import { AnarchitectsFeatureSubmissionDetail, AnarchitectsFeatureSubmissionList } from '@anarchitects/forms-angular/feature';
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureSubmissionsAdmin } from '@anarchitects/forms-angular/feature';
 
 @Component({
   selector: 'app-submissions-page',
-  imports: [AnarchitectsFeatureSubmissionList, AnarchitectsFeatureSubmissionDetail],
-  template: `
-    <anarchitects-forms-feature-submission-list (selected)="selectedId.set($event.id)" />
-    <anarchitects-forms-feature-submission-detail [submissionId]="selectedId()" />
-  `,
+  imports: [AnarchitectsFeatureSubmissionsAdmin],
+  template: `<anarchitects-forms-feature-submissions-admin />`,
 })
-export class SubmissionsPage {
-  readonly selectedId = signal<string | null>(null);
-}
+export class SubmissionsPage {}
 ```
 
-The page displays submissions already in the shared `FormsStore`. Provider registration
-does not fetch saved submissions or add read-side APIs. With no selected ID, detail shows
-the first stored submission; an empty store shows the existing empty states. A selected
-ID absent from the store resolves to no detail. Host-side orchestration that populates state
-must use the same injector scope as the components.
+For one form/version, use:
+
+```html
+<anarchitects-forms-feature-submissions-admin formId="contact" [formVersion]="2" />
+```
+
+| API                                        | Behavior                                                                                                         |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `formId`, `formVersion`                    | Optional server-side list filters. Omit both for all submissions; each change reloads the list.                  |
+| `submissionId`                             | Optional detail ID, for example from host routing. A changed ID fetches and selects it; `null` clears selection. |
+| `selected`                                 | Emits the clicked list entity while fresh detail loads. The shared store receives the fetched detail.            |
+| `listTitle`, `detailTitle`                 | Pane titles; defaults are “Submissions” and “Submission details”.                                                |
+| `listLayout`, `detailLayout`               | Existing `FormsLayoutId` values forwarded to the UI components.                                                  |
+| `listLayoutOptions`, `detailLayoutOptions` | Existing UI layout option objects.                                                                               |
+| `reload()`                                 | Refreshes the current list; also available through the Refresh submissions button.                               |
+
+The component displays independent loading/error status and retry actions for each pane.
+No row is selected automatically. Existing cached selection remains visible during refresh;
+changing list filters preserves selection, even when that entry is outside the new list.
+The list displays `loadedSubmissions()`, so previously cached or locally submitted entries do not
+leak into a filtered result. A successful empty response shows the existing empty-list UI.
+Explicit `submissionId` changes control detail loading; row clicks update the shared store and
+emit `selected` without changing the input. A host may use the output to update its URL.
+
+### Read pipeline and dependencies
+
+The admin feature calls public `FormsStore` read methods, which use `FormsApi` and the shared
+submission DTOs to call `GET /forms/submissions` and `GET /forms/submissions/:submissionId`
+under the configured API base URL. The store converts DTO dates to `Date` objects and merges
+entities into the canonical cache before the existing UI list/detail components render them.
+There are no app-local API services or audience-specific packages in this flow.
+
+This composition depends on the explicit shared-scoping contract from #275 (provider helpers
+and submission components that consume the enclosing store), plus backend contracts/endpoints
+from #278, data-access reads from #279, and state orchestration from #280. Provider registration
+itself does not fetch anything; rendering the admin component initiates reads. Keep one active
+admin composition per store scope because each store owns one list result and one selection.
+Host applications own route guards and backend authorization for submission payloads.
+
+For custom orchestration, use the public [data-access](../data-access/README.md),
+[state](../state/README.md#submission-reads-and-selection), and [UI](../ui/README.md) entry points.
+The existing `AnarchitectsFeatureSubmissionList` and `AnarchitectsFeatureSubmissionDetail`
+remain cache-only building blocks: they do not initiate reads. The standalone list displays the
+canonical cache with optional local `formId` filtering, and the standalone detail defaults to
+the first cached submission when no ID is supplied. Use the new admin composition for the
+server-filtered list and explicit shared selection described above.
 
 ### Route-level registration
 

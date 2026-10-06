@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+.anx-forms-feature-submissions-admin__panes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: var(--anx-stack-gap, 1rem);
+  align-items: start;
+}
