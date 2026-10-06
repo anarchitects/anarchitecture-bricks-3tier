@@ -69,8 +69,8 @@ jobs:
       - run: yarn nx affected -t test --exclude=guardrails,release-tools --parallel=1
       # Keep the existing per-agent memory limit for builds and browser tests.
       - run: yarn nx affected -t build --parallel=1
-      - name: Install browsers for fork PRs without Nx agents
-        if: env.NX_NO_CLOUD == 'true'
+      # Hydration checks always run on this runner, even when e2e uses Nx agents.
+      - name: Install browsers for GitHub runner checks
         run: yarn playwright install --with-deps chromium
       - run: yarn nx affected -t e2e-ci --parallel=1
 
