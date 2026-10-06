@@ -53,6 +53,7 @@
     "@types/jest": "30.0.0",
     "@types/jsdom": "30.0.0",
     "@types/node": "20.19.9",
+    "@types/nodemailer": "7.0.11",
     "@types/passport-jwt": "^4.0.1",
     "@types/pg": "^8.15.5",
     "@typescript-eslint/utils": "8.69.0",

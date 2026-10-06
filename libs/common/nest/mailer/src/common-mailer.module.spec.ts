@@ -206,6 +206,55 @@ describe('CommonMailerModule', () => {
     );
   });
 
+  it('delivers structured messages through node wiring and preserves host sender defaults', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [
+        CommonMailerModule.forRootAsync({
+          useFactory: () => ({
+            transport: { jsonTransport: true },
+            defaults: { from: 'Host <default@example.test>' },
+          }),
+        }),
+        CommonMailerModule.forRoot({ provider: 'node' }),
+      ],
+    }).compile();
+    try {
+      const transport = jest.spyOn(moduleRef.get(MailerService), 'sendMail');
+      const mailer = moduleRef.get(MailerPort);
+      const content = {
+        to: 'reader@example.test',
+        subject: 'Requested message',
+        html: '<p>Hello</p>',
+        text: 'Hello',
+        replyTo: 'help@example.test',
+        headers: { 'X-Application': 'host' },
+      };
+      await expect(mailer.sendMessage(content)).resolves.toBeUndefined();
+      const first = JSON.parse((await transport.mock.results[0].value).message);
+      expect(first).toMatchObject({
+        subject: content.subject,
+        html: content.html,
+        text: content.text,
+        from: { name: 'Host', address: 'default@example.test' },
+        replyTo: [{ address: 'help@example.test' }],
+        headers: content.headers,
+      });
+      await mailer.sendMessage({
+        ...content,
+        from: 'Override <sender@example.test>',
+      });
+      const second = JSON.parse(
+        (await transport.mock.results[1].value).message,
+      );
+      expect(second.from).toEqual({
+        name: 'Override',
+        address: 'sender@example.test',
+      });
+    } finally {
+      await moduleRef.close();
+    }
+  });
+
   it('throws when provider is unsupported via forRoot', () => {
     expect(() =>
       CommonMailerModule.forRoot({
