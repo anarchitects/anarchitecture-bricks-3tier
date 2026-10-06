@@ -174,25 +174,45 @@ Before adding or changing a domain in this repo, verify:
 ## Newsletter Counterpart Intent
 
 The expected counterpart is a `newsletter` bounded context with the same capability
-intent: newsletter subscription requests, affirmative consent and withdrawal
-evidence, and provider integration through replaceable ports. Campaign authoring,
+intent: portable subscriber management, affirmative consent and withdrawal evidence,
+a first-class native lifecycle, and optional external adapters. Native mode must
+support pending confirmation, activation and unsubscribe without requiring a
+newsletter SaaS. MailerLite is one selectable adapter, not a required domain service.
+Campaign authoring, bulk delivery, bounce/complaint processing, sender reputation,
 marketing automation, Blog content and host legal/product policy remain outside it.
 Blog and Newsletter remain independent in both repositories; host composition is
 the integration point.
 
-[ADR-0010](../adr/0010-define-newsletter-domain-boundaries-and-ports.md) records the
-accepted architecture for epic #428. As of 2026-10-06, inspection of the companion
-repository's `main` tree found no Newsletter implementation. This is intentional
-forward alignment, not a claim of an existing DDD package or current parity. Building
-the counterpart is outside this epic; maintainers must recheck the target tree and
-record the mapping in both repositories when that work starts.
+[ADR-0010](../adr/0010-define-newsletter-domain-boundaries-and-ports.md), including
+its #445 amendment, records the intended architecture for epic #428. The original
+2026-10-06 alignment inspection found no Newsletter implementation in the companion
+repository's `main` tree. This remains a forward mapping, not a claim that this
+amendment adds DDD packages or establishes parity. Building the counterpart is
+outside this epic; maintainers must recheck the target tree and record the mapping
+in both repositories when that work starts. Native implementation in this 3-tier
+repository is assigned to #446–#448; #445 defines its architecture only.
 
-Parity means preserving consent-before-provider ordering, append-only grant and
-withdrawal evidence, provider-managed double opt-in, verified and idempotent provider
-events, explicit rate-limit configuration, host-owned wording/version lifecycle,
-and hydration-safe signup. MailerLite and TypeORM remain replaceable adapters in
-either style. Common remains technical/platform-only, and no audience-based package
-split is implied.
+Parity requires two distinct concerns: mutable native operational subscriber/token
+state and append-only Newsletter consent/audit evidence. Neither a stored grant nor
+a sent email proves an active subscription. Preserve pending/active/unsubscribed
+semantics, atomic token consumption, purpose/expiry/generation checks, withdrawal
+idempotency and fresh consent plus confirmation on resubscription. Unsubscribe and
+its evidence must commit consistently; old tokens must not reactivate an opt-out
+or affect a later subscription generation.
+
+Both styles preserve consent-before-subscriber ordering, evidence after failed
+subscriber/mail operations, neutral public responses, host-owned policy/version
+lifecycle, explicit rate limits, and hydration-safe signup. External mode preserves
+provider-managed double opt-in, verified and idempotent provider events, and opt-out
+protection. Native mode owns its own double opt-in and unsubscribe business intent,
+URL/token semantics and default mail rendering. It delegates delivery to the generic
+Common `MailerPort`, never directly to `MailerService`; Common stays transport-only.
+
+Native, MailerLite, other subscriber adapters and persistence remain selectable at
+composition boundaries. An external provider change must not force a different
+public signup DTO or Angular feature. Native mode must work without external
+subscriber credentials, and a provider switch must not silently synchronize state
+or reactivate withdrawn addresses. No audience-based package split is implied.
 
 See the [Newsletter migration mapping](./migration-to-bricks-ddd.md#newsletter-migration-mapping)
 for the intended structural translation and equivalent validation scenarios.

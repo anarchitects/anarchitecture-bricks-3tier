@@ -179,30 +179,52 @@ Avoid:
 
 ## Newsletter Migration Mapping
 
-This is the intended mapping for the Newsletter architecture accepted in
+This is the intended mapping for the Newsletter architecture and #445 native amendment in
 [ADR-0010](../adr/0010-define-newsletter-domain-boundaries-and-ports.md). Paths below
 are planned responsibilities, not installed packages or a migration command. The
 DDD counterpart remains future work; see its [alignment status](./alignment-with-bricks-ddd.md#newsletter-counterpart-intent).
 
-| 3-tier responsibility                                                     | Expected DDD destination                                   | Preserve                                                                              |
-| ------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `libs/newsletter/ts`: consent policy/version and grant/withdrawal meaning | `libs/newsletter/ts/domain`                                | Domain vocabulary and consent invariants, without transport schemas                   |
-| `libs/newsletter/ts`: request/response DTOs and route schemas             | `libs/newsletter/ts/contracts`                             | Public validation and provider-neutral HTTP contracts                                 |
-| Nest `application`                                                        | `libs/newsletter/nest/application`                         | Use cases, `SubscriberPort`, `ConsentRepositoryPort`, ordering and duplicate outcomes |
-| Nest `presentation`                                                       | `libs/newsletter/nest/presentation`                        | HTTP mapping, honeypot behavior and `NewsletterRateLimiterPort` enforcement           |
-| Nest `infrastructure-persistence`                                         | `libs/newsletter/nest/infrastructure-persistence`          | Append-only evidence and atomic durable event deduplication                           |
-| Nest `infrastructure-mailerlite`                                          | `libs/newsletter/nest/infrastructure-mailerlite`           | Provider API integration, raw-body verification and event normalization               |
-| Nest config and root module                                               | Target config surface and `libs/newsletter/nest/facade`    | Typed configuration, explicit overrides and both initialization paths                 |
-| Angular `ui`, `feature`, `state`, `data-access`                           | Corresponding `libs/newsletter/angular/<layer>` packages   | Layer direction, explicit state providers, accessible hydration-safe signup           |
-| Angular config and root exports                                           | Target config surface and `libs/newsletter/angular/facade` | Host-supplied policy/copy/routes and easy composition                                 |
+| 3-tier responsibility                                                                | Expected DDD destination                                   | Preserve                                                                                                                               |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `libs/newsletter/ts`: consent policy/version, lifecycle and grant/withdrawal meaning | `libs/newsletter/ts/domain`                                | Lifecycle transitions and consent invariants, without transport schemas                                                                |
+| `libs/newsletter/ts`: request/response DTOs and route schemas                        | `libs/newsletter/ts/contracts`                             | Public validation and provider-neutral HTTP contracts                                                                                  |
+| Nest `application`                                                                   | `libs/newsletter/nest/application`                         | Subscribe/confirm/unsubscribe use cases, neutral subscriber/state/evidence ports, ordering and idempotency                             |
+| Nest `presentation`                                                                  | `libs/newsletter/nest/presentation`                        | Native confirm/unsubscribe and optional webhook ingress, neutral HTTP mapping and abuse controls                                       |
+| Nest `infrastructure-persistence`                                                    | `libs/newsletter/nest/infrastructure-persistence`          | Separate operational subscriber/token state and append-only evidence; atomic transitions and durable deduplication                     |
+| Nest `infrastructure-native`                                                         | `libs/newsletter/nest/infrastructure-native`               | Native subscriber adapter, token primitives and mail/persistence composition, without moving lifecycle rules out of domain/application |
+| Nest `infrastructure-mailerlite`                                                     | `libs/newsletter/nest/infrastructure-mailerlite`           | Optional provider API integration, raw-body verification and event normalization                                                       |
+| Nest config and root module                                                          | Target config surface and `libs/newsletter/nest/facade`    | Explicit native/external selection, independent transport/persistence, overrides and both initialization paths                         |
+| Angular `ui`, `feature`, `state`, `data-access`                                      | Corresponding `libs/newsletter/angular/<layer>` packages   | Layer direction, explicit state providers, accessible hydration-safe signup                                                            |
+| Angular config and root exports                                                      | Target config surface and `libs/newsletter/angular/facade` | Host-supplied policy/copy/routes and easy composition                                                                                  |
+
+Native lifecycle rules belong in the DDD domain/application surfaces; the native
+infrastructure package adapts ports and composes technical capabilities. The native
+entry point and associated state/token seams are planned responsibilities for
+#446–#448, not a claim that either repository already exports them. Newsletter owns
+confirmation/unsubscribe message intent and default rendering in either style;
+Common `MailerPort` owns delivery. Newsletter must use that port instead of
+injecting `MailerService`; its business templates stay inside Newsletter.
 
 Migrate meaning and contracts first, then application ports, adapters and facades,
 and finally Angular composition. Keep provider payloads and ORM entities out of TS
 domain/contracts. A package split alone must not rewrite stored consent evidence,
 change policy versions or reset event deduplication keys. If storage/schema changes
 are needed, prepare an explicit data migration preserving event identity and history.
+Also preserve operational status, token purpose/expiry/generation, consumed-token
+semantics, and withdrawal/transition consistency. Never derive active subscriber
+state from consent rows alone. If outstanding secure links cannot survive a token
+format/key change, explicitly invalidate and reissue through a bounded flow;
+never activate addresses or discard opt-outs to simplify migration.
 
-Validate both styles with equivalent examples: a new unconfirmed subscription;
+Switching native/external implementations is a separate reconciliation decision.
+Do not enable implicit dual writes or fallback, assume an external provider's state
+matches native rows, or import historical consent as proof of confirmation.
+
+Validate both styles and provider modes with equivalent examples: native operation
+with no MailerLite credentials; new pending subscription, confirmation and
+unsubscribe; repeated/concurrent actions; expired, rotated and replayed tokens;
+fresh consent and confirmation after unsubscribe; failed-mail retry without
+activation; atomic native withdrawal/evidence persistence; external double opt-in;
 existing-address anti-enumeration; stale-policy rejection; evidence persistence
 before provider invocation and retention after provider failure; withdrawal without
 a local grant; concurrent duplicate webhook delivery; invalid signatures or missing

@@ -19,7 +19,7 @@ provider SDK, Blog or other business-domain dependencies.
 ## Installation
 
 Newsletter has not been released. Do not publish this package incrementally: wait
-until #429–#438 merge and epic acceptance is complete, then use the coordinated
+until #429–#438 and #445–#448 merge and epic acceptance is complete, then use the coordinated
 Newsletter release workflow. Workspace development uses the source aliases below.
 
 ## Usage

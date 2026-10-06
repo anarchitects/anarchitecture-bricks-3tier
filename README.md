@@ -143,7 +143,7 @@ nx run forms-angular-example:contract-test
 Run releases via the **Release (Manual)** GitHub workflow:
 
 - Workflow input `domain` must be one of: `forms`, `auth`, `identity`, `newsletter`, `common`.
-- Newsletter is scaffolded for epic #428. Do not release its packages incrementally: wait until #429–#438 are merged and epic acceptance is complete, then perform one coordinated Newsletter release. The release selector enables that future operation; adding it does not authorize publication.
+- Newsletter is under implementation for epic #428. Do not release its packages incrementally: wait until #429–#438 and #445–#448 are merged and epic acceptance is complete, then perform one coordinated Newsletter release. The release selector enables that future operation; adding it does not authorize publication.
 - Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
 - Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
 - Introduce a new publishable project with an `init(<project-or-domain>): <description>` implementation commit. `init` has `semverBump: none` in `nx.json`; the workflow's `first_release` and explicit `bump` inputs choose the initial published version without also inferring a feature bump.
