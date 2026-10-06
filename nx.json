@@ -17,7 +17,9 @@
     ],
     "sharedGlobals": [
       "{workspaceRoot}/.yarnrc.yml",
-      { "runtime": "node --version" }
+      {
+        "runtime": "node --version"
+      }
     ]
   },
   "nxCloudId": "68df993ae28f6906ea159ef3",
@@ -256,6 +258,19 @@
         "projects": ["tailwind"],
         "version": {
           "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=tailwind && yarn nx run tailwind:build"
+        }
+      },
+      "newsletter": {
+        "projectsRelationship": "independent",
+        "projects": ["directory:libs/newsletter/**"],
+        "version": {
+          "groupPreVersionCommand": "yarn nx run release-tools:check-release-tag-ancestry -- --projects=newsletter-angular,newsletter-nest,newsletter-ts && yarn nx run-many -t build -p newsletter-angular,newsletter-nest,newsletter-ts",
+          "updateDependents": "auto",
+          "preserveMatchingDependencyRanges": [
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies"
+          ]
         }
       }
     },

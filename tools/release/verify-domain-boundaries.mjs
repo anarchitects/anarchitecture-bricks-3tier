@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { newsletterBoundaryViolations } from './newsletter-boundaries-lib.mjs';
 
 function readProjectGraph() {
   const output = execFileSync('yarn', ['nx', 'graph', '--print'], {
@@ -57,28 +58,32 @@ function run() {
   const formsToAuthEdges = collectForbiddenEdges(projectGraph, formsProjects, [
     'domain:auth',
   ]);
-  const authToIdentityEdges = collectForbiddenEdges(projectGraph, authProjects, [
-    'domain:identity',
-  ]);
-  const sharedToDomainEdges = collectForbiddenEdges(projectGraph, sharedProjects, [
-    'domain:forms',
-    'domain:auth',
-    'domain:identity',
-  ]);
+  const authToIdentityEdges = collectForbiddenEdges(
+    projectGraph,
+    authProjects,
+    ['domain:identity'],
+  );
+  const sharedToDomainEdges = collectForbiddenEdges(
+    projectGraph,
+    sharedProjects,
+    ['domain:forms', 'domain:auth', 'domain:identity'],
+  );
 
   const authNestDependencies = projectGraph.dependencies?.['auth-nest'] ?? [];
   const hasAuthNestToFormsNest = authNestDependencies.some(
     (dependency) => dependency.target === 'forms-nest',
   );
 
-  const errors = [];
+  const errors = newsletterBoundaryViolations(projectGraph);
 
   if (formsToAuthEdges.length > 0) {
     errors.push('Forms domain must not depend on auth domain.');
   }
 
   if (sharedToDomainEdges.length > 0) {
-    errors.push('Shared domain must not depend on forms/auth/identity domains.');
+    errors.push(
+      'Shared domain must not depend on forms/auth/identity domains.',
+    );
   }
 
   if (authToIdentityEdges.length > 0) {
@@ -104,6 +109,7 @@ function run() {
       'Checked auth projects for reverse identity dependencies.',
       'Checked shared projects for forms/auth/identity dependencies.',
       'Confirmed auth-nest has no direct forms-nest dependency.',
+      'Checked Newsletter isolation, including both directions of Blog coupling.',
     ].join(' '),
   );
 }
