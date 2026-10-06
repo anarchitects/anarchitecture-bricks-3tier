@@ -12,6 +12,31 @@
   },
   "tags": ["domain:newsletter", "tech:nest", "type:facade"],
   "targets": {
+    "package-smoke": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["default", "^production"],
+      "options": {
+        "command": "node libs/newsletter/nest/tests/package-smoke.mjs"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "options": {
+        "command": "tsc --noEmit -p libs/newsletter/nest/tsconfig.lib.json"
+      }
+    },
+    "typecheck-tests": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "options": {
+        "command": "tsc --noEmit -p libs/newsletter/nest/tsconfig.spec.json"
+      }
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
@@ -36,6 +61,13 @@
       "dependsOn": ["^nx-release-publish"],
       "options": {
         "packageRoot": "dist/libs/newsletter/nest"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/newsletter/nest/jest.config.cts"
       }
     }
   }
