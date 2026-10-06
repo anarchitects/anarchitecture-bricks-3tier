@@ -1,3 +1,4 @@
+/// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import * as path from 'path';
@@ -20,17 +21,25 @@ export default defineConfig(() => ({
     outDir: '../../../dist/libs/newsletter/ts',
     emptyOutDir: true,
     reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
+    commonjsOptions: { transformMixedEsModules: true },
     lib: {
-      entry: 'src/index.ts',
-      name: 'newsletter-ts',
-      fileName: 'index',
+      entry: {
+        index: 'src/index.ts',
+        'dtos/index': 'src/dtos/index.ts',
+        'models/index': 'src/models/index.ts',
+      },
       formats: ['es' as const, 'cjs' as const],
     },
-    rolldownOptions: {
-      external: [],
+    rolldownOptions: { external: ['@sinclair/typebox'] },
+  },
+  test: {
+    name: 'newsletter-ts',
+    watch: false,
+    environment: 'node',
+    include: ['src/**/*.spec.ts'],
+    coverage: {
+      reportsDirectory: '../../../coverage/libs/newsletter/ts',
+      provider: 'v8' as const,
     },
   },
 }));

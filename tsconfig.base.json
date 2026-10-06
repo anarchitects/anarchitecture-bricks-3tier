@@ -194,6 +194,12 @@
       ],
       "@anarchitects/newsletter-nest/infrastructure-mailerlite": [
         "libs/newsletter/nest/src/infrastructure-mailerlite/index.ts"
+      ],
+      "@anarchitects/newsletter-ts/dtos": [
+        "libs/newsletter/ts/src/dtos/index.ts"
+      ],
+      "@anarchitects/newsletter-ts/models": [
+        "libs/newsletter/ts/src/models/index.ts"
       ]
     },
     "strict": false,

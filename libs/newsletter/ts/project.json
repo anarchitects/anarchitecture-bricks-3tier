@@ -18,6 +18,14 @@
       "options": {
         "packageRoot": "dist/libs/newsletter/ts"
       }
+    },
+    "typecheck-tests": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "options": {
+        "command": "tsc --noEmit -p libs/newsletter/ts/tsconfig.spec.json"
+      }
     }
   }
 }
