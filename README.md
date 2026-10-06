@@ -214,6 +214,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 - [ADR-0007: Common Mailer Is Transport Infrastructure Only](docs/adr/0007-common-mailer-is-transport-only.md)
 - [ADR-0008: Forms Must Prefer Events Over Embedded Business Logic](docs/adr/0008-forms-event-driven-extension.md)
 - [ADR-0009: Forms Admin Features Must Remain Lightweight](docs/adr/0009-forms-admin-scope-limitation.md)
+- [ADR-0010: Define Newsletter Domain Boundaries And Ports](docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md)
 
 ## Documentation Tooling
 

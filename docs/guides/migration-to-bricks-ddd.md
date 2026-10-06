@@ -177,6 +177,43 @@ Avoid:
 - renaming without separating responsibilities
 - allowing the two repos to drift during migration without documenting equivalence
 
+## Newsletter Migration Mapping
+
+This is the intended mapping for the Newsletter architecture accepted in
+[ADR-0010](../adr/0010-define-newsletter-domain-boundaries-and-ports.md). Paths below
+are planned responsibilities, not installed packages or a migration command. The
+DDD counterpart remains future work; see its [alignment status](./alignment-with-bricks-ddd.md#newsletter-counterpart-intent).
+
+| 3-tier responsibility                                                     | Expected DDD destination                                   | Preserve                                                                              |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `libs/newsletter/ts`: consent policy/version and grant/withdrawal meaning | `libs/newsletter/ts/domain`                                | Domain vocabulary and consent invariants, without transport schemas                   |
+| `libs/newsletter/ts`: request/response DTOs and route schemas             | `libs/newsletter/ts/contracts`                             | Public validation and provider-neutral HTTP contracts                                 |
+| Nest `application`                                                        | `libs/newsletter/nest/application`                         | Use cases, `SubscriberPort`, `ConsentRepositoryPort`, ordering and duplicate outcomes |
+| Nest `presentation`                                                       | `libs/newsletter/nest/presentation`                        | HTTP mapping, honeypot behavior and `NewsletterRateLimiterPort` enforcement           |
+| Nest `infrastructure-persistence`                                         | `libs/newsletter/nest/infrastructure-persistence`          | Append-only evidence and atomic durable event deduplication                           |
+| Nest `infrastructure-mailerlite`                                          | `libs/newsletter/nest/infrastructure-mailerlite`           | Provider API integration, raw-body verification and event normalization               |
+| Nest config and root module                                               | Target config surface and `libs/newsletter/nest/facade`    | Typed configuration, explicit overrides and both initialization paths                 |
+| Angular `ui`, `feature`, `state`, `data-access`                           | Corresponding `libs/newsletter/angular/<layer>` packages   | Layer direction, explicit state providers, accessible hydration-safe signup           |
+| Angular config and root exports                                           | Target config surface and `libs/newsletter/angular/facade` | Host-supplied policy/copy/routes and easy composition                                 |
+
+Migrate meaning and contracts first, then application ports, adapters and facades,
+and finally Angular composition. Keep provider payloads and ORM entities out of TS
+domain/contracts. A package split alone must not rewrite stored consent evidence,
+change policy versions or reset event deduplication keys. If storage/schema changes
+are needed, prepare an explicit data migration preserving event identity and history.
+
+Validate both styles with equivalent examples: a new unconfirmed subscription;
+existing-address anti-enumeration; stale-policy rejection; evidence persistence
+before provider invocation and retention after provider failure; withdrawal without
+a local grant; concurrent duplicate webhook delivery; invalid signatures or missing
+raw bytes causing no writes; retry after persistence failure; explicit shared,
+single-instance and disabled limiter modes; isolated frontend state; and click/Enter
+before hydration causing no email-bearing GET navigation.
+
+Keep exact consent wording, privacy content, CTA copy, access policy and Blog page
+composition in the consumer throughout migration. Document any intentional capability
+divergence in both repositories before claiming parity.
+
 ## Related
 
 - [Guide: Alignment With `anarchitecture-bricks-ddd`](./alignment-with-bricks-ddd.md)

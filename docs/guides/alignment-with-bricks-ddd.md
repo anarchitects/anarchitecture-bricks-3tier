@@ -171,6 +171,32 @@ Before adding or changing a domain in this repo, verify:
 3. If no, should a counterpart be created later, or is the divergence intentional?
 4. If this change would complicate future migration to DDD, is that trade-off acceptable and documented?
 
+## Newsletter Counterpart Intent
+
+The expected counterpart is a `newsletter` bounded context with the same capability
+intent: newsletter subscription requests, affirmative consent and withdrawal
+evidence, and provider integration through replaceable ports. Campaign authoring,
+marketing automation, Blog content and host legal/product policy remain outside it.
+Blog and Newsletter remain independent in both repositories; host composition is
+the integration point.
+
+[ADR-0010](../adr/0010-define-newsletter-domain-boundaries-and-ports.md) records the
+accepted architecture for epic #428. As of 2026-10-06, inspection of the companion
+repository's `main` tree found no Newsletter implementation. This is intentional
+forward alignment, not a claim of an existing DDD package or current parity. Building
+the counterpart is outside this epic; maintainers must recheck the target tree and
+record the mapping in both repositories when that work starts.
+
+Parity means preserving consent-before-provider ordering, append-only grant and
+withdrawal evidence, provider-managed double opt-in, verified and idempotent provider
+events, explicit rate-limit configuration, host-owned wording/version lifecycle,
+and hydration-safe signup. MailerLite and TypeORM remain replaceable adapters in
+either style. Common remains technical/platform-only, and no audience-based package
+split is implied.
+
+See the [Newsletter migration mapping](./migration-to-bricks-ddd.md#newsletter-migration-mapping)
+for the intended structural translation and equivalent validation scenarios.
+
 ## Related
 
 - [Guide: Migration To `anarchitecture-bricks-ddd`](./migration-to-bricks-ddd.md)
