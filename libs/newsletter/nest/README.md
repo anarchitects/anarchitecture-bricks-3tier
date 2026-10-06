@@ -8,6 +8,7 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 - Append-only consent evidence committed before requesting provider-managed double opt-in.
 - Withdrawal processing with atomic repository deduplication and safe partial-batch retries.
 - Framework-independent application services, composition tokens and fake-port unit tests.
+- PostgreSQL/TypeORM consent persistence with a migration and concurrent-delivery integration tests.
 
 ## Installation
 
@@ -103,6 +104,61 @@ Errors contain no submitted values, provider payloads, database details or adapt
 exception causes. Presentation owns HTTP mapping. Adapters must retain any needed
 private diagnostics themselves without exposing them through these errors.
 
+### PostgreSQL persistence
+
+`infrastructure-persistence` exports `NewsletterConsentEntity`,
+`TypeOrmConsentRepository`, `CreateNewsletterConsentEvents1791244800000` and
+`NEWSLETTER_SCHEMA`. TypeORM `^1.1.0` is an optional peer: install it and the `pg`
+driver when selecting this adapter. Application-only consumers need neither.
+
+Register the entity and migration in the host-owned PostgreSQL DataSource:
+
+```ts
+import { DataSource } from 'typeorm';
+import { NewsletterConsentEntity, TypeOrmConsentRepository, CreateNewsletterConsentEvents1791244800000 } from '@anarchitects/newsletter-nest/infrastructure-persistence';
+
+const dataSource = new DataSource({
+  type: 'postgres',
+  // Supply host-owned connection options here.
+  entities: [NewsletterConsentEntity],
+  migrations: [CreateNewsletterConsentEvents1791244800000],
+  synchronize: false,
+});
+await dataSource.initialize();
+// Apply migrations through the host's deployment/migration process.
+const consentRepository = new TypeOrmConsentRepository(dataSource);
+```
+
+Supply that repository to the application services or bind it to
+`CONSENT_REPOSITORY_PORT` in host composition. It uses the DataSource's ordinary
+connections so successful calls commit before returning; do not substitute a
+transaction-bound manager or delay the commit until after a provider call.
+PostgreSQL is the supported database for this adapter.
+
+The migration creates `newsletter.consent_events`. Each row has a fresh UUID,
+email, event kind and server recording timestamp. Grants store the exact policy
+version/text and optional source/IP context; their provider identity columns are
+NULL. Withdrawals store only their opaque event source/key and email/time, leaving
+policy/source/IP fields NULL. Check constraints enforce those two shapes. An
+email/timestamp index supports restricted audit queries through the host DataSource.
+There are no cross-domain entity relations.
+
+Uniqueness on `(event_source, dedupe_key)` makes concurrent withdrawal writes
+atomic and durable. Only that named conflict is acknowledged as a duplicate;
+other database failures propagate to the application error boundary. Normalization
+belongs to the application/provider adapter; persistence preserves supplied
+evidence and opaque identity strings exactly. Identity keys should be compact
+enough for PostgreSQL's normal unique-index limits; oversized keys fail rather
+than being truncated or silently treated as duplicates.
+
+The repository exposes inserts only: it never updates, upserts or deletes evidence.
+This is an application-level append-only contract, not a database trigger blocking
+all host administration. Hosts own access, retention and authorized erasure; grant
+runtime roles only the required SELECT/INSERT privileges where appropriate.
+Rolling back this migration drops the consent table and its evidence, but leaves
+the namespace and other host tables intact. Use forward migrations for deployed
+evidence that must be retained; keep `synchronize: false` in production.
+
 ## Entry points
 
 `application` exports `NewsletterSubscriptionService`, `NewsletterWithdrawalService`,
@@ -110,10 +166,10 @@ their context/result/clock types, error classes, and the `SubscriberPort` and
 `ConsentRepositoryPort` interfaces with `SUBSCRIBER_PORT` and
 `CONSENT_REPOSITORY_PORT` symbols for future composition.
 
-The root facade, `config`, `presentation`, `infrastructure-persistence` and
+The root facade, `config`, `presentation` and
 `infrastructure-mailerlite` entry points remain empty until their respective epic
 issues. Easy-mode `NewsletterModule.forRoot`/`forRootFromConfig` arrives with #435;
-this change provides the advanced application seam only.
+the application and persistence entry points support explicit composition today.
 
 ## Development notes
 
@@ -123,9 +179,18 @@ Run from the workspace root:
 yarn nx run-many -p newsletter-nest -t lint test typecheck typecheck-tests build package-smoke
 ```
 
-Tests use fake subscriber and in-memory repository ports. They validate application
-behavior and the append-once contract, not a database's concurrency guarantees;
-the persistence adapter needs its own integration coverage in #433.
+Application tests use fake subscriber and in-memory repository ports. Run the
+PostgreSQL persistence suite with Docker available:
+
+```sh
+yarn nx run newsletter-nest:test-persistence
+```
+
+It starts and removes an isolated `postgres:16-alpine` container, applies the real
+migration with synchronization disabled, and tests exact evidence, concurrent and
+reconnected duplicate delivery, unrelated constraint failures, partial-batch retry,
+metadata/schema agreement and rollback. The target is uncached and runs for affected
+projects in the GitHub-hosted integration step in both CI workflows.
 
 `package-smoke` checks built runtime exports and strict Node16 declaration
 resolution from isolated CommonJS and ESM consumers without workspace aliases.
