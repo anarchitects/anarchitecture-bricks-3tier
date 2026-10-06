@@ -117,3 +117,35 @@ test('Existing domains and Common cannot import Newsletter', async () => {
     );
   }
 });
+
+test('Newsletter reuses only the Forms renderer and its UI contract types', async () => {
+  for (const entry of [
+    'forms-angular/ui',
+    'forms-ts/models',
+    'forms-ts/dtos',
+  ]) {
+    assert.deepEqual(
+      await messages(
+        'libs/newsletter/angular/ui/src/ui.ts',
+        `import '@anarchitects/${entry}';`,
+      ),
+      [],
+    );
+  }
+  for (const [file, entry] of [
+    ['angular/feature/src/feature.ts', '@anarchitects/forms-angular/ui'],
+    ['angular/state/src/store.ts', '@anarchitects/forms-angular/state'],
+    ['angular/ui/src/ui.ts', '@anarchitects/forms-angular'],
+    ['angular/ui/src/ui.ts', '@anarchitects/forms-angular/data-access'],
+    ['angular/ui/src/ui.ts', '@anarchitects/forms-angular/ui/src/form'],
+    ['angular/ui/src/ui.ts', '../../../../forms/angular/ui/src/index'],
+    ['ts/src/model.ts', '@anarchitects/forms-ts/models'],
+    ['nest/src/application/service.ts', '@anarchitects/forms-nest'],
+  ]) {
+    assert.ok(
+      (await messages(`libs/newsletter/${file}`, `import '${entry}';`)).length >
+        0,
+      `${file}: ${entry}`,
+    );
+  }
+});

@@ -143,3 +143,24 @@ test('Newsletter graph allows Common, internal dependencies and host composition
   blogHost.nodes.source.data.root = 'examples/blog';
   assert.deepEqual(newsletterBoundaryViolations(blogHost), []);
 });
+
+test('Newsletter graph permits Forms UI package edges only from newsletter-angular', () => {
+  for (const source of [
+    'newsletter-angular',
+    'newsletter-ts',
+    'newsletter-nest',
+  ]) {
+    for (const target of ['forms-angular', 'forms-ts', 'forms-nest']) {
+      const graph = {
+        nodes: {
+          [source]: { data: { tags: ['domain:newsletter'] } },
+          [target]: { data: { tags: ['domain:forms'] } },
+        },
+        dependencies: { [source]: [{ target }] },
+      };
+      const allowed =
+        source === 'newsletter-angular' && target !== 'forms-nest';
+      assert.equal(newsletterBoundaryViolations(graph).length, allowed ? 0 : 1);
+    }
+  }
+});

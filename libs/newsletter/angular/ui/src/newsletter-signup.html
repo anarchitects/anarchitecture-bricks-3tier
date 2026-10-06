@@ -1,0 +1,104 @@
+<section
+  class="anx-newsletter-signup"
+  [attr.aria-labelledby]="idPrefix() + '-heading'"
+>
+  <h2 [id]="idPrefix() + '-heading'">{{ presentation().heading }}</h2>
+  @if (presentation().description; as description) {
+  <p>{{ description }}</p>
+  }
+  <p
+    class="anx-newsletter-signup__status"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    {{ accepted() ? presentation().successMessage : busy() ?
+    presentation().submittingMessage : '' }}
+  </p>
+  @if (!accepted()) {
+  <anarchitects-forms-ui-form
+    #formRenderer
+    [config]="formConfig()"
+    [schemaExtensions]="schemaExtensions"
+    [resetOnSubmit]="false"
+    nativeMethod="post"
+    (submitted)="emitSignup($event)"
+  >
+    <ng-template anxTemplate="field" let-field>
+      @switch (field.name) { @case ('email') {
+      <div class="anx-newsletter-signup__field">
+        <label [for]="idPrefix() + '-email'"
+          >{{ presentation().emailLabel }}</label
+        >
+        <input
+          [id]="idPrefix() + '-email'"
+          class="anx-newsletter-signup__email anx-control"
+          type="email"
+          autocomplete="email"
+          [formField]="formRenderer.stringFieldTree('email')!"
+          [attr.aria-invalid]="formRenderer.isFieldInvalid('email')"
+          [attr.aria-describedby]="errorMessage() ? idPrefix() + '-error' : null"
+          (keydown.enter)="requestSignup($event)"
+        />
+      </div>
+      } @case ('website') {
+      <!-- Keep this enabled text field in SSR markup: together with email it blocks implicit native submission on Enter. -->
+      <div class="anx-newsletter-signup__honeypot" aria-hidden="true">
+        <label [for]="idPrefix() + '-website'"
+          >{{ presentation().honeypotLabel }}</label
+        >
+        <input
+          [id]="idPrefix() + '-website'"
+          type="text"
+          tabindex="-1"
+          autocomplete="off"
+          [formField]="formRenderer.stringFieldTree('website')!"
+        />
+      </div>
+      } @case ('consent') {
+      <label
+        class="anx-newsletter-signup__consent"
+        [for]="idPrefix() + '-consent'"
+      >
+        <input
+          [id]="idPrefix() + '-consent'"
+          type="checkbox"
+          [formField]="formRenderer.booleanFieldTree('consent')!"
+          [attr.aria-invalid]="formRenderer.isFieldInvalid('consent')"
+          [attr.aria-describedby]="errorMessage() ? idPrefix() + '-error' : null"
+        />
+        <span>{{ policy().text }}</span>
+      </label>
+      } }
+    </ng-template>
+    <ng-template anxTemplate="actions">
+      @if (presentation().privacy; as privacy) {
+      <a
+        [href]="privacy.href"
+        [target]="privacy.target ?? '_self'"
+        [attr.rel]="privacy.target === '_blank' ? 'noopener noreferrer' : null"
+        >{{ privacy.label }}</a
+      >
+      }
+      <!-- type=button is required before hydration; a submit handler alone cannot prevent a native GET. -->
+      <button
+        class="anx-newsletter-signup__submit anx-control"
+        type="button"
+        [disabled]="busy()"
+        (click)="requestSignup($event)"
+      >
+        {{ busy() ? presentation().submittingMessage :
+        presentation().submitLabel }}
+      </button>
+    </ng-template>
+  </anarchitects-forms-ui-form>
+  @if (errorMessage(); as message) {
+  <p
+    [id]="idPrefix() + '-error'"
+    class="anx-newsletter-signup__error"
+    role="alert"
+  >
+    {{ message }}
+  </p>
+  } }
+</section>

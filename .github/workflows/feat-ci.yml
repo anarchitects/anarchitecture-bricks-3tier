@@ -70,6 +70,14 @@ jobs:
       # Keep the existing per-agent memory limit for builds and browser tests.
       - run: yarn nx affected -t build --parallel=1
 
+      - name: Newsletter SSR privacy regression (GitHub only)
+        env:
+          NX_NO_CLOUD: 'true'
+          NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
+        run: |
+          yarn playwright install --with-deps chromium
+          yarn nx affected -t test-hydration --parallel=1
+
       - name: Package and database integration checks (GitHub only)
         env:
           NX_NO_CLOUD: 'true'

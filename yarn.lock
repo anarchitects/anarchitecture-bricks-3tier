@@ -87,6 +87,7 @@ __metadata:
     "@angular/language-service": "npm:22.1.8"
     "@angular/platform-browser": "npm:22.1.8"
     "@angular/platform-browser-dynamic": "npm:22.1.8"
+    "@angular/platform-server": "npm:22.1.8"
     "@angular/router": "npm:22.1.8"
     "@better-auth/core": "npm:1.7.2"
     "@better-auth/passkey": "npm:~1.7.2"
@@ -797,6 +798,22 @@ __metadata:
     "@angular/animations":
       optional: true
   checksum: 10c0/e3aa6f5540f0c06aa0a833c431b8a35ec4d6e251b7c0f7d3695b75e5339c88695e1189b53a6aa763e997e126282967b99ebd6031cde06e60ce6e70b16420f1d2
+  languageName: node
+  linkType: hard
+
+"@angular/platform-server@npm:22.1.8":
+  version: 22.1.8
+  resolution: "@angular/platform-server@npm:22.1.8"
+  dependencies:
+    tslib: "npm:^2.3.0"
+    xhr2: "npm:^0.2.0"
+  peerDependencies:
+    "@angular/common": 22.1.8
+    "@angular/compiler": 22.1.8
+    "@angular/core": 22.1.8
+    "@angular/platform-browser": 22.1.8
+    rxjs: ^6.5.3 || ^7.4.0
+  checksum: 10c0/f66ffe6a645140566b918897eeea805933712e8467229d71867633e5ce4df5f9fb5f62296253bf8ec807d35f1d028c9ce1a0bcda924040ecddaae88a3e66bd5a
   languageName: node
   linkType: hard
 
@@ -36789,6 +36806,13 @@ __metadata:
     is-wsl: "npm:^3.1.0"
     powershell-utils: "npm:^0.1.0"
   checksum: 10c0/b3ba99cc6b71f66457eef598d529beeb8cb57a72646877fe25993894b808c60b82f6d47df5463f0b6e54632272f62f5eaea105c12784fd09b06f500f3f53aa2e
+  languageName: node
+  linkType: hard
+
+"xhr2@npm:^0.2.0":
+  version: 0.2.1
+  resolution: "xhr2@npm:0.2.1"
+  checksum: 10c0/eebe95bd0ae9087da9b4dda636abee1f30cf9b424fbe8ebd0c7dcfd9be5db3e4aa634cf1837fa3e82b486aace9396a2dbf6be2dc8084862c8239dccec4e16dca
   languageName: node
   linkType: hard
 

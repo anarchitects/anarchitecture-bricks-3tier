@@ -1,5 +1,6 @@
 // ADR-0010: Newsletter may consume Common, but remains independent of other
-// business domains. Host applications and documentation may compose the brick.
+// business domains except Forms UI reuse. ESLint narrows that package edge to
+// UI renderer/contracts; host applications and documentation may compose the brick.
 export function newsletterBoundaryViolations(graph) {
   const tags = (name) => graph.nodes?.[name]?.data?.tags ?? [];
   const errors = [];
@@ -18,13 +19,17 @@ export function newsletterBoundaryViolations(graph) {
       if (!graph.nodes?.[target]) continue; // External npm dependency.
       const targetTags = tags(target);
       if (sourceTags.includes('domain:newsletter')) {
+        const formsPresentation =
+          source === 'newsletter-angular' &&
+          ['forms-angular', 'forms-ts'].includes(target);
         if (
+          !formsPresentation &&
           !targetTags.some((tag) =>
             ['domain:newsletter', 'domain:shared'].includes(tag),
           )
         ) {
           errors.push(
-            `${source} -> ${target}: Newsletter may only depend on Newsletter or Common.`,
+            `${source} -> ${target}: Newsletter may only depend on Newsletter, Common, or the approved Forms UI packages.`,
           );
         }
       } else if (

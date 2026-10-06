@@ -261,6 +261,14 @@ fields and `false` for booleans). Validation errors render after a field is touc
 dirty. A successful submission emits the existing `SubmissionRequestDTO`, resets the
 field state and values, and never inserts `null` into the payload.
 
+For hosts that await an asynchronous domain response, set `[resetOnSubmit]="false"`
+on `AnarchitectsUiForm` to retain values and interaction state after emission.
+The default remains `true`. The host decides when to remove or reset the form.
+`nativeMethod="post"` opts into a native POST fallback (default: `get`). It does
+not send an HTTP request by itself or make pre-hydration submission safe: SSR
+consumers must also compose appropriate action controls and implicit-submission
+behavior. Newsletter's UI tests this composition against actual SSR output.
+
 ## Migrating from the Reactive Forms release
 
 This is a breaking Angular 22-only release:

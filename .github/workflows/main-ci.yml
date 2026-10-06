@@ -74,6 +74,12 @@ jobs:
         run: yarn playwright install --with-deps chromium
       - run: yarn nx affected -t e2e-ci --parallel=1
 
+      - name: Newsletter SSR privacy regression (GitHub only)
+        env:
+          NX_NO_CLOUD: 'true'
+          NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
+        run: yarn nx affected -t test-hydration --parallel=1
+
       - name: Package and database integration checks (GitHub only)
         env:
           NX_NO_CLOUD: 'true'
