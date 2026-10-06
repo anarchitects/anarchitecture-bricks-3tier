@@ -11,9 +11,11 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
-          // Framework peers define package compatibility before components exist.
-          ignoredDependencies: ['@angular/common', '@angular/core'],
-          ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
+          // Consumer smoke tooling is not a runtime package dependency.
+          ignoredFiles: [
+            '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
+            '{projectRoot}/tests/package-smoke.mjs',
+          ],
         },
       ],
     },

@@ -1,7 +1,7 @@
 {
   "name": "newsletter-angular",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/newsletter/angular/src",
+  "sourceRoot": "libs/newsletter/angular",
   "prefix": "anarchitects",
   "projectType": "library",
   "release": {
@@ -37,6 +37,38 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/angular:unit-test",
+      "options": {
+        "tsConfig": "libs/newsletter/angular/tsconfig.spec.json",
+        "include": ["**/*.spec.ts", "**/*.test.ts"]
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "options": {
+        "command": "tsc --noEmit -p libs/newsletter/angular/tsconfig.lib.json"
+      }
+    },
+    "typecheck-tests": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^production"],
+      "options": {
+        "command": "tsc --noEmit -p libs/newsletter/angular/tsconfig.spec.json"
+      }
+    },
+    "package-smoke": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["default", "^production"],
+      "options": {
+        "command": "node libs/newsletter/angular/tests/package-smoke.mjs"
+      }
     }
   }
 }

@@ -1,2 +1,6 @@
-// Reserved entry point. Business APIs are implemented in later epic #428 issues.
-export {};
+export { provideNewsletter } from './providers';
+export type { NewsletterConfig } from '@anarchitects/newsletter-angular/config';
+export {
+  NewsletterStore,
+  type NewsletterSubmissionState,
+} from '@anarchitects/newsletter-angular/state';

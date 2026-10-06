@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "peerDependencies": {
     "@angular/common": "^21.1.0 || ^22.0.0",
-    "@angular/core": "^21.1.0 || ^22.0.0"
+    "@angular/core": "^21.1.0 || ^22.0.0",
+    "rxjs": "~7.8.0"
   },
   "sideEffects": false,
-  "description": "Newsletter angular package scaffold; public APIs follow in epic #428.",
+  "description": "Configurable Newsletter HTTP client and explicitly scoped Angular submission state.",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
@@ -19,5 +20,8 @@
   "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/newsletter/angular",
   "bugs": {
     "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  },
+  "dependencies": {
+    "@anarchitects/newsletter-ts": "0.0.1"
   }
 }

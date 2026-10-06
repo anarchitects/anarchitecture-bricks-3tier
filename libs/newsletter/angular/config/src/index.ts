@@ -1,2 +1,7 @@
-// Reserved entry point. Business APIs are implemented in later epic #428 issues.
-export {};
+export {
+  NEWSLETTER_CONFIG,
+  provideNewsletterConfig,
+  resolveNewsletterConfig,
+  type NewsletterConfig,
+  type ResolvedNewsletterConfig,
+} from './newsletter-config';

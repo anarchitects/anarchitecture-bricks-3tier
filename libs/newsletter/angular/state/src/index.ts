@@ -1,2 +1,5 @@
-// Reserved entry point. Business APIs are implemented in later epic #428 issues.
-export {};
+export {
+  NewsletterStore,
+  type NewsletterSubmissionState,
+} from './newsletter.store';
+export { provideNewsletterState } from './providers';
