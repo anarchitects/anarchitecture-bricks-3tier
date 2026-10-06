@@ -23,6 +23,27 @@ describe('Newsletter config', () => {
       ).toBe(expected);
     },
   );
+  it('normalizes long boundary slash runs while preserving internal base-path slashes', () => {
+    const slashes = '/'.repeat(50000);
+    for (const base of ['/api', 'https://api.example.test/api']) {
+      const config = resolveNewsletterConfig({
+        consent,
+        apiBaseUrl: `${base}${slashes}v1${slashes}`,
+        apiResourcePath: `${slashes}marketing/news${slashes}`,
+      });
+      expect(config.subscriptionUrl).toBe(
+        `${base}${slashes}v1/marketing/news/subscribe`,
+      );
+    }
+  });
+  it('rejects long all-slash and internal-slash resource paths', () => {
+    const slashes = '/'.repeat(50000);
+    for (const apiResourcePath of [slashes, `news${slashes}suffix`]) {
+      expect(() =>
+        resolveNewsletterConfig({ consent, apiResourcePath }),
+      ).toThrow('Invalid Newsletter client configuration.');
+    }
+  });
   it('snapshots host policy without changing whitespace or providing legal defaults', () => {
     const policy = { version: ' v1 ', text: ' Exact wording. ' };
     const config = resolveNewsletterConfig({ consent: policy });

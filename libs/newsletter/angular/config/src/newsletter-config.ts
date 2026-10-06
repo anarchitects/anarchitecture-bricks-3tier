@@ -20,6 +20,17 @@ export const NEWSLETTER_CONFIG = new InjectionToken<ResolvedNewsletterConfig>(
   'NEWSLETTER_CONFIG',
 );
 
+/** Scan boundaries once; an unanchored trailing-slash regex can backtrack quadratically. */
+function trimBoundarySlashes(value: string, trimLeading: boolean): string {
+  let start = 0;
+  let end = value.length;
+  if (trimLeading) {
+    while (start < end && value[start] === '/') start++;
+  }
+  while (end > start && value[end - 1] === '/') end--;
+  return value.slice(start, end);
+}
+
 export function resolveNewsletterConfig(
   config: NewsletterConfig,
 ): ResolvedNewsletterConfig {
@@ -55,7 +66,7 @@ export function resolveNewsletterConfig(
         throw invalid();
     } else if (!/^\/(?!\/)/.test(base)) throw invalid();
   }
-  const resource = path.replace(/^\/+|\/+$/g, '');
+  const resource = trimBoundarySlashes(path, true);
   if (!/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*(?![\s\S])/.test(resource))
     throw invalid();
   return Object.freeze({
@@ -63,7 +74,7 @@ export function resolveNewsletterConfig(
       version: config.consent.version,
       text: config.consent.text,
     }),
-    subscriptionUrl: `${base.replace(/\/+$/, '')}/${resource}/subscribe`,
+    subscriptionUrl: `${trimBoundarySlashes(base, false)}/${resource}/subscribe`,
     requestTimeoutMs: timeout,
   });
 }
