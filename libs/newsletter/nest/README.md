@@ -10,6 +10,7 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 - Framework-independent application services, composition tokens and fake-port unit tests.
 - PostgreSQL/TypeORM consent persistence with a migration and concurrent-delivery integration tests.
 - Optional MailerLite subscriber and signed withdrawal-webhook adapters.
+- Fastify HTTP controllers, explicit rate-limiter selection, and configurable Nest facade.
 
 ## Installation
 
@@ -18,7 +19,153 @@ release after #429–#438 are merged and epic acceptance is complete.
 
 ## Usage
 
-The application entry point supports explicit composition today. Supply adapters
+### Easy mode: root facade
+
+Import `NewsletterModule` from the root entry point. This example assumes the host
+exports a durable `ConsentRepositoryPort` binding from `HostPersistenceModule`:
+
+```ts
+import { Module } from '@nestjs/common';
+import { NewsletterModule } from '@anarchitects/newsletter-nest';
+import { HostPersistenceModule, HOST_CONSENT_REPOSITORY } from './host-persistence.module';
+
+@Module({
+  imports: [
+    NewsletterModule.forRoot({
+      imports: [HostPersistenceModule],
+      consent: { version: 'host-policy/v1', text: 'Exact wording shown by your host.' },
+      persistence: { mode: 'custom', provider: { useExisting: HOST_CONSENT_REPOSITORY } },
+      subscriber: { mode: 'noop' },
+      rateLimit: { mode: 'memory', limit: 5, windowMs: 60_000 },
+      presentation: { resolveClientKey: (request) => request.ip },
+    }),
+  ],
+})
+export class HostModule {}
+```
+
+The explicit `noop` subscriber records consent but does not send confirmation
+emails or contact a provider. Select `{ mode: 'custom', provider: { useExisting:
+HOST_SUBSCRIBER } }` for your own `SubscriberPort`, or select MailerLite explicitly:
+
+```ts
+subscriber: { mode: 'mailerlite', options: { apiKey, groupId } },
+webhook: { webhookSecret, accountId },
+```
+
+The webhook is a separate opt-in and may also accompany a custom subscriber.
+Absent/false `webhook` exposes no webhook route. Missing required credentials fail
+startup. `provider` bindings support `useValue`, `useExisting`, or `useFactory` plus
+`inject`. Export host tokens from modules listed in `imports`. Missing bindings or
+missing required port methods fail startup; no fallback adapter is selected.
+
+To use the bundled PostgreSQL adapter, select
+`persistence: { mode: 'typeorm', dataSourceToken: HOST_DATA_SOURCE }` and import the
+host module exporting that initialized DataSource. Register the entity/migration
+as described below. The facade does not create connections or run migrations.
+Custom persistence does not require the optional TypeORM peer.
+
+Use Nest's Fastify adapter. Webhooks require raw-body capture at bootstrap:
+
+```ts
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
+
+const app = await NestFactory.create<NestFastifyApplication>(HostModule, new FastifyAdapter({ bodyLimit: 1_048_576 }), { rawBody: true });
+await app.listen(3000);
+```
+
+Do not replace captured bytes with reserialized JSON. Missing capture returns 503
+without evidence writes. The host owns ingress body limits, trusted-proxy settings,
+connection lifecycle, and any global URL prefix. The presentation module requires
+Fastify and installs its route hook before Nest maps controllers.
+
+### HTTP behavior
+
+Default routes are `POST /newsletter/subscribe` and, when enabled,
+`POST /newsletter/webhook`. Set `presentation.path` to a relative capability prefix
+(e.g. `marketing/newsletter`); host global prefixes still apply. There is no policy
+read endpoint: the host owns publishing the same policy to its frontend.
+
+Subscriptions use the shared TS route schema with strict validation, without
+coercing values or dropping additional fields. A non-empty string `website`
+honeypot in parsed JSON returns 202 `{ accepted: true }` before schema validation,
+limiter/context resolution, or writes. Malformed JSON and ingress size limits are
+still enforced by Fastify. Genuine requests are validated, limited, and passed to
+the application. Unknown/stale policy or invalid input returns generic 400;
+limiter denial returns 429 with `Retry-After` in whole seconds; unavailable ports,
+limiter, or key resolution return generic 503. Provider status is never returned.
+
+Verified webhook deliveries return 200 `{ recorded, duplicates }` only after
+persistence completes. Invalid signatures return 401, invalid payloads 400,
+adapter size violations 413, and operational/storage failures 503. Subscription
+limits never consume webhook quota; hosts can apply independent ingress controls.
+
+No IP evidence is recorded by default. Supply `presentation.resolveContext` to
+return trusted `{ ipAddress }` if required. `resolveClientKey` and `resolveContext`
+receive the Fastify request; hosts own proxy trust and must not blindly copy
+forwarded headers. Keys should identify the client, never subscriber existence.
+
+### Explicit rate limiting
+
+`rateLimit` is required; choose one mode:
+
+- `{ mode: 'disabled' }`: explicit opt-out of library limiting, for example when a gateway enforces signup quotas.
+- `{ mode: 'memory', limit, windowMs, maxKeys? }`: atomic fixed windows per key in this module instance. Counters reset on restart and are not shared across replicas. Default capacity is 10,000 keys; expired keys are reclaimed and full active capacity fails closed with 503.
+- `{ mode: 'custom', limit, windowMs, provider }`: a host-owned `NewsletterRateLimiterPort`, typically a shared/distributed implementation.
+
+Enabled modes require `presentation.resolveClientKey`. Missing/blank keys, invalid
+adapter results, or limiter failures return 503. The custom port implements
+`consume(key, policy)` atomically, resolving `{ allowed: true }` or
+`{ allowed: false, retryAfterMs }`. Namespace keys when sharing a backend between
+hosts. The memory implementation assumes one fixed policy per instance and keeps
+no global singleton or background timer. Distributed deployments need shared or
+gateway enforcement for a global quota.
+
+### Config-driven initialization
+
+`NewsletterModule.forRootFromConfig(overrides)` reads the `newsletterConfig`
+namespace from the `config` entry point. Explicit overrides take precedence over
+config values, then defaults. Consent and presentation fields merge individually;
+adapter and limiter selections are replaced as a whole. `forRoot(options)` never
+reads the environment. Both paths require consent, persistence, subscriber and
+rate-limiter choices. Persistence bindings and request resolvers remain host-supplied.
+
+| Environment variable                                                       | Purpose                                                |
+| -------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `NEWSLETTER_CONSENT_VERSION`, `NEWSLETTER_CONSENT_TEXT`                    | Exact host policy                                      |
+| `NEWSLETTER_SUBSCRIBER`                                                    | `noop` or `mailerlite`; custom providers use overrides |
+| `NEWSLETTER_MAILERLITE_API_KEY`, `NEWSLETTER_MAILERLITE_GROUP_ID`          | MailerLite subscription configuration                  |
+| `NEWSLETTER_MAILERLITE_WEBHOOK_ENABLED`                                    | Exact `true`/`false`; absent leaves route disabled     |
+| `NEWSLETTER_MAILERLITE_WEBHOOK_SECRET`, `NEWSLETTER_MAILERLITE_ACCOUNT_ID` | Explicit webhook configuration                         |
+| `NEWSLETTER_RATE_LIMIT_MODE`                                               | `disabled` or `memory`; custom limiters use overrides  |
+| `NEWSLETTER_RATE_LIMIT_MAX`, `NEWSLETTER_RATE_LIMIT_WINDOW_MS`             | Positive integer memory quota/window                   |
+| `NEWSLETTER_PATH`                                                          | Relative HTTP prefix; defaults to `newsletter`         |
+
+Environment variables must be loaded before calling `forRootFromConfig`. Hosts
+using an already-resolved config object can call `mapNewsletterConfigToOptions`
+then `forRoot`. Advanced MailerLite retry/body limits and memory capacity are
+available through explicit options/overrides.
+
+```ts
+NewsletterModule.forRootFromConfig({
+  imports: [HostPersistenceModule],
+  persistence: { mode: 'custom', provider: { useExisting: HOST_CONSENT_REPOSITORY } },
+  presentation: { resolveClientKey: (request) => request.ip },
+});
+```
+
+### Advanced composition
+
+The `presentation` entry point exports `NewsletterPresentationModule.forRoot` for
+hosts that compose application services themselves. Supply `imports` exporting
+`NewsletterSubscriptionService` and, if `webhookEnabled: true`, the
+`NEWSLETTER_WEBHOOK_HANDLER` token. The handler receives raw bytes/signature and
+must verify before processing; it may throw sanitized Nest HTTP exceptions.
+The presentation options own the route prefix, request resolvers and required
+limiter choice, independently of infrastructure.
+
+The application entry point supports explicit composition. Supply adapters
 implementing `ConsentRepositoryPort` and `SubscriberPort`; the services do not
 register themselves with Nest or configure infrastructure.
 
@@ -237,18 +384,19 @@ processing summary. Presentation must acknowledge only after `receive` succeeds,
 or after a separately designed durable handoff. Signature verification alone does
 not prevent replay: durable repository deduplication provides that protection.
 `MailerLiteWebhookError.code` distinguishes missing raw bytes, signature, payload
-and size failures for future HTTP mapping without leaking provider payloads.
+and size failures for HTTP mapping without leaking provider payloads.
 
 ## Entry points
 
 `application` exports `NewsletterSubscriptionService`, `NewsletterWithdrawalService`,
 their context/result/clock types, error classes, and the `SubscriberPort` and
 `ConsentRepositoryPort` interfaces with `SUBSCRIBER_PORT` and
-`CONSENT_REPOSITORY_PORT` symbols for future composition.
+`CONSENT_REPOSITORY_PORT` symbols for host composition.
 
-The root facade, `config` and `presentation` entry points remain empty until their respective epic
-issues. Easy-mode `NewsletterModule.forRoot`/`forRootFromConfig` arrives with #435;
-the application and infrastructure entry points support explicit composition today.
+The root exports `NewsletterModule` and its host-facing option types. `config`
+exports the typed namespace, config mapper, validation and adapter option types.
+`presentation` exports the controllers, composable module, webhook-handler seam,
+and rate-limiter port/token/memory implementation.
 
 ## Development notes
 
@@ -270,6 +418,11 @@ migration with synchronization disabled, and tests exact evidence, concurrent an
 reconnected duplicate delivery, unrelated constraint failures, partial-batch retry,
 metadata/schema agreement and rollback. The target is uncached and runs for affected
 projects in the GitHub-hosted integration step in both CI workflows.
+
+Facade tests bootstrap Nest/Fastify and inject real HTTP requests to check strict
+validation, honeypots, all limiter modes, custom providers, route/context options,
+raw-body verification and operational failure responses. Configuration tests cover
+both initialization paths and explicit override precedence.
 
 MailerLite tests use mocked fetch responses and locally signed fixtures, including
 application-service integration. No live MailerLite network calls are needed.
