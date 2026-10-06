@@ -10,6 +10,7 @@ import { Submission, SubmissionFilters } from '@anarchitects/forms-ts/models';
 import { FormsService } from './forms.service';
 
 const NOOP_MAILER_PORT: MailerPort = {
+  sendMessage: async () => undefined,
   send: async () => undefined,
   sendTemplate: async () => undefined,
 };

@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { MailerPort } from '../ports/mailer.port';
+import { MailerPort, type MailerMessage } from '../ports/mailer.port';
 
 @Injectable()
 export class NoopMailerAdapter implements MailerPort {
+  async sendMessage(_message: MailerMessage): Promise<void> {
+    return;
+  }
+
   async send(_to: string, _subject: string, _html: string): Promise<void> {
     return;
   }

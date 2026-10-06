@@ -68,9 +68,10 @@ describe('BetterAuthAuthEngineAdapter', () => {
     compare: jest.fn().mockResolvedValue(true),
   } satisfies Pick<HashService, 'hash' | 'compare'>;
   const mailer = {
+    sendMessage: jest.fn().mockResolvedValue(undefined),
     send: jest.fn().mockResolvedValue(undefined),
     sendTemplate: jest.fn(),
-  } satisfies Pick<MailerPort, 'send' | 'sendTemplate'>;
+  } satisfies MailerPort;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -128,7 +129,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(
@@ -155,7 +156,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(
@@ -175,7 +176,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(
@@ -211,7 +212,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       },
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(adapter.describeCapabilities()).resolves.toEqual({
@@ -239,7 +240,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(
@@ -270,7 +271,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(
@@ -291,7 +292,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await expect(
@@ -330,7 +331,7 @@ describe('BetterAuthAuthEngineAdapter', () => {
       options,
       persistencePort as BetterAuthDatabasePort,
       hashService as HashService,
-      mailer as MailerPort,
+      mailer,
     );
 
     await adapter.passwordSignIn({

@@ -41,7 +41,8 @@ Peer requirements:
 - `CommonMailerModule.forProviderFromConfig(overrides?)`: config-driven provider wiring from `MAILER_PROVIDER`
 - `CommonMailerModule.forRootFromConfig()`: config-driven root mail transport setup
 - `CommonMailerModule.forRootAsync(...)`: pass-through setup for custom transports
-- `MailerPort`: shared mailer port token/contract for domain adapters
+- `MailerPort`: shared mailer port token/contract for domain adapters, including `sendMessage`, `send`, and `sendTemplate`
+- `MailerMessage`: rendered HTML/text message contract with optional sender, reply-to, and headers
 - `NodeMailerAdapter`: shared concrete adapter using Nest `MailerService`
 - `NoopMailerAdapter`: shared no-op implementation
 
@@ -184,7 +185,7 @@ Ship `templates/` alongside `main.js` in that layout. If the deployment root its
 
 ## Usage (Preferred)
 
-Configure mail transport once at app root, then let domain mailer modules consume `MailerService`.
+Configure mail transport once at app root, then let domain mailer modules consume `MailerPort`.
 
 ```ts
 import { Module } from '@nestjs/common';
@@ -250,6 +251,26 @@ export class MailerSetupService {
   constructor(@InjectMailerConfig() private readonly config: MailerConfig) {}
 }
 ```
+
+## Rendered messages with alternatives and metadata
+
+`MailerPort.sendMessage(message)` sends a transport-neutral `MailerMessage` with `to`, `subject`, at least one of `html`/`text`, and optional `from`, `replyTo`, and string-valued `headers`. Supply both bodies for multipart alternative messages. Omitted sender metadata uses the transport's configured defaults. These are message headers, not a custom SMTP envelope. Domains own rendering and business semantics; Common does not interpret the content.
+
+```ts
+await mailer.sendMessage({
+  to: 'reader@example.com',
+  subject: 'Your requested message',
+  html: '<p>Hello</p>',
+  text: 'Hello',
+  from: 'Example <noreply@example.com>',
+  replyTo: 'help@example.com',
+  headers: { 'X-Application': 'example' },
+});
+```
+
+Existing node/noop provider selection applies to this method. Node forwards the supported fields to the configured transport and propagates rejection; success returns `void`, not provider metadata. Noop deliberately resolves without delivery. Callers decide failure/retry policy. Configure provider timeouts at the transport layer. Metadata and rendered bodies are trusted application input; do not forward untrusted request headers or arbitrary transport options.
+
+**Custom adapter compatibility:** `send` and `sendTemplate` keep their existing signatures and behavior. Implementations of `MailerPort` must now implement `sendMessage`, including test doubles. Forward both requested alternatives and metadata, or reject unsupported messages explicitly; never silently discard requested capabilities. The built-in node and noop adapters implement the new contract. This is a source-breaking contract extension for custom implementers and must be released accordingly through CI.
 
 ## Development notes
 
