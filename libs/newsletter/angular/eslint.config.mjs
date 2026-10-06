@@ -11,10 +11,10 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
-          // Consumer smoke tooling is not a runtime package dependency.
+          // Consumer and SSR test tooling is not a runtime package dependency.
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
-            '{projectRoot}/tests/package-smoke.mjs',
+            '{projectRoot}/tests/*.mjs',
           ],
         },
       ],

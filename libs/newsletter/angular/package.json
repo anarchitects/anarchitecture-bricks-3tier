@@ -2,12 +2,13 @@
   "name": "@anarchitects/newsletter-angular",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^21.1.0 || ^22.0.0",
-    "@angular/core": "^21.1.0 || ^22.0.0",
-    "rxjs": "~7.8.0"
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "rxjs": "~7.8.0",
+    "@angular/forms": "^22.0.0"
   },
   "sideEffects": false,
-  "description": "Configurable Newsletter HTTP client and explicitly scoped Angular submission state.",
+  "description": "Forms-backed Newsletter signup UI, configurable HTTP client and explicitly scoped Angular submission state.",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
@@ -22,6 +23,8 @@
     "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   },
   "dependencies": {
-    "@anarchitects/newsletter-ts": "0.0.1"
+    "@anarchitects/newsletter-ts": "0.0.1",
+    "@anarchitects/forms-angular": "^0.9.0",
+    "@anarchitects/forms-ts": "^0.9.0"
   }
 }

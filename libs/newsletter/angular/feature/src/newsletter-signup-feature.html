@@ -1,0 +1,9 @@
+<anarchitects-newsletter-signup
+  [idPrefix]="idPrefix()"
+  [presentation]="presentation()"
+  [policy]="store.consent"
+  [busy]="store.submitting()"
+  [accepted]="store.status() === 'success'"
+  [failureMessage]="failureMessage()"
+  (signupRequested)="requestSignup($event)"
+/>

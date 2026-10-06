@@ -62,8 +62,26 @@ const newsletterLayers = {
         (source.tech === 'angular' &&
           /^(?:@nestjs\/|typeorm(?:\/|$))/.test(value)) ||
         (source.tech === 'nest' && value.startsWith('@angular/'));
+      const formsPresentationImport =
+        source.tech === 'angular' &&
+        source.layer === 'ui' &&
+        [
+          '@anarchitects/forms-angular/ui',
+          '@anarchitects/forms-ts/models',
+          '@anarchitects/forms-ts/dtos',
+        ].includes(value);
+      const relativeBusinessDomainImport =
+        value.startsWith('.') &&
+        /^\.\.\/(?:blog|auth|identity|forms)\//.test(
+          relative(root, resolve(dirname(filename), value)).replaceAll(
+            '\\',
+            '/',
+          ),
+        );
       const businessDomainImport =
-        /^@anarchitects\/(?:blog|auth|identity|forms)-/.test(value);
+        relativeBusinessDomainImport ||
+        (/^@anarchitects\/(?:blog|auth|identity|forms)-/.test(value) &&
+          !formsPresentationImport);
       const wrongTech =
         target && target.tech !== source.tech && target.tech !== 'ts';
       const wrongLayer =
@@ -121,7 +139,12 @@ export default [
           depConstraints: [
             {
               sourceTag: 'domain:newsletter',
-              onlyDependOnLibsWithTags: ['domain:newsletter', 'domain:shared'],
+              // The path-aware rule below limits Forms reuse to Newsletter UI presentation.
+              onlyDependOnLibsWithTags: [
+                'domain:newsletter',
+                'domain:shared',
+                'domain:forms',
+              ],
             },
             ...['ts', 'nest', 'angular'].map((tech) => ({
               allSourceTags: ['domain:newsletter', `tech:${tech}`],

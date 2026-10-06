@@ -31,8 +31,15 @@ workflow engine. A subscriber need not be an authenticated user.
 
 - `newsletter -> blog` and `blog -> newsletter` dependencies are forbidden.
   Host applications compose a Newsletter CTA into Blog pages.
-- Newsletter has no required dependency on Auth, Identity, or Forms. It exposes a
-  typed domain subscription API rather than using Forms as its business API.
+- Newsletter has no required dependency on Auth or Identity. Its TS and Nest
+  layers remain independent of Forms. It exposes a typed domain subscription API
+  rather than using Forms as its business API.
+- Amendment for #437 (2026-10-06, explicit implementation direction): Angular UI
+  reuses `@anarchitects/forms-angular/ui` and Forms TS renderer contract types.
+  This presentation-only dependency supplies rendering and Signal Forms validation;
+  Newsletter retains its own DTOs, consent policy, client, state and backend.
+  Forms feature/state/data-access and Forms backend services are not dependencies.
+  The graph allows these two package edges; path-aware ESLint limits them to UI.
 - Newsletter may consume domain-neutral Common platform capabilities. Common
   must not import Newsletter or own its subscriber/consent semantics.
 - MailerLite subscriber management belongs to Newsletter infrastructure, never

@@ -3,6 +3,7 @@
 @source './preview.ts';
 @source '../../../auth/angular';
 @source '../../../forms/angular';
+@source '../../../newsletter/angular';
 @source '../../../common/angular';
 
 @theme {

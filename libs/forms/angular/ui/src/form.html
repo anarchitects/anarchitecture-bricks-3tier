@@ -20,6 +20,7 @@
   } @if (signalForm(); as currentForm) {
   <form
     class="anx-forms-ui-form__form anx-stack"
+    [attr.method]="nativeMethod()"
     (submit)="onSubmit(); $event.preventDefault()"
     novalidate
   >

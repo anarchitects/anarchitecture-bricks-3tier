@@ -237,6 +237,20 @@ describe('AnarchitectsUiForm Signal Forms', () => {
     expect(requireSignalForm()().dirty()).toBe(false);
   });
 
+  it('can retain values for an asynchronous host and use a native POST fallback', async () => {
+    expect(fixture.nativeElement.querySelector('form').method).toBe('get');
+    ref.setInput('resetOnSubmit', false);
+    ref.setInput('nativeMethod', 'post');
+    fixture.detectChanges();
+    const values = { email: 'person@example.com', name: 'Jane', consent: true };
+    component.formModel.set(values);
+    requireFieldTree('email')().markAsTouched();
+    expect(await component.onSubmit()).toBe(true);
+    expect(component.formModel()).toEqual(values);
+    expect(requireFieldTree('email')().touched()).toBe(true);
+    expect(fixture.nativeElement.querySelector('form').method).toBe('post');
+  });
+
   it('marks invalid fields touched and does not submit invalid data', async () => {
     const emitSpy = vi.spyOn(component.submitted, 'emit');
 

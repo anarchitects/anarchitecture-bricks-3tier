@@ -147,6 +147,10 @@ export class AnarchitectsUiForm {
   readonly pageSubtitle = input<string | null>(null);
   readonly pageCaption = input<string | null>(null);
   readonly submitted = output<SubmissionRequestDTO>();
+  /** Keep values for externally acknowledged submissions; defaults preserve existing behavior. */
+  readonly resetOnSubmit = input(true);
+  /** Native fallback only; hydrated submissions still emit through the output. */
+  readonly nativeMethod = input<'get' | 'post'>('get');
 
   readonly formModel = signal<FormsFormModel>({});
   readonly signalForm = signal<FieldTree<FormsFormModel> | null>(null);
@@ -267,7 +271,8 @@ export class AnarchitectsUiForm {
         payload: { ...this.formModel() },
       };
       this.submitted.emit(submission);
-      currentForm().reset(createFormsModel(this.config()));
+      if (this.resetOnSubmit())
+        currentForm().reset(createFormsModel(this.config()));
       return undefined;
     });
   }

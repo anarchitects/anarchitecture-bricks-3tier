@@ -1,9 +1,12 @@
 # @anarchitects/newsletter-angular
 
-Unreleased Newsletter Angular client and state for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), implementing [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md).
+Unreleased Newsletter Angular signup UI, client and state for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), implementing [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md).
 
 ## Features
 
+- Reusable signup CTA built with `@anarchitects/forms-angular/ui`.
+- Host-owned copy, privacy link, consent and accessible status/error feedback.
+- SSR-safe click/Enter behavior before hydration and without JavaScript.
 - Configurable subscription endpoint and host-owned consent policy.
 - HTTP client using shared Newsletter TS request/response contracts.
 - Explicitly scoped signals for idle, submitting, success and failure states.
@@ -13,8 +16,28 @@ Unreleased Newsletter Angular client and state for [epic #428](https://github.co
 ## Installation
 
 Newsletter packages await one coordinated release after #429–#438 are merged and
-epic acceptance is complete. Angular common/core `^21.1.0 || ^22.0.0` and RxJS
-`~7.8.0` are peers; the package depends on the matching Newsletter TS contracts.
+epic acceptance is complete. Angular common/core/forms `^22.0.0` and RxJS
+`~7.8.0` are peers. The Forms renderer uses Angular 22 Signal Forms, so the
+previous unreleased Angular 21 compatibility range is narrowed to Angular 22.
+Dependencies include Newsletter TS contracts, Forms Angular and Forms TS.
+
+Before publishing Newsletter, release the Forms renderer additions in this change
+(`resetOnSubmit` and `nativeMethod`) and update the Newsletter dependency minimum
+to that published Forms version. The current workspace versions are unreleased
+integration metadata, not a claim that older Forms releases provide these inputs.
+Use the CI-owned release flow; no package publication is part of #437.
+
+Install the Forms peer dependencies described in the [Forms Angular README](../../forms/angular/README.md)
+and configure its Tailwind styling foundation in the host stylesheet:
+
+```css
+@import '@anarchitects/tailwind';
+@source './app';
+@source '../node_modules/@anarchitects/forms-angular';
+@source '../node_modules/@anarchitects/newsletter-angular';
+```
+
+Host theme tokens control colors, borders, spacing and density.
 
 ## Usage
 
@@ -148,13 +171,92 @@ It is a cold Observable: each subscription sends a POST. Those consumers own
 subscription lifetime and duplicate suppression. The store supplies that lifecycle
 for reusable features without requiring UI components to orchestrate `HttpClient`.
 
+### Signup CTA (easy mode)
+
+Import `NewsletterSignupFeature` from the root and install `provideNewsletter`
+at a component or route scope. Supply a document-unique `idPrefix` that is stable
+between server and client, plus all user-facing copy:
+
+```ts
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { NewsletterSignupFeature, provideNewsletter, type NewsletterSignupPresentation } from '@anarchitects/newsletter-angular';
+
+@Component({
+  selector: 'host-newsletter',
+  imports: [NewsletterSignupFeature],
+  providers: [
+    ...provideNewsletter({
+      apiBaseUrl: '/api',
+      consent: { version: 'host-policy/v1', text: 'I agree to receive host updates.' },
+    }),
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<anarchitects-newsletter-signup-feature idPrefix="footer-newsletter" [presentation]="copy" source="footer" />`,
+})
+export class HostNewsletter {
+  readonly copy: NewsletterSignupPresentation = {
+    heading: 'Newsletter',
+    description: 'Updates from our team.',
+    emailLabel: 'Email address',
+    submitLabel: 'Sign up',
+    submittingMessage: 'Sending request…',
+    successMessage: 'Your request has been received.',
+    invalidEmailMessage: 'Enter a valid email address.',
+    consentRequiredMessage: 'Please agree to receive the newsletter.',
+    invalidRequestMessage: 'Review your details and consent.',
+    rateLimitedMessage: 'Please try again later.',
+    unavailableMessage: 'Unable to send. Please try again.',
+    honeypotLabel: 'Leave this field empty',
+    privacy: { href: '/your-privacy-route', label: 'Privacy information', target: '_blank' },
+  };
+}
+```
+
+Example wording/routes are placeholders, never library defaults. The optional
+privacy link defaults to `_self`; `_blank` adds `noopener noreferrer`. Copy is
+rendered as plain text. Consent starts unchecked. Keep success copy generic: an
+accepted request does not prove a new subscription, confirmation, or delivery.
+The optional `source` is explicit attribution, never collected from the URL.
+
+The feature delegates through `NewsletterStore`; only data-access owns HTTP.
+Fields are disabled while submitting, retry retains values after safe failures,
+and generic acceptance removes the form and announces the host message. Form
+values remain transient component state. Separate provider scopes isolate CTAs;
+instances sharing a store scope intentionally share their submission status.
+
+### Signup UI (advanced mode)
+
+`NewsletterSignup` from `@anarchitects/newsletter-angular/ui` is a presentation
+component. Required inputs are `idPrefix`, `policy`, and `presentation`; optional
+inputs are `busy`, `accepted` and `failureMessage`. Its `signupRequested` output
+contains the Newsletter request DTO with email, affirmative consent, the displayed
+policy version, and the `website` honeypot. A policy change clears earlier consent.
+Hosts own orchestration when using this UI directly. `provideNewsletterFeature`
+from `feature` is equivalent to the root `provideNewsletter`; state also exposes
+`provideNewsletterStateWithDataAccess` for composing its default API adapter.
+
+The UI uses the Forms renderer's field/action templates and schema extensions,
+without Forms feature providers, stored form definitions, submission APIs, or
+backend services. Layout uses Forms styling hooks plus minimal Newsletter styles.
+
+The server-rendered form contains a `type="button"` action and two enabled
+text-like inputs (email and the visually hidden honeypot). These suppress implicit
+native Enter submission without relying on an Angular handler. Native method is
+also `post` as a defense against GET URLs. After hydration, click and email Enter
+run Forms validation and emit the Newsletter DTO. The trap stays out of tab order
+and the accessibility tree; do not replace it with `type="hidden"` or disable it
+in initial SSR markup. Submission requires client hydration; no-JS/pre-hydration
+interaction intentionally sends nothing. The package does not claim to provide
+a server-side HTML form endpoint.
+
 ## Entry points
 
-- Root: `provideNewsletter`, `NewsletterStore`, state and config types.
+- Root: `provideNewsletter`, `NewsletterSignupFeature`, `NewsletterStore`, state/config/presentation types.
 - `config`: typed options, resolved token, validation/resolution and provider helper.
 - `data-access`: `NewsletterApi`, safe error class/codes and provider helper.
 - `state`: explicitly scoped store, state type and provider helper.
-- `feature` and `ui`: reserved for #437.
+- `feature`: signup orchestration component and composed provider helper.
+- `ui`: Forms-backed signup presentation component.
 
 ## Development notes
 
@@ -162,16 +264,23 @@ Run from the workspace root:
 
 ```sh
 yarn nx run-many -p newsletter-angular -t lint test typecheck typecheck-tests build package-smoke
+yarn playwright install chromium
+yarn nx run newsletter-angular:test-hydration
+yarn nx run storybook-angular:build-storybook
 yarn nx run docs-hub:validate-content
 ```
 
-Unit tests exercise HTTP contracts, neutral errors, timeout/throttle metadata,
+Unit tests exercise component/feature interactions, consent, validation, retry and
+HTTP contracts, neutral errors, timeout/throttle metadata,
 state transitions, reset/destruction, duplicate suppression and injector isolation.
 The package smoke target checks built ESM exports, strict consumer declarations
 without workspace aliases and scoped state in Node without browser globals.
+The browser regression renders two real feature instances using Angular SSR and
+checks click/Enter with JavaScript disabled and before client bootstrap. Storybook
+includes idle, pending, accepted, retry and localized examples.
 
 The root carries `domain:newsletter`, `tech:angular` and `type:facade` tags. Layers
 inside this publishable project are enforced by path-aware ESLint rules. State
-depends on data-access; config is available to all layers. Newsletter depends only
-on its own domain and compatible Common platform bricks; host applications own
-composition with Blog and other business capabilities.
+depends on data-access; config is available to all layers. The only Forms imports
+allowed are the renderer and its contract types in UI. Newsletter business logic
+remains independent; hosts own composition with Blog and other capabilities.

@@ -69,6 +69,15 @@
       "options": {
         "command": "node libs/newsletter/angular/tests/package-smoke.mjs"
       }
+    },
+    "test-hydration": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "dependsOn": ["build"],
+      "inputs": ["default", "^production"],
+      "options": {
+        "command": "node libs/newsletter/angular/tests/hydration-privacy.mjs"
+      }
     }
   }
 }

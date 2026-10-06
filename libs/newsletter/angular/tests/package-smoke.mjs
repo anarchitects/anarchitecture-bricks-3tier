@@ -12,7 +12,8 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import ts from 'typescript';
 
-// Built ESM package and declarations in a consumer without workspace aliases.
+// Built ESM runtime plus strict declarations using Angular consumers' bundler
+// resolution (Forms TS declarations use extensionless imports), without aliases.
 const root = process.cwd();
 const temp = mkdtempSync(path.join(tmpdir(), 'newsletter-angular-package-'));
 try {
@@ -23,7 +24,13 @@ try {
       path.join(temp, 'node_modules/@anarchitects/newsletter-' + layer),
       { recursive: true },
     );
-  for (const name of ['@angular', '@sinclair', 'rxjs', 'tslib'])
+  for (const layer of ['angular', 'ts'])
+    cpSync(
+      path.join(root, 'dist/libs/forms', layer),
+      path.join(temp, 'node_modules/@anarchitects/forms-' + layer),
+      { recursive: true },
+    );
+  for (const name of ['@angular', '@ngrx', '@sinclair', 'rxjs', 'tslib'])
     symlinkSync(
       path.join(root, 'node_modules', name),
       path.join(temp, 'node_modules', name),
@@ -33,7 +40,9 @@ try {
   writeFileSync(
     consumer,
     `
-    import { provideNewsletter, NewsletterStore, type NewsletterConfig } from '@anarchitects/newsletter-angular';
+    import { provideNewsletter, NewsletterSignupFeature, NewsletterStore, type NewsletterConfig } from '@anarchitects/newsletter-angular';
+    import {NewsletterSignup} from '@anarchitects/newsletter-angular/ui';
+    import {provideNewsletterFeature} from '@anarchitects/newsletter-angular/feature';
     import { provideNewsletterConfig, NEWSLETTER_CONFIG } from '@anarchitects/newsletter-angular/config';
     import { NewsletterApi, NewsletterApiError, provideNewsletterDataAccess } from '@anarchitects/newsletter-angular/data-access';
     import { provideNewsletterState, type NewsletterSubmissionState } from '@anarchitects/newsletter-angular/state';
@@ -44,15 +53,15 @@ try {
     const request: NewsletterSubscriptionRequestDTO = {email:'reader@example.test',consent:true,consentVersion:store.consent.version};
     const state: NewsletterSubmissionState = store.state();
     store.submit(request);store.reset();
-    void [providers, state, NewsletterApi, NewsletterApiError, NEWSLETTER_CONFIG];
+    void [NewsletterSignup, NewsletterSignupFeature, provideNewsletterFeature, providers, state, NewsletterApi, NewsletterApiError, NEWSLETTER_CONFIG];
   `,
   );
   const program = ts.createProgram([consumer], {
     noEmit: true,
     strict: true,
     target: ts.ScriptTarget.ES2022,
-    module: ts.ModuleKind.NodeNext,
-    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
     types: [],
   });
   const diagnostics = ts.getPreEmitDiagnostics(program);
