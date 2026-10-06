@@ -1,0 +1,29 @@
+{
+  "name": "@anarchitects/newsletter-ts",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "description": "Newsletter ts package scaffold; public APIs follow in epic #428.",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/newsletter/ts"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/newsletter/ts",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./package.json": "./package.json"
+  }
+}

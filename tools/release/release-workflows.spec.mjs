@@ -64,6 +64,7 @@ test('release workflows separate versioning from OIDC trusted publishing', () =>
   }
 
   assert.match(releaseWorkflow, /--skip-publish/);
+  assert.match(releaseWorkflow, /- newsletter\b/);
   assert.match(releaseWorkflow, /--group=\$\{\{ inputs\.common_group \}\}/);
   assert.doesNotMatch(releaseWorkflow, /- common-angular\b/);
   assert.match(releaseWorkflow, /options:\s*\n\s*- init/);

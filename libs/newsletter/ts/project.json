@@ -1,0 +1,23 @@
+{
+  "name": "newsletter-ts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/newsletter/ts/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:newsletter", "tech:ts", "type:contracts"],
+  "targets": {
+    "nx-release-publish": {
+      "executor": "@nx/js:release-publish",
+      "dependsOn": ["^nx-release-publish"],
+      "options": {
+        "packageRoot": "dist/libs/newsletter/ts"
+      }
+    }
+  }
+}

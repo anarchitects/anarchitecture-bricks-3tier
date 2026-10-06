@@ -1,0 +1,42 @@
+{
+  "name": "newsletter-nest",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/newsletter/nest/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["{projectRoot}", "dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["domain:newsletter", "tech:nest", "type:facade"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/newsletter/nest",
+        "tsConfig": "libs/newsletter/nest/tsconfig.lib.json",
+        "packageJson": "libs/newsletter/nest/package.json",
+        "main": "libs/newsletter/nest/src/index.ts",
+        "assets": ["libs/newsletter/nest/*.md"],
+        "additionalEntryPoints": [
+          "libs/newsletter/nest/src/application/index.ts",
+          "libs/newsletter/nest/src/config/index.ts",
+          "libs/newsletter/nest/src/infrastructure-mailerlite/index.ts",
+          "libs/newsletter/nest/src/infrastructure-persistence/index.ts",
+          "libs/newsletter/nest/src/presentation/index.ts"
+        ],
+        "generateExportsField": true
+      }
+    },
+    "nx-release-publish": {
+      "executor": "@nx/js:release-publish",
+      "dependsOn": ["^nx-release-publish"],
+      "options": {
+        "packageRoot": "dist/libs/newsletter/nest"
+      }
+    }
+  }
+}

@@ -99,7 +99,7 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs"
       }
     }
   }

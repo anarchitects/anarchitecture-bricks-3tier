@@ -1,0 +1,23 @@
+{
+  "name": "@anarchitects/newsletter-angular",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^21.1.0 || ^22.0.0",
+    "@angular/core": "^21.1.0 || ^22.0.0"
+  },
+  "sideEffects": false,
+  "description": "Newsletter angular package scaffold; public APIs follow in epic #428.",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/newsletter/angular"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/newsletter/angular",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  }
+}

@@ -1,4 +1,103 @@
 import nx from '@nx/eslint-plugin';
+import { dirname, relative, resolve } from 'node:path';
+
+const allowedLayers = {
+  angular: {
+    ui: ['config'],
+    feature: ['ui', 'state', 'config'],
+    state: ['data-access', 'config'],
+    'data-access': ['config'],
+    config: [],
+  },
+  nest: {
+    application: ['config'],
+    presentation: ['application', 'config'],
+    'infrastructure-persistence': ['application', 'config'],
+    'infrastructure-mailerlite': ['application', 'config'],
+    config: [],
+  },
+};
+
+function surface(path) {
+  const [tech, ...parts] = path.split('/');
+  const layer = tech === 'nest' ? parts[1] : parts[0];
+  return { tech, layer: allowedLayers[tech]?.[layer] ? layer : 'facade' };
+}
+
+const newsletterLayers = {
+  meta: {
+    type: 'problem',
+    schema: [],
+    messages: {
+      boundary:
+        'Newsletter {{source}} must not depend on {{target}} (ADR-0010).',
+    },
+  },
+  create(context) {
+    const root = resolve(import.meta.dirname, 'libs/newsletter');
+    const filename = context.filename;
+    const source = surface(relative(root, filename).replaceAll('\\', '/'));
+
+    function check(node) {
+      const value = node?.value;
+      if (typeof value !== 'string') return;
+      let target;
+      const packageMatch = value.match(
+        /^@anarchitects\/newsletter-(ts|nest|angular)(?:\/(.*))?$/,
+      );
+      if (packageMatch) {
+        const [, tech, subpath = ''] = packageMatch;
+        target = surface(`${tech}/${tech === 'nest' ? 'src/' : ''}${subpath}`);
+      } else if (value.startsWith('.')) {
+        const path = relative(
+          root,
+          resolve(dirname(filename), value),
+        ).replaceAll('\\', '/');
+        if (!path.startsWith('../')) target = surface(path);
+      }
+
+      const frameworkImport =
+        (source.tech === 'ts' &&
+          /^(?:@angular\/|@nestjs\/|typeorm(?:\/|$))/.test(value)) ||
+        (source.tech === 'angular' &&
+          /^(?:@nestjs\/|typeorm(?:\/|$))/.test(value)) ||
+        (source.tech === 'nest' && value.startsWith('@angular/'));
+      const businessDomainImport =
+        /^@anarchitects\/(?:blog|auth|identity|forms)-/.test(value);
+      const wrongTech =
+        target && target.tech !== source.tech && target.tech !== 'ts';
+      const wrongLayer =
+        target &&
+        target.tech === source.tech &&
+        source.layer !== 'facade' &&
+        target.layer !== source.layer &&
+        !allowedLayers[source.tech][source.layer].includes(target.layer);
+
+      if (frameworkImport || businessDomainImport || wrongTech || wrongLayer) {
+        context.report({
+          node,
+          messageId: 'boundary',
+          data: { source: `${source.tech}/${source.layer}`, target: value },
+        });
+      }
+    }
+
+    return {
+      ImportDeclaration: (node) => check(node.source),
+      ExportNamedDeclaration: (node) => check(node.source),
+      ExportAllDeclaration: (node) => check(node.source),
+      ImportExpression: (node) => check(node.source),
+      CallExpression: (node) => {
+        if (
+          node.callee.type === 'Identifier' &&
+          node.callee.name === 'require'
+        ) {
+          check(node.arguments[0]);
+        }
+      },
+    };
+  },
+};
 
 export default [
   ...nx.configs['flat/base'],
@@ -20,6 +119,15 @@ export default [
           enforceBuildableLibDependency: true,
           allow: ['^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
           depConstraints: [
+            {
+              sourceTag: 'domain:newsletter',
+              onlyDependOnLibsWithTags: ['domain:newsletter', 'domain:shared'],
+            },
+            ...['ts', 'nest', 'angular'].map((tech) => ({
+              allSourceTags: ['domain:newsletter', `tech:${tech}`],
+              onlyDependOnLibsWithTags:
+                tech === 'ts' ? ['tech:ts'] : [`tech:${tech}`, 'tech:ts'],
+            })),
             {
               sourceTag: 'domain:shared',
               onlyDependOnLibsWithTags: ['domain:shared'],
@@ -89,6 +197,29 @@ export default [
             {
               sourceTag: 'scope:ts-frontend',
               onlyDependOnLibsWithTags: ['*'],
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['libs/newsletter/**/*.ts'],
+    plugins: { newsletter: { rules: { layers: newsletterLayers } } },
+    rules: { 'newsletter/layers': 'error' },
+  },
+  {
+    files: ['libs/blog/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@anarchitects/newsletter-*'],
+              message:
+                'Blog and Newsletter must remain independent; compose them in the host (ADR-0010).',
             },
           ],
         },

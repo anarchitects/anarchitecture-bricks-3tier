@@ -1,0 +1,46 @@
+{
+  "name": "@anarchitects/newsletter-nest",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "description": "Newsletter nest package scaffold; public APIs follow in epic #428.",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anarchitects/anarchitecture-bricks-3tier.git",
+    "directory": "libs/newsletter/nest"
+  },
+  "homepage": "https://github.com/anarchitects/anarchitecture-bricks-3tier/tree/main/libs/newsletter/nest",
+  "bugs": {
+    "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24.11.0"
+  },
+  "typesVersions": {
+    "*": {
+      "application": [
+        "src/application/index.d.ts"
+      ],
+      "config": [
+        "src/config/index.d.ts"
+      ],
+      "presentation": [
+        "src/presentation/index.d.ts"
+      ],
+      "infrastructure-persistence": [
+        "src/infrastructure-persistence/index.d.ts"
+      ],
+      "infrastructure-mailerlite": [
+        "src/infrastructure-mailerlite/index.d.ts"
+      ]
+    }
+  }
+}

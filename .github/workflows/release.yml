@@ -15,6 +15,7 @@ on:
           - forms
           - auth
           - identity
+          - newsletter
           - common
       common_group:
         description: Optional common subgroup; use all for the full common domain

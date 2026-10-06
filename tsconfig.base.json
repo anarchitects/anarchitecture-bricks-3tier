@@ -159,6 +159,41 @@
       ],
       "@anarchitects/auth-angular/ui/passkeys": [
         "./libs/auth/angular/ui/passkeys/src/index.ts"
+      ],
+      "@anarchitects/newsletter-ts": ["./libs/newsletter/ts/src/index.ts"],
+      "@anarchitects/newsletter-nest": ["./libs/newsletter/nest/src/index.ts"],
+      "@anarchitects/newsletter-angular": [
+        "./libs/newsletter/angular/src/index.ts"
+      ],
+      "@anarchitects/newsletter-angular/config": [
+        "./libs/newsletter/angular/config/src/index.ts"
+      ],
+      "@anarchitects/newsletter-angular/data-access": [
+        "./libs/newsletter/angular/data-access/src/index.ts"
+      ],
+      "@anarchitects/newsletter-angular/state": [
+        "./libs/newsletter/angular/state/src/index.ts"
+      ],
+      "@anarchitects/newsletter-angular/feature": [
+        "./libs/newsletter/angular/feature/src/index.ts"
+      ],
+      "@anarchitects/newsletter-angular/ui": [
+        "./libs/newsletter/angular/ui/src/index.ts"
+      ],
+      "@anarchitects/newsletter-nest/application": [
+        "libs/newsletter/nest/src/application/index.ts"
+      ],
+      "@anarchitects/newsletter-nest/config": [
+        "libs/newsletter/nest/src/config/index.ts"
+      ],
+      "@anarchitects/newsletter-nest/presentation": [
+        "libs/newsletter/nest/src/presentation/index.ts"
+      ],
+      "@anarchitects/newsletter-nest/infrastructure-persistence": [
+        "libs/newsletter/nest/src/infrastructure-persistence/index.ts"
+      ],
+      "@anarchitects/newsletter-nest/infrastructure-mailerlite": [
+        "libs/newsletter/nest/src/infrastructure-mailerlite/index.ts"
       ]
     },
     "strict": false,
