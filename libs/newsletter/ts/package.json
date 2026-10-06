@@ -20,20 +20,35 @@
   },
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.js",
-      "require": "./index.cjs"
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./index.cjs"
+      }
     },
     "./package.json": "./package.json",
     "./dtos": {
-      "types": "./dtos/index.d.ts",
-      "import": "./dtos/index.js",
-      "require": "./dtos/index.cjs"
+      "import": {
+        "types": "./dtos/index.d.ts",
+        "default": "./dtos/index.js"
+      },
+      "require": {
+        "types": "./dtos/index.d.cts",
+        "default": "./dtos/index.cjs"
+      }
     },
     "./models": {
-      "types": "./models/index.d.ts",
-      "import": "./models/index.js",
-      "require": "./models/index.cjs"
+      "import": {
+        "types": "./models/index.d.ts",
+        "default": "./models/index.js"
+      },
+      "require": {
+        "types": "./models/index.d.cts",
+        "default": "./models/index.cjs"
+      }
     }
   },
   "dependencies": {
