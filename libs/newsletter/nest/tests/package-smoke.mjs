@@ -26,7 +26,7 @@ try {
       { recursive: true },
     );
   }
-  for (const dependency of ['@sinclair', 'tslib']) {
+  for (const dependency of ['@sinclair', '@types', 'tslib', 'typeorm']) {
     symlinkSync(
       path.join(root, 'node_modules', dependency),
       path.join(temp, 'node_modules', dependency),
@@ -38,6 +38,11 @@ try {
     import type { NewsletterConsentPolicy } from '@anarchitects/newsletter-ts/models';
     import { NewsletterSubscriptionRequestSchema } from '@anarchitects/newsletter-ts/dtos';
     import type { NewsletterSubscriptionResponseDTO } from '@anarchitects/newsletter-ts';
+    import { NewsletterConsentEntity, TypeOrmConsentRepository, CreateNewsletterConsentEvents1791244800000 } from '@anarchitects/newsletter-nest/infrastructure-persistence';
+    import type { DataSource } from 'typeorm';
+    declare const dataSource: DataSource;
+    const adapter: ConsentRepositoryPort = new TypeOrmConsentRepository(dataSource);
+    void [adapter, NewsletterConsentEntity, CreateNewsletterConsentEvents1791244800000];
     const policy: NewsletterConsentPolicy = {version:'v1',text:'Wording'};
     const repository: ConsentRepositoryPort = { appendGrant: async () => {}, appendWithdrawalOnce: async () => 'recorded' };
     const subscriber: SubscriberPort = { subscribe: async () => {} };
@@ -57,7 +62,8 @@ try {
     target: ts.ScriptTarget.ES2022,
     module: ts.ModuleKind.Node16,
     moduleResolution: ts.ModuleResolutionKind.Node16,
-    types: [],
+    types: ['node'],
+    typeRoots: [path.join(temp, 'node_modules/@types')],
   });
   const diagnostics = ts.getPreEmitDiagnostics(program);
   assert.equal(
@@ -71,6 +77,15 @@ try {
   );
   const requireConsumer = createRequire(consumers[0]);
   const api = requireConsumer('@anarchitects/newsletter-nest/application');
+  const persistence = requireConsumer(
+    '@anarchitects/newsletter-nest/infrastructure-persistence',
+  );
+  assert.equal(typeof persistence.NewsletterConsentEntity, 'function');
+  assert.equal(typeof persistence.TypeOrmConsentRepository, 'function');
+  assert.equal(
+    typeof persistence.CreateNewsletterConsentEvents1791244800000,
+    'function',
+  );
   const order = [];
   const repository = {
     appendGrant: async () => {

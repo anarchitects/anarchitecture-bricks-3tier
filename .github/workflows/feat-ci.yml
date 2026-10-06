@@ -77,6 +77,7 @@ jobs:
         run: |
           yarn nx run-many -p release-tools -t validate-typeorm-package-compatibility,test-typeorm-persistence --parallel=1
           yarn nx affected -t test-published-adapter --parallel=1
+          yarn nx affected -t test-persistence --parallel=1
 
       - uses: actions/upload-artifact@v6
         if: always()
