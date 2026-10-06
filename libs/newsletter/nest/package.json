@@ -55,6 +55,9 @@
       ],
       "infrastructure-mailerlite": [
         "src/infrastructure-mailerlite/index.d.ts"
+      ],
+      "infrastructure-native": [
+        "src/infrastructure-native/index.d.ts"
       ]
     }
   }

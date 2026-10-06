@@ -5,3 +5,8 @@ export type {
   NewsletterConsentWithdrawnEvent,
   NewsletterWithdrawalEvent,
 } from './consent-event.model';
+
+export type {
+  NewsletterNativeSubscriber,
+  NewsletterNativeSubscriberStatus,
+} from './native-subscriber.model';

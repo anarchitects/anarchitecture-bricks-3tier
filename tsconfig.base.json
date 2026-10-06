@@ -200,6 +200,9 @@
       ],
       "@anarchitects/newsletter-ts/models": [
         "libs/newsletter/ts/src/models/index.ts"
+      ],
+      "@anarchitects/newsletter-nest/infrastructure-native": [
+        "./libs/newsletter/nest/src/infrastructure-native/index.ts"
       ]
     },
     "strict": false,

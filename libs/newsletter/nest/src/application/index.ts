@@ -1,4 +1,3 @@
-// Reserved entry point. Business APIs are implemented in later epic #428 issues.
 export {
   SUBSCRIBER_PORT,
   type SubscriberPort,
@@ -24,3 +23,19 @@ export {
   type NewsletterValidationCode,
 } from './newsletter.errors';
 export type { NewsletterClock } from './newsletter-clock';
+
+export {
+  NewsletterNativeLifecycleService,
+  type NewsletterNativePreparation,
+} from './native-lifecycle.service';
+export {
+  NATIVE_SUBSCRIBER_REPOSITORY_PORT,
+  type NativeSubscriberRepositoryPort,
+  type NewsletterNativeTransaction,
+  type NewsletterNativeTokenPurpose,
+  type NewsletterNativeTokenRecord,
+} from './ports/native-subscriber-repository.port';
+export {
+  NATIVE_TOKEN_PORT,
+  type NativeTokenPort,
+} from './ports/native-token.port';

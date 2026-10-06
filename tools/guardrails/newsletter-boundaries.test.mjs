@@ -25,6 +25,22 @@ test('Newsletter rejects reversed layers, facade escapes and technology leaks', 
   for (const [file, code] of [
     [
       'nest/src/application/use-case.ts',
+      "import '../infrastructure-native/index';",
+    ],
+    [
+      'nest/src/infrastructure-native/adapter.ts',
+      "import '../infrastructure-mailerlite/index';",
+    ],
+    [
+      'nest/src/infrastructure-native/adapter.ts',
+      "import '../infrastructure-persistence/index';",
+    ],
+    [
+      'nest/src/infrastructure-native/adapter.ts',
+      "import '../presentation/index';",
+    ],
+    [
+      'nest/src/application/use-case.ts',
       "import '@anarchitects/newsletter-nest/infrastructure-persistence';",
     ],
     [
@@ -70,6 +86,11 @@ test('Newsletter rejects reversed layers, facade escapes and technology leaks', 
 
 test('Newsletter permits intended layer direction and root composition', async () => {
   for (const [file, code] of [
+    [
+      'nest/src/infrastructure-native/adapter.ts',
+      "import '../application/index';",
+    ],
+    ['nest/src/infrastructure-native/adapter.ts', "import '../config/index';"],
     [
       'nest/src/application/use-case.ts',
       "import '@anarchitects/newsletter-ts';",

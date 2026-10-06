@@ -17,7 +17,7 @@
       "dependsOn": ["build"],
       "cache": false,
       "options": {
-        "command": "node --test libs/newsletter/nest/tests/persistence.integration.mjs"
+        "command": "node --test libs/newsletter/nest/tests/*.integration.mjs"
       }
     },
     "package-smoke": {
@@ -59,7 +59,8 @@
           "libs/newsletter/nest/src/config/index.ts",
           "libs/newsletter/nest/src/infrastructure-mailerlite/index.ts",
           "libs/newsletter/nest/src/infrastructure-persistence/index.ts",
-          "libs/newsletter/nest/src/presentation/index.ts"
+          "libs/newsletter/nest/src/presentation/index.ts",
+          "libs/newsletter/nest/src/infrastructure-native/index.ts"
         ],
         "generateExportsField": true
       }

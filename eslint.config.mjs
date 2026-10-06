@@ -13,6 +13,7 @@ const allowedLayers = {
     application: ['config'],
     presentation: ['application', 'config'],
     'infrastructure-persistence': ['application', 'config'],
+    'infrastructure-native': ['application', 'config'],
     'infrastructure-mailerlite': ['application', 'config'],
     config: [],
   },

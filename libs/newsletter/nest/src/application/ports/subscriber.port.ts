@@ -8,7 +8,7 @@ export interface NewsletterSubscriberRequest {
 
 export interface SubscriberPort {
   /**
-   * Request provider-managed double opt-in. Never force confirmation or bypass
+   * Request double opt-in through the selected implementation. Never force confirmation or bypass
    * an existing opt-out. New, existing and opted-out addresses must not produce
    * distinguishable success results or existence-related errors.
    *
