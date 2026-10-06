@@ -1,2 +1,3 @@
-// Reserved entry point. Business APIs are implemented in later epic #428 issues.
-export {};
+export * from './module-options';
+export * from './newsletter.config';
+export type * from './mailerlite-options';

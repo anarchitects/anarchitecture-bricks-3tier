@@ -5,25 +5,14 @@ import type {
 import { NewsletterUnavailableError } from '../application/newsletter.errors';
 import { MailerLiteConfigurationError } from './mailerlite.errors';
 
-export interface MailerLiteSubscriberOptions {
-  readonly apiKey: string;
-  readonly groupId: string;
-  /** Optional existing MailerLite custom field receiving request.source. */
-  readonly sourceField?: string;
-  /** Per-attempt timeout; default 5000ms, maximum 30000ms. */
-  readonly timeoutMs?: number;
-  /** Includes the initial request; default 2, maximum 3. */
-  readonly maxAttempts?: number;
-  /** Exponential retry base; default 250ms, maximum 1000ms. */
-  readonly retryDelayMs?: number;
-  /** Maximum acceptable Retry-After/backoff; default 2000ms, maximum 30000ms. */
-  readonly maxRetryDelayMs?: number;
-}
-
-export interface MailerLiteSubscriberDependencies {
-  readonly fetch?: typeof fetch;
-  readonly sleep?: (milliseconds: number) => Promise<void>;
-}
+import type {
+  MailerLiteSubscriberOptions,
+  MailerLiteSubscriberDependencies,
+} from '../config/mailerlite-options';
+export type {
+  MailerLiteSubscriberOptions,
+  MailerLiteSubscriberDependencies,
+} from '../config/mailerlite-options';
 
 const API_URL = 'https://connect.mailerlite.com/api/subscribers';
 const unavailable = () =>

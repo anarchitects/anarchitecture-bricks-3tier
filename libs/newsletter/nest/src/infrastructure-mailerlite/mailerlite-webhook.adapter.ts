@@ -14,15 +14,8 @@ import {
 
 export const MAILERLITE_SIGNATURE_HEADER = 'signature';
 
-export interface MailerLiteWebhookOptions {
-  readonly webhookSecret: string;
-  /** Stable MailerLite account ID; never use a webhook ID or secret as the namespace. */
-  readonly accountId: string;
-  /** Default 1 MiB; must be between 1 byte and 10 MiB. Ingress should also limit body size. */
-  readonly maxBodyBytes?: number;
-  /** Default 1000, maximum 10000. */
-  readonly maxEvents?: number;
-}
+import type { MailerLiteWebhookOptions } from '../config/mailerlite-options';
+export type { MailerLiteWebhookOptions } from '../config/mailerlite-options';
 
 type Payload = Record<string, unknown>;
 const invalid = () => new MailerLiteWebhookError('invalid_payload');

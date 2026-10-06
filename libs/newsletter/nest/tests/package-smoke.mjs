@@ -26,7 +26,16 @@ try {
       { recursive: true },
     );
   }
-  for (const dependency of ['@sinclair', '@types', 'tslib', 'typeorm']) {
+  for (const dependency of [
+    '@sinclair',
+    '@types',
+    '@nestjs',
+    'fastify',
+    'rxjs',
+    'reflect-metadata',
+    'tslib',
+    'typeorm',
+  ]) {
     symlinkSync(
       path.join(root, 'node_modules', dependency),
       path.join(temp, 'node_modules', dependency),
@@ -34,6 +43,12 @@ try {
     );
   }
   const source = `
+    import { NewsletterModule, type NewsletterModuleOptions } from '@anarchitects/newsletter-nest';
+    import { newsletterConfig, mapNewsletterConfigToOptions } from '@anarchitects/newsletter-nest/config';
+    import { NewsletterPresentationModule, InMemoryNewsletterRateLimiter, type NewsletterRateLimiterPort } from '@anarchitects/newsletter-nest/presentation';
+    const limiter: NewsletterRateLimiterPort = new InMemoryNewsletterRateLimiter();
+    void [newsletterConfig, mapNewsletterConfigToOptions, NewsletterPresentationModule, limiter];
+
     import { NewsletterSubscriptionService, NewsletterWithdrawalService, type ConsentRepositoryPort, type SubscriberPort } from '@anarchitects/newsletter-nest/application';
     import type { NewsletterConsentPolicy } from '@anarchitects/newsletter-ts/models';
     import { NewsletterSubscriptionRequestSchema } from '@anarchitects/newsletter-ts/dtos';
@@ -54,6 +69,10 @@ try {
     new NewsletterWithdrawalService(repository).process([]);
     void NewsletterSubscriptionRequestSchema;
     void response;
+    const options: NewsletterModuleOptions = {consent:policy,persistence:{mode:'custom',provider:{useValue:repository}},subscriber:{mode:'custom',provider:{useValue:subscriber}},rateLimit:{mode:'disabled'}};
+    NewsletterModule.forRoot(options);
+    NewsletterModule.forRootFromConfig(options);
+
   `;
   const consumers = ['cts', 'mts'].map((extension) => {
     const filename = path.join(temp, `consumer.${extension}`);
@@ -80,6 +99,18 @@ try {
     }),
   );
   const requireConsumer = createRequire(consumers[0]);
+  const facade = requireConsumer('@anarchitects/newsletter-nest');
+  assert.equal(typeof facade.NewsletterModule.forRoot, 'function');
+  assert.equal(
+    typeof requireConsumer('@anarchitects/newsletter-nest/config')
+      .newsletterConfig,
+    'function',
+  );
+  assert.equal(
+    typeof requireConsumer('@anarchitects/newsletter-nest/presentation')
+      .NewsletterPresentationModule,
+    'function',
+  );
   const api = requireConsumer('@anarchitects/newsletter-nest/application');
   const mailerLite = requireConsumer(
     '@anarchitects/newsletter-nest/infrastructure-mailerlite',
@@ -126,6 +157,21 @@ try {
     ]),
     { recorded: 1, duplicates: 0 },
   );
+  // Optional TypeORM must not be needed just to load/use the facade with custom ports.
+  rmSync(path.join(temp, 'node_modules/typeorm'));
+  const { spawnSync } = await import('node:child_process');
+  const optional = spawnSync(
+    process.execPath,
+    [
+      '-e',
+      `
+    const { NewsletterModule } = require('@anarchitects/newsletter-nest');
+    NewsletterModule.forRoot({consent:{version:'v1',text:'wording'},persistence:{mode:'custom',provider:{useValue:{appendGrant:async()=>{},appendWithdrawalOnce:async()=> 'recorded'}}},subscriber:{mode:'noop'},rateLimit:{mode:'disabled'}});
+  `,
+    ],
+    { cwd: temp, encoding: 'utf8' },
+  );
+  assert.equal(optional.status, 0, optional.stderr);
   const esm = await import(
     pathToFileURL(
       path.join(
