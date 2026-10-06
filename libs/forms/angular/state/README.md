@@ -60,7 +60,9 @@ For shared submission list/detail composition, the recommended high-level helper
 `provideFormsSubmissionsFeature()` from `@anarchitects/forms-angular/feature`. It delegates
 to `provideFormsState()` and returns the same provider-array contract. Direct registration
 here remains supported for custom composition; choose one helper per intended scope.
-See the [feature guide](../feature/README.md) for shared master/detail examples.
+Use `AnarchitectsFeatureSubmissionsAdmin` from the feature entry point for a ready-made
+master/detail flow that calls these read methods and displays `loadedSubmissions()` and
+`selectedSubmission()`. See the [feature guide](../feature/README.md) for shared scope examples.
 
 ### App-wide state
 

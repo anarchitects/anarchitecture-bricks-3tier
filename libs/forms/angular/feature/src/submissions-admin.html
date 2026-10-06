@@ -1,0 +1,51 @@
+<div class="anx-forms-feature-submissions-admin__panes">
+  <section
+    class="anx-stack"
+    aria-label="Submission list"
+    [attr.aria-busy]="store.submissionsLoading()"
+  >
+    <button
+      type="button"
+      class="anx-control"
+      (click)="reload()"
+      [disabled]="store.submissionsLoading()"
+    >
+      Refresh submissions
+    </button>
+    @if (store.submissionsLoading()) {
+    <p role="status">Loading submissions…</p>
+    } @if (store.submissionsError(); as error) {
+    <p role="alert">{{ error }}</p>
+    <button type="button" class="anx-control" (click)="reload()">
+      Retry submissions
+    </button>
+    }
+    <anarchitects-forms-ui-submission-list
+      [submissions]="store.loadedSubmissions()"
+      [title]="listTitle()"
+      [layout]="listLayout()"
+      [layoutOptions]="listLayoutOptions()"
+      (selected)="onSelected($event)"
+    />
+  </section>
+  <section
+    class="anx-stack"
+    aria-label="Submission detail"
+    [attr.aria-busy]="store.submissionLoading()"
+  >
+    @if (store.submissionLoading()) {
+    <p role="status">Loading submission details…</p>
+    } @if (store.submissionError(); as error) {
+    <p role="alert">{{ error }}</p>
+    <button type="button" class="anx-control" (click)="retryDetail()">
+      Retry details
+    </button>
+    }
+    <anarchitects-forms-ui-submission-detail
+      [submission]="store.selectedSubmission()"
+      [title]="detailTitle()"
+      [layout]="detailLayout()"
+      [layoutOptions]="detailLayoutOptions()"
+    />
+  </section>
+</div>

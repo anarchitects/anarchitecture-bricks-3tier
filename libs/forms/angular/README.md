@@ -2,7 +2,7 @@
 
 Angular domain UI components for consuming the Anarchitecture Forms platform. This package wires together
 configuration, data-access, state, feature, and UI layers so Angular applications can request
-contract-driven form definitions, render them dynamically, and submit responses.
+contract-driven form definitions, render them dynamically, submit responses, and inspect saved submissions.
 
 Applications moving from the Reactive Forms and Common Angular UI line should follow the
 [Angular 22, Signal Forms, and Tailwind v4 migration guide](../../../docs/guides/angular-22-signal-forms-tailwind-migration.md).
@@ -18,6 +18,7 @@ Applications moving from the Reactive Forms and Common Angular UI line should fo
 ## Features
 
 - Layered Angular integration for dynamic form retrieval, rendering, and submission
+- Submission list/detail reads with filters, shared selection, and a ready-made admin composition
 - Shared DTO/model contracts aligned with generated OpenAPI clients
 - Composable secondary entry points for app-specific architecture choices
 - Angular 22 Signal Forms with contract-driven validation and host schema extensions
@@ -100,9 +101,42 @@ it with the UI layer, and posts submissions via the data-access service.
 This quick start uses `AnarchitectsFeatureForm`, which retains its component-local store.
 Submission list/detail components require the explicit enclosing scope described below.
 
+### Submissions admin/master-detail
+
+With HTTP and API configuration from the quick start, register a shared store on a host:
+
+```ts
+import { Component } from '@angular/core';
+import { AnarchitectsFeatureSubmissionsAdmin, provideFormsSubmissionsFeature } from '@anarchitects/forms-angular/feature';
+
+@Component({
+  selector: 'app-submissions-page',
+  imports: [AnarchitectsFeatureSubmissionsAdmin],
+  providers: [...provideFormsSubmissionsFeature()],
+  template: `<anarchitects-forms-feature-submissions-admin formId="contact" [formVersion]="2" />`,
+})
+export class SubmissionsPage {}
+```
+
+Omit both filters to list all submissions. The component loads on initialization and filter
+changes, fetches detail when a row is selected, and provides loading/error/retry states. It reuses
+the existing UI list/detail components. Supply `submissionId` for a host-controlled detail ID.
+A route provider may own the store instead; choose one shared scope, following #275.
+
+The public read path is `feature → state → data-access → backend`, with `feature → ui` for
+rendering. `FormsApi.getSubmissions()` / `getSubmission()` return shared DTOs; `FormsStore`
+handles loading, date conversion, caching, and selection. The backend must support the #278
+submission read endpoints. Authorization remains the host's responsibility.
+
+See the [feature consumer guide](feature/README.md#shared-masterdetail-page) for all inputs,
+selection behavior, route-level setup, and custom composition. See the
+[data-access guide](data-access/README.md#submission-reads) and
+[state guide](state/README.md#submission-reads-and-selection) to consume the lower layers directly.
+
 ### Shared submission list/detail state
 
-`AnarchitectsFeatureSubmissionList` and `AnarchitectsFeatureSubmissionDetail` consume an
+`AnarchitectsFeatureSubmissionsAdmin`, `AnarchitectsFeatureSubmissionList`, and
+`AnarchitectsFeatureSubmissionDetail` consume an
 enclosing `FormsStore`; importing these components does not register state. Choose one of
 these supported provider helpers and spread it into app, route, or feature-host providers:
 
