@@ -3,13 +3,32 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { FormsApi } from './forms-api';
+import { FormsApi } from './index';
+import {
+  API_BASE_URL,
+  API_RESOURCE_PATH,
+} from '@anarchitects/forms-angular/config';
 import { provideHttpClient, withXhr } from '@angular/common/http';
-import { SubmissionRequestDTO } from '@anarchitects/forms-ts/dtos';
+import {
+  SubmissionRequestDTO,
+  SubmissionResponseDTO,
+  SubmissionsQueryDTO,
+  SubmissionsResponseDTO,
+} from '@anarchitects/forms-ts/dtos';
+import { Observable } from 'rxjs';
+import { expectTypeOf } from 'vitest';
 
 describe('FormsApi', () => {
   let service: FormsApi;
   let controller: HttpTestingController;
+  const submission: SubmissionResponseDTO = {
+    id: '01900000-0000-7000-8000-000000000001',
+    formId: 'contact',
+    formVersion: 2,
+    payload: { message: 'Hello' },
+    createdAt: '2026-10-05T10:00:00.000Z',
+    updatedAt: '2026-10-05T10:00:00.000Z',
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -68,6 +87,127 @@ describe('FormsApi', () => {
       req.flush(mockResponse);
     });
   });
+  describe('getSubmissions', () => {
+    it.each<{ filters?: SubmissionsQueryDTO; params: Record<string, string> }>([
+      { params: {} },
+      { filters: {}, params: {} },
+      { filters: { formId: undefined, formVersion: undefined }, params: {} },
+      { filters: { formId: 'contact' }, params: { formId: 'contact' } },
+      { filters: { formVersion: 2 }, params: { formVersion: '2' } },
+      {
+        filters: { formId: 'contact', formVersion: 2 },
+        params: { formId: 'contact', formVersion: '2' },
+      },
+    ])(
+      'fetches submissions with only the supplied filters: %j',
+      ({ filters, params }) => {
+        const response$ = service.getSubmissions(filters);
+        expectTypeOf(response$).toEqualTypeOf<
+          Observable<SubmissionsResponseDTO>
+        >();
+        response$.subscribe((response) => {
+          expect(response).toEqual([submission]);
+          expect(typeof response[0].createdAt).toBe('string');
+          expect(typeof response[0].updatedAt).toBe('string');
+        });
+
+        const req = controller.expectOne(
+          (request) => request.url === '/api/forms/submissions',
+        );
+        expect(req.request.method).toBe('GET');
+        expect(
+          Object.fromEntries(
+            req.request.params
+              .keys()
+              .map((key) => [key, req.request.params.get(key)]),
+          ),
+        ).toEqual(params);
+        req.flush([submission]);
+      },
+    );
+
+    it('preserves an empty list response', () => {
+      service
+        .getSubmissions()
+        .subscribe((response) => expect(response).toEqual([]));
+      controller.expectOne('/api/forms/submissions').flush([]);
+    });
+
+    it('encodes form IDs as query values', () => {
+      service.getSubmissions({ formId: 'contact & feedback' }).subscribe();
+      controller
+        .expectOne('/api/forms/submissions?formId=contact%20%26%20feedback')
+        .flush([]);
+    });
+  });
+
+  describe('getSubmission', () => {
+    it('fetches a submission by ID with DTO date strings', () => {
+      const response$ = service.getSubmission(submission.id);
+      expectTypeOf(response$).toEqualTypeOf<
+        Observable<SubmissionResponseDTO>
+      >();
+      response$.subscribe((response) => {
+        expect(response).toEqual(submission);
+        expect(typeof response.createdAt).toBe('string');
+        expect(typeof response.updatedAt).toBe('string');
+      });
+      const req = controller.expectOne(
+        `/api/forms/submissions/${submission.id}`,
+      );
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.keys()).toEqual([]);
+      req.flush(submission);
+    });
+
+    it('passes a missing submission error to the consumer', () => {
+      const onError = vi.fn();
+      service.getSubmission(submission.id).subscribe({
+        next: () => {
+          throw new Error('Expected a 404');
+        },
+        error: onError,
+      });
+      controller
+        .expectOne(`/api/forms/submissions/${submission.id}`)
+        .flush(
+          { message: 'Not found' },
+          { status: 404, statusText: 'Not Found' },
+        );
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 404 }),
+      );
+    });
+
+    it('encodes the ID as a single path segment', () => {
+      service.getSubmission('invalid/id?query').subscribe();
+      controller
+        .expectOne('/api/forms/submissions/invalid%2Fid%3Fquery')
+        .flush(submission);
+    });
+  });
+
+  it('uses the configured base URL and resource path for reads', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        FormsApi,
+        provideHttpClient(withXhr()),
+        provideHttpClientTesting(),
+        { provide: API_BASE_URL, useValue: '/custom-api/' },
+        { provide: API_RESOURCE_PATH, useValue: 'custom-forms' },
+      ],
+    });
+    service = TestBed.inject(FormsApi);
+    controller = TestBed.inject(HttpTestingController);
+    service.getSubmissions().subscribe();
+    service.getSubmission(submission.id).subscribe();
+    controller.expectOne('/custom-api/custom-forms/submissions').flush([]);
+    controller
+      .expectOne(`/custom-api/custom-forms/submissions/${submission.id}`)
+      .flush(submission);
+  });
+
   describe('submitForm', () => {
     it('should submit form data', () => {
       const mockRequest: SubmissionRequestDTO = {
