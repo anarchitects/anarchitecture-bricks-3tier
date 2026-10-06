@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./index.js",
   "types": "./index.d.ts",
-  "description": "Newsletter ts package scaffold; public APIs follow in epic #428.",
+  "description": "Framework-neutral Newsletter subscription schemas and consent evidence contracts.",
   "license": "Apache-2.0",
   "publishConfig": {
     "access": "public"
@@ -24,6 +24,19 @@
       "import": "./index.js",
       "require": "./index.cjs"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./dtos": {
+      "types": "./dtos/index.d.ts",
+      "import": "./dtos/index.js",
+      "require": "./dtos/index.cjs"
+    },
+    "./models": {
+      "types": "./models/index.d.ts",
+      "import": "./models/index.js",
+      "require": "./models/index.cjs"
+    }
+  },
+  "dependencies": {
+    "@sinclair/typebox": "0.34.41"
   }
 }
