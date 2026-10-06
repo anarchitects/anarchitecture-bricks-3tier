@@ -26,7 +26,13 @@ try {
       { recursive: true },
     );
   }
+  cpSync(
+    path.join(root, 'dist/libs/common/nest/mailer'),
+    path.join(temp, 'node_modules/@anarchitects/common-nest-mailer'),
+    { recursive: true },
+  );
   for (const dependency of [
+    '@nestjs-modules',
     '@sinclair',
     '@types',
     '@nestjs',
@@ -59,12 +65,15 @@ try {
     const mailerLite: SubscriberPort = new MailerLiteSubscriberAdapter({apiKey:'test-key',groupId:'123'});
     const webhook = new MailerLiteWebhookAdapter({webhookSecret:'test-secret',accountId:'123'}, {process:async()=>({recorded:0,duplicates:0})});
     void [mailerLite, webhook];
-    import {NativeSubscriberAdapter, CryptoNativeToken} from '@anarchitects/newsletter-nest/infrastructure-native';
+    import {NativeSubscriberAdapter, CryptoNativeToken, NewsletterNativeMailService, NativeUnsubscribeService} from '@anarchitects/newsletter-nest/infrastructure-native';
     import {NewsletterNativeLifecycleService} from '@anarchitects/newsletter-nest/application';
     import {TypeOrmNativeSubscriberRepository, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity, CreateNewsletterNativeSubscribers1791288000000} from '@anarchitects/newsletter-nest/infrastructure-persistence';
     declare const dataSource: DataSource;
     const native = new NewsletterNativeLifecycleService(new TypeOrmNativeSubscriberRepository(dataSource),new CryptoNativeToken(),{scope:'host'});
-    const nativeAdapter: SubscriberPort = new NativeSubscriberAdapter(native);
+    import {NoopMailerAdapter} from '@anarchitects/common-nest-mailer';
+    const mail = new NewsletterNativeMailService(new NoopMailerAdapter(), {publicationName:'Host news',confirmationUrl:'https://host.example.test/confirm',unsubscribeUrl:'https://host.example.test/unsubscribe'});
+    const nativeAdapter: SubscriberPort = new NativeSubscriberAdapter(native,mail);
+    new NativeUnsubscribeService(native,mail);
     void [nativeAdapter, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity, CreateNewsletterNativeSubscribers1791288000000];
     const adapter: ConsentRepositoryPort = new TypeOrmConsentRepository(dataSource);
     void [adapter, NewsletterConsentEntity, CreateNewsletterConsentEvents1791244800000];
@@ -163,8 +172,31 @@ try {
     ]),
     { recorded: 1, duplicates: 0 },
   );
+  const { CommonMailerModule, MailerPort } = requireConsumer(
+    '@anarchitects/common-nest-mailer',
+  );
+  const { Test } = requireConsumer('@nestjs/testing');
+  const moduleRef = await Test.createTestingModule({
+    imports: [CommonMailerModule.forRoot({ provider: 'noop' })],
+  }).compile();
+  try {
+    const { NewsletterNativeMailService } = requireConsumer(
+      '@anarchitects/newsletter-nest/infrastructure-native',
+    );
+    const mail = new NewsletterNativeMailService(moduleRef.get(MailerPort), {
+      publicationName: 'Host news',
+      confirmationUrl: 'https://host.example.test/confirm',
+      unsubscribeUrl: 'https://host.example.test/unsubscribe',
+    });
+    await mail.sendUnsubscribed('reader@example.test');
+  } finally {
+    await moduleRef.close();
+  }
   // Optional TypeORM must not be needed just to load/use the facade with custom ports.
   rmSync(path.join(temp, 'node_modules/typeorm'));
+  rmSync(path.join(temp, 'node_modules/@anarchitects/common-nest-mailer'), {
+    recursive: true,
+  });
   const { spawnSync } = await import('node:child_process');
   const optional = spawnSync(
     process.execPath,
