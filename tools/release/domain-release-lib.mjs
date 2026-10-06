@@ -84,13 +84,30 @@ export function expandReleaseGroupsByDependents({
   releaseGroups,
   projectToDependents,
   projectToReleaseGroup,
+  latestMatchingGitTags,
+  firstRelease = false,
   sortedReleaseGroups = [],
 }) {
   const groupByName = new Map(
     releaseGroups.map((releaseGroup) => [releaseGroup.name, releaseGroup]),
   );
   const selectedGroups = new Set(initialGroupNames);
+  const skippedGroups = new Set();
   const queue = [...initialGroupNames];
+  const unreleasedProjects = (group) =>
+    group.projects.filter((project) => !latestMatchingGitTags.get(project));
+
+  // A first release is an explicit operator choice, never a dependency side effect.
+  for (const groupName of initialGroupNames) {
+    const group = groupByName.get(groupName);
+    if (!group) throw new Error(`Unknown release group "${groupName}".`);
+    const missing = unreleasedProjects(group);
+    if (missing.length > 0 && !firstRelease) {
+      throw new Error(
+        `Release group "${groupName}" contains projects without release tags: ${missing.join(', ')}. Fetch the repository tags, or explicitly select --first-release for an approved initial release.`,
+      );
+    }
+  }
 
   while (queue.length > 0) {
     const groupName = queue.shift();
@@ -108,19 +125,30 @@ export function expandReleaseGroupsByDependents({
           continue;
         }
 
+        // Skip the entire domain group if any package has not been released yet.
+        // This also applies when --first-release was set for a different group.
+        if (
+          unreleasedProjects(groupByName.get(dependentGroupName)).length > 0
+        ) {
+          skippedGroups.add(dependentGroupName);
+          continue;
+        }
+
         selectedGroups.add(dependentGroupName);
         queue.push(dependentGroupName);
       }
     }
   }
 
-  if (sortedReleaseGroups.length === 0) {
-    return Array.from(selectedGroups);
-  }
-
-  return sortedReleaseGroups.filter((groupName) =>
-    selectedGroups.has(groupName),
-  );
+  return {
+    groups:
+      sortedReleaseGroups.length === 0
+        ? Array.from(selectedGroups)
+        : sortedReleaseGroups.filter((groupName) =>
+            selectedGroups.has(groupName),
+          ),
+    skippedGroups: Array.from(skippedGroups),
+  };
 }
 
 export function detectBumpType(currentVersion, newVersion) {
