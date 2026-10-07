@@ -46,24 +46,26 @@ import { HostPersistenceModule, HOST_DATA_SOURCE } from './host-persistence.modu
 import { HostMailModule } from './host-mail.module';
 
 @Module({
-  imports: [NewsletterModule.forRoot({
-    imports: [HostPersistenceModule, HostMailModule],
-    consent: { version: 'host-policy/v1', text: 'Exact wording shown by your host.' },
-    persistence: { mode: 'typeorm', dataSourceToken: HOST_DATA_SOURCE },
-    subscriber: {
-      mode: 'native',
-      options: { scope: 'host-newsletter' },
-      mail: {
-        publicationName: 'Example news',
-        confirmationUrl: 'https://example.com/newsletter/confirm',
-        unsubscribeUrl: 'https://example.com/newsletter/unsubscribe',
-        message: { replyTo: 'help@example.com' },
+  imports: [
+    NewsletterModule.forRoot({
+      imports: [HostPersistenceModule, HostMailModule],
+      consent: { version: 'host-policy/v1', text: 'Exact wording shown by your host.' },
+      persistence: { mode: 'typeorm', dataSourceToken: HOST_DATA_SOURCE },
+      subscriber: {
+        mode: 'native',
+        options: { scope: 'host-newsletter' },
+        mail: {
+          publicationName: 'Example news',
+          confirmationUrl: 'https://example.com/newsletter/confirm',
+          unsubscribeUrl: 'https://example.com/newsletter/unsubscribe',
+          message: { replyTo: 'help@example.com' },
+        },
       },
-    },
-    mailer: { useExisting: MailerPort },
-    rateLimit: { mode: 'memory', limit: 5, windowMs: 60_000 },
-    presentation: { resolveClientKey: request => request.ip },
-  })],
+      mailer: { useExisting: MailerPort },
+      rateLimit: { mode: 'memory', limit: 5, windowMs: 60_000 },
+      presentation: { resolveClientKey: (request) => request.ip },
+    }),
+  ],
 })
 export class HostNewsletterModule {}
 ```
@@ -208,31 +210,31 @@ adapter and limiter selections are replaced as a whole. `forRoot(options)` never
 reads the environment. Both paths require consent, persistence, subscriber and
 rate-limiter choices. Persistence bindings and request resolvers remain host-supplied.
 
-| Environment variable                                                       | Purpose                                                |
-| -------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `NEWSLETTER_CONSENT_VERSION`, `NEWSLETTER_CONSENT_TEXT`                    | Exact host policy                                      |
+| Environment variable                                                       | Purpose                                                          |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `NEWSLETTER_CONSENT_VERSION`, `NEWSLETTER_CONSENT_TEXT`                    | Exact host policy                                                |
 | `NEWSLETTER_SUBSCRIBER`                                                    | `native`, `noop` or `mailerlite`; custom providers use overrides |
-| `NEWSLETTER_MAILERLITE_API_KEY`, `NEWSLETTER_MAILERLITE_GROUP_ID`          | MailerLite subscription configuration                  |
-| `NEWSLETTER_MAILERLITE_WEBHOOK_ENABLED`                                    | Exact `true`/`false`; absent leaves route disabled     |
-| `NEWSLETTER_MAILERLITE_WEBHOOK_SECRET`, `NEWSLETTER_MAILERLITE_ACCOUNT_ID` | Explicit webhook configuration                         |
-| `NEWSLETTER_RATE_LIMIT_MODE`                                               | `disabled` or `memory`; custom limiters use overrides  |
-| `NEWSLETTER_RATE_LIMIT_MAX`, `NEWSLETTER_RATE_LIMIT_WINDOW_MS`             | Positive integer memory quota/window                   |
-| `NEWSLETTER_PATH`                                                          | Relative HTTP prefix; defaults to `newsletter`         |
+| `NEWSLETTER_MAILERLITE_API_KEY`, `NEWSLETTER_MAILERLITE_GROUP_ID`          | MailerLite subscription configuration                            |
+| `NEWSLETTER_MAILERLITE_WEBHOOK_ENABLED`                                    | Exact `true`/`false`; absent leaves route disabled               |
+| `NEWSLETTER_MAILERLITE_WEBHOOK_SECRET`, `NEWSLETTER_MAILERLITE_ACCOUNT_ID` | Explicit webhook configuration                                   |
+| `NEWSLETTER_RATE_LIMIT_MODE`                                               | `disabled` or `memory`; custom limiters use overrides            |
+| `NEWSLETTER_RATE_LIMIT_MAX`, `NEWSLETTER_RATE_LIMIT_WINDOW_MS`             | Positive integer memory quota/window                             |
+| `NEWSLETTER_PATH`                                                          | Relative HTTP prefix; defaults to `newsletter`                   |
 
 Native config additionally reads:
 
-| Variable | Meaning |
-| --- | --- |
-| `NEWSLETTER_NATIVE_SCOPE` | Required host-owned scope |
-| `NEWSLETTER_PUBLICATION_NAME` | Required display name |
-| `NEWSLETTER_CONFIRMATION_URL`, `NEWSLETTER_UNSUBSCRIBE_URL` | Required trusted HTTPS landing pages |
-| `NEWSLETTER_NATIVE_CONFIRMATION_TTL_MS` | Positive bounded duration; default 86400000 |
-| `NEWSLETTER_NATIVE_UNSUBSCRIBE_TTL_MS` | Positive bounded duration; default 2592000000 |
-| `NEWSLETTER_NATIVE_RESEND_COOLDOWN_MS` | Positive bounded duration, no greater than either TTL; default 60000 |
-| `NEWSLETTER_CONFIRMATION_SUBJECT`, `NEWSLETTER_UNSUBSCRIBED_SUBJECT` | Optional subject overrides |
-| `NEWSLETTER_MAIL_FROM`, `NEWSLETTER_MAIL_REPLY_TO` | Optional message metadata; absent uses Common transport defaults |
-| `NEWSLETTER_NOTIFY_UNSUBSCRIBE` | Exact `true`/`false`; default true |
-| `NEWSLETTER_MAIL_MAX_ATTEMPTS`, `NEWSLETTER_MAIL_RETRY_DELAY_MS` | Bounded attempts/delay; defaults 1 and 250 |
+| Variable                                                             | Meaning                                                              |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `NEWSLETTER_NATIVE_SCOPE`                                            | Required host-owned scope                                            |
+| `NEWSLETTER_PUBLICATION_NAME`                                        | Required display name                                                |
+| `NEWSLETTER_CONFIRMATION_URL`, `NEWSLETTER_UNSUBSCRIBE_URL`          | Required trusted HTTPS landing pages                                 |
+| `NEWSLETTER_NATIVE_CONFIRMATION_TTL_MS`                              | Positive bounded duration; default 86400000                          |
+| `NEWSLETTER_NATIVE_UNSUBSCRIBE_TTL_MS`                               | Positive bounded duration; default 2592000000                        |
+| `NEWSLETTER_NATIVE_RESEND_COOLDOWN_MS`                               | Positive bounded duration, no greater than either TTL; default 60000 |
+| `NEWSLETTER_CONFIRMATION_SUBJECT`, `NEWSLETTER_UNSUBSCRIBED_SUBJECT` | Optional subject overrides                                           |
+| `NEWSLETTER_MAIL_FROM`, `NEWSLETTER_MAIL_REPLY_TO`                   | Optional message metadata; absent uses Common transport defaults     |
+| `NEWSLETTER_NOTIFY_UNSUBSCRIBE`                                      | Exact `true`/`false`; default true                                   |
+| `NEWSLETTER_MAIL_MAX_ATTEMPTS`, `NEWSLETTER_MAIL_RETRY_DELAY_MS`     | Bounded attempts/delay; defaults 1 and 250                           |
 
 With `NEWSLETTER_SUBSCRIBER=native`, pass host bindings explicitly:
 
@@ -241,7 +243,7 @@ NewsletterModule.forRootFromConfig({
   imports: [HostPersistenceModule, HostMailModule],
   persistence: { mode: 'typeorm', dataSourceToken: HOST_DATA_SOURCE },
   mailer: { useExisting: MailerPort },
-  presentation: { resolveClientKey: request => request.ip },
+  presentation: { resolveClientKey: (request) => request.ip },
 });
 ```
 

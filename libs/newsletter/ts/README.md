@@ -135,7 +135,7 @@ than overwrite it. Evidence persistence precedes provider subscription attempts.
 
 | Import                               | Public surface                                                                                                                                                                              |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/newsletter-ts`        | All models, DTO types and subscription/native-action runtime schemas                                                                                                                                         |
+| `@anarchitects/newsletter-ts`        | All models, DTO types and subscription/native-action runtime schemas                                                                                                                        |
 | `@anarchitects/newsletter-ts/dtos`   | `NewsletterSubscriptionRequestSchema`, `NewsletterSubscriptionRequestDTO`, `NewsletterSubscriptionResponseSchema`, `NewsletterSubscriptionResponseDTO`, `NewsletterSubscriptionRouteSchema` |
 | `@anarchitects/newsletter-ts/models` | `NewsletterConsentPolicy`, `NewsletterConsentEvent`, `NewsletterConsentGrantedEvent`, `NewsletterConsentWithdrawnEvent`, `NewsletterWithdrawalEvent` (types only)                           |
 
