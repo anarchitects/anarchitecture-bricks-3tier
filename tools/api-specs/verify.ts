@@ -17,6 +17,7 @@ const SNAPSHOT_PATH = join(
 const WORKSPACE_ROOT = process.cwd();
 
 const REQUIRED_PATHS: Array<{ path: string; methods: string[] }> = [
+  { path: '/newsletter/webhook', methods: ['post'] },
   { path: '/newsletter/subscribe', methods: ['post'] },
   { path: '/newsletter/confirm', methods: ['post'] },
   { path: '/newsletter/unsubscribe', methods: ['post'] },

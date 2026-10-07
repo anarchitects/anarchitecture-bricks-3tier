@@ -131,3 +131,7 @@ Malformed persisted permission payloads are treated as trust-boundary failures a
 - Defining inline route schemas instead of importing TS DTO schemas.
 - Mixing persistence internals across domain boundaries.
 - Introducing schema changes without verifying cross-stack consumer impact.
+
+## Newsletter integration
+
+See [Newsletter integration](/guides/newsletter-integration.html) for both provider examples, Forms-backed signup, OpenAPI and browser/database regression. The [migration guide](/guides/newsletter-migration.html) separates reusable capabilities from host policy and app-local data migration.

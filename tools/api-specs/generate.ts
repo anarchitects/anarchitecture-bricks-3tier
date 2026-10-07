@@ -35,11 +35,15 @@ import { GetUserProfileService } from '../../libs/identity/nest/src/application/
 import { UpdateUserProfileService } from '../../libs/identity/nest/src/application/services/update-user-profile.service';
 import { UserProfilesController } from '../../libs/identity/nest/src/presentation/controllers/user-profiles.controller';
 import {
+  NewsletterWebhookController,
   NewsletterNativeController,
   NewsletterSubscriptionController,
   NEWSLETTER_RATE_LIMITER,
 } from '../../libs/newsletter/nest/src/presentation';
-import { NEWSLETTER_PRESENTATION_OPTIONS } from '../../libs/newsletter/nest/src/presentation/presentation-options';
+import {
+  NEWSLETTER_WEBHOOK_HANDLER,
+  NEWSLETTER_PRESENTATION_OPTIONS,
+} from '../../libs/newsletter/nest/src/presentation/presentation-options';
 import {
   NATIVE_NEWSLETTER_ACTIONS,
   NewsletterSubscriptionService,
@@ -150,8 +154,13 @@ applyAuthControllerContractRouteSchemas(
     UserProfilesController,
     NewsletterSubscriptionController,
     NewsletterNativeController,
+    NewsletterWebhookController,
   ],
   providers: [
+    {
+      provide: NEWSLETTER_WEBHOOK_HANDLER,
+      useValue: { receive: async () => ({ recorded: 0, duplicates: 0 }) },
+    },
     {
       provide: NewsletterSubscriptionService,
       useValue: { subscribe: async () => ({ accepted: true }) },

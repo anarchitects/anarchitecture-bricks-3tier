@@ -1,0 +1,29 @@
+<main>
+  <h1>Newsletter example</h1>
+  @if (action) {
+  <h2>{{ action === 'confirm' ? 'Confirm your request' : 'Unsubscribe' }}</h2>
+  @if (accepted()) {
+  <p role="status">Request received.</p>
+  } @else {
+  <p>Continue to submit this request.</p>
+  <button type="button" [disabled]="pending()" (click)="submitAction()">
+    Continue
+  </button>
+  @if (failed()) {
+  <p role="alert">Unable to process the request. Please try again later.</p>
+  } } } @else {
+  <anarchitects-newsletter-signup-feature
+    idPrefix="example-newsletter"
+    source="example-signup"
+    [presentation]="presentation"
+  />
+  <section id="privacy" aria-labelledby="privacy-heading">
+    <h2 id="privacy-heading">Example privacy information</h2>
+    <p>
+      This demonstration records the email address and consent wording for your
+      request. Replace this text with your publication’s policy before
+      deploying.
+    </p>
+  </section>
+  }
+</main>

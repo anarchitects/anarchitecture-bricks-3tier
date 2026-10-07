@@ -152,6 +152,8 @@ describe('subscription response and route', () => {
       'NewsletterSubscriptionRequestSchema',
       'NewsletterSubscriptionResponseSchema',
       'NewsletterSubscriptionRouteSchema',
+      'NewsletterWebhookResponseSchema',
+      'NewsletterWebhookRouteSchema',
     ]);
   });
 });

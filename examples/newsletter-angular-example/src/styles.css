@@ -1,0 +1,4 @@
+@import '@anarchitects/tailwind';
+@source './app';
+@source '../../../libs/forms/angular';
+@source '../../../libs/newsletter/angular';

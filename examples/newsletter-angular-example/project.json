@@ -1,0 +1,89 @@
+{
+  "name": "newsletter-angular-example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "examples/newsletter-angular-example/src",
+  "tags": ["type:app", "scope:client", "domain:newsletter"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/examples/newsletter-angular-example",
+        "browser": "examples/newsletter-angular-example/src/main.ts",
+        "tsConfig": "examples/newsletter-angular-example/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "examples/newsletter-angular-example/public"
+          }
+        ],
+        "styles": ["examples/newsletter-angular-example/src/styles.css"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "configurations": {
+        "production": {
+          "buildTarget": "newsletter-angular-example:build:production"
+        },
+        "development": {
+          "buildTarget": "newsletter-angular-example:build:development"
+        }
+      },
+      "options": {
+        "proxyConfig": "examples/newsletter-angular-example/proxy.conf.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false
+      }
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "newsletter-angular-example:build",
+        "staticFilePath": "dist/examples/newsletter-angular-example/browser",
+        "spa": true
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p examples/newsletter-angular-example/tsconfig.app.json"
+      }
+    }
+  }
+}

@@ -4,6 +4,11 @@ import { join, relative } from 'node:path';
 const workspaceRoot = process.cwd();
 const libsRoot = join(workspaceRoot, 'libs');
 const guideFiles = [
+  {
+    path: 'docs/guides/newsletter-integration.md',
+    key: 'newsletterIntegration',
+  },
+  { path: 'docs/guides/newsletter-migration.md', key: 'newsletterMigration' },
   { path: 'docs/guides/angular.md', key: 'angular' },
   {
     path: 'docs/guides/angular-22-signal-forms-tailwind-migration.md',
@@ -16,6 +21,24 @@ const guideFiles = [
 ];
 
 const guideRequirements = {
+  newsletterIntegration: [
+    'architecture and ownership',
+    'runnable examples',
+    'nest facade and configuration',
+    'persistence and consent evidence',
+    'native lifecycle and mail',
+    'mailerlite and webhook raw body',
+    'public api and rate limiting',
+    'angular and forms composition',
+    'verification and release gate',
+  ],
+  newsletterMigration: [
+    'scope and compatibility',
+    'inventory and ownership',
+    'migration sequence',
+    'validation and rollback',
+    'fitoverforty handoff',
+  ],
   angularFrontendMigration: [
     'scope and breaking boundary',
     'compatibility and prerequisites',

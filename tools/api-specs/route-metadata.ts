@@ -6,6 +6,7 @@ export const TAG_PREFIX_MAP: Array<{ prefix: string; tag: string }> = [
 ];
 
 export const OPERATION_ID_MAP: Record<string, string> = {
+  'POST /newsletter/webhook': 'receiveNewsletterWebhook',
   'POST /newsletter/subscribe': 'subscribeToNewsletter',
   'POST /newsletter/confirm': 'confirmNewsletterSubscription',
   'POST /newsletter/unsubscribe': 'unsubscribeFromNewsletter',

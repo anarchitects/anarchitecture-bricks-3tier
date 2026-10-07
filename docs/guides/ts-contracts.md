@@ -15,10 +15,11 @@ For shared design/runtime UI contracts, see [Design/UI Systems Guide](/guides/de
 
 ## Domain Contract Matrix
 
-| Domain | Canonical TS Contract Package | Angular Consumer | Nest Consumer |
-| --- | --- | --- | --- |
-| Forms | `@anarchitects/forms-ts` | `@anarchitects/forms-angular` | `@anarchitects/forms-nest` |
-| Auth | `@anarchitects/auth-ts` | `@anarchitects/auth-angular` | `@anarchitects/auth-nest` |
+| Domain     | Canonical TS Contract Package | Angular Consumer                   | Nest Consumer                   |
+| ---------- | ----------------------------- | ---------------------------------- | ------------------------------- |
+| Forms      | `@anarchitects/forms-ts`      | `@anarchitects/forms-angular`      | `@anarchitects/forms-nest`      |
+| Auth       | `@anarchitects/auth-ts`       | `@anarchitects/auth-angular`       | `@anarchitects/auth-nest`       |
+| Newsletter | `@anarchitects/newsletter-ts` | `@anarchitects/newsletter-angular` | `@anarchitects/newsletter-nest` |
 
 ## Forms TS Contracts
 
@@ -75,3 +76,7 @@ Do not redefine Auth contracts inside `@anarchitects/auth-angular` or `@anarchit
   `yarn nx run docs-hub:validate-content`,
   `yarn nx run docs-hub:build`,
   `yarn nx run docs-hub:verify`.
+
+## Newsletter integration
+
+See [Newsletter integration](/guides/newsletter-integration.html) for both provider examples, Forms-backed signup, OpenAPI and browser/database regression. The [migration guide](/guides/newsletter-migration.html) separates reusable capabilities from host policy and app-local data migration.

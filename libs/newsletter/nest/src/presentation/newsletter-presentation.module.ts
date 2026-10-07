@@ -1,4 +1,5 @@
 import {
+  Inject,
   Module,
   type DynamicModule,
   type NestModule,
@@ -30,7 +31,9 @@ const configured = new WeakSet<FastifyInstance>();
 
 @Module({})
 export class NewsletterPresentationModule implements NestModule {
-  constructor(private readonly adapterHost: HttpAdapterHost) {}
+  constructor(
+    @Inject(HttpAdapterHost) private readonly adapterHost: HttpAdapterHost,
+  ) {}
 
   configure(): void {
     const adapter = this.adapterHost.httpAdapter;

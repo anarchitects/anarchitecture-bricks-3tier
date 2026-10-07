@@ -1,0 +1,26 @@
+main {
+  max-width: 40rem;
+  margin: 3rem auto;
+  padding: 1.5rem;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+section {
+  margin-top: 3rem;
+}
+button {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid currentColor;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}

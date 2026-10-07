@@ -283,3 +283,7 @@ inside this publishable project are enforced by path-aware ESLint rules. State
 depends on data-access; config is available to all layers. The only Forms imports
 allowed are the renderer and its contract types in UI. Newsletter business logic
 remains independent; hosts own composition with Blog and other capabilities.
+
+## Integration examples and migration
+
+See the [Newsletter integration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-integration.html) for native/MailerLite host setup, the Forms-backed Angular example, contracts, and the coordinated release gate. Use the [app-local migration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-migration.html) to plan adoption while retaining host policy and historical evidence.
