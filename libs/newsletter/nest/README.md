@@ -18,7 +18,7 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 defines a production-usable native subscriber implementation, with mutable
 pending/active/unsubscribed state distinct from append-only consent evidence.
 Newsletter will own native double opt-in, unsubscribe and message semantics;
-Common `MailerPort` will supply replaceable delivery. MailerLite remains optional.
+Common `MailerPort` supplies replaceable delivery. MailerLite remains optional.
 
 #446 supplies the operational core, secure tokens and PostgreSQL persistence described
 below. Native mail orchestration is available through the advanced entry points.
@@ -415,12 +415,14 @@ persisted for background retries. Host renderers/transports must not log them. H
 pages should redact token query strings from access logs, avoid third-party resources,
 and apply a no-referrer policy; endpoint behavior remains #448's scope.
 
-**Compatibility and merge order:** this flow requires the structured message contract
-from the separate Common Mailer prerequisite [#454](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/454).
-Merge that PR before #447. The optional Common peer currently follows the workspace
-version; the first Newsletter release must raise its minimum to the CI-published Common
-version that includes #454. Common 0.3.4 does not implement `sendMessage`; the constructor
-rejects incompatible providers instead of silently dropping alternatives/metadata.
+**Compatibility:** this flow requires `@anarchitects/common-nest-mailer ^0.4.0`, which
+includes the structured message contract delivered separately in
+[#454](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/454) and
+[released as 0.4.0](https://github.com/anarchitects/anarchitecture-bricks-3tier/releases/tag/common-nest-mailer%400.4.0).
+Install that optional peer when using the native Common-backed mail service. Custom
+Common mailer implementations must implement `sendMessage` in addition to `send` and
+`sendTemplate`. Common 0.3.4 does not implement `sendMessage`; the constructor rejects
+incompatible providers instead of silently dropping alternatives/metadata.
 `NativeSubscriberAdapter` now requires a `NewsletterNativeMailPort` as its second
 constructor argument (source change to the unreleased #446 advanced API). Custom and
 MailerLite modes do not load Common Mailer at runtime. No new migration is required.

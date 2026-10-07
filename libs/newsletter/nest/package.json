@@ -16,7 +16,7 @@
     "@nestjs/config": "^4.0.0",
     "@nestjs/platform-fastify": "^11.0.0",
     "fastify": "^5.0.0",
-    "@anarchitects/common-nest-mailer": "^0.3.4"
+    "@anarchitects/common-nest-mailer": "^0.4.0"
   },
   "peerDependenciesMeta": {
     "typeorm": {
