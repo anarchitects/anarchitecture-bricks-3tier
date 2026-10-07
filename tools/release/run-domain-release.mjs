@@ -81,13 +81,23 @@ async function main() {
     domainGroupNames: domainGroups,
     requestedGroup: options.group,
   });
-  const internalGroups = expandReleaseGroupsByDependents({
-    initialGroupNames: initialGroups,
-    releaseGroups: releaseContext.releaseGraph.releaseGroups,
-    projectToDependents: releaseContext.releaseGraph.projectToDependents,
-    projectToReleaseGroup: releaseContext.releaseGraph.projectToReleaseGroup,
-    sortedReleaseGroups: releaseContext.releaseGraph.sortedReleaseGroups,
-  });
+  const { groups: internalGroups, skippedGroups } =
+    expandReleaseGroupsByDependents({
+      initialGroupNames: initialGroups,
+      releaseGroups: releaseContext.releaseGraph.releaseGroups,
+      projectToDependents: releaseContext.releaseGraph.projectToDependents,
+      projectToReleaseGroup: releaseContext.releaseGraph.projectToReleaseGroup,
+      sortedReleaseGroups: releaseContext.releaseGraph.sortedReleaseGroups,
+      latestMatchingGitTags:
+        releaseContext.releaseGraph.cachedLatestMatchingGitTag,
+      firstRelease: options.firstRelease,
+    });
+
+  if (skippedGroups.length > 0) {
+    console.log(
+      `Skipped automatic release of groups without complete release-tag history: ${skippedGroups.join(', ')}. Their first release must be selected explicitly after acceptance.`,
+    );
+  }
 
   console.log(
     `Running domain release for "${options.domain}" via groups: ${internalGroups.join(', ')}`,

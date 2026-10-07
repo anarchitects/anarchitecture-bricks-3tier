@@ -122,9 +122,139 @@ test('expandReleaseGroupsByDependents cascades transitively through downstream r
         ['storefront-angular', storefrontGroup],
       ]),
       sortedReleaseGroups: ['forms', 'auth', 'storefront'],
+      latestMatchingGitTags: new Map(
+        ['forms-angular', 'forms-ts', 'auth-angular', 'storefront-angular'].map(
+          (name) => [name, { tag: `${name}@0.1.0` }],
+        ),
+      ),
     }),
-    ['forms', 'auth', 'storefront'],
+    { groups: ['forms', 'auth', 'storefront'], skippedGroups: [] },
   );
+});
+
+function commonCascadeFixture() {
+  const groups = [
+    buildReleaseGroup('common-nest', ['common-nest-mailer']),
+    buildReleaseGroup('forms', ['forms-angular', 'forms-nest', 'forms-ts']),
+    buildReleaseGroup('auth', ['auth-nest']),
+    buildReleaseGroup('newsletter', [
+      'newsletter-angular',
+      'newsletter-nest',
+      'newsletter-ts',
+    ]),
+  ];
+  return {
+    initialGroupNames: ['common-nest'],
+    releaseGroups: groups,
+    projectToDependents: new Map([
+      ['common-nest-mailer', new Set(['forms-nest', 'auth-nest'])],
+      ['forms-angular', new Set(['newsletter-angular'])],
+    ]),
+    projectToReleaseGroup: new Map(
+      groups.flatMap((group) =>
+        group.projects.map((project) => [project, group]),
+      ),
+    ),
+    latestMatchingGitTags: new Map(
+      groups
+        .slice(0, 3)
+        .flatMap((group) =>
+          group.projects.map((project) => [
+            project,
+            { tag: `${project}@0.3.4` },
+          ]),
+        ),
+    ),
+    sortedReleaseGroups: groups.map((group) => group.name),
+  };
+}
+
+test('Common cascades to released Forms/Auth but never initializes Newsletter implicitly', () => {
+  const options = commonCascadeFixture();
+  const selected = expandReleaseGroupsByDependents(options);
+  assert.deepEqual(selected, {
+    groups: ['common-nest', 'forms', 'auth'],
+    skippedGroups: ['newsletter'],
+  });
+  const selectedGroups = options.releaseGroups.filter((group) =>
+    selected.groups.includes(group.name),
+  );
+  for (const bump of ['patch', 'major']) {
+    const plan = createForcedReleasePlan({
+      releaseGroups: selectedGroups,
+      releaseGroupToFilteredProjects: new Map(),
+      bump,
+    });
+    assert.equal(
+      Object.keys(plan).some((project) => project.startsWith('newsletter-')),
+      false,
+    );
+  }
+  assert.deepEqual(
+    expandReleaseGroupsByDependents({ ...options, firstRelease: true }),
+    selected,
+  );
+});
+
+test('a partially released dependent group is also excluded until explicitly selected', () => {
+  const options = commonCascadeFixture();
+  options.latestMatchingGitTags.set('newsletter-angular', {
+    tag: 'newsletter-angular@0.0.1',
+  });
+  assert.deepEqual(expandReleaseGroupsByDependents(options).skippedGroups, [
+    'newsletter',
+  ]);
+  options.initialGroupNames = ['newsletter'];
+  assert.throws(
+    () => expandReleaseGroupsByDependents(options),
+    /newsletter-nest, newsletter-ts.*--first-release/,
+  );
+  assert.deepEqual(
+    expandReleaseGroupsByDependents({ ...options, firstRelease: true }),
+    { groups: ['newsletter'], skippedGroups: [] },
+  );
+});
+
+test('an approved initial Newsletter release remains explicit and keeps its declared version', () => {
+  const options = {
+    ...commonCascadeFixture(),
+    initialGroupNames: ['newsletter'],
+  };
+  assert.throws(
+    () => expandReleaseGroupsByDependents(options),
+    /without release tags.*--first-release/,
+  );
+  const selected = expandReleaseGroupsByDependents({
+    ...options,
+    firstRelease: true,
+  });
+  assert.deepEqual(selected, { groups: ['newsletter'], skippedGroups: [] });
+  const group = options.releaseGroups.find(
+    (group) => group.name === 'newsletter',
+  );
+  const versions = Object.fromEntries(
+    group.projects.map((project) => [project, '0.0.1']),
+  );
+  assert.deepEqual(
+    createForcedReleasePlan({
+      releaseGroups: [group],
+      releaseGroupToFilteredProjects: new Map(),
+      bump: 'init',
+      firstRelease: true,
+      currentVersions: versions,
+    }),
+    versions,
+  );
+});
+
+test('after all Newsletter packages have release tags they participate in normal cascades', () => {
+  const options = commonCascadeFixture();
+  for (const project of options.releaseGroups.at(-1).projects)
+    options.latestMatchingGitTags.set(project, { tag: `${project}@0.0.1` });
+  assert.deepEqual(expandReleaseGroupsByDependents(options), {
+    groups: ['common-nest', 'forms', 'auth', 'newsletter'],
+    skippedGroups: [],
+  });
 });
 
 test('computeHybridReleasePlan promotes all peers to a shared minor bump', () => {
