@@ -87,6 +87,20 @@ try {
     const options: NewsletterModuleOptions = {consent:policy,persistence:{mode:'custom',provider:{useValue:repository}},subscriber:{mode:'custom',provider:{useValue:subscriber}},rateLimit:{mode:'disabled'}};
     NewsletterModule.forRoot(options);
     NewsletterModule.forRootFromConfig(options);
+    const nativeOptions: NewsletterModuleOptions = {
+      consent: policy,
+      persistence: {mode:'typeorm',dataSourceToken:'host-data-source'},
+      subscriber: {mode:'native',options:{scope:'host'},mail:{publicationName:'Host news',confirmationUrl:'https://host.example.test/confirm',unsubscribeUrl:'https://host.example.test/unsubscribe'}},
+      mailer: {useValue:new NoopMailerAdapter()},
+      rateLimit:{mode:'disabled'},
+    };
+    NewsletterModule.forRoot(nativeOptions);
+    import {NATIVE_NEWSLETTER_ACTIONS, type NewsletterNativeActionsPort} from '@anarchitects/newsletter-nest/application';
+    import type {NewsletterNativeActionRequestDTO,NewsletterNativeActionResponseDTO} from '@anarchitects/newsletter-ts/dtos';
+    const action:NewsletterNativeActionRequestDTO={token:'opaque'};
+    const accepted:NewsletterNativeActionResponseDTO={accepted:true};
+    declare const actions:NewsletterNativeActionsPort;
+    void [NATIVE_NEWSLETTER_ACTIONS,actions.confirm(action.token),accepted];
 
   `;
   const consumers = ['cts', 'mts'].map((extension) => {
@@ -176,10 +190,41 @@ try {
     '@anarchitects/common-nest-mailer',
   );
   const { Test } = requireConsumer('@nestjs/testing');
+  const { Module } = requireConsumer('@nestjs/common');
+  class HostDatabase {}
+  Module({
+    providers: [
+      { provide: 'host-database', useValue: { options: { type: 'postgres' } } },
+    ],
+    exports: ['host-database'],
+  })(HostDatabase);
   const moduleRef = await Test.createTestingModule({
-    imports: [CommonMailerModule.forRoot({ provider: 'noop' })],
+    imports: [
+      facade.NewsletterModule.forRoot({
+        imports: [
+          HostDatabase,
+          CommonMailerModule.forRoot({ provider: 'noop' }),
+        ],
+        consent: { version: 'v1', text: 'Host wording' },
+        persistence: { mode: 'typeorm', dataSourceToken: 'host-database' },
+        subscriber: {
+          mode: 'native',
+          options: { scope: 'host' },
+          mail: {
+            publicationName: 'Host news',
+            confirmationUrl: 'https://host.example.test/confirm',
+            unsubscribeUrl: 'https://host.example.test/unsubscribe',
+          },
+        },
+        mailer: { useExisting: MailerPort },
+        rateLimit: { mode: 'disabled' },
+      }),
+    ],
   }).compile();
   try {
+    const actions = moduleRef.get(api.NATIVE_NEWSLETTER_ACTIONS);
+    await actions.confirm('invalid');
+    await actions.unsubscribe('invalid');
     const { NewsletterNativeMailService } = requireConsumer(
       '@anarchitects/newsletter-nest/infrastructure-native',
     );

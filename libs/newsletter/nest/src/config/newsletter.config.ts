@@ -20,6 +20,20 @@ export const newsletterConfig = registerAs('newsletter', () => ({
   limit: process.env['NEWSLETTER_RATE_LIMIT_MAX'],
   windowMs: process.env['NEWSLETTER_RATE_LIMIT_WINDOW_MS'],
   path: process.env['NEWSLETTER_PATH'],
+  nativeScope: process.env['NEWSLETTER_NATIVE_SCOPE'],
+  confirmationTtlMs: process.env['NEWSLETTER_NATIVE_CONFIRMATION_TTL_MS'],
+  unsubscribeTtlMs: process.env['NEWSLETTER_NATIVE_UNSUBSCRIBE_TTL_MS'],
+  resendCooldownMs: process.env['NEWSLETTER_NATIVE_RESEND_COOLDOWN_MS'],
+  publicationName: process.env['NEWSLETTER_PUBLICATION_NAME'],
+  confirmationUrl: process.env['NEWSLETTER_CONFIRMATION_URL'],
+  unsubscribeUrl: process.env['NEWSLETTER_UNSUBSCRIBE_URL'],
+  confirmationSubject: process.env['NEWSLETTER_CONFIRMATION_SUBJECT'],
+  unsubscribedSubject: process.env['NEWSLETTER_UNSUBSCRIBED_SUBJECT'],
+  mailFrom: process.env['NEWSLETTER_MAIL_FROM'],
+  mailReplyTo: process.env['NEWSLETTER_MAIL_REPLY_TO'],
+  notifyUnsubscribe: process.env['NEWSLETTER_NOTIFY_UNSUBSCRIBE'],
+  mailMaxAttempts: process.env['NEWSLETTER_MAIL_MAX_ATTEMPTS'],
+  mailRetryDelayMs: process.env['NEWSLETTER_MAIL_RETRY_DELAY_MS'],
 }));
 export type NewsletterConfig = ConfigType<typeof newsletterConfig>;
 
@@ -31,7 +45,38 @@ export function mapNewsletterConfigToOptions(
   let subscriber = overrides.subscriber;
   if (!subscriber && config.subscriber) {
     if (config.subscriber === 'noop') subscriber = { mode: 'noop' };
-    else if (config.subscriber === 'mailerlite')
+    else if (config.subscriber === 'native') {
+      const number = (value: string | undefined) =>
+        value === undefined ? undefined : value.trim() ? Number(value) : NaN;
+      if (
+        config.notifyUnsubscribe !== undefined &&
+        !['true', 'false'].includes(config.notifyUnsubscribe)
+      )
+        throw new NewsletterOptionsError();
+      subscriber = {
+        mode: 'native',
+        options: {
+          scope: config.nativeScope ?? '',
+          confirmationTtlMs: number(config.confirmationTtlMs),
+          unsubscribeTtlMs: number(config.unsubscribeTtlMs),
+          resendCooldownMs: number(config.resendCooldownMs),
+        },
+        mail: {
+          publicationName: config.publicationName ?? '',
+          confirmationUrl: config.confirmationUrl ?? '',
+          unsubscribeUrl: config.unsubscribeUrl ?? '',
+          confirmationSubject: config.confirmationSubject,
+          unsubscribedSubject: config.unsubscribedSubject,
+          message: { from: config.mailFrom, replyTo: config.mailReplyTo },
+          notifyUnsubscribe:
+            config.notifyUnsubscribe === undefined
+              ? undefined
+              : config.notifyUnsubscribe === 'true',
+          maxAttempts: number(config.mailMaxAttempts),
+          retryDelayMs: number(config.mailRetryDelayMs),
+        },
+      };
+    } else if (config.subscriber === 'mailerlite')
       subscriber = {
         mode: 'mailerlite',
         options: { apiKey: config.apiKey ?? '', groupId: config.groupId ?? '' },

@@ -12,21 +12,14 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 - Optional MailerLite subscriber and signed withdrawal-webhook adapters.
 - Fastify HTTP controllers, explicit rate-limiter selection, and configurable Nest facade.
 
-## Native implementation roadmap
+## Native subscriber implementation
 
-[ADR-0010's #445 amendment](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md#first-class-native-implementation-and-portability)
-defines a production-usable native subscriber implementation, with mutable
-pending/active/unsubscribed state distinct from append-only consent evidence.
-Newsletter will own native double opt-in, unsubscribe and message semantics;
-Common `MailerPort` supplies replaceable delivery. MailerLite remains optional.
-
-#446 supplies the operational core, secure tokens and PostgreSQL persistence described
-below. Native mail orchestration is available through the advanced entry points.
-This is not yet an available `mode: 'native'` facade configuration: #448 adds native HTTP/facade composition. Until then the root
-facade selections remain `custom`, `mailerlite` and explicit `noop`. The native core
-adapter implements `SubscriberPort` but sends no mail by itself. It is an implementation
-stage, not a complete production signup flow or a silent fallback. No-op is not
-production double opt-in. Campaign delivery remains outside #428.
+[ADR-0010's native amendment](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md#first-class-native-implementation-and-portability)
+defines the first-party subscriber implementation. Select `subscriber.mode: 'native'`
+to run double opt-in, confirmation and unsubscribe with PostgreSQL and the host's
+Common Mailer transport. MailerLite is an independent alternative; native mode requires
+no MailerLite account or credentials. Native mutable state stays separate from append-only
+consent evidence. Campaign delivery remains outside #428.
 
 ## Installation
 
@@ -35,7 +28,64 @@ release after #429–#438 and #445–#448 are merged and epic acceptance is comp
 
 ## Usage
 
-### Easy mode: root facade
+### Easy mode: native root facade
+
+Install the optional peers `typeorm ^1.1.0` and `@anarchitects/common-nest-mailer ^0.4.0`.
+The host exports an initialized PostgreSQL DataSource from `HostPersistenceModule`
+and configures Common Mailer once in `HostMailModule`, exporting `CommonMailerModule`.
+Newsletter consumes its existing `MailerPort`; it does not create another transport.
+Register all three Newsletter entities and both migrations listed under
+[Native operational core](#native-operational-core-446) before serving traffic.
+The facade does not initialize the DataSource, synchronize the schema or run migrations.
+
+```ts
+import { Module } from '@nestjs/common';
+import { MailerPort } from '@anarchitects/common-nest-mailer';
+import { NewsletterModule } from '@anarchitects/newsletter-nest';
+import { HostPersistenceModule, HOST_DATA_SOURCE } from './host-persistence.module';
+import { HostMailModule } from './host-mail.module';
+
+@Module({
+  imports: [
+    NewsletterModule.forRoot({
+      imports: [HostPersistenceModule, HostMailModule],
+      consent: { version: 'host-policy/v1', text: 'Exact wording shown by your host.' },
+      persistence: { mode: 'typeorm', dataSourceToken: HOST_DATA_SOURCE },
+      subscriber: {
+        mode: 'native',
+        options: { scope: 'host-newsletter' },
+        mail: {
+          publicationName: 'Example news',
+          confirmationUrl: 'https://example.com/newsletter/confirm',
+          unsubscribeUrl: 'https://example.com/newsletter/unsubscribe',
+          message: { replyTo: 'help@example.com' },
+        },
+      },
+      mailer: { useExisting: MailerPort },
+      rateLimit: { mode: 'memory', limit: 5, windowMs: 60_000 },
+      presentation: { resolveClientKey: (request) => request.ip },
+    }),
+  ],
+})
+export class HostNewsletterModule {}
+```
+
+The configured HTTPS URLs are **host-owned landing pages**, independent of the backend
+route/global prefix. They should read the token, wait for an explicit user action, and POST
+`{ token }` to the corresponding API endpoint. Merely opening a GET link never changes
+membership, avoiding accidental confirmation/withdrawal by mail-link scanners. No
+redirect URL is accepted from request data. Pages should use `Referrer-Policy: no-referrer`,
+avoid third-party resources, and redact token query strings and request bodies from logs.
+
+Native facade mode requires TypeORM persistence so withdrawal and its consent evidence
+use one transaction on the same database. It requires an explicit `mailer` binding
+(`useExisting`, `useFactory`/`inject`, or `useValue`) implementing the Common `MailerPort`.
+For intentional no-delivery development, bind the existing Common `noop` provider explicitly.
+Custom repository/token/mail composition remains available through the advanced entry points.
+All #447 TTL, retry, renderer, sender/subject and aggregate monitoring options remain available
+in `subscriber.options` and `subscriber.mail`; see [Native mail flow](#native-mail-flow-447).
+
+### Other root facade modes
 
 Import `NewsletterModule` from the root entry point. This example assumes the host
 exports a durable `ConsentRepositoryPort` binding from `HostPersistenceModule`:
@@ -98,7 +148,8 @@ Fastify and installs its route hook before Nest maps controllers.
 
 ### HTTP behavior
 
-Default routes are `POST /newsletter/subscribe` and, when enabled,
+Default routes are `POST /newsletter/subscribe`, native-only
+`POST /newsletter/confirm` and `POST /newsletter/unsubscribe`, and, when independently enabled,
 `POST /newsletter/webhook`. Set `presentation.path` to a relative capability prefix
 (e.g. `marketing/newsletter`); host global prefixes still apply. There is no policy
 read endpoint: the host owns publishing the same policy to its frontend.
@@ -111,6 +162,18 @@ still enforced by Fastify. Genuine requests are validated, limited, and passed t
 the application. Unknown/stale policy or invalid input returns generic 400;
 limiter denial returns 429 with `Retry-After` in whole seconds; unavailable ports,
 limiter, or key resolution return generic 503. Provider status is never returned.
+
+Native actions accept a JSON object containing only a string `token` (maximum 128 characters).
+They return 202 `{ accepted: true }` for valid, malformed, unknown, wrong-purpose, expired,
+superseded and replayed tokens, with `Cache-Control: no-store` and `Referrer-Policy: no-referrer`.
+Invalid request **structure** returns generic 400. Valid token consumption and withdrawal
+evidence are atomic; receipt failure never reverses withdrawal. Database failures return
+generic 503 rather than a false success. Native actions share the configured host-key rate
+budget with subscription requests (429/`Retry-After` on denial); they have no honeypot bypass.
+No email, subscriber ID, status, token or token validity is returned. Responses are neutral
+in content, not guaranteed constant-time. These endpoints are absent in other subscriber modes;
+GET actions are not registered. The application boundary is `NATIVE_NEWSLETTER_ACTIONS` /
+`NewsletterNativeActionsPort` from `application` with void `confirm`/`unsubscribe` methods.
 
 Verified webhook deliveries return 200 `{ recorded, duplicates }` only after
 persistence completes. Invalid signatures return 401, invalid payloads 400,
@@ -147,16 +210,49 @@ adapter and limiter selections are replaced as a whole. `forRoot(options)` never
 reads the environment. Both paths require consent, persistence, subscriber and
 rate-limiter choices. Persistence bindings and request resolvers remain host-supplied.
 
-| Environment variable                                                       | Purpose                                                |
-| -------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `NEWSLETTER_CONSENT_VERSION`, `NEWSLETTER_CONSENT_TEXT`                    | Exact host policy                                      |
-| `NEWSLETTER_SUBSCRIBER`                                                    | `noop` or `mailerlite`; custom providers use overrides |
-| `NEWSLETTER_MAILERLITE_API_KEY`, `NEWSLETTER_MAILERLITE_GROUP_ID`          | MailerLite subscription configuration                  |
-| `NEWSLETTER_MAILERLITE_WEBHOOK_ENABLED`                                    | Exact `true`/`false`; absent leaves route disabled     |
-| `NEWSLETTER_MAILERLITE_WEBHOOK_SECRET`, `NEWSLETTER_MAILERLITE_ACCOUNT_ID` | Explicit webhook configuration                         |
-| `NEWSLETTER_RATE_LIMIT_MODE`                                               | `disabled` or `memory`; custom limiters use overrides  |
-| `NEWSLETTER_RATE_LIMIT_MAX`, `NEWSLETTER_RATE_LIMIT_WINDOW_MS`             | Positive integer memory quota/window                   |
-| `NEWSLETTER_PATH`                                                          | Relative HTTP prefix; defaults to `newsletter`         |
+| Environment variable                                                       | Purpose                                                          |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `NEWSLETTER_CONSENT_VERSION`, `NEWSLETTER_CONSENT_TEXT`                    | Exact host policy                                                |
+| `NEWSLETTER_SUBSCRIBER`                                                    | `native`, `noop` or `mailerlite`; custom providers use overrides |
+| `NEWSLETTER_MAILERLITE_API_KEY`, `NEWSLETTER_MAILERLITE_GROUP_ID`          | MailerLite subscription configuration                            |
+| `NEWSLETTER_MAILERLITE_WEBHOOK_ENABLED`                                    | Exact `true`/`false`; absent leaves route disabled               |
+| `NEWSLETTER_MAILERLITE_WEBHOOK_SECRET`, `NEWSLETTER_MAILERLITE_ACCOUNT_ID` | Explicit webhook configuration                                   |
+| `NEWSLETTER_RATE_LIMIT_MODE`                                               | `disabled` or `memory`; custom limiters use overrides            |
+| `NEWSLETTER_RATE_LIMIT_MAX`, `NEWSLETTER_RATE_LIMIT_WINDOW_MS`             | Positive integer memory quota/window                             |
+| `NEWSLETTER_PATH`                                                          | Relative HTTP prefix; defaults to `newsletter`                   |
+
+Native config additionally reads:
+
+| Variable                                                             | Meaning                                                              |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `NEWSLETTER_NATIVE_SCOPE`                                            | Required host-owned scope                                            |
+| `NEWSLETTER_PUBLICATION_NAME`                                        | Required display name                                                |
+| `NEWSLETTER_CONFIRMATION_URL`, `NEWSLETTER_UNSUBSCRIBE_URL`          | Required trusted HTTPS landing pages                                 |
+| `NEWSLETTER_NATIVE_CONFIRMATION_TTL_MS`                              | Positive bounded duration; default 86400000                          |
+| `NEWSLETTER_NATIVE_UNSUBSCRIBE_TTL_MS`                               | Positive bounded duration; default 2592000000                        |
+| `NEWSLETTER_NATIVE_RESEND_COOLDOWN_MS`                               | Positive bounded duration, no greater than either TTL; default 60000 |
+| `NEWSLETTER_CONFIRMATION_SUBJECT`, `NEWSLETTER_UNSUBSCRIBED_SUBJECT` | Optional subject overrides                                           |
+| `NEWSLETTER_MAIL_FROM`, `NEWSLETTER_MAIL_REPLY_TO`                   | Optional message metadata; absent uses Common transport defaults     |
+| `NEWSLETTER_NOTIFY_UNSUBSCRIBE`                                      | Exact `true`/`false`; default true                                   |
+| `NEWSLETTER_MAIL_MAX_ATTEMPTS`, `NEWSLETTER_MAIL_RETRY_DELAY_MS`     | Bounded attempts/delay; defaults 1 and 250                           |
+
+With `NEWSLETTER_SUBSCRIBER=native`, pass host bindings explicitly:
+
+```ts
+NewsletterModule.forRootFromConfig({
+  imports: [HostPersistenceModule, HostMailModule],
+  persistence: { mode: 'typeorm', dataSourceToken: HOST_DATA_SOURCE },
+  mailer: { useExisting: MailerPort },
+  presentation: { resolveClientKey: (request) => request.ip },
+});
+```
+
+These native values are read only when native mode is selected through config. An explicit
+`subscriber` override replaces the complete selection, including nested options/mail.
+For custom renderers, headers or monitoring hooks, pass a complete native subscriber override
+(or map config first and compose its result). Native configuration is validated at bootstrap.
+Provider selection is never inferred from credentials. Webhook opt-in remains independent;
+leave it absent/false for a native-only installation.
 
 Environment variables must be loaded before calling `forRootFromConfig`. Hosts
 using an already-resolved config object can call `mapNewsletterConfigToOptions`
@@ -178,6 +274,10 @@ hosts that compose application services themselves. Supply `imports` exporting
 `NewsletterSubscriptionService` and, if `webhookEnabled: true`, the
 `NEWSLETTER_WEBHOOK_HANDLER` token. The handler receives raw bytes/signature and
 must verify before processing; it may throw sanitized Nest HTTP exceptions.
+For native HTTP actions, set `nativeEnabled: true` and import a provider for the
+application token `NATIVE_NEWSLETTER_ACTIONS` implementing `NewsletterNativeActionsPort`.
+Bind confirmation to the lifecycle service and unsubscribe to `NativeUnsubscribeService`
+when mail receipts are desired; never return the private notification-preparation handoff.
 The presentation options own the route prefix, request resolvers and required
 limiter choice, independently of infrastructure.
 
@@ -413,7 +513,7 @@ lose a message, and delayed delivery after rotation may contain a superseded lin
 Raw tokens are held only in the transient mail handoff/rendered message and are not
 persisted for background retries. Host renderers/transports must not log them. Host HTTP
 pages should redact token query strings from access logs, avoid third-party resources,
-and apply a no-referrer policy; endpoint behavior remains #448's scope.
+and apply a no-referrer policy; the facade's POST behavior is described above.
 
 **Compatibility:** this flow requires `@anarchitects/common-nest-mailer ^0.4.0`, which
 includes the structured message contract delivered separately in
@@ -462,7 +562,8 @@ const withdrawals = new NativeUnsubscribeService(lifecycle, mail);
 const subscriptions = new NewsletterSubscriptionService(new TypeOrmConsentRepository(dataSource), subscriber, hostConsentPolicy);
 ```
 
-This constructs the native core and mail flow. #448 will expose native facade/HTTP flows. Never
+This constructs the native core and mail flow for advanced composition. The root facade
+composes these services and exposes the HTTP actions described above. Never
 expose `prepareSubscription` as a public endpoint: it is an internal adapter seam
 invoked after `NewsletterSubscriptionService` validates and commits affirmative
 consent. It returns a transient `NewsletterNativePreparation` containing raw
@@ -497,8 +598,8 @@ The cooldown supplements, rather than replaces, presentation/gateway abuse contr
 and ineffective attempts. Malformed, wrong-purpose, unknown, expired, consumed,
 superseded and wrong-scope tokens cause no side effects and disclose no membership
 status. Operational failure throws only neutral `NewsletterUnavailableError`.
-These backend operations do not expose routes; #448 owns HTTP mapping and abuse
-controls. An expired unsubscribe link does not change subscriber state; any future
+The facade maps these operations to the native POST routes with the validation and
+abuse controls described above. An expired unsubscribe link does not change subscriber state; any future
 renewal flow must establish authorization and must not silently resubscribe.
 
 Bearer tokens contain 32 cryptographically random bytes (256 bits), a version and
@@ -615,8 +716,11 @@ and size failures for HTTP mapping without leaking provider payloads.
 `ConsentRepositoryPort` interfaces with `SUBSCRIBER_PORT` and
 `CONSENT_REPOSITORY_PORT` symbols for host composition. Native repository and token
 ports have separate `NATIVE_SUBSCRIBER_REPOSITORY_PORT` and `NATIVE_TOKEN_PORT` symbols.
-`infrastructure-native` exports the native core adapter and cryptographic token
-implementation; `infrastructure-persistence` exports both consent and native storage.
+`NewsletterNativeActionsPort` and `NATIVE_NEWSLETTER_ACTIONS` expose the neutral
+confirmation/withdrawal boundary used by presentation.
+`infrastructure-native` exports the native core adapter, cryptographic token
+implementation, mail service and unsubscribe orchestrator; `infrastructure-persistence`
+exports both consent and native storage.
 
 The root exports `NewsletterModule` and its host-facing option types. `config`
 exports the typed namespace, config mapper, validation and adapter option types.

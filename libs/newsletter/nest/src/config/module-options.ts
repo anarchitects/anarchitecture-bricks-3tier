@@ -11,6 +11,8 @@ import type {
   MailerLiteSubscriberOptions,
   MailerLiteWebhookOptions,
 } from './mailerlite-options';
+import type { NewsletterNativeOptions } from './native-options';
+import type { NewsletterNativeMailOptions } from './native-mail-options';
 
 /** Standard Nest binding without the token owned by Newsletter. */
 export type NewsletterProviderBinding =
@@ -57,9 +59,16 @@ export interface NewsletterModuleOptions {
     | { readonly mode: 'custom'; readonly provider: NewsletterProviderBinding }
     | { readonly mode: 'noop' }
     | {
+        readonly mode: 'native';
+        readonly options: NewsletterNativeOptions;
+        readonly mail: NewsletterNativeMailOptions;
+      }
+    | {
         readonly mode: 'mailerlite';
         readonly options: MailerLiteSubscriberOptions;
       };
+  /** Required for native mode: bind the host's existing Common MailerPort, without configuring transport here. */
+  readonly mailer?: NewsletterProviderBinding;
   /** Absent/false exposes no webhook route. Independent of subscriber selection. */
   readonly webhook?: false | MailerLiteWebhookOptions;
   readonly rateLimit: NewsletterRateLimitOptions;
@@ -88,8 +97,19 @@ export function validateNewsletterOptions(
     typeof options.consent.text !== 'string' ||
     !options.consent.text.trim() ||
     !['custom', 'typeorm'].includes(options.persistence?.mode) ||
-    !['custom', 'noop', 'mailerlite'].includes(options.subscriber?.mode) ||
+    !['custom', 'noop', 'mailerlite', 'native'].includes(
+      options.subscriber?.mode,
+    ) ||
     !['disabled', 'memory', 'custom'].includes(options.rateLimit?.mode)
+  )
+    throw new NewsletterOptionsError();
+  // Native withdrawal commits subscriber state and evidence in the same database.
+  if (
+    options.subscriber.mode === 'native' &&
+    (options.persistence.mode !== 'typeorm' ||
+      !options.mailer ||
+      !options.subscriber.options ||
+      !options.subscriber.mail)
   )
     throw new NewsletterOptionsError();
   if (

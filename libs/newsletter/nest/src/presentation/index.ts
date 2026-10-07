@@ -1,5 +1,6 @@
 export { NewsletterPresentationModule } from './newsletter-presentation.module';
 export { NewsletterSubscriptionController } from './newsletter-subscription.controller';
+export { NewsletterNativeController } from './newsletter-native.controller';
 export { NewsletterWebhookController } from './newsletter-webhook.controller';
 export {
   NEWSLETTER_WEBHOOK_HANDLER,

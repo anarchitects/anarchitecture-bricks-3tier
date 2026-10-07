@@ -8,6 +8,9 @@ import { before, after, test } from 'node:test';
 import { setTimeout as delay } from 'node:timers/promises';
 import { GenericContainer, Wait } from 'testcontainers';
 import { DataSource } from 'typeorm';
+import { Module } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { Client } from 'pg';
 
 // Consume built packages in isolation, just like the existing package-smoke test.
@@ -22,7 +25,15 @@ for (const layer of ['nest', 'ts'])
     path.join(fixture, 'node_modules/@anarchitects', `newsletter-${layer}`),
     { recursive: true },
   );
-for (const name of ['@sinclair', 'tslib', 'typeorm'])
+for (const name of [
+  '@sinclair',
+  '@nestjs',
+  'rxjs',
+  'reflect-metadata',
+  'fastify',
+  'tslib',
+  'typeorm',
+])
   symlinkSync(
     path.resolve('node_modules', name),
     path.join(fixture, 'node_modules', name),
@@ -593,6 +604,159 @@ test('native mail failure, cooldown, rotation and receipt replay preserve real c
   const latest = parseLinks(messages[5]);
   await lifecycle.confirm(latest[0]);
   assert.equal((await read(scope, email)).status, 'active');
+});
+
+test('native facade drives the public HTTP lifecycle with committed PostgreSQL state and no MailerLite', async () => {
+  const { NewsletterModule } = require('@anarchitects/newsletter-nest');
+  const scope = 'http-facade';
+  const email = 'http@example.test';
+  const messages = [];
+  let failMail = false;
+  const mailer = {
+    sendMessage: async (message) => {
+      messages.push(message);
+      const row = await second
+        .getRepository(Subscriber)
+        .findOneByOrFail({ scope, email: message.to });
+      assert.ok(['pending_confirmation', 'unsubscribed'].includes(row.status));
+      if (failMail) throw new Error('private SMTP failure');
+    },
+    send: async () => assert.fail('legacy mail'),
+    sendTemplate: async () => assert.fail('legacy templates'),
+  };
+  class HostRuntime {}
+  Module({
+    providers: [
+      { provide: 'host-database', useValue: first },
+      { provide: 'host-mailer', useValue: mailer },
+    ],
+    exports: ['host-database', 'host-mailer'],
+  })(HostRuntime);
+  const module = await Test.createTestingModule({
+    imports: [
+      NewsletterModule.forRoot({
+        imports: [HostRuntime],
+        consent: { version: 'v1', text: 'Exact public HTTP consent' },
+        persistence: { mode: 'typeorm', dataSourceToken: 'host-database' },
+        subscriber: {
+          mode: 'native',
+          options: { scope },
+          mail: {
+            publicationName: 'HTTP newsletter',
+            confirmationUrl: 'https://host.example.test/news/confirm',
+            unsubscribeUrl: 'https://host.example.test/news/unsubscribe',
+          },
+        },
+        mailer: { useExisting: 'host-mailer' },
+        rateLimit: { mode: 'disabled' },
+        presentation: { path: 'host-news' },
+      }),
+    ],
+  }).compile();
+  const app = module.createNestApplication(new FastifyAdapter(), {
+    logger: false,
+  });
+  app.setGlobalPrefix('api');
+  try {
+    await app.init();
+    await app.getHttpAdapter().getInstance().ready();
+    const post = async (action, payload) => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/host-news/' + action,
+        payload,
+      });
+      assert.equal(response.statusCode, 202, response.body);
+      assert.deepEqual(response.json(), { accepted: true });
+      assert.ok(!response.body.includes(email));
+      return response;
+    };
+    const subscribe = (address = email) =>
+      post('subscribe', {
+        email: address,
+        consent: true,
+        consentVersion: 'v1',
+      });
+    await subscribe();
+    assert.equal((await read(scope, email)).status, 'pending_confirmation');
+    assert.equal(messages.length, 1);
+    const links = messages[0].text
+      .match(/https:\/\/\S+/g)
+      .map((link) => new URL(link));
+    assert.deepEqual(
+      links.map((link) => link.pathname),
+      ['/news/confirm', '/news/unsubscribe'],
+    );
+    const [confirm, unsubscribe] = links.map((link) =>
+      link.searchParams.get('token'),
+    );
+    for (const link of links)
+      assert.deepEqual([...link.searchParams.keys()], ['token']);
+    await subscribe(); // resend cooldown
+    assert.equal(messages.length, 1);
+    await post('confirm', { token: unsubscribe }); // wrong purpose, neutral
+    await post('confirm', { token: 'v1.c.' + 'x'.repeat(43) }); // unknown verifier
+    assert.equal((await read(scope, email)).status, 'pending_confirmation');
+    assert.equal(
+      (
+        await app.inject({
+          method: 'GET',
+          url: '/api/host-news/confirm?token=' + confirm,
+        })
+      ).statusCode,
+      404,
+    );
+    assert.equal((await read(scope, email)).status, 'pending_confirmation');
+    for (let i = 0; i < 2; i++) {
+      const response = await post('confirm', { token: confirm });
+      assert.equal(response.headers['cache-control'], 'no-store');
+    }
+    assert.equal((await read(scope, email)).status, 'active');
+    await subscribe();
+    assert.equal(messages.length, 1);
+    failMail = true;
+    await Promise.all(
+      Array.from({ length: 6 }, () =>
+        post('unsubscribe', { token: unsubscribe }),
+      ),
+    );
+    assert.equal((await read(scope, email)).status, 'unsubscribed');
+    assert.equal(messages.length, 2); // receipt failure cannot undo withdrawal or trigger replay sends
+    assert.equal(
+      await first.getRepository(Consent).countBy({ email, kind: 'withdrawn' }),
+      1,
+    );
+    await post('confirm', { token: confirm });
+    assert.equal((await read(scope, email)).status, 'unsubscribed');
+    await post('unsubscribe', { token: '' });
+    const failedAddress = 'http-failed@example.test';
+    await subscribe(failedAddress);
+    const pending = await read(scope, failedAddress);
+    assert.equal(pending.status, 'pending_confirmation');
+    const failedToken = new URL(
+      messages.at(-1).text.match(/https:\/\/\S+/)[0],
+    ).searchParams.get('token');
+    await first
+      .getRepository(Token)
+      .update({ subscriberId: pending.id }, { expiresAt: new Date(0) });
+    await post('confirm', { token: failedToken });
+    assert.equal(
+      (await read(scope, failedAddress)).status,
+      'pending_confirmation',
+    );
+    assert.equal(
+      (
+        await app.inject({
+          method: 'POST',
+          url: '/api/host-news/webhook',
+          payload: {},
+        })
+      ).statusCode,
+      404,
+    );
+  } finally {
+    await app.close();
+  }
 });
 
 test('native migration rollback preserves consent and host objects, and reapplication restores matching metadata', async () => {

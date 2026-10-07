@@ -34,6 +34,16 @@ import { CreateUserProfileService } from '../../libs/identity/nest/src/applicati
 import { GetUserProfileService } from '../../libs/identity/nest/src/application/services/get-user-profile.service';
 import { UpdateUserProfileService } from '../../libs/identity/nest/src/application/services/update-user-profile.service';
 import { UserProfilesController } from '../../libs/identity/nest/src/presentation/controllers/user-profiles.controller';
+import {
+  NewsletterNativeController,
+  NewsletterSubscriptionController,
+  NEWSLETTER_RATE_LIMITER,
+} from '../../libs/newsletter/nest/src/presentation';
+import { NEWSLETTER_PRESENTATION_OPTIONS } from '../../libs/newsletter/nest/src/presentation/presentation-options';
+import {
+  NATIVE_NEWSLETTER_ACTIONS,
+  NewsletterSubscriptionService,
+} from '../../libs/newsletter/nest/src/application';
 
 const OUTPUT_DIR = join(process.cwd(), 'docs/openapi');
 const JSON_OUTPUT = join(OUTPUT_DIR, 'openapi.json');
@@ -138,8 +148,26 @@ applyAuthControllerContractRouteSchemas(
     FormsController,
     SubmissionsController,
     UserProfilesController,
+    NewsletterSubscriptionController,
+    NewsletterNativeController,
   ],
   providers: [
+    {
+      provide: NewsletterSubscriptionService,
+      useValue: { subscribe: async () => ({ accepted: true }) },
+    },
+    {
+      provide: NATIVE_NEWSLETTER_ACTIONS,
+      useValue: {
+        confirm: async () => undefined,
+        unsubscribe: async () => undefined,
+      },
+    },
+    {
+      provide: NEWSLETTER_PRESENTATION_OPTIONS,
+      useValue: { rateLimit: { mode: 'disabled' } },
+    },
+    { provide: NEWSLETTER_RATE_LIMITER, useValue: null },
     { provide: AuthPasskeyService, useValue: {} },
     {
       provide: AuthService,
@@ -218,7 +246,12 @@ async function run() {
           description: 'Local',
         },
       ],
-      tags: [{ name: 'Auth' }, { name: 'Forms' }, { name: 'Identity' }],
+      tags: [
+        { name: 'Auth' },
+        { name: 'Forms' },
+        { name: 'Identity' },
+        { name: 'Newsletter' },
+      ],
     },
     hideUntagged: false,
     transform: ({
@@ -273,7 +306,7 @@ async function run() {
   const app = await NestFactory.create<NestFastifyApplication>(
     ApiSpecsModule,
     adapter,
-    { logger: false },
+    { logger: false, abortOnError: false },
   );
 
   await app.init();

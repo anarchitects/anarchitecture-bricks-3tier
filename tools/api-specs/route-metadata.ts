@@ -2,9 +2,13 @@ export const TAG_PREFIX_MAP: Array<{ prefix: string; tag: string }> = [
   { prefix: '/auth', tag: 'Auth' },
   { prefix: '/forms', tag: 'Forms' },
   { prefix: '/identity', tag: 'Identity' },
+  { prefix: '/newsletter', tag: 'Newsletter' },
 ];
 
 export const OPERATION_ID_MAP: Record<string, string> = {
+  'POST /newsletter/subscribe': 'subscribeToNewsletter',
+  'POST /newsletter/confirm': 'confirmNewsletterSubscription',
+  'POST /newsletter/unsubscribe': 'unsubscribeFromNewsletter',
   'PATCH /auth/activate': 'activateUser',
   'PATCH /auth/change-password/{userId}': 'changePassword',
   'POST /auth/forgot-password': 'forgotPassword',

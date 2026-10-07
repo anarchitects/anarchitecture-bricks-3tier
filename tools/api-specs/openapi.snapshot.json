@@ -66,6 +66,15 @@
     },
     "/identity/profiles/by-auth-user/{authUserId}": {
       "get": "getUserProfileByAuthUserId"
+    },
+    "/newsletter/confirm": {
+      "post": "confirmNewsletterSubscription"
+    },
+    "/newsletter/subscribe": {
+      "post": "subscribeToNewsletter"
+    },
+    "/newsletter/unsubscribe": {
+      "post": "unsubscribeFromNewsletter"
     }
   }
 }
