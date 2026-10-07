@@ -75,6 +75,9 @@
     },
     "/newsletter/unsubscribe": {
       "post": "unsubscribeFromNewsletter"
+    },
+    "/newsletter/webhook": {
+      "post": "receiveNewsletterWebhook"
     }
   }
 }

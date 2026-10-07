@@ -164,3 +164,7 @@ Do not treat Angular route metadata as full instance-level authorization. If the
 - Using internal source imports instead of published entry points.
 - Treating TS contracts as Angular-owned instead of TS-owned.
 - Skipping OpenAPI/client sync after schema changes.
+
+## Newsletter integration
+
+See [Newsletter integration](/guides/newsletter-integration.html) for both provider examples, Forms-backed signup, OpenAPI and browser/database regression. The [migration guide](/guides/newsletter-migration.html) separates reusable capabilities from host policy and app-local data migration.

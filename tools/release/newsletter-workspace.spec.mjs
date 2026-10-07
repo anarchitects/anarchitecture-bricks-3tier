@@ -32,6 +32,16 @@ test('Newsletter release selection targets exactly its three packages', () => {
       };
     }
   }
+  // Integration applications carry the domain tag but must never enter npm release selection.
+  for (const tech of ['nest', 'angular']) {
+    const path = `examples/newsletter-${tech}-example`;
+    const project = readJson(`${path}/project.json`);
+    nodes[project.name] = {
+      name: project.name,
+      type: 'app',
+      data: { ...project, root: path },
+    };
+  }
   const groups = Object.entries(readJson('nx.json').release.groups).map(
     ([name, config]) => ({
       ...config,

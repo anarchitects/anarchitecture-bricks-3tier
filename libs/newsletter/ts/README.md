@@ -155,3 +155,11 @@ Consumers replace infrastructure through those Nest ports, not through provider
 fields added to these DTOs. Shared contracts contain no deployment credentials or
 consumer-specific consent constants. Changes to these public fields/schemas should
 be treated as contract changes and validated against both frontend and backend uses.
+
+## Webhook acknowledgement
+
+`NewsletterWebhookResponseSchema` and `NewsletterWebhookResponseDTO` describe the aggregate `{ recorded, duplicates }` acknowledgement. Both counts are non-negative integers; addresses and provider subscriber state are excluded. `NewsletterWebhookRouteSchema` supplies the HTTP 200 response only. Raw provider payloads must reach signature verification before provider-specific validation; the schema does not replace that authentication boundary. These exports are available from the root and `/dtos`.
+
+## Integration examples and migration
+
+See the [Newsletter integration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-integration.html) for native/MailerLite host setup, the Forms-backed Angular example, contracts, and the coordinated release gate. Use the [app-local migration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-migration.html) to plan adoption while retaining host policy and historical evidence.

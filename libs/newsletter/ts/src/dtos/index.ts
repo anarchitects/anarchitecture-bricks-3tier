@@ -8,3 +8,4 @@ export {
 } from './subscription-response.dto';
 export { NewsletterSubscriptionRouteSchema } from './subscription-route.schema';
 export * from './native-action.dto';
+export * from './webhook-response.dto';

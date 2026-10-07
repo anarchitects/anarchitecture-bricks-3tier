@@ -11,6 +11,8 @@ const requiredFiles = [
   'guides/auth-passkeys.html',
   'guides/angular-22-signal-forms-tailwind-migration.html',
   'guides/nest.html',
+  'guides/newsletter-integration.html',
+  'guides/newsletter-migration.html',
   'guides/ts-contracts.html',
   'guides/design-ui-systems.html',
   'guides/ai-agents.html',
@@ -38,6 +40,15 @@ if (!Array.isArray(catalog.packages) || catalog.packages.length === 0) {
   process.exit(1);
 }
 
+for (const layer of ['ts', 'nest', 'angular']) {
+  if (
+    !catalog.packages.some(
+      (pkg) => pkg.importPath === `@anarchitects/newsletter-${layer}`,
+    )
+  ) {
+    throw new Error(`Missing Newsletter ${layer} package in docs catalog`);
+  }
+}
 const missingPackagePages = [];
 for (const pkg of catalog.packages) {
   if (!pkg.readmePath || !pkg.slug) {

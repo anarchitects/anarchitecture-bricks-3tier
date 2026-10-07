@@ -227,6 +227,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 - Docs hub static site is generated via `nx run docs-hub:build` and published by `.github/workflows/docs-pages.yml`.
 - Markdown guide sources live in `docs/guides/angular.md` and `docs/guides/nest.md`; docs-hub renders them into HTML during build.
 - Publishable package `README.md` files are rendered as docs pages under `/packages/<package-slug>/` and linked alongside source README URLs.
+- Newsletter examples and adoption: [integration guide](docs/guides/newsletter-integration.md) and [app-local migration guide](docs/guides/newsletter-migration.md).
 - Production docs URL: `https://bricks-3tier.anarchitects.dev` (Storybook under `/storybook`, OpenAPI under `/openapi`).
 
 ## Docs PR Commit Policy

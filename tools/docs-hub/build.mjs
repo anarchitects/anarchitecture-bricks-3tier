@@ -61,6 +61,14 @@ function pageTemplate(title, activePath, content, generatedAt) {
       label: 'Frontend Migration',
     },
     { href: '/guides/nest.html', label: 'Nest Guide' },
+    {
+      href: '/guides/newsletter-integration.html',
+      label: 'Newsletter Integration',
+    },
+    {
+      href: '/guides/newsletter-migration.html',
+      label: 'Newsletter Migration',
+    },
     { href: '/guides/auth-migration.html', label: 'Auth Migration Guide' },
     { href: '/guides/auth-passkeys.html', label: 'Passkey Integration' },
     { href: '/guides/ts-contracts.html', label: 'TS Contracts Guide' },
@@ -414,6 +422,30 @@ writeFile(
     generatedAt,
   ),
 );
+
+for (const [slug, title] of [
+  ['newsletter-integration', 'Newsletter Integration'],
+  ['newsletter-migration', 'Newsletter Migration'],
+]) {
+  const markdown = readFileSync(
+    join(workspaceRoot, `docs/guides/${slug}.md`),
+    'utf8',
+  );
+  // These two guides link to one another; resolve those links within the rendered hub.
+  const renderedMarkdown = markdown
+    .replaceAll('newsletter-integration.md)', 'newsletter-integration.html)')
+    .replaceAll('newsletter-migration.md)', 'newsletter-migration.html)');
+  writeFile(
+    `guides/${slug}.html`,
+    renderMarkdownPage(
+      title,
+      `/guides/${slug}.html`,
+      renderedMarkdown,
+      generatedAt,
+    ),
+  );
+  writeFile(`guides/${slug}.md`, markdown);
+}
 
 writeFile(
   'release/index.html',

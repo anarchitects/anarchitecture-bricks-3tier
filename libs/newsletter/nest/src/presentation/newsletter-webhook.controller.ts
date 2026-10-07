@@ -8,6 +8,8 @@ import {
   ServiceUnavailableException,
   type RawBodyRequest,
 } from '@nestjs/common';
+import { RouteSchema } from '@nestjs/platform-fastify';
+import { NewsletterWebhookRouteSchema } from '@anarchitects/newsletter-ts/dtos';
 import type { FastifyRequest } from 'fastify';
 import {
   NEWSLETTER_WEBHOOK_HANDLER,
@@ -22,6 +24,7 @@ export class NewsletterWebhookController {
   ) {}
   @Post('webhook')
   @HttpCode(200)
+  @RouteSchema(NewsletterWebhookRouteSchema)
   async receive(@Req() request: RawBodyRequest<FastifyRequest>) {
     if (!request.rawBody)
       throw new ServiceUnavailableException(

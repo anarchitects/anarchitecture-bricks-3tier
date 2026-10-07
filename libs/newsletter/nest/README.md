@@ -763,3 +763,7 @@ The root carries `domain:newsletter`, `tech:nest` and `type:facade` tags. Layers
 inside this publishable project are enforced by path-aware ESLint rules. Newsletter
 depends only on its own domain and compatible Common platform bricks; host
 applications own composition with Blog and other business capabilities.
+
+## Integration examples and migration
+
+See the [Newsletter integration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-integration.html) for native/MailerLite host setup, the Forms-backed Angular example, contracts, and the coordinated release gate. Use the [app-local migration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-migration.html) to plan adoption while retaining host policy and historical evidence.

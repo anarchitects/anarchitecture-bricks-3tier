@@ -1611,6 +1611,29 @@ paths:
           description: Default Response
       tags:
         - Newsletter
+  /newsletter/webhook:
+    post:
+      operationId: receiveNewsletterWebhook
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                additionalProperties: false
+                properties:
+                  duplicates:
+                    minimum: 0
+                    type: integer
+                  recorded:
+                    minimum: 0
+                    type: integer
+                required:
+                  - recorded
+                  - duplicates
+                type: object
+          description: Default Response
+      tags:
+        - Newsletter
 servers:
   - description: Local
     url: http://localhost:3000

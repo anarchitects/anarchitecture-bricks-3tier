@@ -1,0 +1,88 @@
+{
+  "name": "newsletter-nest-example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "examples/newsletter-nest-example/src",
+  "projectType": "application",
+  "tags": ["type:app", "scope:server", "domain:newsletter"],
+  "targets": {
+    "prune-lockfile": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "executor": "@nx/js:prune-lockfile",
+      "outputs": [
+        "{workspaceRoot}/dist/examples/newsletter-nest-example/package.json",
+        "{workspaceRoot}/dist/examples/newsletter-nest-example/yarn.lock"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "copy-workspace-modules": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "outputs": [
+        "{workspaceRoot}/dist/examples/newsletter-nest-example/workspace_modules"
+      ],
+      "executor": "@nx/js:copy-workspace-modules",
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "prune": {
+      "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
+      "executor": "nx:noop"
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "newsletter-nest-example:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "newsletter-nest-example:build:development"
+        },
+        "production": {
+          "buildTarget": "newsletter-nest-example:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p examples/newsletter-nest-example/tsconfig.app.json"
+      }
+    },
+    "test-newsletter-integration": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build",
+        {
+          "target": "build",
+          "projects": ["newsletter-angular-example"]
+        }
+      ],
+      "cache": false,
+      "options": {
+        "command": "tsx --no-cache --tsconfig tsconfig.base.json examples/newsletter-nest-example/tests/contract.ts"
+      }
+    },
+    "contract-test": {
+      "executor": "nx:noop",
+      "dependsOn": ["test-newsletter-integration"]
+    },
+    "typecheck-tests": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p examples/newsletter-nest-example/tsconfig.spec.json"
+      }
+    }
+  },
+  "implicitDependencies": ["newsletter-angular-example"]
+}
