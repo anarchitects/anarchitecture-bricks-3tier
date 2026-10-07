@@ -90,6 +90,18 @@ non-empty `website` string structurally; it does not implement that behavior.
 Controllers consume the exported route schema rather than declaring inline TypeBox
 schemas. Routes, OpenAPI operation IDs and tags are configured outside this package.
 
+### Native confirmation/unsubscribe API
+
+`NewsletterNativeActionRequestSchema` / `NewsletterNativeActionRequestDTO` accept only
+`{ token: string }`, bounded to 128 characters. This validates request shape, not bearer
+validity. Empty, malformed, expired or replayed token strings receive the same neutral
+acknowledgement as valid tokens; the backend decides whether any state transition occurs.
+`NewsletterNativeActionResponseSchema` / `NewsletterNativeActionResponseDTO` describe
+`{ accepted: true }`. `NewsletterNativeActionRouteSchema` maps body and 202 response for
+both native POST actions. These contracts are exported from the root and `dtos`.
+No response contains membership state, addresses or token material. Browser landing pages
+submit the token in a POST body after a user action; GET must not consume it.
+
 ### Consent configuration and evidence
 
 `NewsletterConsentPolicy` requires `version` and exact `text`. The host owns both,
@@ -123,7 +135,7 @@ than overwrite it. Evidence persistence precedes provider subscription attempts.
 
 | Import                               | Public surface                                                                                                                                                                              |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `@anarchitects/newsletter-ts`        | All models, DTO types and the three runtime schemas                                                                                                                                         |
+| `@anarchitects/newsletter-ts`        | All models, DTO types and subscription/native-action runtime schemas                                                                                                                                         |
 | `@anarchitects/newsletter-ts/dtos`   | `NewsletterSubscriptionRequestSchema`, `NewsletterSubscriptionRequestDTO`, `NewsletterSubscriptionResponseSchema`, `NewsletterSubscriptionResponseDTO`, `NewsletterSubscriptionRouteSchema` |
 | `@anarchitects/newsletter-ts/models` | `NewsletterConsentPolicy`, `NewsletterConsentEvent`, `NewsletterConsentGrantedEvent`, `NewsletterConsentWithdrawnEvent`, `NewsletterWithdrawalEvent` (types only)                           |
 

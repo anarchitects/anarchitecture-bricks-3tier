@@ -2185,6 +2185,156 @@
         },
         "tags": ["Identity"]
       }
+    },
+    "/newsletter/confirm": {
+      "post": {
+        "operationId": "confirmNewsletterSubscription",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "token": {
+                    "maxLength": 128,
+                    "type": "string"
+                  }
+                },
+                "required": ["token"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "accepted": {
+                      "enum": [true],
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["accepted"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Newsletter"]
+      }
+    },
+    "/newsletter/subscribe": {
+      "post": {
+        "operationId": "subscribeToNewsletter",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "consent": {
+                    "enum": [true],
+                    "type": "boolean"
+                  },
+                  "consentVersion": {
+                    "minLength": 1,
+                    "pattern": "\\S",
+                    "type": "string"
+                  },
+                  "email": {
+                    "maxLength": 254,
+                    "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+(?![\\s\\S])",
+                    "type": "string"
+                  },
+                  "source": {
+                    "maxLength": 2048,
+                    "type": "string"
+                  },
+                  "website": {
+                    "maxLength": 2048,
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "consent", "consentVersion"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "accepted": {
+                      "enum": [true],
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["accepted"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Newsletter"]
+      }
+    },
+    "/newsletter/unsubscribe": {
+      "post": {
+        "operationId": "unsubscribeFromNewsletter",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": false,
+                "properties": {
+                  "token": {
+                    "maxLength": 128,
+                    "type": "string"
+                  }
+                },
+                "required": ["token"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "accepted": {
+                      "enum": [true],
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["accepted"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Newsletter"]
+      }
     }
   },
   "servers": [
@@ -2202,6 +2352,9 @@
     },
     {
       "name": "Identity"
+    },
+    {
+      "name": "Newsletter"
     }
   ]
 }

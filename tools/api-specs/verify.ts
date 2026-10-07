@@ -17,6 +17,9 @@ const SNAPSHOT_PATH = join(
 const WORKSPACE_ROOT = process.cwd();
 
 const REQUIRED_PATHS: Array<{ path: string; methods: string[] }> = [
+  { path: '/newsletter/subscribe', methods: ['post'] },
+  { path: '/newsletter/confirm', methods: ['post'] },
+  { path: '/newsletter/unsubscribe', methods: ['post'] },
   { path: '/auth/register', methods: ['post'] },
   { path: '/auth/login', methods: ['post'] },
   { path: '/auth/me', methods: ['get'] },
@@ -127,6 +130,8 @@ function findNestControllerFiles(): string[] {
 
     return (
       normalizedPath.includes('/nest/src/presentation/controllers/') ||
+      (normalizedPath.includes('/nest/src/presentation/') &&
+        normalizedPath.endsWith('.controller.ts')) ||
       (normalizedPath.includes('/examples/') &&
         normalizedPath.endsWith('.controller.ts'))
     );

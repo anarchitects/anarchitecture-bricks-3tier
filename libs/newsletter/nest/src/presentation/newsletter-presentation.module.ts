@@ -24,6 +24,7 @@ import {
 } from './rate-limiter';
 import { newsletterSubscriptionController } from './newsletter-subscription.controller';
 import { newsletterWebhookController } from './newsletter-webhook.controller';
+import { newsletterNativeController } from './newsletter-native.controller';
 
 const configured = new WeakSet<FastifyInstance>();
 
@@ -40,10 +41,10 @@ export class NewsletterPresentationModule implements NestModule {
     configured.add(instance);
     // Register before Nest maps routes. Other host routes retain their own validation.
     instance.addHook('onRoute', (route) => {
+      const config = route.config as Record<string, unknown> | undefined;
       if (
-        !(route.config as Record<string, unknown> | undefined)?.[
-          'newsletterSubscription'
-        ]
+        !config?.['newsletterSubscription'] &&
+        !config?.['newsletterNativeAction']
       )
         return;
       route.attachValidation = true;
@@ -53,6 +54,7 @@ export class NewsletterPresentationModule implements NestModule {
           Value.Check(schema as TSchema, data)
             ? { value: data }
             : { error: new Error('Invalid newsletter request.') };
+      if (!config?.['newsletterSubscription']) return;
       const previous = route.preValidation ? [route.preValidation].flat() : [];
       route.preValidation = [
         async (request, reply) => {
@@ -104,6 +106,9 @@ export class NewsletterPresentationModule implements NestModule {
       providers,
       controllers: [
         newsletterSubscriptionController(options.path ?? 'newsletter'),
+        ...(options.nativeEnabled
+          ? [newsletterNativeController(options.path ?? 'newsletter')]
+          : []),
         ...(options.webhookEnabled
           ? [newsletterWebhookController(options.path ?? 'newsletter')]
           : []),

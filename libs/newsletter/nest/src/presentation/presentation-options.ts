@@ -20,4 +20,6 @@ export interface NewsletterPresentationModuleOptions
   readonly imports?: ModuleMetadata['imports'];
   readonly rateLimit: NewsletterRateLimitOptions;
   readonly webhookEnabled?: boolean;
+  /** Requires NATIVE_NEWSLETTER_ACTIONS from the host/runtime imports. */
+  readonly nativeEnabled?: boolean;
 }

@@ -21,11 +21,10 @@ epic acceptance is complete. Angular common/core/forms `^22.0.0` and RxJS
 previous unreleased Angular 21 compatibility range is narrowed to Angular 22.
 Dependencies include Newsletter TS contracts, Forms Angular and Forms TS.
 
-Before publishing Newsletter, release the Forms renderer additions in this change
-(`resetOnSubmit` and `nativeMethod`) and update the Newsletter dependency minimum
-to that published Forms version. The current workspace versions are unreleased
-integration metadata, not a claim that older Forms releases provide these inputs.
-Use the CI-owned release flow; no package publication is part of #437.
+Forms Angular and Forms TS now require `^0.10.0`. The renderer additions used by
+Newsletter (`resetOnSubmit` and `nativeMethod`) are available in the
+[published Forms Angular 0.10.0 release](https://github.com/anarchitects/anarchitecture-bricks-3tier/releases/tag/forms-angular%400.10.0).
+Newsletter itself still awaits epic acceptance and the CI-owned release flow.
 
 Install the Forms peer dependencies described in the [Forms Angular README](../../forms/angular/README.md)
 and configure its Tailwind styling foundation in the host stylesheet:

@@ -8,14 +8,24 @@ import {
   type Provider,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import type { MailerPort } from '@anarchitects/common-nest-mailer';
 import {
   CONSENT_REPOSITORY_PORT,
   SUBSCRIBER_PORT,
   NewsletterSubscriptionService,
   NewsletterWithdrawalService,
+  NewsletterNativeLifecycleService,
+  NATIVE_NEWSLETTER_ACTIONS,
+  type NewsletterNativeActionsPort,
   type ConsentRepositoryPort,
   type SubscriberPort,
 } from './application';
+import {
+  CryptoNativeToken,
+  NativeSubscriberAdapter,
+  NewsletterNativeMailService,
+  NativeUnsubscribeService,
+} from './infrastructure-native';
 import {
   newsletterConfig,
   mapNewsletterConfigToOptions,
@@ -71,13 +81,25 @@ export class NewsletterModule {
           },
       options.subscriber.mode === 'custom'
         ? bindNewsletterProvider(subscriber, options.subscriber.provider)
-        : {
-            provide: subscriber,
-            useValue:
-              options.subscriber.mode === 'noop'
-                ? { subscribe: async () => undefined }
-                : new MailerLiteSubscriberAdapter(options.subscriber.options),
-          },
+        : options.subscriber.mode === 'native'
+          ? {
+              provide: subscriber,
+              inject: [
+                NewsletterNativeLifecycleService,
+                NewsletterNativeMailService,
+              ],
+              useFactory: (
+                lifecycle: NewsletterNativeLifecycleService,
+                mail: NewsletterNativeMailService,
+              ) => new NativeSubscriberAdapter(lifecycle, mail),
+            }
+          : {
+              provide: subscriber,
+              useValue:
+                options.subscriber.mode === 'noop'
+                  ? { subscribe: async () => undefined }
+                  : new MailerLiteSubscriberAdapter(options.subscriber.options),
+            },
       {
         provide: CONSENT_REPOSITORY_PORT,
         inject: [repository],
@@ -112,6 +134,66 @@ export class NewsletterModule {
       NewsletterSubscriptionService,
       NewsletterWithdrawalService,
     ];
+    if (
+      options.subscriber.mode === 'native' &&
+      persistence.mode === 'typeorm' &&
+      options.mailer
+    ) {
+      const native = options.subscriber;
+      const mailer = Symbol('newsletter.configured-mailer');
+      providers.push(
+        bindNewsletterProvider(mailer, options.mailer),
+        {
+          provide: NewsletterNativeMailService,
+          inject: [mailer],
+          useFactory: (value: unknown) =>
+            new NewsletterNativeMailService(
+              requireNewsletterMethods<MailerPort>(value, [
+                'sendMessage',
+                'send',
+                'sendTemplate',
+              ]),
+              native.mail,
+            ),
+        },
+        {
+          provide: NewsletterNativeLifecycleService,
+          inject: [persistence.dataSourceToken],
+          useFactory: async (dataSource: unknown) => {
+            const { TypeOrmNativeSubscriberRepository } = await import(
+              './infrastructure-persistence'
+            );
+            return new NewsletterNativeLifecycleService(
+              new TypeOrmNativeSubscriberRepository(
+                dataSource as ConstructorParameters<
+                  typeof TypeOrmNativeSubscriberRepository
+                >[0],
+              ),
+              new CryptoNativeToken(),
+              native.options,
+            );
+          },
+        },
+        {
+          provide: NATIVE_NEWSLETTER_ACTIONS,
+          inject: [
+            NewsletterNativeLifecycleService,
+            NewsletterNativeMailService,
+          ],
+          useFactory: (
+            lifecycle: NewsletterNativeLifecycleService,
+            mail: NewsletterNativeMailService,
+          ): NewsletterNativeActionsPort => {
+            const withdrawal = new NativeUnsubscribeService(lifecycle, mail);
+            return {
+              confirm: (token) => lifecycle.confirm(token),
+              unsubscribe: (token) => withdrawal.unsubscribe(token),
+            };
+          },
+        },
+      );
+      exports.push(NATIVE_NEWSLETTER_ACTIONS);
+    }
     if (options.webhook) {
       const webhookOptions = options.webhook;
       providers.push({
@@ -163,6 +245,7 @@ export class NewsletterModule {
       ...options.presentation,
       rateLimit: options.rateLimit,
       webhookEnabled: !!options.webhook,
+      nativeEnabled: options.subscriber.mode === 'native',
       imports: [runtime, ...(options.imports ?? [])],
     });
     return {

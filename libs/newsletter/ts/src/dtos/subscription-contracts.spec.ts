@@ -146,6 +146,9 @@ describe('subscription response and route', () => {
 
   it('exposes only the intended runtime schemas from the package root', () => {
     expect(Object.keys(publicApi).sort()).toEqual([
+      'NewsletterNativeActionRequestSchema',
+      'NewsletterNativeActionResponseSchema',
+      'NewsletterNativeActionRouteSchema',
       'NewsletterSubscriptionRequestSchema',
       'NewsletterSubscriptionResponseSchema',
       'NewsletterSubscriptionRouteSchema',

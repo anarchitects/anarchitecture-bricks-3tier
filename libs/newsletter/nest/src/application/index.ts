@@ -24,6 +24,10 @@ export {
 } from './newsletter.errors';
 export type { NewsletterClock } from './newsletter-clock';
 export type { NewsletterNativeMailPort } from './ports/native-mail.port';
+export {
+  NATIVE_NEWSLETTER_ACTIONS,
+  type NewsletterNativeActionsPort,
+} from './ports/native-actions.port';
 
 export {
   NewsletterNativeLifecycleService,

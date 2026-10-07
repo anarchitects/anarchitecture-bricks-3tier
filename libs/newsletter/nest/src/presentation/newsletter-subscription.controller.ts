@@ -1,3 +1,4 @@
+import { enforceNewsletterRateLimit } from './enforce-rate-limit';
 import {
   Controller,
   Inject,
@@ -6,7 +7,6 @@ import {
   Res,
   HttpCode,
   BadRequestException,
-  HttpException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { RouteConfig, RouteSchema } from '@nestjs/platform-fastify';
@@ -26,6 +26,7 @@ import {
 @Controller('newsletter')
 export class NewsletterSubscriptionController {
   constructor(
+    @Inject(NewsletterSubscriptionService)
     private readonly subscriptions: NewsletterSubscriptionService,
     @Inject(NEWSLETTER_PRESENTATION_OPTIONS)
     private readonly options: NewsletterPresentationModuleOptions,
@@ -43,38 +44,12 @@ export class NewsletterSubscriptionController {
   ) {
     if (request.validationError)
       throw new BadRequestException('Invalid newsletter request.');
-    if (this.options.rateLimit.mode !== 'disabled') {
-      let result;
-      try {
-        const key = await this.options.resolveClientKey?.(request);
-        if (
-          typeof key !== 'string' ||
-          !key.trim() ||
-          key.length > 512 ||
-          !this.limiter
-        )
-          throw new Error();
-        result = await this.limiter.consume(key, this.options.rateLimit);
-        if (
-          !result ||
-          typeof result.allowed !== 'boolean' ||
-          (!result.allowed &&
-            (!Number.isFinite(result.retryAfterMs) || result.retryAfterMs <= 0))
-        )
-          throw new Error();
-      } catch {
-        throw new ServiceUnavailableException(
-          'Newsletter processing is temporarily unavailable.',
-        );
-      }
-      if (!result.allowed) {
-        reply.header(
-          'Retry-After',
-          String(Math.ceil(result.retryAfterMs / 1000)),
-        );
-        throw new HttpException('Too many newsletter requests.', 429);
-      }
-    }
+    await enforceNewsletterRateLimit(
+      request,
+      reply,
+      this.options,
+      this.limiter,
+    );
     let context;
     try {
       context = (await this.options.resolveContext?.(request)) ?? {};

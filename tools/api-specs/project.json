@@ -28,6 +28,12 @@
         },
         {
           "fileset": "{workspaceRoot}/libs/identity/ts/src/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/newsletter/nest/src/**/*"
+        },
+        {
+          "fileset": "{workspaceRoot}/libs/newsletter/ts/src/**/*"
         }
       ],
       "outputs": ["{workspaceRoot}/docs/openapi"],
