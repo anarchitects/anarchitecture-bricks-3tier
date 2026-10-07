@@ -38,6 +38,8 @@ const {
 const {
   CryptoNativeToken,
   NativeSubscriberAdapter,
+  NewsletterNativeMailService,
+  NativeUnsubscribeService,
 } = require('@anarchitects/newsletter-nest/infrastructure-native');
 const {
   NewsletterNativeSubscriberEntity: Subscriber,
@@ -436,7 +438,10 @@ test('token insert failure rolls back creation, and consent failure prevents sub
   }
   await retry.confirm(original.confirmationToken);
   assert.equal((await read('failed-rotation')).status, 'active');
-  const adapter = new NativeSubscriberAdapter(service('adapter'));
+  const adapter = new NativeSubscriberAdapter(service('adapter'), {
+    sendConfirmation: async () => undefined,
+    sendUnsubscribed: async () => undefined,
+  });
   const failingConsent = {
     appendGrant: async () => {
       throw new Error('offline');
@@ -466,6 +471,128 @@ test('token insert failure rolls back creation, and consent failure prevents sub
     undefined,
   );
   assert.equal((await read('adapter')).status, 'pending_confirmation');
+});
+
+test('native mail failure, cooldown, rotation and receipt replay preserve real committed state', async () => {
+  const scope = 'mail-flow';
+  const email = 'mail-flow@example.test';
+  const lifecycle = service(scope);
+  const messages = [];
+  const outcomes = [];
+  const snapshots = [];
+  let fail = true;
+  const mail = new NewsletterNativeMailService(
+    {
+      sendMessage: async (message) => {
+        // Query through a second connection: pending state and consent are already committed.
+        const state = await second
+          .getRepository(Subscriber)
+          .findOneByOrFail({ scope, email });
+        snapshots.push({
+          status: state.status,
+          grants: await second
+            .getRepository(Consent)
+            .countBy({ email, kind: 'granted' }),
+        });
+        messages.push(message);
+        if (fail) throw new Error('SMTP details must stay private');
+      },
+      send: async () => {
+        throw new Error('legacy send is forbidden');
+      },
+      sendTemplate: async () => {
+        throw new Error('legacy templates are forbidden');
+      },
+    },
+    {
+      publicationName: 'Host news',
+      confirmationUrl: 'https://host.example.test/confirm',
+      unsubscribeUrl: 'https://host.example.test/unsubscribe',
+      maxAttempts: 2,
+      retryDelayMs: 0,
+      onDeliveryOutcome: (outcome) => outcomes.push(outcome),
+    },
+  );
+  const subscriptions = new NewsletterSubscriptionService(
+    new TypeOrmConsentRepository(first),
+    new NativeSubscriberAdapter(lifecycle, mail),
+    { version: 'v1', text: 'Host wording' },
+    clock,
+  );
+  const request = { email, consent: true, consentVersion: 'v1' };
+  assert.deepEqual(await subscriptions.subscribe(request), { accepted: true });
+  assert.equal((await read(scope, email)).status, 'pending_confirmation');
+  assert.equal(messages.length, 2);
+  assert.equal(messages[0], messages[1]);
+  assert.deepEqual(outcomes, [
+    { kind: 'confirmation', outcome: 'failed', attempts: 2 },
+  ]);
+  const parseLinks = (message) =>
+    message.text
+      .match(/https:\/\/\S+/g)
+      .map((link) => new URL(link).searchParams.get('token'));
+  const old = parseLinks(messages[0]);
+  await subscriptions.subscribe(request);
+  assert.equal(messages.length, 2); // Failed delivery does not bypass the resend cooldown.
+  now += 1000;
+  fail = false;
+  await subscriptions.subscribe(request);
+  assert.equal(messages.length, 3);
+  const fresh = parseLinks(messages[2]);
+  assert.notEqual(fresh[0], old[0]);
+  await lifecycle.confirm(old[0]);
+  assert.equal((await read(scope, email)).status, 'pending_confirmation');
+  await lifecycle.confirm(fresh[0]);
+  await subscriptions.subscribe(request);
+  assert.equal(messages.length, 3); // Active membership has the same accepted response, no mail.
+  const withdrawal = new NativeUnsubscribeService(lifecycle, mail);
+  fail = true;
+  await Promise.all(
+    Array.from({ length: 12 }, () => withdrawal.unsubscribe(fresh[1])),
+  );
+  assert.equal((await read(scope, email)).status, 'unsubscribed');
+  assert.equal(
+    await first
+      .getRepository(Consent)
+      .countBy({ eventSource: 'native:' + scope }),
+    1,
+  );
+  assert.equal(messages.length, 5); // Only one receipt operation, with two bounded attempts.
+  await withdrawal.unsubscribe(fresh[1]);
+  await withdrawal.unsubscribe(old[1]);
+  await withdrawal.unsubscribe('invalid');
+  assert.equal(messages.length, 5);
+  assert.deepEqual(outcomes.at(-1), {
+    kind: 'unsubscribed',
+    outcome: 'failed',
+    attempts: 2,
+  });
+  assert.equal(
+    await first.getRepository(Consent).countBy({ email, kind: 'granted' }),
+    4,
+  );
+  assert.deepEqual(
+    snapshots.map((value) => value.status),
+    [
+      'pending_confirmation',
+      'pending_confirmation',
+      'pending_confirmation',
+      'unsubscribed',
+      'unsubscribed',
+    ],
+  );
+  assert.ok(snapshots.every((value) => value.grants > 0));
+  fail = false;
+  const previousGeneration = (await read(scope, email)).generation;
+  await subscriptions.subscribe(request);
+  assert.equal(messages.length, 6);
+  assert.notEqual((await read(scope, email)).generation, previousGeneration);
+  assert.equal((await read(scope, email)).status, 'pending_confirmation');
+  await withdrawal.unsubscribe(fresh[1]);
+  assert.equal(messages.length, 6);
+  const latest = parseLinks(messages[5]);
+  await lifecycle.confirm(latest[0]);
+  assert.equal((await read(scope, email)).status, 'active');
 });
 
 test('native migration rollback preserves consent and host objects, and reapplication restores matching metadata', async () => {

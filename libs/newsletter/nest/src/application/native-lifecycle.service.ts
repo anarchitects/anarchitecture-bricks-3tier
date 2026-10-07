@@ -15,7 +15,7 @@ import type {
 import type { NativeTokenPort } from './ports/native-token.port';
 import type { NewsletterSubscriberRequest } from './ports/subscriber.port';
 
-/** Trusted backend handoff for #447, never a public DTO or log payload. Raw tokens exist only here. */
+/** Trusted backend mail handoff, never a public DTO or log payload. */
 export interface NewsletterNativePreparation {
   readonly email: string;
   readonly confirmationToken: string;
@@ -127,13 +127,20 @@ export class NewsletterNativeLifecycleService {
     await this.consume(secret, 'unsubscribe');
   }
 
+  /** Trusted mail orchestration only. Returns an address only after a new withdrawal commits. */
+  async unsubscribeAndPrepareNotification(
+    secret: unknown,
+  ): Promise<{ readonly email: string } | undefined> {
+    return this.consume(secret, 'unsubscribe');
+  }
+
   private async consume(
     secret: unknown,
     purpose: NewsletterNativeTokenPurpose,
-  ): Promise<void> {
+  ): Promise<{ readonly email: string } | undefined> {
     const hash = this.tokens.hash(secret, purpose);
     if (!hash) return;
-    await this.storage(() =>
+    return this.storage(() =>
       this.repository.transact(
         this.options.scope,
         { tokenHash: hash },
@@ -175,6 +182,9 @@ export class NewsletterNativeLifecycleService {
             await tx.deleteTokens(subscriber.id, 'confirm');
           }
           await tx.saveToken({ ...token, consumedAt: now });
+          return purpose === 'unsubscribe'
+            ? { email: subscriber.email }
+            : undefined;
         },
       ),
     );

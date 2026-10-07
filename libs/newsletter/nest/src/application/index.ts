@@ -23,6 +23,7 @@ export {
   type NewsletterValidationCode,
 } from './newsletter.errors';
 export type { NewsletterClock } from './newsletter-clock';
+export type { NewsletterNativeMailPort } from './ports/native-mail.port';
 
 export {
   NewsletterNativeLifecycleService,

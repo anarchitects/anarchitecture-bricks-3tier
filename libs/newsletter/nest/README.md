@@ -18,11 +18,11 @@ Unreleased Newsletter backend package for [epic #428](https://github.com/anarchi
 defines a production-usable native subscriber implementation, with mutable
 pending/active/unsubscribed state distinct from append-only consent evidence.
 Newsletter will own native double opt-in, unsubscribe and message semantics;
-Common `MailerPort` will supply replaceable delivery. MailerLite remains optional.
+Common `MailerPort` supplies replaceable delivery. MailerLite remains optional.
 
 #446 supplies the operational core, secure tokens and PostgreSQL persistence described
-below. This is not yet an available `mode: 'native'` facade configuration: #447
-adds mail delivery and #448 adds native HTTP/facade composition. Until then the root
+below. Native mail orchestration is available through the advanced entry points.
+This is not yet an available `mode: 'native'` facade configuration: #448 adds native HTTP/facade composition. Until then the root
 facade selections remain `custom`, `mailerlite` and explicit `noop`. The native core
 adapter implements `SubscriberPort` but sends no mail by itself. It is an implementation
 stage, not a complete production signup flow or a silent fallback. No-op is not
@@ -324,11 +324,114 @@ Rolling back this migration drops the consent table and its evidence, but leaves
 the namespace and other host tables intact. Use forward migrations for deployed
 evidence that must be retained; keep `synchronize: false` in production.
 
+### Native mail flow (#447)
+
+`NewsletterNativeMailService` in `infrastructure-native` implements the Newsletter-owned
+`NewsletterNativeMailPort` intent contract using the generic Common `MailerPort.sendMessage`.
+It ships default HTML and plain-text confirmation/withdrawal content, requires no template
+files, and never imports `MailerService` or configures a transport. Configure Common
+once at the host root, then inject the exported `MailerPort` into the factory:
+
+```ts
+import { Module } from '@nestjs/common';
+import { CommonMailerModule, MailerPort } from '@anarchitects/common-nest-mailer';
+import { NewsletterNativeMailService } from '@anarchitects/newsletter-nest/infrastructure-native';
+
+@Module({
+  imports: [
+    // Host transport configuration; no template directory is needed for rendered messages.
+    CommonMailerModule.forRootAsync({
+      useFactory: () => ({ transport: hostSmtpOptions, defaults: { from: 'news@example.com' } }),
+    }),
+    CommonMailerModule.forRoot({ provider: 'node' }),
+  ],
+  providers: [
+    {
+      provide: NewsletterNativeMailService,
+      inject: [MailerPort],
+      useFactory: (mailer: MailerPort) =>
+        new NewsletterNativeMailService(mailer, {
+          publicationName: 'Example news',
+          confirmationUrl: 'https://example.com/newsletter/confirm',
+          unsubscribeUrl: 'https://example.com/newsletter/unsubscribe',
+        }),
+    },
+  ],
+  exports: [NewsletterNativeMailService],
+})
+export class HostNewsletterMailModule {}
+```
+
+The existing `CommonMailerModule.forRoot({ provider: 'noop' })` can replace both imports
+for intentional no-delivery tests/development. Existing `forRootFromConfig()` plus
+`forProviderFromConfig()` also works for hosts already using config-based Common
+transport/template setup. Do not import a second transport just for Newsletter.
+Noop success means the configured provider accepted the operation, not inbox delivery.
+
+Options are exported as `NewsletterNativeMailOptions` from `config`:
+
+- Required `publicationName`, `confirmationUrl`, and `unsubscribeUrl`. Both endpoints
+  must be absolute HTTPS URLs with no credentials, query, or fragment. Configure
+  trusted public origins/routes at bootstrap, never derive them from request headers.
+  Each link adds only a `token` query parameter containing the versioned, purpose-bound
+  secret from #446. No email, subscriber ID, or consent evidence is placed in URLs.
+- `confirmationSubject` and `unsubscribedSubject` override the default subjects.
+  `message` uses Common's `from`, `replyTo`, and generic string `headers` vocabulary.
+  Metadata is trusted host configuration; omit sender fields to use transport defaults.
+- `renderConfirmation(context)` and `renderUnsubscribed(context)` return both `html`
+  and `text`. Context contains the publication name and, for confirmation only, both
+  sensitive URLs. Hosts own safe escaping and link inclusion in custom rendering.
+  Defaults escape HTML and include confirmation and unsubscribe links in both alternatives.
+- `notifyUnsubscribe: false` disables the receipt, without changing withdrawal behavior.
+- `maxAttempts` is 1..3 (default 1); `retryDelayMs` is 0..5000 (default 250). Attempts
+  share one rendered message and token pair. Configure finite connection/socket timeouts
+  in the Common transport; Newsletter does not race unresolved sends with a timeout.
+- `onDeliveryOutcome` is a synchronous aggregate monitoring hook with only `kind`,
+  `outcome`, and `attempts`. Rendering failure reports zero attempts. Provider errors,
+  emails, URLs and tokens are never passed to the hook or logged by the library.
+
+`NativeUnsubscribeService.unsubscribe(secret)` first commits withdrawal and consent
+proof atomically, then attempts a receipt only for a newly effective token. Its response
+is neutral for success, invalid/expired/superseded tokens and replays. The internal
+`unsubscribeAndPrepareNotification` seam returns an address only after commit; never
+expose that seam or its result as an HTTP response. The lower-level lifecycle
+`unsubscribe` still performs withdrawal without sending a receipt.
+
+**Failure/retry contract:** grant and pending state survive rendering or delivery failure.
+The public subscription acknowledgement remains `{ accepted: true }`, just as for an
+already active address or a suppressed resend. No mail failure activates a subscriber,
+rolls back evidence, or switches provider. Fresh affirmative subscription requests may
+resend after the lifecycle cooldown, rotating both tokens; immediate retries send nothing.
+Each accepted request still appends its own grant evidence. Hosts should monitor aggregate
+failures and retain presentation/gateway abuse limits. Responses are neutral in content;
+this synchronous flow does not promise constant-time responses.
+
+Receipt failure never reverses withdrawal. Replaying a used token does not retry the
+receipt. Bounded in-call retries may deliver duplicates if transport acceptance was
+ambiguous. There is no durable outbox or exactly-once delivery: a crash after commit can
+lose a message, and delayed delivery after rotation may contain a superseded link.
+Raw tokens are held only in the transient mail handoff/rendered message and are not
+persisted for background retries. Host renderers/transports must not log them. Host HTTP
+pages should redact token query strings from access logs, avoid third-party resources,
+and apply a no-referrer policy; endpoint behavior remains #448's scope.
+
+**Compatibility:** this flow requires `@anarchitects/common-nest-mailer ^0.4.0`, which
+includes the structured message contract delivered separately in
+[#454](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/454) and
+[released as 0.4.0](https://github.com/anarchitects/anarchitecture-bricks-3tier/releases/tag/common-nest-mailer%400.4.0).
+Install that optional peer when using the native Common-backed mail service. Custom
+Common mailer implementations must implement `sendMessage` in addition to `send` and
+`sendTemplate`. Common 0.3.4 does not implement `sendMessage`; the constructor rejects
+incompatible providers instead of silently dropping alternatives/metadata.
+`NativeSubscriberAdapter` now requires a `NewsletterNativeMailPort` as its second
+constructor argument (source change to the unreleased #446 advanced API). Custom and
+MailerLite modes do not load Common Mailer at runtime. No new migration is required.
+
 ### Native operational core (#446)
 
 `NewsletterNativeLifecycleService` in `application` owns lifecycle decisions.
 `NativeSubscriberAdapter` in `infrastructure-native` implements `SubscriberPort`
-by invoking that service; `CryptoNativeToken` supplies cryptography. Persistence
+by invoking that service and the configured Newsletter mail port; `CryptoNativeToken` supplies cryptography. Persistence
 is a separate `TypeOrmNativeSubscriberRepository` adapter. No MailerLite client,
 credentials or Nest container is required for these classes.
 
@@ -337,7 +440,8 @@ Register all three entities and both migrations with the host PostgreSQL DataSou
 ```ts
 import { NewsletterConsentEntity, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity, CreateNewsletterConsentEvents1791244800000, CreateNewsletterNativeSubscribers1791288000000, TypeOrmConsentRepository, TypeOrmNativeSubscriberRepository } from '@anarchitects/newsletter-nest/infrastructure-persistence';
 import { NewsletterNativeLifecycleService, NewsletterSubscriptionService } from '@anarchitects/newsletter-nest/application';
-import { CryptoNativeToken, NativeSubscriberAdapter } from '@anarchitects/newsletter-nest/infrastructure-native';
+import { CryptoNativeToken, NativeSubscriberAdapter, NewsletterNativeMailService, NativeUnsubscribeService } from '@anarchitects/newsletter-nest/infrastructure-native';
+import type { MailerPort } from '@anarchitects/common-nest-mailer';
 
 // In the host DataSource options; initialize and run migrations through host deployment tooling.
 const entities = [NewsletterConsentEntity, NewsletterNativeSubscriberEntity, NewsletterNativeTokenEntity];
@@ -345,18 +449,27 @@ const migrations = [CreateNewsletterConsentEvents1791244800000, CreateNewsletter
 
 // dataSource is the host's initialized DataSource with these entities/migrations.
 const lifecycle = new NewsletterNativeLifecycleService(new TypeOrmNativeSubscriberRepository(dataSource), new CryptoNativeToken(), { scope: 'host-newsletter', confirmationTtlMs: 86_400_000, unsubscribeTtlMs: 2_592_000_000, resendCooldownMs: 60_000 });
-const subscriber = new NativeSubscriberAdapter(lifecycle);
+// mailer is the MailerPort resolved from the host's existing Common Mailer provider.
+declare const mailer: MailerPort;
+const mail = new NewsletterNativeMailService(mailer, {
+  publicationName: 'Example news',
+  confirmationUrl: 'https://example.com/newsletter/confirm',
+  unsubscribeUrl: 'https://example.com/newsletter/unsubscribe',
+  message: { from: 'Example <news@example.com>', replyTo: 'help@example.com' },
+});
+const subscriber = new NativeSubscriberAdapter(lifecycle, mail);
+const withdrawals = new NativeUnsubscribeService(lifecycle, mail);
 const subscriptions = new NewsletterSubscriptionService(new TypeOrmConsentRepository(dataSource), subscriber, hostConsentPolicy);
 ```
 
-This constructs the **core only**. It records pending state without sending mail;
-#447 will compose delivery and #448 will expose native facade/HTTP flows. Never
+This constructs the native core and mail flow. #448 will expose native facade/HTTP flows. Never
 expose `prepareSubscription` as a public endpoint: it is an internal adapter seam
 invoked after `NewsletterSubscriptionService` validates and commits affirmative
 consent. It returns a transient `NewsletterNativePreparation` containing raw
-confirmation/unsubscribe tokens for the future trusted mail handoff, or `undefined`
-for active subscribers and suppressed resends. The core `NativeSubscriberAdapter`
-discards that handoff and resolves `void`, preserving the existing subscriber port.
+confirmation/unsubscribe tokens for the trusted mail handoff, or `undefined`
+for active subscribers and suppressed resends. `NativeSubscriberAdapter` hands
+tokens to `NewsletterNativeMailPort.sendConfirmation` only after commit, then resolves
+`void`, preserving the existing subscriber port.
 Preparation does not grant consent or authorize itself; bypassing the subscription
 use case would bypass consent validation. Do not log, persist or return handoff
 tokens in subscription acknowledgements.
