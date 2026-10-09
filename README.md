@@ -202,6 +202,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 ## Architecture Guides
 
 - [Audit: Nest 11/12 Compatibility And Support Decisions](docs/guides/nest-11-12-compatibility-audit.md)
+- [Guide: Nest Development And Maintenance Strategy](docs/guides/nest-development-strategy.md)
 - [Guide: Alignment With `anarchitecture-bricks-ddd`](docs/guides/alignment-with-bricks-ddd.md)
 - [Guide: Migration To `anarchitecture-bricks-ddd`](docs/guides/migration-to-bricks-ddd.md)
 - [Guide: Angular 22 And TypeScript 6 Migration](docs/guides/angular-22-migration.md)
