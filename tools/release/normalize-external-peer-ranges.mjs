@@ -43,7 +43,8 @@ function walkDirectories(rootDir) {
 
 function addMissingRootDependencyReference(dependencyName, packageJsonPath) {
   const relativePath = relative(workspaceRoot, packageJsonPath);
-  const existing = missingRootDependencyReferences.get(dependencyName) ?? new Set();
+  const existing =
+    missingRootDependencyReferences.get(dependencyName) ?? new Set();
   existing.add(relativePath);
   missingRootDependencyReferences.set(dependencyName, existing);
 }
@@ -68,13 +69,26 @@ function normalizePackageJson(packageJsonPath) {
   const parsed = JSON.parse(source);
   const peerDependencies = parsed.peerDependencies;
 
-  if (!parsed.publishConfig || !peerDependencies || typeof peerDependencies !== 'object') {
+  // #465 verifies this package independently of the root Nest 11 toolchain.
+  // Its packed-consumer matrix owns these ranges; root normalization would
+  // erase Nest 12 support and lower the tested dependency floors.
+  if (parsed.name === '@anarchitects/common-nest-mailer') {
+    return;
+  }
+
+  if (
+    !parsed.publishConfig ||
+    !peerDependencies ||
+    typeof peerDependencies !== 'object'
+  ) {
     return;
   }
 
   let fileChanged = false;
 
-  for (const [dependencyName, currentRange] of Object.entries(peerDependencies)) {
+  for (const [dependencyName, currentRange] of Object.entries(
+    peerDependencies,
+  )) {
     if (dependencyName.startsWith('@anarchitects/')) {
       continue;
     }
@@ -122,8 +136,8 @@ if (missingRootDependencyReferences.size > 0) {
     'Skipped peer dependencies without root package.json mapping (left unchanged):',
   );
 
-  const sortedMissing = [...missingRootDependencyReferences.entries()].sort((a, b) =>
-    a[0].localeCompare(b[0]),
+  const sortedMissing = [...missingRootDependencyReferences.entries()].sort(
+    (a, b) => a[0].localeCompare(b[0]),
   );
 
   for (const [dependencyName, fileSet] of sortedMissing) {

@@ -12,6 +12,26 @@
   },
   "tags": ["domain:shared", "tech:nest", "layer:infra"],
   "targets": {
+    "test-nest-compatibility": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": false,
+      "defaultConfiguration": "nest12",
+      "options": {
+        "command": "node tools/testing/run-common-mailer-nest-host.mjs nest12"
+      },
+      "configurations": {
+        "nest11": {
+          "command": "node tools/testing/run-common-mailer-nest-host.mjs nest11"
+        },
+        "nest11-config12": {
+          "command": "node tools/testing/run-common-mailer-nest-host.mjs nest11-config12"
+        },
+        "nest12": {
+          "command": "node tools/testing/run-common-mailer-nest-host.mjs nest12"
+        }
+      }
+    },
     "build": {
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],

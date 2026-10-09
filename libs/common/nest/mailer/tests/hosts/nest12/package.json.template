@@ -1,0 +1,24 @@
+{
+  "name": "common-mailer-nest12-consumer",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "@anarchitects/common-nest-mailer": "file:common-mailer.tgz",
+    "@nestjs/common": "12.1.2",
+    "@nestjs/core": "12.1.2",
+    "@nestjs/testing": "12.1.2",
+    "@nestjs/config": "12.0.1",
+    "@nestjs-modules/mailer": "3.0.2",
+    "nodemailer": "8.0.5",
+    "handlebars": "4.7.9",
+    "reflect-metadata": "0.1.14",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@types/node": "22.18.6"
+  }
+}

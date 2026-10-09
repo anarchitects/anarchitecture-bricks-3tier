@@ -18,17 +18,62 @@ Shared typed mailer configuration, transport setup, and provider wiring for Nest
 
 ## Installation
 
+The contract below is for the **unreleased next minor** prepared by #465.
+Published `0.4.x` remains the Nest 11 / Mailer 2 / Nodemailer 7 maintenance
+line. Wait for the new minor before using these instructions with npm; do not
+publish these dependency changes as a `0.4.x` patch.
+
 ```bash
-npm install @anarchitects/common-nest-mailer @nestjs/common @nestjs/config @nestjs-modules/mailer
+npm install @anarchitects/common-nest-mailer @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 # or
-yarn add @anarchitects/common-nest-mailer @nestjs/common @nestjs/config @nestjs-modules/mailer
+yarn add @anarchitects/common-nest-mailer @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 ```
 
 Peer requirements:
 
-- `@nestjs/common`
-- `@nestjs/config`
-- `@nestjs-modules/mailer`
+- `@nestjs/common`: `^11.1.6 || ^12.1.2`
+- `@nestjs/config`: `^4.0.2 || ^12.0.1` (Config 4 is Nest 11 only)
+- `@nestjs-modules/mailer`: `^3.0.2`
+- `nodemailer`: `^8.0.5`
+
+Keep the host's Nest common/core/platform/testing packages on the same major.
+For Nest 11, use common/core `^11.1.6` and either supported Config line.
+Config's own peers reject Nest 12 with Config 4. Handlebars and the Nodemailer
+declarations are direct package dependencies, so the built-in template adapter
+does not depend on optional packages being hoisted by the consuming workspace.
+
+### Compatibility and migration
+
+The same CommonJS artifact supports these tested dependency combinations:
+
+| Nest common/core/testing | Config | Mailer | Nodemailer | Handlebars |
+| ------------------------ | ------ | ------ | ---------- | ---------- |
+| 11.1.6                   | 4.0.2  | 3.0.2  | 8.0.5      | 4.7.9      |
+| 11.1.6                   | 12.0.1 | 3.0.2  | 8.0.5      | 4.7.9      |
+| 12.1.2                   | 12.0.1 | 3.0.2  | 8.0.5      | 4.7.9      |
+
+**Breaking dependency change:** upgrading from `0.4.x` requires Mailer 3,
+Nodemailer 8, and at least the declared Nest patch floor. Update those host
+dependencies together. The facade methods, config namespace, injection tokens,
+node/noop selection and `MailerPort` API are unchanged by #465. Existing Nest 11
+hosts may stay on the `0.4.x` maintenance line or migrate to this new minor.
+Domain package dependency ranges must be updated in their own compatibility
+issues before they consume the new Common minor; this change alone does not
+certify Auth, Forms or Newsletter on Nest 12.
+
+Mailer 2.3.4 and 2.3.10 publish a declaration importing
+`@nestjs/common/interfaces`, which is not exposed by Nest 12 under NodeNext
+resolution. [Mailer 3.0.2](https://registry.npmjs.org/@nestjs-modules/mailer/3.0.2)
+imports those types from the public Nest root and requires Nodemailer >=8.0.5.
+It also stops automatically installing optional template engines. This package
+therefore declares Handlebars directly. No `skipLibCheck`, patched upstream
+declarations, ESM conversion or application API workaround is required.
+
+These checks ran on Node **24.21.0**, npm **11.19.0**, and TypeScript **6.0.3**
+with `moduleResolution: NodeNext` and `skipLibCheck: false`. This is not a
+certification of every Node version: minimum-Node coverage and the wider CI
+matrix remain #468's gate before release under #469. No package version bump,
+publication or deprecation is performed by #465.
 
 ## Entry points and exports
 
@@ -190,7 +235,10 @@ Configure mail transport once at app root, then let domain mailer modules consum
 ```ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { CommonMailerModule, mailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  CommonMailerModule,
+  mailerConfig,
+} from '@anarchitects/common-nest-mailer';
 
 @Module({
   imports: [
@@ -244,7 +292,10 @@ export class AppModule {}
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { InjectMailerConfig, MailerConfig } from '@anarchitects/common-nest-mailer';
+import {
+  InjectMailerConfig,
+  MailerConfig,
+} from '@anarchitects/common-nest-mailer';
 
 @Injectable()
 export class MailerSetupService {
@@ -277,6 +328,40 @@ Existing node/noop provider selection applies to this method. Node forwards the 
 - Configure transport once at app root and keep domain modules adapter-focused.
 - Use `MailerPort` as the cross-domain contract to avoid tight coupling to concrete providers.
 - Keep shared module defaults safe for local/dev environments.
+
+### Isolated packed consumers
+
+```bash
+yarn nx run common-nest-mailer:test-nest-compatibility:nest11
+yarn nx run common-nest-mailer:test-nest-compatibility:nest11-config12
+yarn nx run common-nest-mailer:test-nest-compatibility:nest12
+```
+
+The uncached target builds and packs the actual library, checks source/build/pack
+manifest equality, then installs it outside the repository with `npm ci`, strict
+peer/engine checks and lifecycle scripts disabled. Registry dependencies are
+integrity-locked in `tests/hosts/*/*.template`; only the newly built local tarball
+has no stored integrity. Its dependency and peer contracts must match the lock,
+and its version is taken from the current source manifest. There are no workspace
+links or rewritten package peers. The host uses the development Node range from
+#463 (`^22.22.3 || ^24.15.0 || >=26.0.0`) and needs npm registry access.
+
+Both CommonJS and ESM decorated consumers compile and run. They verify token
+identity, DI, explicit/config-driven provider selection and precedence, noop
+without a transport, real Nodemailer dispatch through an in-memory transport,
+sender defaults/overrides, message metadata, error propagation, shutdown, legacy
+send/template methods, config injection, deployment-relative template rendering
+and startup rejection of an invalid template directory. No external email is sent.
+
+To refresh a host lock after an intentional dependency change, copy its manifest
+template to a temporary directory as `package.json`, pack the built library there
+as `common-mailer.tgz`, and run `npm install --package-lock-only --ignore-scripts
+--strict-peer-deps --legacy-peer-deps=false --force=false --engine-strict`.
+Copy the resulting lock back to the template, removing only the local Common
+Mailer's `integrity` field. Retain every registry integrity field. Run all three
+host targets and `yarn nx run release-tools:test` before accepting the update.
+The external peer normalizer deliberately preserves this package's independently
+verified contract instead of copying the Nest 11 root ranges.
 
 ## License
 

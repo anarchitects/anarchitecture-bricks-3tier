@@ -114,8 +114,14 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        "{workspaceRoot}/libs/common/nest/mailer/package.json",
+        "{workspaceRoot}/libs/common/nest/mailer/tests/hosts/**/*",
+        "{workspaceRoot}/tools/testing/run-common-mailer-nest-host.mjs"
+      ],
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs"
       }
     }
   }
