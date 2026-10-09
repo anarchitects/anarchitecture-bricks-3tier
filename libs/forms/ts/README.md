@@ -1,5 +1,7 @@
 # @anarchitects/forms-ts
 
+The next minor includes explicit `.js` relative declaration specifiers for strict NodeNext consumers. Existing public exports and ESM/CJS bundles are preserved. Packed Nest 11/12 consumers verify this contract through `release-tools:test-forms-identity-nest-compatibility` (#466). The declaration correction can also be backported to the previous maintenance minor.
+
 Schema-first form configuration and validation library built with TypeBox. Define forms declaratively
 and generate runtime validation schemas automatically.
 

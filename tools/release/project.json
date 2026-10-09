@@ -148,10 +148,39 @@
         "{workspaceRoot}/tools/testing/run-common-mailer-nest-host.mjs",
         "{workspaceRoot}/tools/testing/auth-nest-hosts/**/*",
         "{workspaceRoot}/tools/testing/run-auth-nest-host.mjs",
-        "{workspaceRoot}/libs/auth/{nest,declarations,ts}/package.json"
+        "{workspaceRoot}/libs/auth/{nest,declarations,ts}/package.json",
+        "{workspaceRoot}/tools/testing/forms-identity-nest-hosts/**/*",
+        "{workspaceRoot}/tools/testing/run-forms-identity-nest-host.mjs",
+        "{workspaceRoot}/libs/{forms,identity}/{nest,ts}/package.json"
       ],
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs"
+      }
+    },
+    "test-forms-identity-nest-compatibility": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["forms-nest", "identity-nest"],
+          "target": "build"
+        }
+      ],
+      "cache": false,
+      "parallelism": false,
+      "defaultConfiguration": "nest12",
+      "options": {
+        "command": "node tools/testing/run-forms-identity-nest-host.mjs nest12"
+      },
+      "configurations": {
+        "nest11": {
+          "command": "node tools/testing/run-forms-identity-nest-host.mjs nest11"
+        },
+        "nest11-modern": {
+          "command": "node tools/testing/run-forms-identity-nest-host.mjs nest11-modern"
+        },
+        "nest12": {
+          "command": "node tools/testing/run-forms-identity-nest-host.mjs nest12"
+        }
       }
     }
   }

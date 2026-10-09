@@ -1,4 +1,4 @@
-import type { FormConfig } from './form.types';
+import type { FormConfig } from './form.types.js';
 
 export const contactForm: FormConfig = {
   id: 'contact_default',

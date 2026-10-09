@@ -1,0 +1,33 @@
+{
+  "name": "forms-identity-nest11-consumer",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "@anarchitects/common-nest-mailer": "file:common-mailer.tgz",
+    "@nestjs/common": "11.1.6",
+    "@nestjs/core": "11.1.6",
+    "@nestjs/testing": "11.1.6",
+    "@nestjs/platform-fastify": "11.1.6",
+    "@nestjs/config": "4.0.2",
+    "@nestjs/typeorm": "11.0.1",
+    "@nestjs-modules/mailer": "3.0.2",
+    "nodemailer": "8.0.5",
+    "handlebars": "4.7.9",
+    "typeorm": "1.1.0",
+    "pg": "8.16.3",
+    "fastify": "5.4.0",
+    "reflect-metadata": "0.1.14",
+    "rxjs": "7.8.2",
+    "@anarchitects/forms-ts": "file:forms-ts.tgz",
+    "@anarchitects/forms-nest": "file:forms-nest.tgz",
+    "@anarchitects/identity-ts": "file:identity-ts.tgz",
+    "@anarchitects/identity-nest": "file:identity-nest.tgz"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@types/node": "22.18.6"
+  }
+}

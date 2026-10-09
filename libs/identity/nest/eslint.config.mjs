@@ -8,6 +8,8 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
+          // Packed hosts verify upcoming minor contracts; CI owns source versions.
+          ignoredDependencies: ['@anarchitects/identity-ts'],
           ignoredFiles: ['{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}'],
         },
       ],
