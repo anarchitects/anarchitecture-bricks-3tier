@@ -37,9 +37,18 @@
     "validate-angular-packed-manifests": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        { "projects": "auth-angular", "target": "build" },
-        { "projects": "forms-angular", "target": "build" },
-        { "projects": "identity-angular", "target": "build" }
+        {
+          "projects": "auth-angular",
+          "target": "build"
+        },
+        {
+          "projects": "forms-angular",
+          "target": "build"
+        },
+        {
+          "projects": "identity-angular",
+          "target": "build"
+        }
       ],
       "options": {
         "command": "node tools/release/validate-angular-package-compatibility.mjs --dist"
@@ -48,9 +57,18 @@
     "validate-typeorm-package-compatibility": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        { "projects": "auth-nest", "target": "build" },
-        { "projects": "forms-nest", "target": "build" },
-        { "projects": "identity-nest", "target": "build" }
+        {
+          "projects": "auth-nest",
+          "target": "build"
+        },
+        {
+          "projects": "forms-nest",
+          "target": "build"
+        },
+        {
+          "projects": "identity-nest",
+          "target": "build"
+        }
       ],
       "options": {
         "command": "node tools/release/validate-typeorm-package-compatibility.mjs"
@@ -59,9 +77,18 @@
     "test-typeorm-persistence": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        { "projects": "auth-nest", "target": "build" },
-        { "projects": "forms-nest", "target": "build" },
-        { "projects": "identity-nest", "target": "build" }
+        {
+          "projects": "auth-nest",
+          "target": "build"
+        },
+        {
+          "projects": "forms-nest",
+          "target": "build"
+        },
+        {
+          "projects": "identity-nest",
+          "target": "build"
+        }
       ],
       "cache": false,
       "parallelism": false,
@@ -118,10 +145,13 @@
         "default",
         "{workspaceRoot}/libs/common/nest/mailer/package.json",
         "{workspaceRoot}/libs/common/nest/mailer/tests/hosts/**/*",
-        "{workspaceRoot}/tools/testing/run-common-mailer-nest-host.mjs"
+        "{workspaceRoot}/tools/testing/run-common-mailer-nest-host.mjs",
+        "{workspaceRoot}/tools/testing/auth-nest-hosts/**/*",
+        "{workspaceRoot}/tools/testing/run-auth-nest-host.mjs",
+        "{workspaceRoot}/libs/auth/{nest,declarations,ts}/package.json"
       ],
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs"
       }
     }
   }

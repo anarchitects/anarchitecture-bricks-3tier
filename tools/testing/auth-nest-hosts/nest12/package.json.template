@@ -1,0 +1,33 @@
+{
+  "name": "auth-nest12-consumer",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "@anarchitects/auth-ts": "file:auth-ts.tgz",
+    "@anarchitects/auth-declarations": "file:auth-declarations.tgz",
+    "@anarchitects/common-nest-mailer": "file:common-mailer.tgz",
+    "@anarchitects/auth-nest": "file:auth-nest.tgz",
+    "@nestjs/common": "12.1.2",
+    "@nestjs/core": "12.1.2",
+    "@nestjs/testing": "12.1.2",
+    "@nestjs/platform-fastify": "12.1.2",
+    "@nestjs/config": "12.0.1",
+    "@nestjs/jwt": "12.0.2",
+    "@nestjs/typeorm": "12.0.2",
+    "@nestjs-modules/mailer": "3.0.2",
+    "nodemailer": "8.0.5",
+    "handlebars": "4.7.9",
+    "typeorm": "1.1.0",
+    "pg": "8.16.3",
+    "fastify": "5.12.5",
+    "reflect-metadata": "0.1.14",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@types/node": "22.18.6"
+  }
+}

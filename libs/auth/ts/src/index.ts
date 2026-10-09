@@ -1,3 +1,3 @@
-export * from './contracts';
-export * from './dtos';
-export * from './models';
+export * from './contracts/index.js';
+export * from './dtos/index.js';
+export * from './models/index.js';

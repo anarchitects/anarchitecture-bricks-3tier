@@ -9,6 +9,12 @@ TypeScript DTOs and domain models for the Anarchitecture authentication stack. T
 
 Use it to validate inbound/outbound payloads, share typings between Angular/Nest bricks, and keep auth-specific logic consistent across tiers.
 
+The unreleased 0.12 line uses explicit `.js` relative specifiers in emitted
+declarations for strict NodeNext consumers. DTOs, models, public entry points and
+CJS/ESM runtime formats are preserved. This transitive declaration fix is validated
+by the [Auth Nest 11/12 packed-consumer matrix](../nest/README.md#nest-1112-compatibility-464)
+and can be backported independently to the 0.11.x maintenance line.
+
 Migration guidance for the Better Auth realignment lives in the [auth migration guide](../../../docs/guides/auth-migration.md).
 Migration guidance for the contract-driven auth profile model lives in the [auth contract migration guide](../../../docs/guides/auth-contracts-migration.md).
 

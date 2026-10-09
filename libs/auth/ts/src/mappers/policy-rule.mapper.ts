@@ -1,6 +1,6 @@
-import { parsePolicyRuleDTO } from '../dtos';
-import { PolicyRule } from '../models/auth.types';
-import { PolicyRuleWire } from './auth-public.types';
+import { parsePolicyRuleDTO } from '../dtos/index.js';
+import { PolicyRule } from '../models/auth.types.js';
+import { PolicyRuleWire } from './auth-public.types.js';
 
 export const toPolicyRuleWire = (rule: PolicyRule): PolicyRuleWire => ({
   ...parsePolicyRuleDTO({

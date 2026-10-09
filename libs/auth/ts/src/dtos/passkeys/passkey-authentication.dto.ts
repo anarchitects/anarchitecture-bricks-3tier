@@ -1,9 +1,9 @@
 import { type Static, Type } from '@sinclair/typebox';
-import { LoggedInUserInfoResponseSchema } from '../logged-in-user-info-response.dto';
+import { LoggedInUserInfoResponseSchema } from '../logged-in-user-info-response.dto.js';
 import {
   PasskeyAuthenticationCredentialSchema,
   PasskeyAuthenticationOptionsSchema,
-} from './webauthn-json.schemas';
+} from './webauthn-json.schemas.js';
 
 /** Discoverable-credential login: no username, userId, challenge, or RP policy supplied by the caller. */
 export const PasskeyAuthenticationBeginRequestSchema = Type.Object(

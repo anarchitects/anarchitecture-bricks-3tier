@@ -1,4 +1,4 @@
-import type { AuthFieldMeta } from './auth-contracts.factory';
+import type { AuthFieldMeta } from './auth-contracts.factory.js';
 
 export type AuthPayloadFieldBehavior = Pick<
   AuthFieldMeta,
@@ -18,11 +18,7 @@ export function shapeAuthPayload<
     const fieldBehavior = fieldMap[key];
     const isEmptyOptionalValue = value === '' || value === null;
 
-    if (
-      !fieldBehavior ||
-      fieldBehavior.required ||
-      !isEmptyOptionalValue
-    ) {
+    if (!fieldBehavior || fieldBehavior.required || !isEmptyOptionalValue) {
       return [[key, value] as const];
     }
 

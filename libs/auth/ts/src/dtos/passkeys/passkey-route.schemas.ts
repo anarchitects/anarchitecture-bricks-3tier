@@ -3,13 +3,13 @@ import {
   PasskeyRegistrationBeginResponseSchema,
   PasskeyRegistrationFinishRequestSchema,
   PasskeyRegistrationFinishResponseSchema,
-} from './passkey-registration.dto';
+} from './passkey-registration.dto.js';
 import {
   PasskeyAuthenticationBeginRequestSchema,
   PasskeyAuthenticationBeginResponseSchema,
   PasskeyAuthenticationFinishRequestSchema,
   PasskeyAuthenticationFinishResponseSchema,
-} from './passkey-authentication.dto';
+} from './passkey-authentication.dto.js';
 
 // Pure Fastify fields for future @RouteSchema consumers. HTTP routes and OpenAPI
 // operationId/tags are assigned by Nest presentation and central spec tooling.

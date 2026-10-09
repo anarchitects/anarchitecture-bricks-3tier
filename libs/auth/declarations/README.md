@@ -25,7 +25,12 @@ yarn add @anarchitects/auth-declarations
 pnpm add @anarchitects/auth-declarations
 ```
 
-Peer dependency: `@nestjs/common ^11.0.0`
+Peer dependency for the unreleased 0.12 line: `@nestjs/common ^11.1.6 || ^12.1.2`.
+It requires `@anarchitects/auth-ts ^0.12.0`; published 0.11.x remains the prior
+Nest 11 maintenance line. Both ESM and CommonJS exports preserve the same public
+metadata keys. Explicit `.js` specifiers in declarations enable strict NodeNext
+type resolution. The [Auth packed-consumer matrix](../nest/README.md#nest-1112-compatibility-464)
+checks both module formats against the host's Nest reflector and real global guards.
 
 ## Usage
 

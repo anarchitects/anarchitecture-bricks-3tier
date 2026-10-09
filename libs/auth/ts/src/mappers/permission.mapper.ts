@@ -1,7 +1,7 @@
-import { Permission } from '../models/permission.model';
-import { Role } from '../models/role.model';
-import { fromIsoDateTime, toIsoDateTime } from './date-time';
-import { PublicPermission } from './auth-public.types';
+import { Permission } from '../models/permission.model.js';
+import { Role } from '../models/role.model.js';
+import { fromIsoDateTime, toIsoDateTime } from './date-time.js';
+import { PublicPermission } from './auth-public.types.js';
 
 const cloneConditions = (
   conditions: Record<string, unknown> | null,

@@ -1,9 +1,9 @@
-import { parsePolicyRuleArrayDTO } from '../dtos';
-import { LoggedInUserInfoResponseDTO } from '../dtos/logged-in-user-info-response.dto';
-import { AuthUser, PolicyRule } from '../models';
-import { PolicyRuleWire, PublicUser } from './auth-public.types';
-import { fromPolicyRuleWire, toPolicyRuleWire } from './policy-rule.mapper';
-import { fromPublicAuthUser, toPublicAuthUser } from './auth-user.mapper';
+import { parsePolicyRuleArrayDTO } from '../dtos/index.js';
+import { LoggedInUserInfoResponseDTO } from '../dtos/logged-in-user-info-response.dto.js';
+import { AuthUser, PolicyRule } from '../models/index.js';
+import { PolicyRuleWire, PublicUser } from './auth-public.types.js';
+import { fromPolicyRuleWire, toPolicyRuleWire } from './policy-rule.mapper.js';
+import { fromPublicAuthUser, toPublicAuthUser } from './auth-user.mapper.js';
 
 export type LoggedInUserInfoModel = {
   user: AuthUser;

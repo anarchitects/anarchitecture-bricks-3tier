@@ -1,4 +1,4 @@
-import type { AuthContractConfig } from './auth-contract.config';
+import type { AuthContractConfig } from './auth-contract.config.js';
 
 export function assertContractCompatibility(
   config: AuthContractConfig,

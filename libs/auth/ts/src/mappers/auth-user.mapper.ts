@@ -1,7 +1,7 @@
-import { AuthUser } from '../models/auth-user.model';
-import { fromIsoDateTime, toIsoDateTime } from './date-time';
-import { PublicUser } from './auth-public.types';
-import { fromPublicRole, toPublicRole } from './role.mapper';
+import { AuthUser } from '../models/auth-user.model.js';
+import { fromIsoDateTime, toIsoDateTime } from './date-time.js';
+import { PublicUser } from './auth-public.types.js';
+import { fromPublicRole, toPublicRole } from './role.mapper.js';
 
 export const toPublicAuthUser = (model: AuthUser): PublicUser => ({
   id: model.id,
