@@ -1,1 +1,1 @@
-export * from './lib/auth-declarations';
+export * from './lib/auth-declarations.js';

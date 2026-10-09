@@ -1,4 +1,4 @@
-import { Role } from './role.model';
+import { Role } from './role.model.js';
 
 export type AuthUser = {
   id: string;

@@ -9,7 +9,7 @@ import type {
   AuthContractConfig,
   AuthFieldConfig,
   EmptyStringPolicy,
-} from './auth-contract.config';
+} from './auth-contract.config.js';
 
 // ---- Field meta types --------------------------------------------------------
 

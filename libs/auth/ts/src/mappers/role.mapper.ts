@@ -1,8 +1,11 @@
-import { Role } from '../models/role.model';
-import { AuthUser } from '../models/auth-user.model';
-import { fromIsoDateTime, toIsoDateTime } from './date-time';
-import { PublicRole } from './auth-public.types';
-import { fromPublicPermission, toPublicPermission } from './permission.mapper';
+import { Role } from '../models/role.model.js';
+import { AuthUser } from '../models/auth-user.model.js';
+import { fromIsoDateTime, toIsoDateTime } from './date-time.js';
+import { PublicRole } from './auth-public.types.js';
+import {
+  fromPublicPermission,
+  toPublicPermission,
+} from './permission.mapper.js';
 
 export const toPublicRole = (model: Role): PublicRole => ({
   id: model.id,

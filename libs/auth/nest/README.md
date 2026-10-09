@@ -22,10 +22,15 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 
 ## Installation
 
+The Nest 11/12 contract below is prepared for the **unreleased Auth 0.12 minor**,
+with Auth declarations/TS `^0.12.0` and Common Mailer `^0.5.0`. Published Auth
+`0.11.x` remains the Nest 11 maintenance line. Common 0.5 must be released before
+Auth 0.12; do not apply these dependency changes as a 0.11.x patch.
+
 ```bash
-npm install @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/platform-fastify @nestjs/typeorm typeorm
+npm install @anarchitects/auth-nest @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/platform-fastify@^12.1.2 @nestjs/config@^12.0.1 @nestjs/jwt@^12.0.2 @nestjs/typeorm@^12.0.2 typeorm@^1.1.0 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 # or
-yarn add @anarchitects/auth-nest @nestjs/common @nestjs/config @nestjs/core @nestjs/jwt @nestjs/platform-fastify @nestjs/typeorm typeorm
+yarn add @anarchitects/auth-nest @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/platform-fastify@^12.1.2 @nestjs/config@^12.0.1 @nestjs/jwt@^12.0.2 @nestjs/typeorm@^12.0.2 typeorm@^1.1.0 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 ```
 
 Peer requirements:
@@ -33,7 +38,83 @@ Peer requirements:
 - `@nestjs/common`, `@nestjs/core`, `@nestjs/jwt`, `@nestjs/typeorm`, `@nestjs/config`
 - `@nestjs/platform-fastify`, `typeorm`
 
-The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` packages are installed transitively. The published community package `@anarchitects/better-auth-typeorm-adapter` is also installed transitively and used internally by `@anarchitects/auth-nest`; consumers do not need to wire it directly when using this package facade. Runtime utilities such as `@casl/ability`, `bcrypt`, `better-auth`, and `@better-auth/passkey` are direct dependencies of this package. Add `@nestjs-modules/mailer` only when your host app enables the shared/common mailer integration.
+The internal `@anarchitects/auth-ts` and `@anarchitects/common-nest-mailer` packages are installed transitively. The published community package `@anarchitects/better-auth-typeorm-adapter` is also installed transitively and used internally by `@anarchitects/auth-nest`; consumers do not need to wire it directly when using this package facade. Runtime utilities such as `@casl/ability`, `bcrypt`, `better-auth`, and `@better-auth/passkey` are direct dependencies of this package. Common Mailer's Mailer 3/Nodemailer 8 peers are required even when Auth selects `noop`; noop avoids transport setup and delivery, not installation of the mandatory dependency graph.
+
+### Nest 11/12 compatibility (#464)
+
+The supported peers are common/core/platform-fastify `^11.1.6 || ^12.1.2`,
+Config `^4.0.2 || ^12.0.1`, JWT `^11.0.1 || ^12.0.2`, Nest TypeORM
+`^11.0.1 || ^12.0.2`, and TypeORM `^1.1.0`. Keep common/core/platform/testing
+on the same major. The older integration peers exclude Nest 12 themselves.
+
+| Consumer        | Nest   | Config | JWT    | Nest TypeORM | Fastify |
+| --------------- | ------ | ------ | ------ | ------------ | ------- |
+| `nest11`        | 11.1.6 | 4.0.2  | 11.0.1 | 11.0.1       | 5.4.0   |
+| `nest11-modern` | 11.1.6 | 12.0.1 | 12.0.2 | 12.0.2       | 5.12.5  |
+| `nest12`        | 12.1.2 | 12.0.1 | 12.0.2 | 12.0.2       | 5.12.5  |
+
+All three use TypeORM 1.1.0, PostgreSQL 16, the published Better Auth TypeORM
+adapter 0.2.0, Better Auth/core/passkey 1.7.2, Mailer 3.0.2 and Nodemailer
+8.0.5. Better Auth and passkey are pinned alongside core: their patch releases
+can change exact upstream peer requirements, so update the family together and
+refresh the consumer locks. Passport is not part of the current Auth runtime;
+JWT uses the package's Better Auth integration and `@nestjs/jwt` directly.
+
+**Breaking upgrade requirements:** the next minor requires Common Mailer 0.5's
+Mailer 3/Nodemailer 8 stack and the newer Auth TS/declaration packages. Keep the
+0.11.x line for hosts that retain the older stack. Public facade/secondary entry
+points, metadata keys and CJS/ESM formats are preserved. Auth TS and declarations
+now emit explicit `.js` relative specifiers so strict NodeNext consumers can
+resolve their types without `skipLibCheck` or consumer aliases.
+
+**Nest 12 Fastify bootstrap requirement:** Nest 12.1.2 classifies errors more
+strictly; Fastify's ordinary schema-validation `Error` otherwise becomes HTTP 500. Configure the host adapter to produce a Nest HTTP exception. This works
+on Nest 11 too and preserves HTTP 400 for invalid Auth request schemas:
+
+```ts
+import { BadRequestException } from '@nestjs/common';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
+
+const adapter = new FastifyAdapter({
+  schemaErrorFormatter: (errors, dataVar) => new BadRequestException(`${dataVar} ${errors.map((error) => error.message).join(', ')}`),
+});
+// Pass adapter to NestFactory.create<NestFastifyApplication>(AppModule, adapter).
+```
+
+Run the uncached packed-consumer checks with Docker available:
+
+```bash
+yarn nx run auth-nest:test-nest-compatibility:nest11
+yarn nx run auth-nest:test-nest-compatibility:nest11-modern
+yarn nx run auth-nest:test-nest-compatibility:nest12
+```
+
+The target builds real artifacts, verifies source/build/pack contracts, and
+installs their tarballs outside the workspace using locked registry dependencies,
+strict peer/engine checks and no install scripts. `tools/testing/auth-nest-hosts/candidates.json`
+rehearses only the upcoming package **versions** (Auth 0.12/Common 0.5); it does
+not rewrite dependency ranges or peer metadata. Checked-in source versions and
+publication remain owned by the release workflow. After release, update that
+candidate map and locks together. To refresh a lock intentionally after building,
+run `node tools/testing/run-auth-nest-host.mjs <consumer> --refresh-lock`, then
+run the normal Nx targets. Registry integrity hashes are retained; local candidate
+tarballs are rebuilt and their manifest contracts checked on each run.
+
+The hosts compile decorated CJS/ESM consumers with strict NodeNext declarations,
+verify metadata identity and all exported Nest layers, and exercise facade,
+config-driven and advanced composition, global guards, CASL resource policies,
+Fastify request validation, real session/JWT flows, migrations, passkey persistence,
+restart and optional provider/route disabling. They use a disposable PostgreSQL
+container and noop mail delivery. No workspace symlinks or peer overrides are used.
+Results were verified on Node 24.21.0, npm 11.19.0 and TypeScript 6.0.3; minimum-Node
+and wider CI coverage remain #468's release gate. TypeORM's process-wide entity
+registry is not treated as evidence of optional table absence.
+
+The strict NodeNext declaration fixes are also suitable for backporting to the
+0.11.x maintenance line. Published 0.11.0 has the earlier declaration layout;
+deprecation may be considered after a fixed maintenance release is available,
+but is proposed only and requires human approval. No version bump, release or
+deprecation is performed by #464.
 
 ## Better Auth Adapter Boundary
 

@@ -1,0 +1,14 @@
+[
+  { "root": "libs/auth/ts", "version": "0.12.0", "archive": "auth-ts.tgz" },
+  {
+    "root": "libs/auth/declarations",
+    "version": "0.12.0",
+    "archive": "auth-declarations.tgz"
+  },
+  {
+    "root": "libs/common/nest/mailer",
+    "version": "0.5.0",
+    "archive": "common-mailer.tgz"
+  },
+  { "root": "libs/auth/nest", "version": "0.12.0", "archive": "auth-nest.tgz" }
+]

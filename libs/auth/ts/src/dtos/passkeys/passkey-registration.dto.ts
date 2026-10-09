@@ -1,10 +1,10 @@
 import { type Static, Type } from '@sinclair/typebox';
-import { SuccessResponseSchema } from '../success-response.dto';
+import { SuccessResponseSchema } from '../success-response.dto.js';
 import {
   PasskeyAuthenticatorAttachmentSchema,
   PasskeyRegistrationCredentialSchema,
   PasskeyRegistrationOptionsSchema,
-} from './webauthn-json.schemas';
+} from './webauthn-json.schemas.js';
 
 /** Register for the authenticated user; user identity and verification policy are server-owned. */
 export const PasskeyRegistrationBeginRequestSchema = Type.Object(

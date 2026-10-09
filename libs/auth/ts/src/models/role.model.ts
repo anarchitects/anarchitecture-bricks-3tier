@@ -1,5 +1,5 @@
-import { Permission } from './permission.model';
-import { AuthUser } from './auth-user.model';
+import { Permission } from './permission.model.js';
+import { AuthUser } from './auth-user.model.js';
 
 export type Role = {
   id: string;

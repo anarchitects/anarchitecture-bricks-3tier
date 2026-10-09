@@ -1,5 +1,5 @@
-import { parsePolicyRuleDTO } from '../dtos';
-import { PolicyRule } from './auth.types';
+import { parsePolicyRuleDTO } from '../dtos/index.js';
+import { PolicyRule } from './auth.types.js';
 
 export type RoutePolicy = Pick<PolicyRule, 'action' | 'subject'>;
 
