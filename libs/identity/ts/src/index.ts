@@ -1,2 +1,2 @@
-export * from './dtos';
-export * from './models';
+export * from './dtos/index.js';
+export * from './models/index.js';

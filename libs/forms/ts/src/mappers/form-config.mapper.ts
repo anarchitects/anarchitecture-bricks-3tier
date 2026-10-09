@@ -1,5 +1,5 @@
-import { FormDefinitionResponseDTO } from '../dtos/form-definition-response.dto';
-import { FormConfig } from '../models/form.types';
+import { FormDefinitionResponseDTO } from '../dtos/form-definition-response.dto.js';
+import { FormConfig } from '../models/form.types.js';
 
 const cloneConfig = (config: FormConfig): FormConfig => ({
   id: config.id,

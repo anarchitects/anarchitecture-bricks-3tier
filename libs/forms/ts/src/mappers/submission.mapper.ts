@@ -1,9 +1,12 @@
-import { SubmissionRequestDTO } from '../dtos/submission-request.dto';
-import { SubmissionResponseDTO } from '../dtos/submission-response.dto';
-import { Submission } from '../models/submission.model';
-import { fromIsoDateTime, toIsoDateTime } from './date-time';
+import { SubmissionRequestDTO } from '../dtos/submission-request.dto.js';
+import { SubmissionResponseDTO } from '../dtos/submission-response.dto.js';
+import { Submission } from '../models/submission.model.js';
+import { fromIsoDateTime, toIsoDateTime } from './date-time.js';
 
-type SubmissionRequestModel = Pick<Submission, 'formId' | 'formVersion' | 'payload'>;
+type SubmissionRequestModel = Pick<
+  Submission,
+  'formId' | 'formVersion' | 'payload'
+>;
 
 const clonePayload = (
   payload: Record<string, unknown>,

@@ -1,0 +1,27 @@
+[
+  {
+    "root": "libs/forms/ts",
+    "version": "0.11.0",
+    "archive": "forms-ts.tgz"
+  },
+  {
+    "root": "libs/forms/nest",
+    "version": "0.11.0",
+    "archive": "forms-nest.tgz"
+  },
+  {
+    "root": "libs/identity/ts",
+    "version": "0.2.0",
+    "archive": "identity-ts.tgz"
+  },
+  {
+    "root": "libs/identity/nest",
+    "version": "0.2.0",
+    "archive": "identity-nest.tgz"
+  },
+  {
+    "root": "libs/common/nest/mailer",
+    "version": "0.5.0",
+    "archive": "common-mailer.tgz"
+  }
+]

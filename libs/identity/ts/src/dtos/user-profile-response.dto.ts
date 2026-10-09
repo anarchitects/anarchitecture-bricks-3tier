@@ -1,4 +1,4 @@
-import { UserProfileDTO, UserProfileSchema } from './user-profile.dto';
+import { UserProfileDTO, UserProfileSchema } from './user-profile.dto.js';
 
 export const UserProfileResponseSchema = UserProfileSchema;
 

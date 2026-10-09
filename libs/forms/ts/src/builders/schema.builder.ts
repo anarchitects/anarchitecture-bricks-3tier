@@ -1,5 +1,5 @@
 import { Type, TSchema } from '@sinclair/typebox';
-import type { FormConfig, FormField } from '../models/form.types';
+import type { FormConfig, FormField } from '../models/form.types.js';
 
 function tFromField(f: FormField): TSchema {
   const stringConstraints = {

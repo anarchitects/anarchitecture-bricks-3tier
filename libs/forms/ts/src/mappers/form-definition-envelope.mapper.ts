@@ -1,12 +1,10 @@
-import {
-  FormDefinitionEnvelopeResponseDTO,
-} from '../dtos/form-definition-envelope-response.dto';
-import { FormDefinitionResponseDTO } from '../dtos/form-definition-response.dto';
-import { FormConfig } from '../models/form.types';
+import { FormDefinitionEnvelopeResponseDTO } from '../dtos/form-definition-envelope-response.dto.js';
+import { FormDefinitionResponseDTO } from '../dtos/form-definition-response.dto.js';
+import { FormConfig } from '../models/form.types.js';
 import {
   fromFormDefinitionResponseDTO,
   toFormDefinitionResponseDTO,
-} from './form-config.mapper';
+} from './form-config.mapper.js';
 
 export type FormDefinitionEnvelopeModel = {
   config: FormConfig;
@@ -37,9 +35,7 @@ export const fromFormDefinitionEnvelopeResponseDTO = (
   const config = assertObject(dto.config, 'config');
 
   return {
-    config: fromFormDefinitionResponseDTO(
-      config as FormDefinitionResponseDTO,
-    ),
+    config: fromFormDefinitionResponseDTO(config as FormDefinitionResponseDTO),
     schema: dto.schema,
   };
 };

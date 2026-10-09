@@ -1,3 +1,3 @@
-export * from './form.types';
-export * from './contact-form.model';
-export * from './submission.model';
+export * from './form.types.js';
+export * from './contact-form.model.js';
+export * from './submission.model.js';
