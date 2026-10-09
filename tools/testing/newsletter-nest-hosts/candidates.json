@@ -1,0 +1,17 @@
+[
+  {
+    "root": "libs/newsletter/ts",
+    "version": "0.0.1",
+    "archive": "newsletter-ts.tgz"
+  },
+  {
+    "root": "libs/newsletter/nest",
+    "version": "0.1.0",
+    "archive": "newsletter-nest.tgz"
+  },
+  {
+    "root": "libs/common/nest/mailer",
+    "version": "0.5.0",
+    "archive": "common-mailer.tgz"
+  }
+]

@@ -69,7 +69,7 @@ function normalizePackageJson(packageJsonPath) {
   const parsed = JSON.parse(source);
   const peerDependencies = parsed.peerDependencies;
 
-  // #464/#465/#466 verify these packages independently of the root Nest 11 toolchain.
+  // #464–#467 verify these packages independently of the root Nest 11 toolchain.
   // Their packed-consumer matrices own these ranges; root normalization would
   // erase Nest 12 support and lower the tested dependency floors.
   if (
@@ -79,6 +79,7 @@ function normalizePackageJson(packageJsonPath) {
       '@anarchitects/auth-declarations',
       '@anarchitects/forms-nest',
       '@anarchitects/identity-nest',
+      '@anarchitects/newsletter-nest',
     ].includes(parsed.name)
   ) {
     return;

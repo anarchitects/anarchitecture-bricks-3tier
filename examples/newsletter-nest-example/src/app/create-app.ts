@@ -1,5 +1,9 @@
 import 'reflect-metadata';
-import { Module, type DynamicModule } from '@nestjs/common';
+import {
+  BadRequestException,
+  Module,
+  type DynamicModule,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -59,7 +63,14 @@ export async function createNewsletterApp(options: {
         }),
       ],
     },
-    new FastifyAdapter({ logger: false }),
+    new FastifyAdapter({
+      logger: false,
+      // Preserve HTTP 400 for host-level schema failures under Nest 12.
+      schemaErrorFormatter: (errors, dataVar) =>
+        new BadRequestException(
+          `${dataVar} ${errors.map((error) => error.message).join(', ')}`,
+        ),
+    }),
     {
       rawBody: true,
       logger: false,

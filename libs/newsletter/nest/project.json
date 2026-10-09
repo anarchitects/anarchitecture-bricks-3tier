@@ -78,6 +78,33 @@
       "options": {
         "jestConfig": "libs/newsletter/nest/jest.config.cts"
       }
+    },
+    "test-nest-compatibility": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "cache": false,
+      "parallelism": false,
+      "defaultConfiguration": "nest12",
+      "options": {
+        "command": "node tools/testing/run-newsletter-nest-host.mjs nest12"
+      },
+      "configurations": {
+        "nest11": {
+          "command": "node tools/testing/run-newsletter-nest-host.mjs nest11"
+        },
+        "nest11-modern": {
+          "command": "node tools/testing/run-newsletter-nest-host.mjs nest11-modern"
+        },
+        "nest12": {
+          "command": "node tools/testing/run-newsletter-nest-host.mjs nest12"
+        },
+        "nest11-optional": {
+          "command": "node tools/testing/run-newsletter-nest-host.mjs nest11-optional"
+        },
+        "nest12-optional": {
+          "command": "node tools/testing/run-newsletter-nest-host.mjs nest12-optional"
+        }
+      }
     }
   }
 }
