@@ -94,3 +94,19 @@ These hosts contain **no Anarchitects bricks**. Passing them establishes a worki
 #464–#467 add their package-level checks and determine per-track compatibility. #468 supplies real packed-artifact consumers, database/mail/HTTP behavior, optional-peer absence, Node minimum coverage and the CI matrix. Use the locked host strategy as the foundation while keeping package-specific dependencies explicit. Existing Newsletter, passkey and persistence examples remain part of that evidence; nonexistent Forms/Auth Nest examples from older README commands must not be counted.
 
 #463 introduces only development tooling and policy. No runtime peer change, package version bump, published API break or npm deprecation is performed here.
+
+## Common Mailer follow-up (#465)
+
+#465 runs before #464 because Auth has a mandatory Common Mailer dependency.
+The [Common Mailer compatibility matrix](../../libs/common/nest/mailer/README.md#compatibility-and-migration)
+verifies packed consumers on both Nest majors while retaining root Nest 11.
+Mailer 2's declarations use a Nest subpath removed in Nest 12. Mailer 3 fixes
+that import and requires Nodemailer 8; these dependency changes belong to a new
+Common minor, leaving `0.4.x` available for the older Nest 11 stack. The public
+Common Mailer API and CommonJS output are preserved.
+
+The root mailer dependencies move to the same stack so normal builds and tests
+exercise the supported adapter. Common Mailer's intentional peer ranges are
+protected from root normalization. #468 still owns minimum-Node coverage and
+the full release/CI matrix; #469 owns versioning and release routing. Downstream
+issues must opt into the new Common minor explicitly and verify their own packs.
