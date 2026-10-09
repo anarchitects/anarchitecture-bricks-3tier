@@ -201,6 +201,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 ## Architecture Guides
 
+- [Audit: Nest 11/12 Compatibility And Support Decisions](docs/guides/nest-11-12-compatibility-audit.md)
 - [Guide: Alignment With `anarchitecture-bricks-ddd`](docs/guides/alignment-with-bricks-ddd.md)
 - [Guide: Migration To `anarchitecture-bricks-ddd`](docs/guides/migration-to-bricks-ddd.md)
 - [Guide: Angular 22 And TypeScript 6 Migration](docs/guides/angular-22-migration.md)
@@ -218,6 +219,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 - [ADR-0008: Forms Must Prefer Events Over Embedded Business Logic](docs/adr/0008-forms-event-driven-extension.md)
 - [ADR-0009: Forms Admin Features Must Remain Lightweight](docs/adr/0009-forms-admin-scope-limitation.md)
 - [ADR-0010: Define Newsletter Domain Boundaries And Ports](docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md)
+- [ADR-0011: Verify Nest Runtime Support Independently Of Tooling](docs/adr/0011-verify-nest-runtime-support-independently-of-tooling.md)
 
 ## Documentation Tooling
 
