@@ -6,6 +6,22 @@
   "projectType": "library",
   "tags": ["scope:release", "type:tooling"],
   "targets": {
+    "test-nest-development-host": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "defaultConfiguration": "nest12",
+      "options": {
+        "command": "node tools/testing/run-nest-development-host.mjs 12"
+      },
+      "configurations": {
+        "nest11": {
+          "command": "node tools/testing/run-nest-development-host.mjs 11"
+        },
+        "nest12": {
+          "command": "node tools/testing/run-nest-development-host.mjs 12"
+        }
+      }
+    },
     "validate-domain-tags": {
       "executor": "nx:run-commands",
       "options": {
@@ -99,7 +115,7 @@
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs"
       }
     }
   }

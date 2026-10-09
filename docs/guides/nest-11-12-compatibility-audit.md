@@ -5,6 +5,10 @@
 - Decision: [ADR-0011](../adr/0011-verify-nest-runtime-support-independently-of-tooling.md) (accepted by the maintainer on 2026-10-09).
 - Scope: dependency/source audit and verification plan. No package ranges, lockfile, runtime code, or release behavior change here.
 
+Follow-up: [#463 development and maintenance strategy](nest-development-strategy.md)
+records the staged workspace choice, executable host checks, published plugin
+validation constraint and approved separate Nest 11/12 minor-track policy.
+
 ## Conclusion and evidence levels
 
 Nest 12 is available: the official [v12.0.0 release](https://github.com/nestjs/nest/releases/tag/v12.0.0) exists, and the npm registry reports stable core/framework **12.1.2**, published 2026-09-30. Availability is not the blocker. The current bricks declare Nest 11 only; Nest 12 support remains **unverified and outside their declared peer ranges**.

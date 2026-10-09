@@ -3,6 +3,7 @@
 - Status: Accepted
 - Date: 2026-10-09
 - Acceptance: Explicit maintainer approval on 2026-10-09.
+- Amendment: Maintainer-approved separate minor maintenance tracks on 2026-10-09 (#463).
 - Owners: Architecture maintainers
 - Scope: [epic #461](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/461), starting with [#462](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/462)
 
@@ -28,6 +29,12 @@ subsequent workspace, CI and release issues.
 2. Preserve Nest 11 while investigating Nest 12 per package. No blanket
    Nest-12-only decision follows from the plugin's supported framework major.
    Keep each consuming host's common/core/platform/testing major aligned.
+   Maintainer amendment: preservation may use separate package minor lines.
+   Breaking Nest 12 changes may ship on a new pre-1.0 minor line, while features
+   and fixes continue on the existing Nest 11 line. Dual-major peers in a single
+   artifact are optional and require verification. Track-specific dependency
+   contracts and release routing follow the
+   [development and maintenance strategy](../guides/nest-development-strategy.md).
 3. Publish support only after clean consumers install packed artifacts and pass
    declaration, module-loading and meaningful runtime tests for the dependency
    combinations being advertised. Include the facade and advanced entry points,
