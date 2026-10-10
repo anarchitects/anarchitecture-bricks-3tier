@@ -8,6 +8,8 @@ export default [
       '@nx/dependency-checks': [
         'error',
         {
+          // The packed matrix owns the upcoming Common Mailer contract.
+          ignoredDependencies: ['@anarchitects/common-nest-mailer'],
           ignoredFiles: [
             '{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}',
             // Isolated package-consumer checks use the workspace compiler only.

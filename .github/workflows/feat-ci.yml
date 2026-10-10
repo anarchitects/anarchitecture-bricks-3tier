@@ -78,6 +78,20 @@ jobs:
           yarn playwright install --with-deps chromium
           yarn nx affected -t test-hydration --parallel=1
 
+      # Covers PostgreSQL and Ryuk without credentials, including fork PRs.
+      # Docker falls back to Docker Hub when an image is not cached by Google.
+      - name: Configure Docker Hub cache
+        run: |
+          sudo mkdir -p /etc/docker
+          if [ ! -f /etc/docker/daemon.json ]; then
+            echo '{}' | sudo tee /etc/docker/daemon.json > /dev/null
+          fi
+          sudo jq '."registry-mirrors" = (["https://mirror.gcr.io"] + (."registry-mirrors" // []) | unique)' \
+            /etc/docker/daemon.json > "$RUNNER_TEMP/docker-daemon.json"
+          sudo install -m 644 "$RUNNER_TEMP/docker-daemon.json" /etc/docker/daemon.json
+          sudo systemctl restart docker
+          docker info --format '{{json .RegistryConfig.Mirrors}}'
+
       - name: Package and database integration checks (GitHub only)
         env:
           NX_NO_CLOUD: 'true'

@@ -151,10 +151,13 @@
         "{workspaceRoot}/libs/auth/{nest,declarations,ts}/package.json",
         "{workspaceRoot}/tools/testing/forms-identity-nest-hosts/**/*",
         "{workspaceRoot}/tools/testing/run-forms-identity-nest-host.mjs",
-        "{workspaceRoot}/libs/{forms,identity}/{nest,ts}/package.json"
+        "{workspaceRoot}/libs/{forms,identity}/{nest,ts}/package.json",
+        "{workspaceRoot}/tools/testing/newsletter-nest-hosts/**/*",
+        "{workspaceRoot}/tools/testing/run-newsletter-nest-host.mjs",
+        "{workspaceRoot}/libs/newsletter/{nest,ts}/package.json"
       ],
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs tools/release/newsletter-nest-host.spec.mjs"
       }
     },
     "test-forms-identity-nest-compatibility": {

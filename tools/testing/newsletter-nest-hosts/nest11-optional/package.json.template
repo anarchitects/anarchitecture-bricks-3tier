@@ -1,0 +1,24 @@
+{
+  "name": "newsletter-nest11-optional-consumer",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "@nestjs/common": "11.1.6",
+    "@nestjs/core": "11.1.6",
+    "@nestjs/testing": "11.1.6",
+    "@nestjs/platform-fastify": "11.1.6",
+    "@nestjs/config": "4.0.2",
+    "fastify": "5.4.0",
+    "reflect-metadata": "0.1.14",
+    "rxjs": "7.8.2",
+    "@anarchitects/newsletter-ts": "file:newsletter-ts.tgz",
+    "@anarchitects/newsletter-nest": "file:newsletter-nest.tgz"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "@types/node": "22.18.6"
+  }
+}

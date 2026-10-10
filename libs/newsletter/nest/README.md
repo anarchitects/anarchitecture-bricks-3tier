@@ -26,11 +26,43 @@ consent evidence. Campaign delivery remains outside #428.
 Do not publish this package independently. Newsletter packages await one coordinated
 release after #429–#438 and #445–#448 are merged and epic acceptance is complete.
 
+### Nest 11/12 compatibility (#467)
+
+The upcoming Newsletter Nest **0.1 minor** supports Nest common/core/platform-fastify `^11.1.6 || ^12.1.2`, Config `^4.0.2 || ^12.0.1`, and Fastify `^5.4.0`. Keep all Nest core packages on the same major. The root workspace remains on Nest 11; the isolated packed hosts verify Nest 12 independently of Nx tooling.
+
+| Host              | Nest   | Config | Fastify | Optional integrations   |
+| ----------------- | ------ | ------ | ------- | ----------------------- |
+| `nest11`          | 11.1.6 | 4.0.2  | 5.4.0   | TypeORM + Common Mailer |
+| `nest11-modern`   | 11.1.6 | 12.0.1 | 5.12.5  | TypeORM + Common Mailer |
+| `nest12`          | 12.1.2 | 12.0.1 | 5.12.5  | TypeORM + Common Mailer |
+| `nest11-optional` | 11.1.6 | 4.0.2  | 5.4.0   | Neither installed       |
+| `nest12-optional` | 12.1.2 | 12.0.1 | 5.12.5  | Neither installed       |
+
+The full hosts use TypeORM 1.1.0, PostgreSQL 16, Common Mailer 0.5, Mailer 3.0.2 and Nodemailer 8.0.5. Newsletter owns its DataSource integration directly and does not require `@nestjs/typeorm`. Native Common-backed delivery requires installing the optional Common Mailer peer and its Mailer 3/Nodemailer 8 peers; configure the transport once at host root. Custom/noop/MailerLite provider hosts may omit Common Mailer, and custom persistence may omit TypeORM.
+
+**Breaking requirements:** compared with the previous 0.0.1 manifest, the tested Nest/Config/Fastify floors are raised and the optional Common Mailer peer changes from `^0.4.0` to `^0.5.0`. This is prepared as a new pre-1.0 minor, not a patch. Existing public entry points, provider seams, raw-body signature format and subscriber behavior are preserved. Newsletter TS already ships separate strict ESM/CJS declarations and needs no declaration rewrite for this change.
+
+With Docker available, run:
+
+```bash
+yarn nx run newsletter-nest:test-nest-compatibility:nest11
+yarn nx run newsletter-nest:test-nest-compatibility:nest11-modern
+yarn nx run newsletter-nest:test-nest-compatibility:nest12
+yarn nx run newsletter-nest:test-nest-compatibility:nest11-optional
+yarn nx run newsletter-nest:test-nest-compatibility:nest12-optional
+```
+
+The full hosts compile strict NodeNext CJS/ESM consumers and the actual Nest example source against packed packages, without workspace aliases or `skipLibCheck`. They run exported migrations, native signup/mail/confirmation/unsubscribe/replay/restart, MailerLite provider failures, rate limiting, exact raw-body signature verification, rejected signatures/accounts/oversized payloads and durable concurrent webhook deduplication. Config-driven composition checks explicit overrides and disabled routes. Optional-peer hosts use separate clean npm installs and verify runtime CJS/ESM loading, custom/noop providers, advanced presentation composition, custom limiting and fail-closed behavior when raw-body capture is missing. Declaration checks for optional integration types run in the full hosts, where those types are installed.
+
+`tools/testing/newsletter-nest-hosts/candidates.json` stages Newsletter Nest 0.1.0, the unchanged Newsletter TS 0.0.1 artifact, and Common Mailer 0.5.0. Only candidate **versions** change during staging; dependencies, peer ranges, optional-peer metadata and exports must match the source/build/packed contracts. Frozen registry locks retain integrity hashes and use strict peer/engine checks without install scripts. To refresh a lock intentionally after building, run `node tools/testing/run-newsletter-nest-host.mjs <host> --refresh-lock`, then validate the normal target. Update candidate versions and locks together when the coordinated release selects final versions.
+
+Verified on Node 24.21.0, npm 11.19.0 and TypeScript 6.0.3. Existing Node engines are unchanged; minimum-Node and wider CI verification remain #468's release gate. Epic #428 is closed, but #467 does not publish packages or change its coordinated release policy. Source versions, tags and publication remain owned by the human-approved release workflow; Common Mailer 0.5 must be available before releasing this Common-backed contract.
+
 ## Usage
 
 ### Easy mode: native root facade
 
-Install the optional peers `typeorm ^1.1.0` and `@anarchitects/common-nest-mailer ^0.4.0`.
+Install the optional peers `typeorm ^1.1.0` and `@anarchitects/common-nest-mailer ^0.5.0`.
 The host exports an initialized PostgreSQL DataSource from `HostPersistenceModule`
 and configures Common Mailer once in `HostMailModule`, exporting `CommonMailerModule`.
 Newsletter consumes its existing `MailerPort`; it does not create another transport.
@@ -134,14 +166,19 @@ Custom persistence does not require the optional TypeORM peer.
 Use Nest's Fastify adapter. Webhooks require raw-body capture at bootstrap:
 
 ```ts
+import { BadRequestException } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 
-const app = await NestFactory.create<NestFastifyApplication>(HostModule, new FastifyAdapter({ bodyLimit: 1_048_576 }), { rawBody: true });
+const adapter = new FastifyAdapter({
+  bodyLimit: 1_048_576,
+  schemaErrorFormatter: (errors, dataVar) => new BadRequestException(`${dataVar} ${errors.map((error) => error.message).join(', ')}`),
+});
+const app = await NestFactory.create<NestFastifyApplication>(HostModule, adapter, { rawBody: true });
 await app.listen(3000);
 ```
 
-Do not replace captured bytes with reserialized JSON. Missing capture returns 503
+The schema error formatter preserves HTTP 400 for host schema failures under Nest 12 and also works on Nest 11. Newsletter subscription/native routes retain their own strict validation. Do not replace captured bytes with reserialized JSON. Missing capture returns 503
 without evidence writes. The host owns ingress body limits, trusted-proxy settings,
 connection lifecycle, and any global URL prefix. The presentation module requires
 Fastify and installs its route hook before Nest maps controllers.
@@ -515,8 +552,7 @@ persisted for background retries. Host renderers/transports must not log them. H
 pages should redact token query strings from access logs, avoid third-party resources,
 and apply a no-referrer policy; the facade's POST behavior is described above.
 
-**Compatibility:** this flow requires `@anarchitects/common-nest-mailer ^0.4.0`, which
-includes the structured message contract delivered separately in
+**Compatibility:** the Nest 11/12 line requires `@anarchitects/common-nest-mailer ^0.5.0` (Mailer 3/Nodemailer 8). It retains the structured message contract delivered separately in
 [#454](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/454) and
 [released as 0.4.0](https://github.com/anarchitects/anarchitecture-bricks-3tier/releases/tag/common-nest-mailer%400.4.0).
 Install that optional peer when using the native Common-backed mail service. Custom
