@@ -53,12 +53,16 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
+          # Corepack is enabled after both runtime installations. Cache Yarn
+          # explicitly below so setup-node never probes the runner's Yarn 1.
+          package-manager-cache: false
       - name: Record consumer executable
         run: echo "NEST_HOST_NODE=$(command -v node)" >> "$GITHUB_ENV"
       - name: Install workspace tooling runtime
         uses: actions/setup-node@v5
         with:
           node-version: '24.21.0'
+          package-manager-cache: false
       - run: corepack enable
       - uses: actions/cache@v4
         with:

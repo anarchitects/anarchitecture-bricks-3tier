@@ -119,6 +119,42 @@ test('CI covers every matrix lane and executes the uncached Nx host target', () 
   ]);
 });
 
+test('CI enables Corepack before any Yarn cache discovery or installation', () => {
+  const workflow = parse(
+    readFileSync(
+      resolve(root, '.github/workflows/nest-compatibility.yml'),
+      'utf8',
+    ),
+  );
+  const steps = workflow.jobs['packed-hosts'].steps;
+  const corepack = steps.findIndex((step) => step.run === 'corepack enable');
+  assert.ok(corepack >= 0);
+  const setups = steps.filter((step) =>
+    step.uses?.startsWith('actions/setup-node@'),
+  );
+  assert.equal(setups.length, 2);
+  for (const setup of setups) {
+    assert.equal(setup.with['package-manager-cache'], false);
+    assert.equal(
+      setup.with.cache,
+      undefined,
+      'Explicit setup-node caching would also invoke Yarn too early',
+    );
+    assert.ok(steps.indexOf(setup) < corepack);
+  }
+  const cache = steps.findIndex((step) =>
+    step.uses?.startsWith('actions/cache@'),
+  );
+  const install = steps.findIndex(
+    (step) => step.run === 'yarn install --immutable',
+  );
+  assert.ok(
+    cache > corepack,
+    'Restore the explicit download cache after Corepack',
+  );
+  assert.ok(install > cache, 'Install after Corepack and cache restoration');
+});
+
 for (const lane of ciLanes) {
   test(`${lane.suite} / Node ${lane.node}: all locked host dependencies admit the runtime`, () => {
     const { cases, exclusions } = hostCases(lane.suite, lane.node);
