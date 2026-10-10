@@ -1,5 +1,7 @@
 # Nest development and maintenance strategy
 
+The [packed Nest release validation guide](nest-release-validation.md) now defines #468's CI commands, runtime minimum lanes and explicit exclusions. The development hosts below remain an upstream tooling baseline; the packed hosts provide brick-specific evidence.
+
 This is the implementation strategy for [#463](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/463), following the [#462 audit](nest-11-12-compatibility-audit.md) and [ADR-0011](../adr/0011-verify-nest-runtime-support-independently-of-tooling.md). Decision date: 2026-10-09.
 
 ## Workspace decision

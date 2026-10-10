@@ -1,3 +1,4 @@
+import { nestHostRuntime, nestHostCache } from './nest-host-runtime.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import {
@@ -27,7 +28,7 @@ const fixtures = join(root, project, 'tests/hosts', configuration);
 const host = mkdtempSync(
   join(tmpdir(), `anarchitects-mailer-${configuration}-`),
 );
-const env = { ...process.env };
+const { node: hostNode, env, version: hostNodeVersion } = nestHostRuntime();
 delete env.NODE_PATH;
 delete env.NODE_OPTIONS;
 // A developer's mail configuration must not affect the isolated host.
@@ -60,7 +61,7 @@ try {
         '--json',
         '--ignore-scripts',
         '--cache',
-        join(host, '.npm-cache'),
+        nestHostCache(host),
       ],
       true,
     ),
@@ -107,7 +108,7 @@ try {
   writeFileSync(join(host, 'tsconfig.json'), JSON.stringify(tsconfig));
 
   console.log(
-    `Common Mailer ${configuration}; Node ${process.version}; ${host}`,
+    `Common Mailer ${configuration}; Node ${hostNodeVersion}; ${host}`,
   );
   run('npm', [
     'ci',
@@ -119,17 +120,13 @@ try {
     '--force=false',
     '--engine-strict',
     '--cache',
-    join(host, '.npm-cache'),
+    nestHostCache(host),
   ]);
   run('npm', ['ls', '--all'], true);
   run('npm', ['ls', '--depth=0']);
-  run(process.execPath, [
-    'node_modules/typescript/bin/tsc',
-    '-p',
-    'tsconfig.json',
-  ]);
-  run(process.execPath, ['nest-consumer.cjs']);
-  run(process.execPath, ['out/nest-consumer.mjs']);
+  run(hostNode, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json']);
+  run(hostNode, ['nest-consumer.cjs']);
+  run(hostNode, ['out/nest-consumer.mjs']);
   console.log(`Packed Common Mailer ${configuration} passed.`);
 } finally {
   rmSync(host, { recursive: true, force: true });

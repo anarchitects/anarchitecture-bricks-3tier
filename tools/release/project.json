@@ -154,10 +154,14 @@
         "{workspaceRoot}/libs/{forms,identity}/{nest,ts}/package.json",
         "{workspaceRoot}/tools/testing/newsletter-nest-hosts/**/*",
         "{workspaceRoot}/tools/testing/run-newsletter-nest-host.mjs",
-        "{workspaceRoot}/libs/newsletter/{nest,ts}/package.json"
+        "{workspaceRoot}/libs/newsletter/{nest,ts}/package.json",
+        "{workspaceRoot}/tools/testing/nest-host-runtime.mjs",
+        "{workspaceRoot}/tools/testing/nest-compatibility-matrix.mjs",
+        "{workspaceRoot}/tools/testing/run-nest-compatibility-matrix.mjs",
+        "{workspaceRoot}/.github/workflows/nest-compatibility.yml"
       ],
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs tools/release/newsletter-nest-host.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs tools/release/newsletter-nest-host.spec.mjs tools/release/nest-compatibility.spec.mjs"
       }
     },
     "test-forms-identity-nest-compatibility": {
@@ -183,6 +187,44 @@
         },
         "nest12": {
           "command": "node tools/testing/run-forms-identity-nest-host.mjs nest12"
+        }
+      }
+    },
+    "validate-nest-package-compatibility": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": [
+        {
+          "projects": [
+            "auth-nest",
+            "auth-declarations",
+            "common-nest-mailer",
+            "forms-nest",
+            "identity-nest",
+            "newsletter-nest"
+          ],
+          "target": "build"
+        }
+      ],
+      "options": {
+        "command": "node tools/release/validate-nest-package-compatibility.mjs"
+      }
+    },
+    "test-nest-compatibility": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "parallelism": false,
+      "dependsOn": ["validate-nest-package-compatibility"],
+      "defaultConfiguration": "nest12",
+      "options": {
+        "command": "node tools/testing/run-nest-compatibility-matrix.mjs nest12"
+      },
+      "configurations": {
+        "nest11": {
+          "command": "node tools/testing/run-nest-compatibility-matrix.mjs nest11"
+        },
+        "nest12": {
+          "command": "node tools/testing/run-nest-compatibility-matrix.mjs nest12"
         }
       }
     }

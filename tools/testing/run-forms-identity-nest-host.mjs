@@ -1,3 +1,4 @@
+import { nestHostRuntime, nestHostCache } from './nest-host-runtime.mjs';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import {
@@ -28,7 +29,7 @@ const fixtures = join(import.meta.dirname, 'forms-identity-nest-hosts');
 const host = mkdtempSync(
   join(tmpdir(), `anarchitects-forms-identity-${configuration}-`),
 );
-const env = { ...process.env };
+const { node: hostNode, env, version: hostNodeVersion } = nestHostRuntime();
 for (const key of Object.keys(env)) {
   if (
     key === 'NODE_PATH' ||
@@ -71,6 +72,7 @@ try {
       'types',
       'dependencies',
       'peerDependencies',
+      'peerDependenciesMeta',
       'engines',
     ]) {
       assert.deepEqual(
@@ -95,7 +97,7 @@ try {
           '--json',
           '--ignore-scripts',
           '--cache',
-          join(host, '.npm-cache'),
+          nestHostCache(host),
         ],
         true,
       ),
@@ -120,7 +122,7 @@ try {
     '--force=false',
     '--engine-strict',
     '--cache',
-    join(host, '.npm-cache'),
+    nestHostCache(host),
   ];
   if (refresh) {
     run('npm', ['install', '--package-lock-only', ...npmFlags]);
@@ -144,6 +146,7 @@ try {
         'version',
         'dependencies',
         'peerDependencies',
+        'peerDependenciesMeta',
         'engines',
       ])
         assert.deepEqual(
@@ -163,17 +166,13 @@ try {
     tsconfig.files = ['consumer.cts', 'consumer.mts'];
     writeFileSync(join(host, 'tsconfig.json'), JSON.stringify(tsconfig));
     console.log(
-      `Forms/Identity ${configuration}; Node ${process.version}; ${host}`,
+      `Forms/Identity ${configuration}; Node ${hostNodeVersion}; ${host}`,
     );
     run('npm', ['ci', ...npmFlags]);
     run('npm', ['ls', '--all'], true);
     run('npm', ['ls', '--depth=0']);
-    run(process.execPath, [
-      'node_modules/typescript/bin/tsc',
-      '-p',
-      'tsconfig.json',
-    ]);
-    run(process.execPath, ['out/consumer.mjs']);
+    run(hostNode, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json']);
+    run(hostNode, ['out/consumer.mjs']);
     container = await new GenericContainer('postgres:16-alpine')
       .withEnvironment({
         POSTGRES_DB: 'forms_identity_host',
@@ -186,7 +185,7 @@ try {
       )
       .start();
     env.FORMS_IDENTITY_HOST_DATABASE_URL = `postgres://postgres:postgres@${container.getHost()}:${container.getMappedPort(5432)}/forms_identity_host`;
-    await runAsync(process.execPath, ['run-consumer.mjs']);
+    await runAsync(hostNode, ['run-consumer.mjs']);
     console.log(`Packed Forms/Identity ${configuration} passed.`);
   }
 } finally {

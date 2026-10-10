@@ -40,6 +40,8 @@
 
 ## Local Workflow
 
+For Nest package changes and release preparation, follow the [packed Nest release validation matrix](docs/guides/nest-release-validation.md). It lists the Nx commands, locked Nest 11/12 consumers, Node minimums and explicit exclusions.
+
 ```bash
 yarn install
 
