@@ -1,6 +1,6 @@
 # Nest development and maintenance strategy
 
-The [packed Nest release validation guide](nest-release-validation.md) now defines #468's CI commands, runtime minimum lanes and explicit exclusions. The development hosts below remain an upstream tooling baseline; the packed hosts provide brick-specific evidence.
+**Status after #468/#469:** all six bricks have verified dual-major artifacts and seven green Linux CI lanes. The [release plan](nest-compatibility-release-plan.md) records the new minors, Auth's Node 20 removal, completed Newsletter initial release and main-only release workflow constraint. No Nest 11 support is dropped, and plugin adoption remains a separate tooling follow-up. The [packed Nest release validation guide](nest-release-validation.md) defines CI commands, runtime minimum lanes and explicit exclusions. The development hosts below remain an upstream tooling baseline; the packed hosts provide brick-specific evidence.
 
 This is the implementation strategy for [#463](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/463), following the [#462 audit](nest-11-12-compatibility-audit.md) and [ADR-0011](../adr/0011-verify-nest-runtime-support-independently-of-tooling.md). Decision date: 2026-10-09.
 
@@ -18,7 +18,7 @@ The maintainer confirmed that a breaking Nest 12 change may ship on a **new mino
 - Apply portable fixes/features to both tracks with separate review and validation. Backport behavior, not necessarily identical dependency/configuration changes. Each track must pass its own host and package checks.
 - Keep supported package/dependency versions explicit for each line. Do not widen the old Nest 11 artifacts' support claims retrospectively.
 - Repository release groups synchronize domain major/minor lines. The human/CI release decision must account for sibling TS/Angular packages and exact internal dependency ranges; do not independently assign an arbitrary Nest-package minor here.
-- Under [current release conventions](../../CONTRIBUTING.md#release-workflow-domain-groups), the pre-1.0 adjustment uses a breaking/major bump to advance to the next minor line. Publication remains CI-owned. Before releasing from a maintenance branch, #469 must verify workflow ref support, tag ancestry and dependent-version handling; simply having a branch does not establish a working release path.
+- Under [current release conventions](../../CONTRIBUTING.md#release-workflow-domain-groups), the pre-1.0 adjustment uses a breaking/major bump to advance to the next minor line. Publication remains CI-owned. The #469 review confirms `release.yml` accepts only `main`. Maintenance publication requires a reviewed ref/dist-tag routing change, tag ancestry and dependent-version validation before use; simply having a branch does not establish a working release path.
 - Newsletter still obeys #428's coordinated publication gate.
 
 This is a permitted fallback and maintenance policy, not a decision to force every brick to become Nest-12-only. Dropping Nest 11 in a new artifact, raising runtime Node requirements or changing module exports must be disclosed as breaking for that release line.
@@ -52,7 +52,7 @@ The plugin requires Node `^22.22.3 || ^24.15.0 || >=26.0.0`, Nx/devkit `>=23.2.0
 3. Resolve the manifest-validation constraint above. Use the plugin's supported initialization path; inspect its dry run and generated changes. Replace obsolete generator defaults only after verifying the replacement schemas. Its source-only ESM library defaults do not replace this repo's publishable-library conventions.
 4. Adopt existing Nest applications individually with reviewed `nest-cli.json` configuration. Keep projects under `examples/`; do not create `apps/`. Use distinct inferred names such as `nest-build`/`nest-start` during evaluation to avoid conflicting with explicit `build`/`serve` targets. Select one authoritative build/start path before completing adoption.
 5. Preserve `@nx/js:tsc` package exports, additional entry points, declaration emission and release outputs, plus the Vite declarations build. Preserve Nest test decorator metadata and contract targets. Native CLI defaults are not a mandate to migrate every package to ESM, Vitest or another bundler.
-6. Run #468's packed consumer verification on each supported track and reconcile release validators/peer normalization before #469 releases. The external peer normalizer currently copies root ranges; it must not erase intentionally verified runtime contracts.
+6. Run #468's packed consumer verification on each supported track and reconcile release validators/peer normalization before #469 releases. The external peer normalizer now protects the six intentional Nest package contracts, and the packed validator checks their preserved source/build/tarball metadata.
 
 Do not add `nx`, `@nx/*`, `@nestjs/cli`, schematics or `@anarchitects/nest` to a published brick's runtime dependencies merely because the development workspace uses them.
 
@@ -109,6 +109,4 @@ Common Mailer API and CommonJS output are preserved.
 
 The root mailer dependencies move to the same stack so normal builds and tests
 exercise the supported adapter. Common Mailer's intentional peer ranges are
-protected from root normalization. #468 still owns minimum-Node coverage and
-the full release/CI matrix; #469 owns versioning and release routing. Downstream
-issues must opt into the new Common minor explicitly and verify their own packs.
+protected from root normalization. #468 completed the minimum-Node and CI matrix; #469 records the coordinated release plan. Auth, Forms and Newsletter now opt into Common 0.5 and verify their own packs.

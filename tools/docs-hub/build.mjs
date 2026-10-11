@@ -426,15 +426,30 @@ writeFile(
 for (const [slug, title] of [
   ['newsletter-integration', 'Newsletter Integration'],
   ['newsletter-migration', 'Newsletter Migration'],
+  ['nest-compatibility-release-plan', 'Nest Compatibility Release Plan'],
+  ['nest-release-validation', 'Packed Nest Release Validation'],
 ]) {
   const markdown = readFileSync(
     join(workspaceRoot, `docs/guides/${slug}.md`),
     'utf8',
   );
-  // These two guides link to one another; resolve those links within the rendered hub.
+  // Resolve guides within the hub and repository-only links against their source.
   const renderedMarkdown = markdown
     .replaceAll('newsletter-integration.md)', 'newsletter-integration.html)')
-    .replaceAll('newsletter-migration.md)', 'newsletter-migration.html)');
+    .replaceAll('newsletter-migration.md)', 'newsletter-migration.html)')
+    .replace(
+      /\]\((nest|nest-compatibility-release-plan|nest-release-validation|auth-migration)\.md(?:#[^)]*)?\)/g,
+      '](/guides/$1.html)',
+    )
+    .replace(
+      /\]\((\.\.\/[^)]+)\)/g,
+      (_, path) =>
+        `](${new URL(path, 'https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/').href})`,
+    )
+    .replaceAll(
+      '](nest-development-strategy.md)',
+      '](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/nest-development-strategy.md)',
+    );
   writeFile(
     `guides/${slug}.html`,
     renderMarkdownPage(
@@ -461,6 +476,7 @@ writeFile(
     <li>Docs-surface PRs must use non-bumping commit types: <code>docs</code>, <code>chore</code>, <code>ci</code>, <code>style</code>.</li>
   </ul>
   <p>See repository root docs for full release rules and required validation steps.</p>
+  <p><a href="/guides/nest-compatibility-release-plan.html">Nest 11/12 release plan</a> and <a href="/guides/nest-release-validation.html">packed package validation</a> cover verified support, migrations and coordinated release gates.</p>
 </article>`,
     generatedAt,
   ),

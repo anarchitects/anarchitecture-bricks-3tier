@@ -26,9 +26,7 @@ of these models; backend token and repository contracts belong to Nest applicati
 
 ## Installation
 
-Newsletter has not been released. Do not publish this package incrementally: wait
-until #429–#438 and #445–#448 merge and epic acceptance is complete, then use the coordinated
-Newsletter release workflow. Workspace development uses the source aliases below.
+Newsletter 0.0.1 is published. The next coordinated 0.1 release accompanies the Nest 11/12 contract; TS has no public API break in that upgrade. See the [release plan](../../../docs/guides/nest-compatibility-release-plan.md). Workspace development uses the source aliases below.
 
 ## Usage
 

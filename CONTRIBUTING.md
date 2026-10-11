@@ -40,7 +40,7 @@
 
 ## Local Workflow
 
-For Nest package changes and release preparation, follow the [packed Nest release validation matrix](docs/guides/nest-release-validation.md). It lists the Nx commands, locked Nest 11/12 consumers, Node minimums and explicit exclusions.
+For Nest package changes and release preparation, follow the [packed Nest release validation matrix](docs/guides/nest-release-validation.md). It lists the Nx commands, locked Nest 11/12 consumers, Node minimums and explicit exclusions. The [release plan](docs/guides/nest-compatibility-release-plan.md) records per-package breaking requirements and candidate minors, Newsletter coordination, plugin timing and the current maintenance-branch publication prerequisite.
 
 ```bash
 yarn install
@@ -64,9 +64,9 @@ nx run docs-hub:validate-content
 nx run docs-hub:build
 nx run docs-hub:verify
 nx run storybook-angular:storybook
-nx run auth-nest-example:contract-test
+yarn nx run auth-nest:test-nest-compatibility:nest12
 nx run auth-angular-example:contract-test
-nx run forms-nest-example:contract-test
+yarn nx run release-tools:test-forms-identity-nest-compatibility:nest12
 nx run forms-angular-example:contract-test
 
 # Docs-surface commit policy check
@@ -101,17 +101,17 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
 - Select exactly one domain group input: `forms`, `auth`, `identity`, `newsletter`, or `common`.
-- Newsletter publication is gated by epic #428: merge #429–#438 and #445–#448 and complete epic acceptance before one coordinated Newsletter release. Scaffolding and intermediate implementation PRs must not publish Newsletter packages.
+- Newsletter 0.0.1 shipped after #428 acceptance. Preserve coordinated domain publication for its next 0.1 release; follow the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md).
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
 - A first release is prepared from an `init(<project-or-domain>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.
 - The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
 - Use the optional `common_group` selector when a common release must target only one subgroup. The initial Tailwind release uses `common-tailwind`; leaving it at `all` preserves full-domain behavior.
-- Automatic downstream release cascades include only groups whose packages all have matching release tags. Untagged or partially released groups (including Newsletter before epic acceptance) are skipped as a whole, even if `first_release` is enabled for another group. Their dependency ranges remain unchanged until their own release preparation.
+- Automatic downstream release cascades include only groups whose packages all have matching release tags. Untagged or partially released groups are skipped as a whole, even if `first_release` is enabled for another group. Their dependency ranges remain unchanged until their own release preparation.
 - An explicitly selected group with missing tags requires `first_release`; first fetch all repository tags to distinguish missing history from an actual initial release. This flag does not authorize first releases of other dependent groups.
 - The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`.
 - The repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference. `init` is restricted to a first release whose selected projects already declare `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.
-- Do not run local `nx release` before merging PRs; use the repo runner instead.
+- Do not perform local releases. Only use the repo runner locally with `-d` for a dry run; actual versioning and publication remain CI-owned after human acceptance.
 - Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.
 - For a publish-only retry, manually run **Publish** with the existing package tag. Do not rerun versioning.
 - Domain major and minor lines stay synchronized while patch versions may diverge. With Nx's pre-1.0 adjustment, use `bump=major` to advance a `0.x` domain to its next minor line.

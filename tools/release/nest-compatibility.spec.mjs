@@ -12,11 +12,58 @@ import {
   ciLanes,
   fixtureDirectory,
   hostCases,
+  runHostCasesWithReaper,
 } from '../testing/nest-compatibility-matrix.mjs';
 import { nestHostRuntime } from '../testing/nest-host-runtime.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
 const json = (path) => JSON.parse(readFileSync(resolve(root, path), 'utf8'));
+
+test('matrix keeps a parent Reaper session across hosts and releases it after the last host', async () => {
+  const events = [];
+  let connected = false;
+  await runHostCasesWithReaper(
+    ['first', 'second'],
+    async (host) => {
+      assert.ok(
+        connected,
+        'Parent must stay connected between child processes',
+      );
+      events.push(host);
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.ok(connected);
+    },
+    async () => {
+      connected = true;
+      events.push('connect');
+      return {
+        stop: async () => {
+          connected = false;
+          events.push('stop');
+        },
+      };
+    },
+  );
+  assert.deepEqual(events, ['connect', 'first', 'second', 'stop']);
+  assert.equal(connected, false);
+});
+
+test('matrix releases its parent session and propagates a host failure without running later hosts', async () => {
+  const failure = new Error('host failed');
+  const events = [];
+  await assert.rejects(
+    runHostCasesWithReaper(
+      ['first', 'second'],
+      async (host) => {
+        events.push(host);
+        throw failure;
+      },
+      async () => ({ stop: async () => events.push('stop') }),
+    ),
+    (error) => error === failure,
+  );
+  assert.deepEqual(events, ['first', 'stop']);
+});
 
 function artifact(project) {
   const source = json(`${project.root}/package.json`);
@@ -48,6 +95,23 @@ const validate = (project, a) =>
 test('all six package contracts accept preserved manifests and complete exports', () => {
   assert.equal(nestPackages.length, 6);
   for (const project of nestPackages) validate(project, artifact(project));
+});
+
+test('Auth cannot advertise Node 20 while its locked Kysely dependency requires Node 22', () => {
+  const project = nestPackages.find((p) => p.name === 'auth-nest');
+  const a = artifact(project);
+  const lock = json(
+    'tools/testing/auth-nest-hosts/nest11/package-lock.json.template',
+  );
+  const dependencyRange = lock.packages['node_modules/kysely'].engines.node;
+  assert.equal(semver.satisfies('20.19.0', dependencyRange), false);
+  assert.equal(semver.satisfies('20.19.0', a.source.engines.node), false);
+  for (const version of ['22.13.0', '24.11.0', '26.11.1']) {
+    assert.ok(semver.satisfies(version, dependencyRange));
+    assert.ok(semver.satisfies(version, a.source.engines.node));
+  }
+  a.source.engines.node = '^20.19.0 || ^22.13.0 || >=24.11.0';
+  assert.throws(() => validate(project, a), /auth-nest: engines/);
 });
 
 test('contract validator rejects peer, engine and optional-peer drift at build/pack boundaries', () => {

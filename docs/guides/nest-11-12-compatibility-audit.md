@@ -1,5 +1,7 @@
 # Nest 11/12 compatibility audit
 
+Historical #462 audit. For the completed support decision, successful CI evidence and proposed release versions, use the [Nest guide](nest.md#verified-support) and [#469 release plan](nest-compatibility-release-plan.md).
+
 - Audited: 2026-10-09, for [#462](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/462) in [epic #461](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/461).
 - Repository baseline: `e57f671a98d4c3bc09e03303f85fdf4505cdb71b`.
 - Decision: [ADR-0011](../adr/0011-verify-nest-runtime-support-independently-of-tooling.md) (accepted by the maintainer on 2026-10-09).

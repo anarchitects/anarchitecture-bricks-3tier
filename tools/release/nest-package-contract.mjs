@@ -136,7 +136,9 @@ export function validateNestPackageContract(
   );
   assert.deepEqual(
     source.engines,
-    layers[label] ? { node: nodeRange } : undefined,
+    layers[label]
+      ? { node: label === 'auth-nest' ? '^22.13.0 || >=24.11.0' : nodeRange }
+      : undefined,
     `${label}: engines`,
   );
   assert.deepEqual(

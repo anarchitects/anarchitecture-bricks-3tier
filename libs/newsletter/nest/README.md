@@ -1,6 +1,6 @@
 # @anarchitects/newsletter-nest
 
-Unreleased Newsletter backend package for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), implementing [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md).
+Newsletter backend package for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), implementing [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md).
 
 ## Features
 
@@ -23,8 +23,9 @@ consent evidence. Campaign delivery remains outside #428.
 
 ## Installation
 
-Do not publish this package independently. Newsletter packages await one coordinated
-release after #429–#438 and #445–#448 are merged and epic acceptance is complete.
+Newsletter 0.0.1 was [released on 2026-10-07](https://github.com/anarchitects/anarchitecture-bricks-3tier/releases/tag/newsletter-nest%400.0.1) after #428. This README describes the **unreleased coordinated 0.1 minor**; the existing npm latest does not have this Nest 12 contract. Newsletter Nest, TS and Angular move to 0.1 together.
+
+After publication, follow the [Nest 11/12 install recipes](../../../docs/guides/nest.md#install-without-nx) and [release plan](../../../docs/guides/nest-compatibility-release-plan.md). Runtime consumption needs no Nx or generator plugin. For native delivery, install Common Mailer 0.5 and its Mailer 3/Nodemailer 8 peers; custom/MailerLite modes can omit the optional adapters when they are not imported or configured.
 
 ### Nest 11/12 compatibility (#467)
 
@@ -40,7 +41,7 @@ The upcoming Newsletter Nest **0.1 minor** supports Nest common/core/platform-fa
 
 The full hosts use TypeORM 1.1.0, PostgreSQL 16, Common Mailer 0.5, Mailer 3.0.2 and Nodemailer 8.0.5. Newsletter owns its DataSource integration directly and does not require `@nestjs/typeorm`. Native Common-backed delivery requires installing the optional Common Mailer peer and its Mailer 3/Nodemailer 8 peers; configure the transport once at host root. Custom/noop/MailerLite provider hosts may omit Common Mailer, and custom persistence may omit TypeORM.
 
-**Breaking requirements:** compared with the previous 0.0.1 manifest, the tested Nest/Config/Fastify floors are raised and the optional Common Mailer peer changes from `^0.4.0` to `^0.5.0`. This is prepared as a new pre-1.0 minor, not a patch. Existing public entry points, provider seams, raw-body signature format and subscriber behavior are preserved. Newsletter TS already ships separate strict ESM/CJS declarations and needs no declaration rewrite for this change.
+**Breaking requirements:** Newsletter Nest 0.1 requires Newsletter TS 0.1.0. Compared with the previous 0.0.1 manifest, the tested Nest/Config/Fastify floors are raised and the optional Common Mailer peer changes from `^0.4.0` to `^0.5.0`. This is prepared as a new pre-1.0 minor, not a patch. Existing public entry points, provider seams, raw-body signature format and subscriber behavior are preserved. Newsletter TS already ships separate strict ESM/CJS declarations and needs no declaration rewrite for this change.
 
 With Docker available, run:
 
@@ -54,9 +55,9 @@ yarn nx run newsletter-nest:test-nest-compatibility:nest12-optional
 
 The full hosts compile strict NodeNext CJS/ESM consumers and the actual Nest example source against packed packages, without workspace aliases or `skipLibCheck`. They run exported migrations, native signup/mail/confirmation/unsubscribe/replay/restart, MailerLite provider failures, rate limiting, exact raw-body signature verification, rejected signatures/accounts/oversized payloads and durable concurrent webhook deduplication. Config-driven composition checks explicit overrides and disabled routes. Optional-peer hosts use separate clean npm installs and verify runtime CJS/ESM loading, custom/noop providers, advanced presentation composition, custom limiting and fail-closed behavior when raw-body capture is missing. Declaration checks for optional integration types run in the full hosts, where those types are installed.
 
-`tools/testing/newsletter-nest-hosts/candidates.json` stages Newsletter Nest 0.1.0, the unchanged Newsletter TS 0.0.1 artifact, and Common Mailer 0.5.0. Only candidate **versions** change during staging; dependencies, peer ranges, optional-peer metadata and exports must match the source/build/packed contracts. Frozen registry locks retain integrity hashes and use strict peer/engine checks without install scripts. To refresh a lock intentionally after building, run `node tools/testing/run-newsletter-nest-host.mjs <host> --refresh-lock`, then validate the normal target. Update candidate versions and locks together when the coordinated release selects final versions.
+`tools/testing/newsletter-nest-hosts/candidates.json` stages Newsletter Nest 0.1.0, Newsletter TS 0.1.0 (unchanged API, coordinated version line), and Common Mailer 0.5.0. Only candidate **versions** change during staging; dependencies, peer ranges, optional-peer metadata and exports must match the source/build/packed contracts. Frozen registry locks retain integrity hashes and use strict peer/engine checks without install scripts. To refresh a lock intentionally after building, run `node tools/testing/run-newsletter-nest-host.mjs <host> --refresh-lock`, then validate the normal target. Update candidate versions and locks together when the coordinated release selects final versions.
 
-Verified on Node 24.21.0, npm 11.19.0 and TypeScript 6.0.3. Existing Node engines are unchanged; minimum-Node and wider CI verification remain #468's release gate. Epic #428 is closed, but #467 does not publish packages or change its coordinated release policy. Source versions, tags and publication remain owned by the human-approved release workflow; Common Mailer 0.5 must be available before releasing this Common-backed contract.
+[Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 on Node 20.19.0, 22.13.0, 24.11.0 and 26.11.1, and Nest 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1, including optional-peer absence. TypeScript is 6.0.3. The locked Nest 12 graph excludes Node 20. That run used the earlier TS 0.0.1 staging version; #469 aligns staging with the coordinated TS 0.1.0 release, requiring fresh PR CI. Epic #428 is closed and its initial release shipped; the next minor retains coordinated release ownership. Source versions, tags and publication remain owned by the human-approved release workflow; Common Mailer 0.5 must be available before releasing this Common-backed contract.
 
 ## Usage
 

@@ -18,14 +18,16 @@ NestJS facade and layer entry points for the Anarchitecture identity domain.
 
 ## Installation
 
+The commands below target the next minor **after coordinated publication**. See the [verified Nest 11/12 matrix and install recipes](../../../docs/guides/nest.md#verified-support) and [release plan](../../../docs/guides/nest-compatibility-release-plan.md) for current npm versions, migrations and maintenance routing. These runtime packages work in ordinary npm/Yarn/pnpm Nest applications without Nx, the Nest CLI or `@anarchitects/nest`.
+
 The Nest 11/12 contract is prepared for the **unreleased Identity 0.2 minor**, with `@anarchitects/identity-ts@^0.2.0`. The `0.1.x` line remains available for Nest 11 maintenance. Do not ship these dependency-floor changes as a patch on the previous minor.
 
 ```bash
-npm install @anarchitects/identity-nest
+npm install @anarchitects/identity-nest@^0.2.0 @nestjs/common@12.1.2 @nestjs/core@12.1.2 @nestjs/platform-fastify@12.1.2 @nestjs/config@12.0.1 @nestjs/typeorm@12.0.2 typeorm@1.1.0 pg@8.16.3 reflect-metadata@0.1.14 rxjs@7.8.2
 # or
-yarn add @anarchitects/identity-nest
+yarn add @anarchitects/identity-nest@^0.2.0 @nestjs/common@12.1.2 @nestjs/core@12.1.2 @nestjs/platform-fastify@12.1.2 @nestjs/config@12.0.1 @nestjs/typeorm@12.0.2 typeorm@1.1.0 pg@8.16.3 reflect-metadata@0.1.14 rxjs@7.8.2
 # or
-pnpm add @anarchitects/identity-nest
+pnpm add @anarchitects/identity-nest@^0.2.0 @nestjs/common@12.1.2 @nestjs/core@12.1.2 @nestjs/platform-fastify@12.1.2 @nestjs/config@12.0.1 @nestjs/typeorm@12.0.2 typeorm@1.1.0 pg@8.16.3 reflect-metadata@0.1.14 rxjs@7.8.2
 ```
 
 The TypeORM 1 package line requires Node.js
@@ -70,7 +72,7 @@ yarn nx run release-tools:test-forms-identity-nest-compatibility:nest12
 
 `tools/testing/forms-identity-nest-hosts/candidates.json` stages only upcoming **versions** (Forms 0.11, Identity 0.2 and Common Mailer 0.5). Source/build/packed dependency and peer contracts must match; no dependency rewrites, overrides or workspace links are used. Registry dependencies have frozen locks and integrity hashes, strict peer/engine checks and no install scripts. Source versions and publication remain CI-release-owned. To refresh a lock intentionally after building, run `node tools/testing/run-forms-identity-nest-host.mjs <consumer> --refresh-lock`, then run the normal Nx target.
 
-Verified on Node 24.21.0, npm 11.19.0 and TypeScript 6.0.3. The existing engine range is unchanged; minimum-Node and broader CI verification remain #468's release gate. The NodeNext declaration fix can be backported separately to the previous TS minor. Deprecation of affected published versions may be considered after a fixed maintenance release and requires human approval; this change performs no release or deprecation.
+[Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 on Node 20.19.0, 22.13.0, 24.11.0 and 26.11.1, and Nest 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1. TypeScript is 6.0.3. The locked Nest 12 dependency graph requires Node >=22; the unchanged package engine union does not certify Nest 12 on Node 20. The NodeNext declaration fix can be backported separately to the previous TS minor. Deprecation of affected published versions may be considered after a fixed maintenance release and requires human approval; this change performs no release or deprecation.
 
 ## Exports
 

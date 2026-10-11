@@ -77,12 +77,12 @@ Do not assume password state lives on `users`. The credential account row is the
 
 ### Better Auth 1.7 and TypeORM 1.1 persistence upgrade
 
-This is a breaking persistence upgrade. Consumers must use:
+This is a breaking persistence upgrade. The upcoming Auth 0.12 line also removes the unsupported Node 20 engine claim because locked Kysely 0.29.6 requires Node >=22. See the [Nest release plan](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/nest-compatibility-release-plan.md) for coordinated package versions and Nest 11/12 host setup. Consumers must use:
 
-- Node.js `^20.19.0 || ^22.13.0 || >=24.11.0`
-- Better Auth and `@better-auth/passkey` `~1.7.2`
+- Node.js `^22.13.0 || >=24.11.0`
+- Better Auth and `@better-auth/passkey` `1.7.2` (pinned together with core)
 - `@anarchitects/better-auth-typeorm-adapter` `0.2.0`
-- TypeORM `^1.1.0` and `@nestjs/typeorm` `^11.0.1`
+- TypeORM `^1.1.0` and `@nestjs/typeorm` `^11.0.1 || ^12.0.2` (use 12.0.2 with Nest 12)
 
 Better Auth 1.7 derives provider-ID identities through its built-in issuer
 strategy. Credential accounts use `local:credential`; OAuth accounts without a
