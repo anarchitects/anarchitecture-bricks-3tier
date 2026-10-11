@@ -11,6 +11,13 @@ const config: StorybookConfig = {
   },
   staticDirs: ['../../../../public'],
   webpackFinal: async (webpackConfig) => {
+    // Shared TS packages use emitted .js specifiers for NodeNext consumers.
+    // Storybook consumes their workspace .ts sources through tsconfig paths.
+    webpackConfig.resolve ??= {};
+    webpackConfig.resolve.extensionAlias = {
+      ...webpackConfig.resolve.extensionAlias,
+      '.js': ['.ts', '.js'],
+    };
     webpackConfig.module ??= { rules: [] };
     webpackConfig.module.rules ??= [];
     webpackConfig.module.rules.push({
