@@ -11,6 +11,8 @@ const requiredFiles = [
   'guides/auth-passkeys.html',
   'guides/angular-22-signal-forms-tailwind-migration.html',
   'guides/nest.html',
+  'guides/nest-compatibility-release-plan.html',
+  'guides/nest-release-validation.html',
   'guides/newsletter-integration.html',
   'guides/newsletter-migration.html',
   'guides/ts-contracts.html',

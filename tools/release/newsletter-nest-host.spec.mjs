@@ -24,6 +24,20 @@ const candidates = readJson(join(fixtures, 'candidates.json')).map(
 const packages = new Map(
   candidates.map((candidate) => [candidate.source.name, candidate]),
 );
+
+test('Newsletter candidates rehearse the coordinated domain release line', () => {
+  const nest = packages.get('@anarchitects/newsletter-nest');
+  const contracts = packages.get('@anarchitects/newsletter-ts');
+  assert.equal(semver.major(nest.version), semver.major(contracts.version));
+  assert.equal(semver.minor(nest.version), semver.minor(contracts.version));
+  assert.ok(
+    semver.satisfies(
+      contracts.version,
+      nest.source.dependencies['@anarchitects/newsletter-ts'],
+    ),
+  );
+});
+
 for (const [host, version, config] of [
   ['nest11', '11.1.6', '4.0.2'],
   ['nest11-modern', '11.1.6', '12.0.1'],

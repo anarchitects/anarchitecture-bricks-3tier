@@ -50,6 +50,23 @@ test('all six package contracts accept preserved manifests and complete exports'
   for (const project of nestPackages) validate(project, artifact(project));
 });
 
+test('Auth cannot advertise Node 20 while its locked Kysely dependency requires Node 22', () => {
+  const project = nestPackages.find((p) => p.name === 'auth-nest');
+  const a = artifact(project);
+  const lock = json(
+    'tools/testing/auth-nest-hosts/nest11/package-lock.json.template',
+  );
+  const dependencyRange = lock.packages['node_modules/kysely'].engines.node;
+  assert.equal(semver.satisfies('20.19.0', dependencyRange), false);
+  assert.equal(semver.satisfies('20.19.0', a.source.engines.node), false);
+  for (const version of ['22.13.0', '24.11.0', '26.11.1']) {
+    assert.ok(semver.satisfies(version, dependencyRange));
+    assert.ok(semver.satisfies(version, a.source.engines.node));
+  }
+  a.source.engines.node = '^20.19.0 || ^22.13.0 || >=24.11.0';
+  assert.throws(() => validate(project, a), /auth-nest: engines/);
+});
+
 test('contract validator rejects peer, engine and optional-peer drift at build/pack boundaries', () => {
   const project = nestPackages.find((p) => p.name === 'newsletter-nest');
   for (const stage of ['built', 'packed']) {

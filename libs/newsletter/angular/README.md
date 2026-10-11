@@ -1,6 +1,6 @@
 # @anarchitects/newsletter-angular
 
-Unreleased Newsletter Angular signup UI, client and state for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), implementing [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md).
+Newsletter Angular signup UI, client and state for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), implementing [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md).
 
 ## Features
 
@@ -15,8 +15,7 @@ Unreleased Newsletter Angular signup UI, client and state for [epic #428](https:
 
 ## Installation
 
-Newsletter packages await one coordinated release after #429–#438 and #445–#448 are merged and
-epic acceptance is complete. Angular common/core/forms `^22.0.0` and RxJS
+Newsletter 0.0.1 is published. The next coordinated 0.1 release accompanies the Nest 11/12 contract; it does not introduce an Angular API break. Angular common/core/forms `^22.0.0` and RxJS
 `~7.8.0` are peers. The Forms renderer uses Angular 22 Signal Forms, so the
 previous unreleased Angular 21 compatibility range is narrowed to Angular 22.
 Dependencies include Newsletter TS contracts, Forms Angular and Forms TS.
@@ -24,7 +23,7 @@ Dependencies include Newsletter TS contracts, Forms Angular and Forms TS.
 Forms Angular and Forms TS now require `^0.10.0`. The renderer additions used by
 Newsletter (`resetOnSubmit` and `nativeMethod`) are available in the
 [published Forms Angular 0.10.0 release](https://github.com/anarchitects/anarchitecture-bricks-3tier/releases/tag/forms-angular%400.10.0).
-Newsletter itself still awaits epic acceptance and the CI-owned release flow.
+The next minor coordinates Newsletter TS 0.1 and Forms 0.11 dependency updates through the CI release workflow; see the [release plan](../../../docs/guides/nest-compatibility-release-plan.md).
 
 Install the Forms peer dependencies described in the [Forms Angular README](../../forms/angular/README.md)
 and configure its Tailwind styling foundation in the host stylesheet:

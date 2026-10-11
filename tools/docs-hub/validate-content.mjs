@@ -15,12 +15,30 @@ const guideFiles = [
     key: 'angularFrontendMigration',
   },
   { path: 'docs/guides/nest.md', key: 'nest' },
+  {
+    path: 'docs/guides/nest-compatibility-release-plan.md',
+    key: 'nestRelease',
+  },
+  { path: 'docs/guides/nest-release-validation.md', key: 'nestValidation' },
   { path: 'docs/guides/ts-contracts.md', key: 'tsContracts' },
   { path: 'docs/guides/design-ui-systems.md', key: 'designUiSystems' },
   { path: 'docs/guides/ai-agents.md', key: 'aiAgents' },
 ];
 
 const guideRequirements = {
+  nestRelease: [
+    'verified support and evidence',
+    'package versions and migration',
+    'newsletter 428 and plugin coordination',
+    'release execution and ordering',
+    'maintenance branches and deprecation',
+  ],
+  nestValidation: [
+    'ci matrix and exclusions',
+    'locked host coverage',
+    'local and pre release commands',
+    'maintaining the gate',
+  ],
   newsletterIntegration: [
     'architecture and ownership',
     'runnable examples',

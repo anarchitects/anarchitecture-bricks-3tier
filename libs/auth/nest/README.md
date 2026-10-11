@@ -22,15 +22,17 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 
 ## Installation
 
+The commands below target the next minor **after coordinated publication**. See the [verified Nest 11/12 matrix and install recipes](../../../docs/guides/nest.md#verified-support) and [release plan](../../../docs/guides/nest-compatibility-release-plan.md) for current npm versions, migrations and maintenance routing. These runtime packages work in ordinary npm/Yarn/pnpm Nest applications without Nx, the Nest CLI or `@anarchitects/nest`.
+
 The Nest 11/12 contract below is prepared for the **unreleased Auth 0.12 minor**,
 with Auth declarations/TS `^0.12.0` and Common Mailer `^0.5.0`. Published Auth
 `0.11.x` remains the Nest 11 maintenance line. Common 0.5 must be released before
 Auth 0.12; do not apply these dependency changes as a 0.11.x patch.
 
 ```bash
-npm install @anarchitects/auth-nest @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/platform-fastify@^12.1.2 @nestjs/config@^12.0.1 @nestjs/jwt@^12.0.2 @nestjs/typeorm@^12.0.2 typeorm@^1.1.0 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
+npm install @anarchitects/auth-nest@^0.12.0 @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/platform-fastify@^12.1.2 @nestjs/config@^12.0.1 @nestjs/jwt@^12.0.2 @nestjs/typeorm@^12.0.2 typeorm@^1.1.0 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 # or
-yarn add @anarchitects/auth-nest @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/platform-fastify@^12.1.2 @nestjs/config@^12.0.1 @nestjs/jwt@^12.0.2 @nestjs/typeorm@^12.0.2 typeorm@^1.1.0 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
+yarn add @anarchitects/auth-nest@^0.12.0 @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/platform-fastify@^12.1.2 @nestjs/config@^12.0.1 @nestjs/jwt@^12.0.2 @nestjs/typeorm@^12.0.2 typeorm@^1.1.0 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 ```
 
 Peer requirements:
@@ -60,7 +62,7 @@ can change exact upstream peer requirements, so update the family together and
 refresh the consumer locks. Passport is not part of the current Auth runtime;
 JWT uses the package's Better Auth integration and `@nestjs/jwt` directly.
 
-**Breaking upgrade requirements:** the next minor requires Common Mailer 0.5's
+**Breaking upgrade requirements:** Auth 0.12 drops Node 20 because its locked Kysely 0.29.6 requires Node >=22. Use the verified Node 22.13.0, 24.11.0 or 26.11.1 lanes. The next minor requires Common Mailer 0.5's
 Mailer 3/Nodemailer 8 stack and the newer Auth TS/declaration packages. Keep the
 0.11.x line for hosts that retain the older stack. Public facade/secondary entry
 points, metadata keys and CJS/ESM formats are preserved. Auth TS and declarations
@@ -106,8 +108,7 @@ config-driven and advanced composition, global guards, CASL resource policies,
 Fastify request validation, real session/JWT flows, migrations, passkey persistence,
 restart and optional provider/route disabling. They use a disposable PostgreSQL
 container and noop mail delivery. No workspace symlinks or peer overrides are used.
-Results were verified on Node 24.21.0, npm 11.19.0 and TypeScript 6.0.3; minimum-Node
-and wider CI coverage remain #468's release gate. TypeORM's process-wide entity
+[Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 and 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1 with TypeScript 6.0.3. Node 20 is excluded for Auth on both majors. TypeORM's process-wide entity
 registry is not treated as evidence of optional table absence.
 
 The strict NodeNext declaration fixes are also suitable for backporting to the
@@ -215,9 +216,9 @@ export const AppDataSource = new DataSource({
 Use the symbol-based approach for production apps and reusable templates. Keep plugin-specific migrations with their owning plugin modules. The `infrastructure-persistence` entry point exposes the core auth schema migration and the ordered Better Auth 1.7 account-issuer migration.
 
 The Better Auth 1.7 and TypeORM 1.1 line requires Node.js
-`^20.19.0 || ^22.13.0 || >=24.11.0`, Better Auth `~1.7.2`,
+`^22.13.0 || >=24.11.0`, Better Auth `1.7.2`,
 `@anarchitects/better-auth-typeorm-adapter@0.2.0`, TypeORM `^1.1.0`, and
-`@nestjs/typeorm@^11.0.1`. Read the [auth migration guide](../../../docs/guides/auth-migration.md)
+`@nestjs/typeorm@^11.0.1 || ^12.0.2`. Read the [auth migration guide](../../../docs/guides/auth-migration.md)
 before upgrading a populated database. The adapter's `0.2.0` license is
 Apache-2.0 rather than MIT.
 

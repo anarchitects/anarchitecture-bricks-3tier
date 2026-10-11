@@ -2,7 +2,7 @@
 
 ## Scope and compatibility
 
-This guide describes adopting the Newsletter bricks in a host such as FitOverForty. It does not change that downstream repository or assume its current implementation. Inventory the host first, then map actual behavior to the capabilities below. The initial Newsletter packages remain behind epic acceptance and the CI release gate; use the repository examples until published versions are available.
+This guide describes adopting the Newsletter bricks in a host such as FitOverForty. It does not change that downstream repository or assume its current implementation. Inventory the host first, then map actual behavior to the capabilities below. Newsletter 0.0.1 is published following #428 acceptance. The next coordinated 0.1 minor adds verified Nest 11/12 support; follow the [release plan](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/nest-compatibility-release-plan.md) before adopting that line.
 
 The Angular surface uses Angular 22, the Forms package, and explicit state providers. Native Nest persistence requires the supported TypeORM/PostgreSQL combination, and native mail uses Common Mailer's `sendMessage` API. Check package peer dependencies and align the host before replacing its implementation. Changing endpoint shapes, consent versions, database schemas, or confirmation URLs can be a breaking host migration even though these are new package APIs.
 

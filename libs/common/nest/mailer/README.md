@@ -18,15 +18,17 @@ Shared typed mailer configuration, transport setup, and provider wiring for Nest
 
 ## Installation
 
+The commands below target the next minor **after coordinated publication**. See the [verified Nest 11/12 matrix and install recipes](../../../../../docs/guides/nest.md#verified-support) and [release plan](../../../../../docs/guides/nest-compatibility-release-plan.md) for current npm versions, migrations and maintenance routing. These runtime packages work in ordinary npm/Yarn/pnpm Nest applications without Nx, the Nest CLI or `@anarchitects/nest`.
+
 The contract below is for the **unreleased next minor** prepared by #465.
 Published `0.4.x` remains the Nest 11 / Mailer 2 / Nodemailer 7 maintenance
 line. Wait for the new minor before using these instructions with npm; do not
 publish these dependency changes as a `0.4.x` patch.
 
 ```bash
-npm install @anarchitects/common-nest-mailer @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
+npm install @anarchitects/common-nest-mailer@^0.5.0 @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 # or
-yarn add @anarchitects/common-nest-mailer @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
+yarn add @anarchitects/common-nest-mailer@^0.5.0 @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
 ```
 
 Peer requirements:
@@ -57,9 +59,7 @@ Nodemailer 8, and at least the declared Nest patch floor. Update those host
 dependencies together. The facade methods, config namespace, injection tokens,
 node/noop selection and `MailerPort` API are unchanged by #465. Existing Nest 11
 hosts may stay on the `0.4.x` maintenance line or migrate to this new minor.
-Domain package dependency ranges must be updated in their own compatibility
-issues before they consume the new Common minor; this change alone does not
-certify Auth, Forms or Newsletter on Nest 12.
+Auth, Forms and Newsletter now declare Common 0.5 and have their own passing packed hosts. Their releases must be coordinated with Common 0.5 availability.
 
 Mailer 2.3.4 and 2.3.10 publish a declaration importing
 `@nestjs/common/interfaces`, which is not exposed by Nest 12 under NodeNext
@@ -69,11 +69,7 @@ It also stops automatically installing optional template engines. This package
 therefore declares Handlebars directly. No `skipLibCheck`, patched upstream
 declarations, ESM conversion or application API workaround is required.
 
-These checks ran on Node **24.21.0**, npm **11.19.0**, and TypeScript **6.0.3**
-with `moduleResolution: NodeNext` and `skipLibCheck: false`. This is not a
-certification of every Node version: minimum-Node coverage and the wider CI
-matrix remain #468's gate before release under #469. No package version bump,
-publication or deprecation is performed by #465.
+[Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 on Node 20.19.0, 22.13.0, 24.11.0 and 26.11.1, and Nest 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1, with TypeScript 6.0.3, strict NodeNext and `skipLibCheck: false`. No standalone engine is declared for this package; use the tested host/dependency combinations. Nest 12 on Node 20 is excluded by its locked dependencies. See the release plan before publishing 0.5.0.
 
 ## Entry points and exports
 
