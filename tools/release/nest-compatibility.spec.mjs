@@ -12,11 +12,58 @@ import {
   ciLanes,
   fixtureDirectory,
   hostCases,
+  runHostCasesWithReaper,
 } from '../testing/nest-compatibility-matrix.mjs';
 import { nestHostRuntime } from '../testing/nest-host-runtime.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
 const json = (path) => JSON.parse(readFileSync(resolve(root, path), 'utf8'));
+
+test('matrix keeps a parent Reaper session across hosts and releases it after the last host', async () => {
+  const events = [];
+  let connected = false;
+  await runHostCasesWithReaper(
+    ['first', 'second'],
+    async (host) => {
+      assert.ok(
+        connected,
+        'Parent must stay connected between child processes',
+      );
+      events.push(host);
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.ok(connected);
+    },
+    async () => {
+      connected = true;
+      events.push('connect');
+      return {
+        stop: async () => {
+          connected = false;
+          events.push('stop');
+        },
+      };
+    },
+  );
+  assert.deepEqual(events, ['connect', 'first', 'second', 'stop']);
+  assert.equal(connected, false);
+});
+
+test('matrix releases its parent session and propagates a host failure without running later hosts', async () => {
+  const failure = new Error('host failed');
+  const events = [];
+  await assert.rejects(
+    runHostCasesWithReaper(
+      ['first', 'second'],
+      async (host) => {
+        events.push(host);
+        throw failure;
+      },
+      async () => ({ stop: async () => events.push('stop') }),
+    ),
+    (error) => error === failure,
+  );
+  assert.deepEqual(events, ['first', 'stop']);
+});
 
 function artifact(project) {
   const source = json(`${project.root}/package.json`);

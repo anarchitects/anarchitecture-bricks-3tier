@@ -3,7 +3,11 @@ import { spawn } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import semver from 'semver';
-import { fixtureDirectory, hostCases } from './nest-compatibility-matrix.mjs';
+import {
+  fixtureDirectory,
+  hostCases,
+  runHostCasesWithReaper,
+} from './nest-compatibility-matrix.mjs';
 import { nestHostRuntime } from './nest-host-runtime.mjs';
 
 assert.equal(process.argv.length, 3, 'Expected one suite: nest11 or nest12');
@@ -31,7 +35,7 @@ for (const { family, configuration } of cases) {
       );
   }
 }
-for (const { family, configuration } of cases) {
+await runHostCasesWithReaper(cases, async ({ family, configuration }) => {
   console.log(`\n=== ${family}/${configuration} on Node ${version} ===`);
   await new Promise((resolve, reject) => {
     const child = spawn(
@@ -48,7 +52,7 @@ for (const { family, configuration } of cases) {
           ),
     );
   });
-}
+});
 console.log(
   `Packed ${process.argv[2]} matrix passed: ${cases.length} hosts on ${version}.`,
 );

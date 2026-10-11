@@ -1,5 +1,24 @@
 import assert from 'node:assert/strict';
 import semver from 'semver';
+import { Network } from 'testcontainers';
+
+export async function runHostCasesWithReaper(
+  cases,
+  runHost,
+  startSession = () => new Network().start(),
+) {
+  // Starting a Testcontainers resource connects this long-lived parent to Ryuk.
+  // Keep that connection across child exits and npm/compiler work: otherwise
+  // the next child can discover a running Reaper that has begun shutting down.
+  // The network is only a session anchor; hosts retain separate databases and
+  // their own container cleanup. Ryuk also remains enabled for abnormal exits.
+  const session = await startSession();
+  try {
+    for (const host of cases) await runHost(host);
+  } finally {
+    await session.stop();
+  }
+}
 
 export const ciLanes = [
   { node: '20.19.0', suite: 'nest11' },
