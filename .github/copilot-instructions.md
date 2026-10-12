@@ -241,3 +241,8 @@ AI coding agents operate in assistive mode and do not replace human code ownersh
 - Hand-edit generated `docs/openapi/*` files.
 - Mix Angular and Nest concerns in the same library layer.
 - Add framework-coupled logic into shared TS packages.
+
+
+## Mandatory ADR preflight for AI code generation
+
+Before generating or modifying any code, tests, templates or migrations, enumerate and read every ADR in BOTH `anarchitects/anarchitecture-meta/adr/**` and this repository (`adr/**`, `docs/adr/**`, and any other ADR directories). Review all accepted, proposed, historical and superseded records and respect their status. Record applicable decisions and conflicts; proposals do not supersede accepted decisions. Re-check after scope changes. If either ADR source is inaccessible, stop code generation and report the blocker. See https://github.com/anarchitects/anarchitecture-meta/tree/main/adr.
