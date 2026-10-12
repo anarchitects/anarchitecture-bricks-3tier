@@ -1,6 +1,6 @@
 # ADR-0013: Migrate Auth Toward Nest 12 Authentication and Independent Passkeys
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-12
 - Owners: Architecture maintainers
 - Governing: [Meta Nest-first ADR](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0010-nest-first-runtime-and-dependency-policy.md) and [Auth safety ADR](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0011-nest12-authn-authz-contracts-and-compatibility.md)
