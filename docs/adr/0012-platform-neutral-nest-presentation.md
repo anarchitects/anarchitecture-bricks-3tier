@@ -1,6 +1,6 @@
 # ADR-0012: Evolve Nest Presentation Toward HTTP Platform Neutrality
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-12
 - Owners: Architecture maintainers
 - Scope: 3-tier Nest Bricks and their HTTP/published-contract generation
