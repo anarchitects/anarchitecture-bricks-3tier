@@ -1,6 +1,8 @@
-## Mandatory architecture decision review (AI agents)
+## Mandatory architecture decision preflight for every AI agent
 
-Before generating, editing or refactoring **any code**, enumerate and read **ALL ADRs in this repository**, including every document in `adr/**`, `docs/adr/**` and any other documented ADR location. Read accepted, proposed, historical and superseded records; apply their status correctly and follow applicable accepted decisions. Then read **all relevant engineering guides** for the affected packages and topics, including the [Modern Angular Engineering Guide](docs/guides/modern-angular/README.md), its [repository application](docs/guides/modern-angular/repository-application.md) and linked topic guides for Angular work. This applies to generated code, templates, examples, tests and migrations. Record applicable decisions and explicit conflicts before implementation; re-check when scope changes. A proposal does not silently override an accepted ADR. Never commit the licensed Modern Angular PDF, extracted text, scans or copied source passages.
+**Before generating, editing or refactoring any code**, including scaffolding, templates, tests, migration scripts and examples, enumerate and read **all ADRs** in both `anarchitects/anarchitecture-meta/adr/**` and **all ADRs in this repository** (`adr/**`, `docs/adr/**` and any other documented ADR locations). Read accepted, proposed, historical and superseded records; apply applicable accepted decisions and respect each status. Proposals do not override accepted ADRs. When either ADR source is inaccessible, report the blocker rather than claiming a review or proceeding to generate, edit or refactor code. Meta: https://github.com/anarchitects/anarchitecture-meta/tree/main/adr.
+
+Then read **all relevant engineering guides** for the affected packages and topics, including the [Modern Angular Engineering Guide](docs/guides/modern-angular/README.md), its [repository application](docs/guides/modern-angular/repository-application.md) and linked topic guides for Angular work. Record applicable decisions, relevant constraints and explicit conflicts before implementation; repeat the review whenever scope changes. Never commit the licensed Modern Angular PDF, extracted text, scans or copied source passages.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
@@ -500,3 +502,7 @@ Keep reusable capability artifacts in the domain library and let consuming apps 
 - backend authorization
 
 Reference: `docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md`
+
+## Ecosystem architecture decisions
+
+For changes affecting HTTP adapters, Nest presentation, SSR or generator defaults, review the applicable cross-repository architecture decisions in [Anarchitecture Meta](https://github.com/anarchitects/anarchitecture-meta/tree/main/adr), especially [HTTP Platform Independence](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0008-http-platform-independence.md) and [Native Node Candidate Default](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0009-native-node-candidate-default.md), **as well as all repository ADRs**. Proposed ADRs establish review intent, not currently shipped behavior or automatic authorization to change supported defaults. If Meta is inaccessible, report that explicitly and avoid assuming the policy was reviewed; local ADRs remain authoritative for repository implementation details. Do not silently change existing Fastify behavior or advertised compatibility.
