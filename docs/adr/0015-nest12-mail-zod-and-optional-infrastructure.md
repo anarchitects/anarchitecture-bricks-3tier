@@ -1,6 +1,6 @@
 # ADR-0015: Native Nest Mail, Zod Contracts and Opt-in Reliability
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-12
 - Owners: Architecture maintainers
 - Governing: [Meta Nest-first ADR](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0010-nest-first-runtime-and-dependency-policy.md)
