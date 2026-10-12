@@ -1,6 +1,6 @@
 # ADR-0014: Native Nest Authorization with Canonical Auth-TS Policies
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-12
 - Owners: Architecture maintainers
 - Governing: [Meta Nest-first ADR](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0010-nest-first-runtime-and-dependency-policy.md)
