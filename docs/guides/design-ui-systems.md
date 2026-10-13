@@ -7,8 +7,9 @@ This guide defines the target frontend foundation for Anarchitecture Bricks.
 supersedes the previous layered Common Angular UI-system direction. The legacy source projects have been
 removed; current frontend-foundation work targets Tailwind CSS v4.
 
-Contract ownership for DTOs and domain models remains canonical in the
-[TS Contracts Guide](/guides/ts-contracts.html).
+The [TS Contracts Guide](/guides/ts-contracts.html) distinguishes canonical public
+HTTP definitions in `anarchitecture-contracts` from local domain/UI models and
+transitional DTOs. UI ownership does not authorize changes to wire contracts.
 
 ## System Layers
 

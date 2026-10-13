@@ -5,8 +5,8 @@ Modular, reusable libraries and showcase applications for scalable software arch
 ## Purpose
 
 - Publishable domain libraries in `libs/` (TypeScript, Angular, NestJS).
-- OpenAPI docs generated from Nest implementation metadata (`@RouteSchema`).
-- Shared DTOs/models defined in TypeScript libraries (`libs/*/ts`).
+- Implementation OpenAPI generated from Nest metadata (`@RouteSchema`) for baseline/conformance evidence.
+- Local domain models and transitional TypeBox DTOs in TypeScript libraries (`libs/*/ts`).
 - Technical docs generated with Compodoc and surfaced through Storybook.
 - Nx-managed example applications in `examples/` for integration and contract validation.
 
@@ -20,10 +20,19 @@ The two repos should align on domain intent and public capability surface, while
 
 ## Source of Truth
 
-1. Shared model and DTO schemas: `libs/*/ts`.
-2. HTTP contract shape: Nest presentation controllers + pure `@RouteSchema` schema fields.
-3. OpenAPI metadata (`operationId`, `tags`) is derived in `tools/api-specs/route-metadata.ts`.
-4. Generated OpenAPI artifacts: `docs/openapi/openapi.json` and `docs/openapi/openapi.yaml`.
+1. Shared public HTTP contracts: [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts), authored as Zod-first wire schemas and first-class operation definitions. Deterministic OpenAPI 3.1 is their authoritative published artifact.
+2. Domain models, business invariants and internal application ports: their implementation domains. `auth-ts` retains authorization-policy semantics/evaluation; Contracts owns the HTTP representation.
+3. Transitional implementation baseline: `libs/*/ts` TypeBox DTOs, Nest controllers, Fastify `@RouteSchema`, and `tools/api-specs/route-metadata.ts`.
+4. Local `docs/openapi/openapi.json` and `.yaml`: generated implementation evidence, not canonical public contracts or a master specification for DDD.
+
+[Accepted ADR-0016](docs/adr/0016-consume-canonical-public-api-contracts.md) applies [Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md).
+[Contracts epic #1](https://github.com/anarchitects/anarchitecture-contracts/issues/1) delivers canonical artifacts;
+[3-tier epic #485](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/485)
+tracks independent adoption and conformance. Its #486 governance step can proceed
+alongside Contracts work. Existing exports, generators and runtime behavior remain
+in place; this documentation does not claim extraction, publication or adoption.
+Consumers migrate to versioned published or pinned immutable artifacts only after
+baseline audit and semantic compatibility review. See the [TS Contracts Guide](docs/guides/ts-contracts.md).
 
 ## Repository Structure
 
@@ -84,14 +93,14 @@ tools/
 ```bash
 yarn install
 
-# OpenAPI from implementation
+# Transitional implementation OpenAPI (baseline/conformance evidence)
 nx run api-specs:generate
 nx run api-specs:lint
 nx run api-specs:verify
 
-# For route additions/changes:
-# update tools/api-specs/route-metadata.ts
-# then run nx run api-specs:snapshot for intentional OpenAPI changes
+# Coordinate public API changes in Contracts first. For approved baseline changes:
+# align tools/api-specs/route-metadata.ts and review the generated diff
+# then run yarn nx run api-specs:snapshot; snapshots do not authorize wire changes
 
 # Angular technical docs
 nx run angular-docs:generate
@@ -198,6 +207,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 ## Architecture Guides
 
+- [Guide: Canonical HTTP Contract Ownership And Transitional TS Packages](docs/guides/ts-contracts.md)
 - [Audit: Nest 11/12 Compatibility And Support Decisions](docs/guides/nest-11-12-compatibility-audit.md)
 - [Guide: Verified Nest Support And Installation](docs/guides/nest.md#verified-support)
 - [Guide: Nest Compatibility Release Plan](docs/guides/nest-compatibility-release-plan.md)
@@ -210,6 +220,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 ## Architecture Decision Records
 
+- [ADR-0016: Consume Canonical Public API Contracts](docs/adr/0016-consume-canonical-public-api-contracts.md)
 - [ADR-0001: Align With `anarchitecture-bricks-ddd` And Support Migration](docs/adr/0001-align-with-bricks-ddd-and-support-migration.md)
 - [ADR-0002: Do Not Split Libraries By Audience Until Workflow Divergence Is Real](docs/adr/0002-do-not-split-libraries-by-audience-until-workflow-divergence-is-real.md)
 - [ADR-0003: Adopt Tailwind v4 As The Frontend Foundation And Retire Common Angular UI Packages](docs/adr/0003-adopt-tailwind-v4-frontend-foundation-and-retire-common-angular-ui-packages.md)
@@ -226,7 +237,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 
 - Storybook remains the default UI documentation and interaction surface.
 - Compodoc provides Angular technical API metadata and pages.
-- OpenAPI provides HTTP contract documentation derived from implementation.
+- Local OpenAPI documents implementation behavior and supplies baseline/conformance evidence; canonical published OpenAPI comes from `anarchitecture-contracts`.
 - Docs hub static site is generated via `nx run docs-hub:build` and published by `.github/workflows/docs-pages.yml`.
 - Markdown guide sources live in `docs/guides/angular.md` and `docs/guides/nest.md`; docs-hub renders them into HTML during build.
 - Publishable package `README.md` files are rendered as docs pages under `/packages/<package-slug>/` and linked alongside source README URLs.

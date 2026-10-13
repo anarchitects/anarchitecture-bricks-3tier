@@ -7,6 +7,13 @@
 - Owners: Architecture maintainers
 - Scope: [epic #461](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/461), starting with [#462](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/462)
 
+## Maintenance policy update
+
+Meta ADR-0010 and local ADR-0013–0015 subsequently restrict Nest 11 to security
+and bug-fix patches. [ADR-0016](0016-consume-canonical-public-api-contracts.md)
+records that precedence: decision 2's earlier permission for Nest 11 feature work
+is superseded. Existing compatibility commitments and packed-consumer gates remain.
+
 ## Context
 
 Six publishable packages currently declare Nest 11 peers. Nest 12 is published,

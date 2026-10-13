@@ -10,7 +10,7 @@ Preserve capability-first libraries, Angular ui/feature/state/data-access layers
 
 Preserve Tailwind v4 CSS foundation, accepted foundation/forms/auth sequencing, verified legacy Angular 21 support where promised, and package retirement only after consumers migrate. Current root Angular 22 does not cancel historical release obligations. Keep Better Auth behind session-first facades with internal TypeORM; keep Nest runtime and tooling support separate. No release, deprecation or unpublish is performed here.
 
-## Complete local ADR inventory
+## Local ADR inventory at the 2026-10-11 review
 
 All 14 records below were read. Status labels are preserved; a proposed amendment within an accepted record does not automatically become accepted.
 
@@ -30,6 +30,23 @@ All 14 records below were read. Status labels are preserved; a proposed amendmen
 | [ADR 106: Better Auth Decision Record Behind Auth Facades](../../adr/106-better-auth-spike.md)                                                                                                | Accepted - Implemented.                         | Better Auth is internal behind the accepted public auth facades and session-first contract.                                                                                            |
 | [ADR 121: Better Auth Persistence Strategy Recommendation](../../adr/121-better-auth-persistence-recommendation.md)                                                                           | Accepted - Aligned to implemented architecture. | Internal TypeORM persistence must not become an additional public auth mode.                                                                                                           |
 | [ADR: Modern Angular 22 and Signal Forms](../../adr/modern-angular-22-signal-forms.md)                                                                                                        | Accepted (maintainer approval 2026-10-11)       | Accepted on 2026-10-11; adds source/API traceability and preserves local release gates.                                                                                                |
+
+## Subsequent HTTP ownership decisions (2026-10-13)
+
+The 14-record table above is the 2026-10-11 review snapshot. The additional accepted
+records are [ADR-0012](../../adr/0012-platform-neutral-nest-presentation.md),
+[ADR-0013](../../adr/0013-nest12-first-authentication-and-passkeys.md),
+[ADR-0014](../../adr/0014-nest12-authorization-shared-policy-contract.md),
+[ADR-0015](../../adr/0015-nest12-mail-zod-and-optional-infrastructure.md) and
+[ADR-0016](../../adr/0016-consume-canonical-public-api-contracts.md).
+
+Public HTTP authority belongs to `anarchitecture-contracts`: Zod-first schemas and
+operations with deterministic OpenAPI 3.1 artifacts. Existing Angular TS DTO imports
+and local generated clients remain transitional until immutable canonical versions
+are adopted and verified against backend behavior. Local domain models and `auth-ts`
+policy semantics remain here. Preserve explicit state providers and layer boundaries.
+Contracts and verified consumer adoption precede separate Nest 12-native modernization;
+Nest 11 stays patch-only. This changes no Angular implementation or support range.
 
 ## Application gates
 

@@ -2,7 +2,7 @@
 
 ## Intent
 
-This is the Angular implementation cookbook for Anarchitecture Bricks. It focuses on practical Angular setup and consumption patterns, while shared design/runtime guidance and TS contract ownership stay canonical in:
+This is the Angular implementation cookbook for Anarchitecture Bricks. It focuses on practical Angular setup and consumption patterns, with shared design/runtime guidance and HTTP ownership explained in:
 
 - [Frontend Foundation Guide](/guides/design-ui-systems.html)
 - [TS Contracts Guide](/guides/ts-contracts.html)
@@ -13,7 +13,7 @@ This is the Angular implementation cookbook for Anarchitecture Bricks. It focuse
 
 - Angular libraries follow `ui <- feature -> state -> data-access`.
 - `config` and `util` are shared helpers available across layers.
-- TS contracts are consumed from domain TS packages; Angular layers do not redefine ownership contracts.
+- Shared public HTTP contracts belong to `anarchitecture-contracts`; current local TS DTO imports remain transitional. Angular layers do not independently author wire schemas.
 - State scope stays explicit through provider helpers (no implicit global singleton state).
 
 ## Easy Mode with Root Exports
@@ -53,12 +53,16 @@ Use advanced mode for custom transport adapters, scoped state lifecycles, or dom
 
 ## TS Contract Integration
 
-Contract ownership remains in TS packages:
+Public HTTP ownership belongs to `anarchitecture-contracts`, using Zod-first wire
+schemas, operation definitions and deterministic generated OpenAPI 3.1. Angular
+clients adopt the same immutable contract version as the verified backend; current
+`@anarchitects/forms-ts`, `@anarchitects/auth-ts`, Identity and Newsletter DTO imports
+remain the transitional baseline until that migration is implemented.
 
-- Forms contracts: `@anarchitects/forms-ts`
-- Auth contracts: `@anarchitects/auth-ts`
-
-Angular consumers (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`) map TS contracts in `data-access` and `state`, then expose stable UI/feature APIs. For contract ownership, change workflow, and compatibility policy, follow [TS Contracts Guide](/guides/ts-contracts.html).
+Keep transport mapping in `data-access`, orchestration in `state` and stable UI/feature
+APIs. Domain models and `auth-ts` policy semantics stay local. Follow the
+[TS Contracts Guide](/guides/ts-contracts.html) for compatibility and adoption gates;
+local generated clients and Prism checks alone do not establish canonical conformance.
 
 ## Layout Cookbook
 
@@ -135,13 +139,13 @@ fully custom introductory content.
 - Keep HTTP and endpoint adapters in `data-access`.
 - Keep stateful orchestration and derived UI signals in `state`.
 - Keep `feature` as composition/orchestration and `ui` as presentational/token-driven.
-- Sync backend schema changes by regenerating OpenAPI and updating Angular adapters before merge.
+- Coordinate HTTP changes through reviewed canonical contract versions; verify Angular adapters/generated clients and backend conformance together, retaining baseline checks during transition.
 
 ## Auth CASL Guidance
 
 For `@anarchitects/auth-angular`, keep the authorization split explicit:
 
-- `@anarchitects/auth-ts` owns the serialized auth rule shape
+- `@anarchitects/auth-ts` owns policy semantics; Contracts owns the HTTP representation, mapped without loss
 - `policyGuard` is a coarse route-attempt check over `{ action, subject }`
 - `resourcePolicyGuard` is for resolved-resource routes
 - `canAccessResource(...)` and `canAccessResourceField(...)` are for concrete UI/resource checks
@@ -162,7 +166,7 @@ Do not treat Angular route metadata as full instance-level authorization. If the
 - Bypassing root exports for routine use cases and over-fragmenting app setup.
 - Coupling UI components directly to transport concerns instead of `data-access`.
 - Using internal source imports instead of published entry points.
-- Treating TS contracts as Angular-owned instead of TS-owned.
+- Treating Angular or local TS DTOs as canonical public HTTP contract owners.
 - Skipping OpenAPI/client sync after schema changes.
 
 ## Newsletter integration

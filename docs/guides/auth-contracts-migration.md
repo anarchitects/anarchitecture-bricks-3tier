@@ -6,6 +6,15 @@ This guide covers the move from hard-coded auth DTO request schemas to the contr
 
 Use this guide when a consumer needs to customize auth field requirements, length limits, or empty-string handling without forking package code.
 
+## Canonical HTTP ownership
+
+This guide describes the existing local profile customization seam. Under
+[ADR-0016](../adr/0016-consume-canonical-public-api-contracts.md), shared public HTTP
+schemas and operations belong to `anarchitecture-contracts`. Preserve these profile
+exports and runtime behavior during transition, and audit configured field rules,
+length limits and empty-string handling before claiming conformance to an immutable
+canonical version. A local profile version does not authorize a public wire change.
+
 ## What Changed
 
 Before this shift, auth request behavior was effectively fixed by static DTO request schema exports such as:
@@ -36,7 +45,7 @@ This is the important behavioral change:
 
 ### Newly important exports
 
-Use these exports as the new source of truth for profile-driven auth behavior:
+Use these exports for the existing local profile-driven auth behavior:
 
 | Package                             | Export                                        | Purpose                                                          |
 | ----------------------------------- | --------------------------------------------- | ---------------------------------------------------------------- |

@@ -1,6 +1,6 @@
 ## Mandatory architecture reading
 
-Before generating or changing any code, follow [anarchitecture-bricks-3tier agent instructions](./AGENTS.md): enumerate and read **ALL repository ADRs**, then **all relevant engineering guides**, including the [Modern Angular guide](./docs/guides/modern-angular/README.md) and its repository application for Angular work. This includes generated output, examples, tests and migrations. Respect decision status, flag conflicts and re-check when scope changes.
+Before generating or changing any code, follow [anarchitecture-bricks-3tier agent instructions](./AGENTS.md): enumerate and read **ALL Meta and repository ADRs**, then **all relevant engineering guides**, including the [Modern Angular guide](./docs/guides/modern-angular/README.md) and its repository application for Angular work. This includes generated output, examples, tests and migrations. Respect decision status, flag conflicts and re-check when scope changes.
 
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
@@ -25,3 +25,25 @@ Before generating or changing any code, follow [anarchitecture-bricks-3tier agen
 - The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
 
 <!-- nx configuration end-->
+
+## Public HTTP contract authority
+
+Follow [local ADR-0016](docs/adr/0016-consume-canonical-public-api-contracts.md) and [Accepted Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md).
+[`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts) owns shared public HTTP contracts:
+Zod-first wire schemas plus first-class operation definitions, with deterministic
+OpenAPI 3.1 as a published artifact. Consume versioned published or pinned immutable
+artifacts; neither Bricks implementation nor its generated OpenAPI is authoritative.
+
+Before public API work, read the applicable canonical contract version and its
+compatibility rules. Current TypeBox DTOs, Fastify metadata, `tools/api-specs` and
+`docs/openapi` remain the transitional implementation baseline until audited adoption
+and conformance are proven. Preserve them; do not claim package availability or adoption
+from ADR acceptance. Do not author independent Zod/TypeBox copies or authorize a wire
+change through a local snapshot. Domain models, invariants and internal ports remain
+local; `auth-ts` retains policy semantics/evaluation, while Contracts owns HTTP representation.
+
+[Contracts epic #1](https://github.com/anarchitects/anarchitecture-contracts/issues/1) supplies the canonical artifacts;
+[3-tier epic #485](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/485)
+tracks adoption. Contracts and verified adoption precede separate Nest 12-native
+modernization. Nest 11 stays patch-only. Preserve existing runtime support and Fastify
+behavior until separately reviewed migration and release gates pass.

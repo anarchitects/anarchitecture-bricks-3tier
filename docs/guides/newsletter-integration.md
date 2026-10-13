@@ -64,7 +64,8 @@ Enable `webhook: { accountId, webhookSecret }` and bootstrap Fastify with `{ raw
 
 ## Public API and rate limiting
 
-The generated OpenAPI includes all optional capabilities at the default `/newsletter` resource path, without the example's global `/api` prefix:
+The implementation-generated OpenAPI is transitional baseline evidence under the
+[TS Contracts Guide](/guides/ts-contracts.html), not canonical HTTP authority. It includes all optional capabilities at the default `/newsletter` resource path, without the example's global `/api` prefix:
 
 | Method/path                    | Availability              | Success                        |
 | ------------------------------ | ------------------------- | ------------------------------ |

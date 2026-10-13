@@ -6,6 +6,16 @@
 - Owners: Architecture maintainers
 - Scope: Architecture foundation for [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428), delivered through [#429](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/429)
 
+## Public HTTP contract ownership update (2026-10-13)
+
+[ADR-0016](0016-consume-canonical-public-api-contracts.md) applies Accepted Meta
+ADR-0012: `anarchitecture-contracts` owns shared public wire schemas and operations.
+Local DTOs, route bindings and implementation OpenAPI remain the transitional
+baseline. References below to local schema/metadata ownership describe that
+implementation, not canonical cross-repository HTTP authority. Domain ownership
+and existing behavior remain unchanged; adoption requires immutable artifacts and
+verified conformance.
+
 ## Context
 
 Fit Over Forty already implements newsletter signup, affirmative consent evidence,

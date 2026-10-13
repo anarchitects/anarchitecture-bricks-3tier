@@ -13,6 +13,12 @@ These overlays are valid in:
 
 The guidance is package-focused and applies whenever libraries from `@anarchitects/*` are used.
 
+Public HTTP ownership follows [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md)
+and [Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md).
+See the [TS Contracts Guide](/guides/ts-contracts.html) and
+[Contracts epic #1](https://github.com/anarchitects/anarchitecture-contracts/issues/1).
+Package README integration recipes do not override canonical HTTP contracts.
+
 ## README-First Enforcement Overlay
 
 Use this overlay in every agent instruction file that consumes Bricks packages:
@@ -37,6 +43,10 @@ Use this overlay for general package usage and architecture boundaries:
 ## Anarchitecture Bricks Overlay
 
 - Apply the Bricks README-First Overlay first.
+- Read all Meta/local ADRs and the applicable canonical contract version and compatibility rules before public API work.
+- `anarchitecture-contracts` owns Zod-first public HTTP schemas and operation definitions; deterministic OpenAPI 3.1 is a published artifact. Consume immutable versions.
+- Local TypeBox DTOs, controllers and generated OpenAPI remain transitional baseline/conformance evidence. Preserve them until verified adoption; no independent schema copies or wire changes authorized by local snapshots.
+- Domain models, invariants and internal ports stay local; `auth-ts` retains policy semantics/evaluation. Contract extraction does not authorize provider replacement, Nest 11 feature backports or Nest 12-native modernization.
 - Prioritize public package contracts from `@anarchitects/*` and avoid internal path imports.
 - Keep Angular layering strict: `ui <- feature -> state -> data-access` with `config` and `util` shared.
 - Keep Nest layering strict: `presentation -> application <- infrastructure` with `config` and `util` shared.
@@ -54,7 +64,7 @@ Use this overlay when working with Angular package consumption (`@anarchitects/*
 - Apply the Bricks README-First Overlay first for every `@anarchitects/*-angular` package you import.
 - Compose features using published Angular packages such as `@anarchitects/forms-angular` and `@anarchitects/auth-angular`.
 - Keep state explicit via provider helpers; avoid implicit global singletons for domain stores.
-- Use generated or typed domain contracts from `@anarchitects/*` TS libraries for request/response boundaries.
+- Preserve current TS DTO imports during transition; adopt generated/typed clients from pinned canonical contracts only with verified backend conformance.
 - Keep presentational concerns in UI packages and orchestration in feature/state layers.
 ```
 
@@ -68,7 +78,7 @@ Use this overlay when working with Nest package consumption (`@anarchitects/*-ne
 - Apply the Bricks README-First Overlay first for every `@anarchitects/*-nest` package you import.
 - Start with facade modules from packages such as `@anarchitects/forms-nest` or `@anarchitects/auth-nest`.
 - Use secondary entry points only when explicit overrides are needed.
-- Keep route schemas sourced from shared DTO packages and avoid inline schema drift.
+- Preserve imported transitional DTO schemas; future presentation bindings derive from canonical Contracts artifacts, without inline schema drift.
 - Preserve infrastructure boundaries and keep cross-domain persistence relations scalar at runtime.
 ```
 

@@ -4,6 +4,20 @@
 - Audience: Maintainers and contributors of `anarchitecture-bricks-3tier`
 - Scope: Cross-repo alignment with `anarchitects/anarchitecture-bricks-ddd`
 
+## Shared public HTTP ownership
+
+[ADR-0016](../adr/0016-consume-canonical-public-api-contracts.md) applies Meta ADR-0012:
+`anarchitecture-contracts` owns Zod-first public wire schemas, operation definitions
+and their deterministic OpenAPI 3.1 artifacts. Both Bricks styles consume immutable
+versions and independently prove conformance for claimed capabilities. Neither
+implementation's generated OpenAPI is the other's master specification.
+
+The structural mappings below describe local implementation responsibilities.
+Local `ts/contracts` or `libs/*/ts` packages retain transitional DTOs and may provide
+compatibility mappings; they do not independently author canonical HTTP schemas.
+Domain meaning and internal ports remain implementation-owned. Track missing DDD
+capabilities explicitly as unsupported; no full DDD feature parity is implied.
+
 ## Purpose
 
 `anarchitecture-bricks-3tier` and `anarchitecture-bricks-ddd` are companion repositories.
