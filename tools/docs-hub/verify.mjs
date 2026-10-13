@@ -16,6 +16,7 @@ const requiredFiles = [
   'guides/newsletter-integration.html',
   'guides/newsletter-migration.html',
   'guides/ts-contracts.html',
+  'guides/public-api-legacy-baseline.html',
   'guides/design-ui-systems.html',
   'guides/ai-agents.html',
   'release/index.html',

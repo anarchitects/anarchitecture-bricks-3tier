@@ -208,6 +208,7 @@ Alignment does **not** mean identical file structure or forced architectural sam
 ## Architecture Guides
 
 - [Guide: Canonical HTTP Contract Ownership And Transitional TS Packages](docs/guides/ts-contracts.md)
+- [Audit: Frozen Legacy Public API Baseline (#487)](docs/guides/public-api-legacy-baseline.md)
 - [Audit: Nest 11/12 Compatibility And Support Decisions](docs/guides/nest-11-12-compatibility-audit.md)
 - [Guide: Verified Nest Support And Installation](docs/guides/nest.md#verified-support)
 - [Guide: Nest Compatibility Release Plan](docs/guides/nest-compatibility-release-plan.md)

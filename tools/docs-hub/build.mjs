@@ -424,6 +424,7 @@ writeFile(
 );
 
 for (const [slug, title] of [
+  ['public-api-legacy-baseline', 'Legacy Public API Baseline'],
   ['newsletter-integration', 'Newsletter Integration'],
   ['newsletter-migration', 'Newsletter Migration'],
   ['nest-compatibility-release-plan', 'Nest Compatibility Release Plan'],
