@@ -442,12 +442,7 @@
       "sourceManifest": "libs/identity/angular/package.json",
       "registry": {
         "version": "0.2.0",
-        "versions": [
-          "0.0.1",
-          "0.0.2",
-          "0.1.0",
-          "0.2.0"
-        ],
+        "versions": ["0.0.1", "0.0.2", "0.1.0", "0.2.0"],
         "dist-tags": {
           "latest": "0.2.0"
         },
@@ -483,12 +478,7 @@
       "sourceManifest": "libs/identity/nest/package.json",
       "registry": {
         "version": "0.2.0",
-        "versions": [
-          "0.0.1",
-          "0.0.2",
-          "0.1.0",
-          "0.2.0"
-        ],
+        "versions": ["0.0.1", "0.0.2", "0.1.0", "0.2.0"],
         "dist-tags": {
           "latest": "0.2.0"
         },
@@ -524,12 +514,7 @@
       "sourceManifest": "libs/identity/ts/package.json",
       "registry": {
         "version": "0.2.0",
-        "versions": [
-          "0.0.1",
-          "0.0.2",
-          "0.1.0",
-          "0.2.0"
-        ],
+        "versions": ["0.0.1", "0.0.2", "0.1.0", "0.2.0"],
         "dist-tags": {
           "latest": "0.2.0"
         },
@@ -565,11 +550,7 @@
       "sourceManifest": "libs/newsletter/angular/package.json",
       "registry": {
         "version": "0.1.0",
-        "versions": [
-          "0.0.0-stage",
-          "0.0.1",
-          "0.1.0"
-        ],
+        "versions": ["0.0.0-stage", "0.0.1", "0.1.0"],
         "dist-tags": {
           "latest": "0.1.0"
         },
@@ -599,10 +580,7 @@
       "sourceManifest": "libs/newsletter/nest/package.json",
       "registry": {
         "version": "0.1.0",
-        "versions": [
-          "0.0.1",
-          "0.1.0"
-        ],
+        "versions": ["0.0.1", "0.1.0"],
         "dist-tags": {
           "latest": "0.1.0"
         },
@@ -632,11 +610,7 @@
       "sourceManifest": "libs/newsletter/ts/package.json",
       "registry": {
         "version": "0.1.0",
-        "versions": [
-          "0.0.0-stage",
-          "0.0.1",
-          "0.1.0"
-        ],
+        "versions": ["0.0.0-stage", "0.0.1", "0.1.0"],
         "dist-tags": {
           "latest": "0.1.0"
         },

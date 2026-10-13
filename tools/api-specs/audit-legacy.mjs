@@ -59,13 +59,11 @@ for (const [path, source] of sources) {
   }
   if (!/\.(ts|mts|cts|mjs)$/.test(path)) continue;
   const ast = syntax(path, source);
-  const imports = ast.statements
-    .filter(ts.isImportDeclaration)
-    .map((node) => ({
-      from: literal(node.moduleSpecifier),
-      bindings: node.importClause?.getText(ast) ?? '',
-      line: ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
-    }));
+  const imports = ast.statements.filter(ts.isImportDeclaration).map((node) => ({
+    from: literal(node.moduleSpecifier),
+    bindings: node.importClause?.getText(ast) ?? '',
+    line: ast.getLineAndCharacterOfPosition(node.getStart(ast)).line + 1,
+  }));
   if (
     /\/ts\/src\//.test(path) &&
     domainPath.test(path) &&

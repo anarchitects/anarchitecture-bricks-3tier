@@ -4370,9 +4370,7 @@
       {
         "key": "GET /auth/me",
         "operationId": "getLoggedInUserInfo",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1me/get",
         "sha256": "67d2e5ab809543d2db03b807989e6d40feb4bc58ec7ef2e88356b1e115bcb1da",
         "parameters": [],
@@ -4414,20 +4412,14 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "action",
-                          "subject"
-                        ],
+                        "required": ["action", "subject"],
                         "type": "object"
                       },
                       "type": "array"
                     },
                     "user": {}
                   },
-                  "required": [
-                    "user",
-                    "rbac"
-                  ],
+                  "required": ["user", "rbac"],
                   "type": "object"
                 }
               }
@@ -4440,9 +4432,7 @@
       {
         "key": "GET /forms/{formId}",
         "operationId": "getFormDefinition",
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "pointer": "/paths/~1forms~1{formId}/get",
         "sha256": "ee149240f89cb31be6ce3a8f172f568fa31e315450641f73b840e99802f33d2b",
         "parameters": [
@@ -4491,11 +4481,7 @@
                                   "type": "string"
                                 }
                               },
-                              "required": [
-                                "enabled",
-                                "templateId",
-                                "subject"
-                              ],
+                              "required": ["enabled", "templateId", "subject"],
                               "type": "object"
                             },
                             "subject": {
@@ -4515,9 +4501,7 @@
                                     "type": "string"
                                   }
                                 },
-                                "required": [
-                                  "url"
-                                ],
+                                "required": ["url"],
                                 "type": "object"
                               },
                               "type": "array"
@@ -4531,45 +4515,31 @@
                               "kind": {
                                 "anyOf": [
                                   {
-                                    "enum": [
-                                      "string"
-                                    ],
+                                    "enum": ["string"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "password"
-                                    ],
+                                    "enum": ["password"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "email"
-                                    ],
+                                    "enum": ["email"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "textarea"
-                                    ],
+                                    "enum": ["textarea"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "boolean"
-                                    ],
+                                    "enum": ["boolean"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "select"
-                                    ],
+                                    "enum": ["select"],
                                     "type": "string"
                                   },
                                   {
-                                    "enum": [
-                                      "file"
-                                    ],
+                                    "enum": ["file"],
                                     "type": "string"
                                   }
                                 ]
@@ -4595,10 +4565,7 @@
                                       "type": "string"
                                     }
                                   },
-                                  "required": [
-                                    "value",
-                                    "label"
-                                  ],
+                                  "required": ["value", "label"],
                                   "type": "object"
                                 },
                                 "type": "array"
@@ -4628,10 +4595,7 @@
                                 "type": "object"
                               }
                             },
-                            "required": [
-                              "name",
-                              "kind"
-                            ],
+                            "required": ["name", "kind"],
                             "type": "object"
                           },
                           "type": "array"
@@ -4644,21 +4608,15 @@
                             "captcha": {
                               "anyOf": [
                                 {
-                                  "enum": [
-                                    "turnstile"
-                                  ],
+                                  "enum": ["turnstile"],
                                   "type": "string"
                                 },
                                 {
-                                  "enum": [
-                                    "hcaptcha"
-                                  ],
+                                  "enum": ["hcaptcha"],
                                   "type": "string"
                                 },
                                 {
-                                  "enum": [
-                                    "none"
-                                  ],
+                                  "enum": ["none"],
                                   "type": "string"
                                 }
                               ]
@@ -4667,18 +4625,14 @@
                               "type": "string"
                             }
                           },
-                          "required": [
-                            "captcha"
-                          ],
+                          "required": ["captcha"],
                           "type": "object"
                         },
                         "validationRules": {
                           "items": {
                             "properties": {
                               "kind": {
-                                "enum": [
-                                  "matchFields"
-                                ],
+                                "enum": ["matchFields"],
                                 "type": "string"
                               },
                               "message": {
@@ -4691,11 +4645,7 @@
                                 "type": "string"
                               }
                             },
-                            "required": [
-                              "kind",
-                              "sourceField",
-                              "targetField"
-                            ],
+                            "required": ["kind", "sourceField", "targetField"],
                             "type": "object"
                           },
                           "type": "array"
@@ -4705,19 +4655,12 @@
                           "type": "integer"
                         }
                       },
-                      "required": [
-                        "id",
-                        "version",
-                        "fields"
-                      ],
+                      "required": ["id", "version", "fields"],
                       "type": "object"
                     },
                     "schema": {}
                   },
-                  "required": [
-                    "config",
-                    "schema"
-                  ],
+                  "required": ["config", "schema"],
                   "type": "object"
                 }
               }
@@ -4730,9 +4673,7 @@
       {
         "key": "GET /forms/submissions",
         "operationId": "getSubmissions",
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "pointer": "/paths/~1forms~1submissions/get",
         "sha256": "d5541e9cd6a74a79a089b94cc1c8e0eb217ace45308a641f6f5cfec1d5295a48",
         "parameters": [
@@ -4808,9 +4749,7 @@
       {
         "key": "GET /forms/submissions/{submissionId}",
         "operationId": "getSubmission",
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "pointer": "/paths/~1forms~1submissions~1{submissionId}/get",
         "sha256": "c660420440ecf68e24f4724683d8dd30716edca861a1a5bb62cec518c1ff1d96",
         "parameters": [
@@ -4874,9 +4813,7 @@
       {
         "key": "GET /identity/profiles/{profileId}",
         "operationId": "getUserProfileById",
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "pointer": "/paths/~1identity~1profiles~1{profileId}/get",
         "sha256": "54cd479a47734cfa8c1844c7d15cbfc2a37991e10ff066b5e4b9d511e1522e5b",
         "parameters": [
@@ -4997,9 +4934,7 @@
       {
         "key": "GET /identity/profiles/by-auth-user/{authUserId}",
         "operationId": "getUserProfileByAuthUserId",
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "pointer": "/paths/~1identity~1profiles~1by-auth-user~1{authUserId}/get",
         "sha256": "80f72aecabb47ddd58342e0b604a650f49000554e63325a59b052d4c1097aedd",
         "parameters": [
@@ -5120,9 +5055,7 @@
       {
         "key": "PATCH /auth/activate",
         "operationId": "activateUser",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1activate/patch",
         "sha256": "7b920f087820929f5e75bc937c43894cb1ed62bc87402a55615f8ab3d66a193d",
         "parameters": [],
@@ -5136,9 +5069,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -5155,9 +5086,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -5170,9 +5099,7 @@
       {
         "key": "PATCH /auth/change-password/{userId}",
         "operationId": "changePassword",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1change-password~1{userId}/patch",
         "sha256": "443eafb281937fd207c1af9865e2a1b1f9d1d8f71eab53bb169c0f164da8a39d",
         "parameters": [
@@ -5224,9 +5151,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -5239,9 +5164,7 @@
       {
         "key": "PATCH /auth/update-email/{userId}",
         "operationId": "updateEmail",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1update-email~1{userId}/patch",
         "sha256": "d948107b4b468410947eb9a3d23b9f3e2995a3d323b42013d8d90f3db9dfee93",
         "parameters": [
@@ -5268,9 +5191,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "newEmail"
-                ],
+                "required": ["newEmail"],
                 "type": "object"
               }
             }
@@ -5287,9 +5208,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -5302,9 +5221,7 @@
       {
         "key": "PATCH /identity/profiles/{profileId}",
         "operationId": "updateUserProfile",
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "pointer": "/paths/~1identity~1profiles~1{profileId}/patch",
         "sha256": "f516464299290772e4743d28631b66f4672c929c9d77f3dd7646135d56c536c0",
         "parameters": [
@@ -5496,9 +5413,7 @@
       {
         "key": "POST /auth/forgot-password",
         "operationId": "forgotPassword",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1forgot-password/post",
         "sha256": "5502e9e9978857013271a25ab44ee5671ab70314003d931a586c36abd6294c9e",
         "parameters": [],
@@ -5512,9 +5427,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email"
-                ],
+                "required": ["email"],
                 "type": "object"
               }
             }
@@ -5531,9 +5444,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -5546,9 +5457,7 @@
       {
         "key": "POST /auth/login",
         "operationId": "login",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1login/post",
         "sha256": "a6f2d6e9e8d5f7e3829676e0d291ede6b011c8f5436b83e93136f37282824e8e",
         "parameters": [],
@@ -5567,10 +5476,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "credential",
-                  "password"
-                ],
+                "required": ["credential", "password"],
                 "type": "object"
               }
             }
@@ -5614,20 +5520,14 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "action",
-                          "subject"
-                        ],
+                        "required": ["action", "subject"],
                         "type": "object"
                       },
                       "type": "array"
                     },
                     "user": {}
                   },
-                  "required": [
-                    "user",
-                    "rbac"
-                  ],
+                  "required": ["user", "rbac"],
                   "type": "object"
                 }
               }
@@ -5640,9 +5540,7 @@
       {
         "key": "POST /auth/logout",
         "operationId": "logout",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1logout/post",
         "sha256": "24f25ba892f8549cf86440165918a12b5e96959434d5e0f3d29a9ef774184534",
         "parameters": [],
@@ -5668,9 +5566,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -5683,9 +5579,7 @@
       {
         "key": "POST /auth/passkeys/authentication/begin",
         "operationId": "beginAuthentication",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1passkeys~1authentication~1begin/post",
         "sha256": "a9d9b2b9d807e7269a88887f5f8ec0c81be99422a64ee7c87a32439d0aac28cb",
         "parameters": [],
@@ -5725,16 +5619,11 @@
                             "type": "array"
                           },
                           "type": {
-                            "enum": [
-                              "public-key"
-                            ],
+                            "enum": ["public-key"],
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "id",
-                          "type"
-                        ],
+                        "required": ["id", "type"],
                         "type": "object"
                       },
                       "type": "array"
@@ -5766,29 +5655,21 @@
                     "userVerification": {
                       "anyOf": [
                         {
-                          "enum": [
-                            "required"
-                          ],
+                          "enum": ["required"],
                           "type": "string"
                         },
                         {
-                          "enum": [
-                            "preferred"
-                          ],
+                          "enum": ["preferred"],
                           "type": "string"
                         },
                         {
-                          "enum": [
-                            "discouraged"
-                          ],
+                          "enum": ["discouraged"],
                           "type": "string"
                         }
                       ]
                     }
                   },
-                  "required": [
-                    "challenge"
-                  ],
+                  "required": ["challenge"],
                   "type": "object"
                 }
               }
@@ -5801,9 +5682,7 @@
       {
         "key": "POST /auth/passkeys/authentication/finish",
         "operationId": "finishAuthentication",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1passkeys~1authentication~1finish/post",
         "sha256": "8754d5ec56f84772b3f11f323ba02a231c0cf6f5a792c90b29b35b4f98a6e7b9",
         "parameters": [],
@@ -5819,15 +5698,11 @@
                       "authenticatorAttachment": {
                         "anyOf": [
                           {
-                            "enum": [
-                              "platform"
-                            ],
+                            "enum": ["platform"],
                             "type": "string"
                           },
                           {
-                            "enum": [
-                              "cross-platform"
-                            ],
+                            "enum": ["cross-platform"],
                             "type": "string"
                           }
                         ]
@@ -5885,9 +5760,7 @@
                         "type": "object"
                       },
                       "type": {
-                        "enum": [
-                          "public-key"
-                        ],
+                        "enum": ["public-key"],
                         "type": "string"
                       }
                     },
@@ -5901,9 +5774,7 @@
                     "type": "object"
                   }
                 },
-                "required": [
-                  "response"
-                ],
+                "required": ["response"],
                 "type": "object"
               }
             }
@@ -5947,20 +5818,14 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "action",
-                          "subject"
-                        ],
+                        "required": ["action", "subject"],
                         "type": "object"
                       },
                       "type": "array"
                     },
                     "user": {}
                   },
-                  "required": [
-                    "user",
-                    "rbac"
-                  ],
+                  "required": ["user", "rbac"],
                   "type": "object"
                 }
               }
@@ -5973,9 +5838,7 @@
       {
         "key": "POST /auth/passkeys/registration/begin",
         "operationId": "beginRegistration",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1passkeys~1registration~1begin/post",
         "sha256": "59d22659efc82506c126b011abdea70928eda13c0494b75794d74b562df84406",
         "parameters": [],
@@ -5988,15 +5851,11 @@
                   "authenticatorAttachment": {
                     "anyOf": [
                       {
-                        "enum": [
-                          "platform"
-                        ],
+                        "enum": ["platform"],
                         "type": "string"
                       },
                       {
-                        "enum": [
-                          "cross-platform"
-                        ],
+                        "enum": ["cross-platform"],
                         "type": "string"
                       }
                     ]
@@ -6018,27 +5877,19 @@
                     "attestation": {
                       "anyOf": [
                         {
-                          "enum": [
-                            "none"
-                          ],
+                          "enum": ["none"],
                           "type": "string"
                         },
                         {
-                          "enum": [
-                            "indirect"
-                          ],
+                          "enum": ["indirect"],
                           "type": "string"
                         },
                         {
-                          "enum": [
-                            "direct"
-                          ],
+                          "enum": ["direct"],
                           "type": "string"
                         },
                         {
-                          "enum": [
-                            "enterprise"
-                          ],
+                          "enum": ["enterprise"],
                           "type": "string"
                         }
                       ]
@@ -6056,15 +5907,11 @@
                         "authenticatorAttachment": {
                           "anyOf": [
                             {
-                              "enum": [
-                                "platform"
-                              ],
+                              "enum": ["platform"],
                               "type": "string"
                             },
                             {
-                              "enum": [
-                                "cross-platform"
-                              ],
+                              "enum": ["cross-platform"],
                               "type": "string"
                             }
                           ]
@@ -6075,21 +5922,15 @@
                         "residentKey": {
                           "anyOf": [
                             {
-                              "enum": [
-                                "required"
-                              ],
+                              "enum": ["required"],
                               "type": "string"
                             },
                             {
-                              "enum": [
-                                "preferred"
-                              ],
+                              "enum": ["preferred"],
                               "type": "string"
                             },
                             {
-                              "enum": [
-                                "discouraged"
-                              ],
+                              "enum": ["discouraged"],
                               "type": "string"
                             }
                           ]
@@ -6097,21 +5938,15 @@
                         "userVerification": {
                           "anyOf": [
                             {
-                              "enum": [
-                                "required"
-                              ],
+                              "enum": ["required"],
                               "type": "string"
                             },
                             {
-                              "enum": [
-                                "preferred"
-                              ],
+                              "enum": ["preferred"],
                               "type": "string"
                             },
                             {
-                              "enum": [
-                                "discouraged"
-                              ],
+                              "enum": ["discouraged"],
                               "type": "string"
                             }
                           ]
@@ -6141,16 +5976,11 @@
                             "type": "array"
                           },
                           "type": {
-                            "enum": [
-                              "public-key"
-                            ],
+                            "enum": ["public-key"],
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "id",
-                          "type"
-                        ],
+                        "required": ["id", "type"],
                         "type": "object"
                       },
                       "type": "array"
@@ -6174,16 +6004,11 @@
                             "type": "integer"
                           },
                           "type": {
-                            "enum": [
-                              "public-key"
-                            ],
+                            "enum": ["public-key"],
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "type",
-                          "alg"
-                        ],
+                        "required": ["type", "alg"],
                         "type": "object"
                       },
                       "minItems": 1,
@@ -6201,9 +6026,7 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "name"
-                      ],
+                      "required": ["name"],
                       "type": "object"
                     },
                     "timeout": {
@@ -6226,20 +6049,11 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name",
-                        "displayName"
-                      ],
+                      "required": ["id", "name", "displayName"],
                       "type": "object"
                     }
                   },
-                  "required": [
-                    "rp",
-                    "user",
-                    "challenge",
-                    "pubKeyCredParams"
-                  ],
+                  "required": ["rp", "user", "challenge", "pubKeyCredParams"],
                   "type": "object"
                 }
               }
@@ -6252,9 +6066,7 @@
       {
         "key": "POST /auth/passkeys/registration/finish",
         "operationId": "finishRegistration",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1passkeys~1registration~1finish/post",
         "sha256": "4b00454b20e07c3656c269ad8954e67fa412ef89771a28f118fabba9e0709452",
         "parameters": [],
@@ -6276,15 +6088,11 @@
                       "authenticatorAttachment": {
                         "anyOf": [
                           {
-                            "enum": [
-                              "platform"
-                            ],
+                            "enum": ["platform"],
                             "type": "string"
                           },
                           {
-                            "enum": [
-                              "cross-platform"
-                            ],
+                            "enum": ["cross-platform"],
                             "type": "string"
                           }
                         ]
@@ -6337,16 +6145,11 @@
                             "type": "array"
                           }
                         },
-                        "required": [
-                          "clientDataJSON",
-                          "attestationObject"
-                        ],
+                        "required": ["clientDataJSON", "attestationObject"],
                         "type": "object"
                       },
                       "type": {
-                        "enum": [
-                          "public-key"
-                        ],
+                        "enum": ["public-key"],
                         "type": "string"
                       }
                     },
@@ -6360,9 +6163,7 @@
                     "type": "object"
                   }
                 },
-                "required": [
-                  "response"
-                ],
+                "required": ["response"],
                 "type": "object"
               }
             }
@@ -6379,9 +6180,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -6394,9 +6193,7 @@
       {
         "key": "POST /auth/register",
         "operationId": "registerUser",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1register/post",
         "sha256": "2bad0427e05d4284a8a656ec8945d1877fc223c1d83989df409a23e6386eb363",
         "parameters": [],
@@ -6423,11 +6220,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email",
-                  "password",
-                  "confirmPassword"
-                ],
+                "required": ["email", "password", "confirmPassword"],
                 "type": "object"
               }
             }
@@ -6444,9 +6237,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -6459,9 +6250,7 @@
       {
         "key": "POST /auth/reset-password",
         "operationId": "resetPassword",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1reset-password/post",
         "sha256": "c44d4ca1cda0520324f3c1040b7ee496f6c1689e679244e26997c51506d8255d",
         "parameters": [],
@@ -6483,11 +6272,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token",
-                  "password",
-                  "confirmPassword"
-                ],
+                "required": ["token", "password", "confirmPassword"],
                 "type": "object"
               }
             }
@@ -6504,9 +6289,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -6519,9 +6302,7 @@
       {
         "key": "POST /auth/verify-email",
         "operationId": "verifyEmail",
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "pointer": "/paths/~1auth~1verify-email/post",
         "sha256": "95f21e1950611bd3200c8e24dd2b6939a1c56fb803e1c1f345f9fbbd930a43fb",
         "parameters": [],
@@ -6535,9 +6316,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -6554,9 +6333,7 @@
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "success"
-                  ],
+                  "required": ["success"],
                   "type": "object"
                 }
               }
@@ -6569,9 +6346,7 @@
       {
         "key": "POST /forms/submit",
         "operationId": "submitForm",
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "pointer": "/paths/~1forms~1submit/post",
         "sha256": "58de35b1991f88e94788d6cefb3b3947731c582354da32678941ea6a037016a7",
         "parameters": [],
@@ -6592,11 +6367,7 @@
                     "type": "object"
                   }
                 },
-                "required": [
-                  "formId",
-                  "formVersion",
-                  "payload"
-                ],
+                "required": ["formId", "formVersion", "payload"],
                 "type": "object"
               }
             }
@@ -6652,9 +6423,7 @@
       {
         "key": "POST /identity/profiles",
         "operationId": "createUserProfile",
-        "tags": [
-          "Identity"
-        ],
+        "tags": ["Identity"],
         "pointer": "/paths/~1identity~1profiles/post",
         "sha256": "739d62c5a4b1384af0bc47df1e2120803f37017d45435966980a64609c83332c",
         "parameters": [],
@@ -6727,9 +6496,7 @@
                     ]
                   }
                 },
-                "required": [
-                  "authUserId"
-                ],
+                "required": ["authUserId"],
                 "type": "object"
               }
             }
@@ -6841,9 +6608,7 @@
       {
         "key": "POST /newsletter/confirm",
         "operationId": "confirmNewsletterSubscription",
-        "tags": [
-          "Newsletter"
-        ],
+        "tags": ["Newsletter"],
         "pointer": "/paths/~1newsletter~1confirm/post",
         "sha256": "a5d6514adb341691cdd26bfd4e797db2837298029370aefbd0090ac3b7126195",
         "parameters": [],
@@ -6858,9 +6623,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -6875,15 +6638,11 @@
                   "additionalProperties": false,
                   "properties": {
                     "accepted": {
-                      "enum": [
-                        true
-                      ],
+                      "enum": [true],
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "accepted"
-                  ],
+                  "required": ["accepted"],
                   "type": "object"
                 }
               }
@@ -6896,9 +6655,7 @@
       {
         "key": "POST /newsletter/subscribe",
         "operationId": "subscribeToNewsletter",
-        "tags": [
-          "Newsletter"
-        ],
+        "tags": ["Newsletter"],
         "pointer": "/paths/~1newsletter~1subscribe/post",
         "sha256": "22d30c09baaaa812c8b69eae8b3ffa6816b2f4cf5a2340925f8eded491a79dc0",
         "parameters": [],
@@ -6909,9 +6666,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "consent": {
-                    "enum": [
-                      true
-                    ],
+                    "enum": [true],
                     "type": "boolean"
                   },
                   "consentVersion": {
@@ -6933,11 +6688,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "email",
-                  "consent",
-                  "consentVersion"
-                ],
+                "required": ["email", "consent", "consentVersion"],
                 "type": "object"
               }
             }
@@ -6952,15 +6703,11 @@
                   "additionalProperties": false,
                   "properties": {
                     "accepted": {
-                      "enum": [
-                        true
-                      ],
+                      "enum": [true],
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "accepted"
-                  ],
+                  "required": ["accepted"],
                   "type": "object"
                 }
               }
@@ -6973,9 +6720,7 @@
       {
         "key": "POST /newsletter/unsubscribe",
         "operationId": "unsubscribeFromNewsletter",
-        "tags": [
-          "Newsletter"
-        ],
+        "tags": ["Newsletter"],
         "pointer": "/paths/~1newsletter~1unsubscribe/post",
         "sha256": "f362e27c3c078765cb1ae4b6889731c0a9ffe11f695392f2a42eee19c45861ba",
         "parameters": [],
@@ -6990,9 +6735,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "token"
-                ],
+                "required": ["token"],
                 "type": "object"
               }
             }
@@ -7007,15 +6750,11 @@
                   "additionalProperties": false,
                   "properties": {
                     "accepted": {
-                      "enum": [
-                        true
-                      ],
+                      "enum": [true],
                       "type": "boolean"
                     }
                   },
-                  "required": [
-                    "accepted"
-                  ],
+                  "required": ["accepted"],
                   "type": "object"
                 }
               }
@@ -7028,9 +6767,7 @@
       {
         "key": "POST /newsletter/webhook",
         "operationId": "receiveNewsletterWebhook",
-        "tags": [
-          "Newsletter"
-        ],
+        "tags": ["Newsletter"],
         "pointer": "/paths/~1newsletter~1webhook/post",
         "sha256": "11919546221f6d7ea81cc9e261f95e013e70fab457ae6e40fef3946780451db8",
         "parameters": [],
@@ -7051,10 +6788,7 @@
                       "type": "integer"
                     }
                   },
-                  "required": [
-                    "recorded",
-                    "duplicates"
-                  ],
+                  "required": ["recorded", "duplicates"],
                   "type": "object"
                 }
               }
@@ -7867,9 +7601,7 @@
     {
       "path": "libs/auth/ts/src/contracts/auth-contract-compatibility.ts",
       "category": "contracts",
-      "exports": [
-        "assertContractCompatibility"
-      ],
+      "exports": ["assertContractCompatibility"],
       "typeboxImports": []
     },
     {
@@ -7915,9 +7647,7 @@
     {
       "path": "libs/auth/ts/src/contracts/default-auth-contracts.ts",
       "category": "contracts",
-      "exports": [
-        "defaultAuthContracts"
-      ],
+      "exports": ["defaultAuthContracts"],
       "typeboxImports": []
     },
     {
@@ -7945,10 +7675,7 @@
     {
       "path": "libs/auth/ts/src/dtos/activate-user-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "ActivateUserRequestSchema",
-        "ActivateUserRequestDTO"
-      ],
+      "exports": ["ActivateUserRequestSchema", "ActivateUserRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -7960,10 +7687,7 @@
     {
       "path": "libs/auth/ts/src/dtos/change-password-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "ChangePasswordRequestSchema",
-        "ChangePasswordRequestDTO"
-      ],
+      "exports": ["ChangePasswordRequestSchema", "ChangePasswordRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -7975,10 +7699,7 @@
     {
       "path": "libs/auth/ts/src/dtos/forgot-password-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "ForgotPasswordRequestSchema",
-        "ForgotPasswordRequestDTO"
-      ],
+      "exports": ["ForgotPasswordRequestSchema", "ForgotPasswordRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8011,10 +7732,7 @@
     {
       "path": "libs/auth/ts/src/dtos/jwt-logout-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "JwtLogoutRequestSchema",
-        "JwtLogoutRequestDTO"
-      ],
+      "exports": ["JwtLogoutRequestSchema", "JwtLogoutRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8052,10 +7770,7 @@
     {
       "path": "libs/auth/ts/src/dtos/login-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "LoginRequestSchema",
-        "LoginRequestDTO"
-      ],
+      "exports": ["LoginRequestSchema", "LoginRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8067,10 +7782,7 @@
     {
       "path": "libs/auth/ts/src/dtos/login-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "LoginResponseSchema",
-        "LoginResponseDTO"
-      ],
+      "exports": ["LoginResponseSchema", "LoginResponseDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8082,10 +7794,7 @@
     {
       "path": "libs/auth/ts/src/dtos/logout-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "LogoutRequestSchema",
-        "LogoutRequestDTO"
-      ],
+      "exports": ["LogoutRequestSchema", "LogoutRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8210,10 +7919,7 @@
     {
       "path": "libs/auth/ts/src/dtos/refresh-token-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "RefreshTokenRequestSchema",
-        "RefreshTokenRequestDTO"
-      ],
+      "exports": ["RefreshTokenRequestSchema", "RefreshTokenRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8225,10 +7931,7 @@
     {
       "path": "libs/auth/ts/src/dtos/refresh-token-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "RefreshTokenResponseSchema",
-        "RefreshTokenResponseDTO"
-      ],
+      "exports": ["RefreshTokenResponseSchema", "RefreshTokenResponseDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8240,10 +7943,7 @@
     {
       "path": "libs/auth/ts/src/dtos/register-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "RegisterRequestSchema",
-        "RegisterRequestDTO"
-      ],
+      "exports": ["RegisterRequestSchema", "RegisterRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8255,19 +7955,13 @@
     {
       "path": "libs/auth/ts/src/dtos/register-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "RegisterResponseSchema",
-        "RegisterResponseDTO"
-      ],
+      "exports": ["RegisterResponseSchema", "RegisterResponseDTO"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/dtos/reset-password-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "ResetPasswordRequestSchema",
-        "ResetPasswordRequestDTO"
-      ],
+      "exports": ["ResetPasswordRequestSchema", "ResetPasswordRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8279,10 +7973,7 @@
     {
       "path": "libs/auth/ts/src/dtos/success-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "SuccessResponseSchema",
-        "SuccessResponseDTO"
-      ],
+      "exports": ["SuccessResponseSchema", "SuccessResponseDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8294,10 +7985,7 @@
     {
       "path": "libs/auth/ts/src/dtos/update-email-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "UpdateEmailRequestSchema",
-        "UpdateEmailRequestDTO"
-      ],
+      "exports": ["UpdateEmailRequestSchema", "UpdateEmailRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8309,10 +7997,7 @@
     {
       "path": "libs/auth/ts/src/dtos/user-id-params.dto.ts",
       "category": "dtos",
-      "exports": [
-        "UserIdParamsSchema",
-        "UserIdParamsDTO"
-      ],
+      "exports": ["UserIdParamsSchema", "UserIdParamsDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8324,10 +8009,7 @@
     {
       "path": "libs/auth/ts/src/dtos/verify-email-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "VerifyEmailRequestSchema",
-        "VerifyEmailRequestDTO"
-      ],
+      "exports": ["VerifyEmailRequestSchema", "VerifyEmailRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8371,10 +8053,7 @@
     {
       "path": "libs/auth/ts/src/mappers/date-time.ts",
       "category": "mappers",
-      "exports": [
-        "toIsoDateTime",
-        "fromIsoDateTime"
-      ],
+      "exports": ["toIsoDateTime", "fromIsoDateTime"],
       "typeboxImports": []
     },
     {
@@ -8404,55 +8083,37 @@
     {
       "path": "libs/auth/ts/src/mappers/permission.mapper.ts",
       "category": "mappers",
-      "exports": [
-        "toPublicPermission",
-        "fromPublicPermission"
-      ],
+      "exports": ["toPublicPermission", "fromPublicPermission"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/mappers/policy-rule.mapper.ts",
       "category": "mappers",
-      "exports": [
-        "toPolicyRuleWire",
-        "fromPolicyRuleWire"
-      ],
+      "exports": ["toPolicyRuleWire", "fromPolicyRuleWire"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/mappers/role.mapper.ts",
       "category": "mappers",
-      "exports": [
-        "toPublicRole",
-        "fromPublicRole"
-      ],
+      "exports": ["toPublicRole", "fromPublicRole"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/mappers/user.mapper.ts",
       "category": "mappers",
-      "exports": [
-        "export * from './auth-user.mapper.js';"
-      ],
+      "exports": ["export * from './auth-user.mapper.js';"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/models/auth-user.model.ts",
       "category": "models",
-      "exports": [
-        "AuthUser",
-        "User"
-      ],
+      "exports": ["AuthUser", "User"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/models/auth.types.ts",
       "category": "models",
-      "exports": [
-        "Action",
-        "Subject",
-        "PolicyRule"
-      ],
+      "exports": ["Action", "Subject", "PolicyRule"],
       "typeboxImports": []
     },
     {
@@ -8470,34 +8131,25 @@
     {
       "path": "libs/auth/ts/src/models/permission.model.ts",
       "category": "models",
-      "exports": [
-        "Permission"
-      ],
+      "exports": ["Permission"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/models/role.model.ts",
       "category": "models",
-      "exports": [
-        "Role"
-      ],
+      "exports": ["Role"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/models/route-policy.ts",
       "category": "models",
-      "exports": [
-        "RoutePolicy",
-        "canAttemptRoutePolicy"
-      ],
+      "exports": ["RoutePolicy", "canAttemptRoutePolicy"],
       "typeboxImports": []
     },
     {
       "path": "libs/auth/ts/src/models/user.model.ts",
       "category": "models",
-      "exports": [
-        "export * from './auth-user.model.js';"
-      ],
+      "exports": ["export * from './auth-user.model.js';"],
       "typeboxImports": []
     },
     {
@@ -8515,17 +8167,13 @@
     {
       "path": "libs/forms/ts/src/builders/index.ts",
       "category": "builders",
-      "exports": [
-        "export * from './schema.builder.js';"
-      ],
+      "exports": ["export * from './schema.builder.js';"],
       "typeboxImports": []
     },
     {
       "path": "libs/forms/ts/src/builders/schema.builder.ts",
       "category": "builders",
-      "exports": [
-        "schemaFromConfig"
-      ],
+      "exports": ["schemaFromConfig"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8552,10 +8200,7 @@
     {
       "path": "libs/forms/ts/src/dtos/form-definition-query.dto.ts",
       "category": "dtos",
-      "exports": [
-        "FormDefinitionQuerySchema",
-        "FormDefinitionQueryDTO"
-      ],
+      "exports": ["FormDefinitionQuerySchema", "FormDefinitionQueryDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8567,10 +8212,7 @@
     {
       "path": "libs/forms/ts/src/dtos/form-definition-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "FormDefinitionRequestSchema",
-        "FormDefinitionRequestDTO"
-      ],
+      "exports": ["FormDefinitionRequestSchema", "FormDefinitionRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8582,10 +8224,7 @@
     {
       "path": "libs/forms/ts/src/dtos/form-definition-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "FormDefinitionResponseSchema",
-        "FormDefinitionResponseDTO"
-      ],
+      "exports": ["FormDefinitionResponseSchema", "FormDefinitionResponseDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8597,10 +8236,7 @@
     {
       "path": "libs/forms/ts/src/dtos/form-id-params.dto.ts",
       "category": "dtos",
-      "exports": [
-        "FormIdParamsSchema",
-        "FormIdParamsDTO"
-      ],
+      "exports": ["FormIdParamsSchema", "FormIdParamsDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8629,10 +8265,7 @@
     {
       "path": "libs/forms/ts/src/dtos/submission-id-params.dto.ts",
       "category": "dtos",
-      "exports": [
-        "SubmissionIdParamsSchema",
-        "SubmissionIdParamsDTO"
-      ],
+      "exports": ["SubmissionIdParamsSchema", "SubmissionIdParamsDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8644,10 +8277,7 @@
     {
       "path": "libs/forms/ts/src/dtos/submission-request.dto.ts",
       "category": "dtos",
-      "exports": [
-        "SubmissionRequestSchema",
-        "SubmissionRequestDTO"
-      ],
+      "exports": ["SubmissionRequestSchema", "SubmissionRequestDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8659,10 +8289,7 @@
     {
       "path": "libs/forms/ts/src/dtos/submission-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "SubmissionResponseSchema",
-        "SubmissionResponseDTO"
-      ],
+      "exports": ["SubmissionResponseSchema", "SubmissionResponseDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8674,10 +8301,7 @@
     {
       "path": "libs/forms/ts/src/dtos/submissions-query.dto.ts",
       "category": "dtos",
-      "exports": [
-        "SubmissionsQuerySchema",
-        "SubmissionsQueryDTO"
-      ],
+      "exports": ["SubmissionsQuerySchema", "SubmissionsQueryDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8689,10 +8313,7 @@
     {
       "path": "libs/forms/ts/src/dtos/submissions-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "SubmissionsResponseSchema",
-        "SubmissionsResponseDTO"
-      ],
+      "exports": ["SubmissionsResponseSchema", "SubmissionsResponseDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8704,18 +8325,13 @@
     {
       "path": "libs/forms/ts/src/index.ts",
       "category": "index.ts",
-      "exports": [
-        "export * from './models/index.js';"
-      ],
+      "exports": ["export * from './models/index.js';"],
       "typeboxImports": []
     },
     {
       "path": "libs/forms/ts/src/mappers/date-time.ts",
       "category": "mappers",
-      "exports": [
-        "toIsoDateTime",
-        "fromIsoDateTime"
-      ],
+      "exports": ["toIsoDateTime", "fromIsoDateTime"],
       "typeboxImports": []
     },
     {
@@ -8761,20 +8377,13 @@
     {
       "path": "libs/forms/ts/src/models/contact-form.model.ts",
       "category": "models",
-      "exports": [
-        "contactForm"
-      ],
+      "exports": ["contactForm"],
       "typeboxImports": []
     },
     {
       "path": "libs/forms/ts/src/models/form.types.ts",
       "category": "models",
-      "exports": [
-        "FieldKind",
-        "FormField",
-        "FormValidationRule",
-        "FormConfig"
-      ],
+      "exports": ["FieldKind", "FormField", "FormValidationRule", "FormConfig"],
       "typeboxImports": []
     },
     {
@@ -8790,19 +8399,13 @@
     {
       "path": "libs/forms/ts/src/models/submission.model.ts",
       "category": "models",
-      "exports": [
-        "Submission",
-        "SubmissionFilters"
-      ],
+      "exports": ["Submission", "SubmissionFilters"],
       "typeboxImports": []
     },
     {
       "path": "libs/identity/ts/src/dtos/auth-user-id-params.dto.ts",
       "category": "dtos",
-      "exports": [
-        "AuthUserIdParamsSchema",
-        "AuthUserIdParamsDTO"
-      ],
+      "exports": ["AuthUserIdParamsSchema", "AuthUserIdParamsDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8857,10 +8460,7 @@
     {
       "path": "libs/identity/ts/src/dtos/user-profile-id-params.dto.ts",
       "category": "dtos",
-      "exports": [
-        "UserProfileIdParamsSchema",
-        "UserProfileIdParamsDTO"
-      ],
+      "exports": ["UserProfileIdParamsSchema", "UserProfileIdParamsDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8872,19 +8472,13 @@
     {
       "path": "libs/identity/ts/src/dtos/user-profile-response.dto.ts",
       "category": "dtos",
-      "exports": [
-        "UserProfileResponseSchema",
-        "UserProfileResponseDTO"
-      ],
+      "exports": ["UserProfileResponseSchema", "UserProfileResponseDTO"],
       "typeboxImports": []
     },
     {
       "path": "libs/identity/ts/src/dtos/user-profile.dto.ts",
       "category": "dtos",
-      "exports": [
-        "UserProfileSchema",
-        "UserProfileDTO"
-      ],
+      "exports": ["UserProfileSchema", "UserProfileDTO"],
       "typeboxImports": [
         {
           "from": "@sinclair/typebox",
@@ -8905,18 +8499,13 @@
     {
       "path": "libs/identity/ts/src/models/index.ts",
       "category": "models",
-      "exports": [
-        "export * from './user-profile.model.js';"
-      ],
+      "exports": ["export * from './user-profile.model.js';"],
       "typeboxImports": []
     },
     {
       "path": "libs/identity/ts/src/models/user-profile.model.ts",
       "category": "models",
-      "exports": [
-        "UserProfile",
-        "IdentityProfile"
-      ],
+      "exports": ["UserProfile", "IdentityProfile"],
       "typeboxImports": []
     },
     {
@@ -8994,9 +8583,7 @@
     {
       "path": "libs/newsletter/ts/src/dtos/subscription-route.schema.ts",
       "category": "dtos",
-      "exports": [
-        "NewsletterSubscriptionRouteSchema"
-      ],
+      "exports": ["NewsletterSubscriptionRouteSchema"],
       "typeboxImports": []
     },
     {
@@ -9038,9 +8625,7 @@
     {
       "path": "libs/newsletter/ts/src/models/consent-policy.model.ts",
       "category": "models",
-      "exports": [
-        "NewsletterConsentPolicy"
-      ],
+      "exports": ["NewsletterConsentPolicy"],
       "typeboxImports": []
     },
     {
@@ -9079,9 +8664,7 @@
           "line": 77,
           "call": "this.http\n      .post",
           "url": "`/api/newsletter/${this.action}`",
-          "types": [
-            "NewsletterNativeActionResponseDTO"
-          ]
+          "types": ["NewsletterNativeActionResponseDTO"]
         }
       ]
     },
@@ -9141,9 +8724,7 @@
           "line": 85,
           "call": "http\n      .post",
           "url": "refreshUrl",
-          "types": [
-            "LoginResponseDTO"
-          ]
+          "types": ["LoginResponseDTO"]
         }
       ]
     },
@@ -9184,25 +8765,19 @@
           "line": 20,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/jwt/login`",
-          "types": [
-            "LoginResponseDTO"
-          ]
+          "types": ["LoginResponseDTO"]
         },
         {
           "line": 24,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/jwt/logout`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 31,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/jwt/refresh`",
-          "types": [
-            "RefreshTokenResponseDTO"
-          ]
+          "types": ["RefreshTokenResponseDTO"]
         }
       ]
     },
@@ -9226,33 +8801,25 @@
           "line": 29,
           "call": "this.http.post",
           "url": "`${this.url}/registration/begin`",
-          "types": [
-            "PasskeyRegistrationBeginResponseDTO"
-          ]
+          "types": ["PasskeyRegistrationBeginResponseDTO"]
         },
         {
           "line": 36,
           "call": "this.http\n      .post",
           "url": "`${this.url}/registration/finish`",
-          "types": [
-            "PasskeyRegistrationFinishResponseDTO"
-          ]
+          "types": ["PasskeyRegistrationFinishResponseDTO"]
         },
         {
           "line": 51,
           "call": "this.http.post",
           "url": "`${this.url}/authentication/begin`",
-          "types": [
-            "PasskeyAuthenticationBeginResponseDTO"
-          ]
+          "types": ["PasskeyAuthenticationBeginResponseDTO"]
         },
         {
           "line": 58,
           "call": "this.http\n      .post",
           "url": "`${this.url}/authentication/finish`",
-          "types": [
-            "PasskeyAuthenticationFinishResponseDTO"
-          ]
+          "types": ["PasskeyAuthenticationFinishResponseDTO"]
         }
       ]
     },
@@ -9325,73 +8892,55 @@
           "line": 35,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/register`",
-          "types": [
-            "RegisterResponseDTO"
-          ]
+          "types": ["RegisterResponseDTO"]
         },
         {
           "line": 42,
           "call": "this.http.patch",
           "url": "`${this.resourceUrl}/activate`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 49,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/login`",
-          "types": [
-            "LoggedInUserInfoResponseDTO"
-          ]
+          "types": ["LoggedInUserInfoResponseDTO"]
         },
         {
           "line": 56,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/logout`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 63,
           "call": "this.http.patch",
           "url": "`${this.resourceUrl}/change-password/${userId}`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 70,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/forgot-password`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 77,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/reset-password`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 84,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/verify-email`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 91,
           "call": "this.http.patch",
           "url": "`${this.resourceUrl}/update-email/${userId}`",
-          "types": [
-            "{ success: boolean }"
-          ]
+          "types": ["{ success: boolean }"]
         },
         {
           "line": 102,
@@ -10206,33 +9755,25 @@
           "line": 28,
           "call": "this.http.get",
           "url": "`${this.resourceUrl}/${formId}`",
-          "types": [
-            "{ config: FormConfig; schema: unknown }"
-          ]
+          "types": ["{ config: FormConfig; schema: unknown }"]
         },
         {
           "line": 43,
           "call": "this.http.get",
           "url": "`${this.resourceUrl}/submissions`",
-          "types": [
-            "SubmissionsResponseDTO"
-          ]
+          "types": ["SubmissionsResponseDTO"]
         },
         {
           "line": 50,
           "call": "this.http.get",
           "url": "`${this.resourceUrl}/submissions/${encodeURIComponent(submissionId)}`",
-          "types": [
-            "SubmissionResponseDTO"
-          ]
+          "types": ["SubmissionResponseDTO"]
         },
         {
           "line": 56,
           "call": "this.http.post",
           "url": "`${this.resourceUrl}/submit`",
-          "types": [
-            "SubmissionResponseDTO"
-          ]
+          "types": ["SubmissionResponseDTO"]
         }
       ]
     },
@@ -10558,17 +10099,13 @@
           "line": 20,
           "call": "this.http.get",
           "url": "`${this.profilesUrl}/by-auth-user/${encodeURIComponent(authUserId)}`",
-          "types": [
-            "UserProfileResponseDTO"
-          ]
+          "types": ["UserProfileResponseDTO"]
         },
         {
           "line": 26,
           "call": "this.http.patch",
           "url": "`${this.profilesUrl}/${encodeURIComponent(profileId)}`",
-          "types": [
-            "UserProfileResponseDTO"
-          ]
+          "types": ["UserProfileResponseDTO"]
         }
       ]
     },
@@ -10707,9 +10244,7 @@
           "line": 28,
           "call": "this.http\n      .post",
           "url": "this.config.subscriptionUrl",
-          "types": [
-            "unknown"
-          ]
+          "types": ["unknown"]
         }
       ]
     },
@@ -10793,16 +10328,11 @@
     },
     {
       "path": "examples/auth-angular-example-e2e/src/example.spec.ts",
-      "titles": [
-        "renders login and registration package features"
-      ]
+      "titles": ["renders login and registration package features"]
     },
     {
       "path": "examples/auth-angular-example/src/app/app.spec.ts",
-      "titles": [
-        "App",
-        "should render title"
-      ]
+      "titles": ["App", "should render title"]
     },
     {
       "path": "examples/auth-angular-example/src/contract/auth-api.contract.spec.ts",
@@ -10814,16 +10344,11 @@
     },
     {
       "path": "examples/forms-angular-example-e2e/src/example.spec.ts",
-      "titles": [
-        "renders a form supplied by the forms package"
-      ]
+      "titles": ["renders a form supplied by the forms package"]
     },
     {
       "path": "examples/forms-angular-example/src/app/app.spec.ts",
-      "titles": [
-        "App",
-        "should render title"
-      ]
+      "titles": ["App", "should render title"]
     },
     {
       "path": "examples/forms-angular-example/src/contract/forms-api.contract.spec.ts",
@@ -12276,10 +11801,7 @@
     },
     {
       "path": "libs/forms/angular/ui/src/submitted.spec.ts",
-      "titles": [
-        "AnarchitectsFormsUiSubmitted",
-        "should create"
-      ]
+      "titles": ["AnarchitectsFormsUiSubmitted", "should create"]
     },
     {
       "path": "libs/forms/nest/src/application/application.module.spec.ts",
