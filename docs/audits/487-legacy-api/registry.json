@@ -1,0 +1,664 @@
+{
+  "observedOn": "2026-10-13",
+  "registry": "https://registry.npmjs.org",
+  "sourceRevision": "ecda1b6e0d9bc39c66373452a92dce91e06abee0",
+  "packages": [
+    {
+      "name": "@anarchitects/auth-angular",
+      "sourceVersion": "0.12.0",
+      "sourceManifest": "libs/auth/angular/package.json",
+      "registry": {
+        "version": "0.12.0",
+        "versions": [
+          "0.0.1",
+          "0.1.5",
+          "0.1.6",
+          "0.3.0",
+          "0.4.0",
+          "0.5.0",
+          "0.5.1",
+          "0.6.0",
+          "0.6.1",
+          "0.6.2",
+          "0.6.3",
+          "0.6.4",
+          "0.7.0",
+          "0.8.0",
+          "0.8.1",
+          "0.8.2",
+          "0.8.3",
+          "0.9.0",
+          "0.9.1",
+          "0.10.0",
+          "0.10.1",
+          "0.10.2",
+          "0.10.3",
+          "0.11.0",
+          "0.12.0",
+          "1.0.0",
+          "1.0.1",
+          "2.0.0",
+          "2.1.0"
+        ],
+        "dist-tags": {
+          "latest": "0.12.0"
+        },
+        "dist": {
+          "shasum": "68a3f92eac4fd34b44b9054dda6eb675008bfddf",
+          "tarball": "https://registry.npmjs.org/@anarchitects/auth-angular/-/auth-angular-0.12.0.tgz",
+          "fileCount": 61,
+          "integrity": "sha512-RltB7JvEqJdaGztMLmt4bL/sacNeVukobHpysTk6Cak99aXnCIkwdggEbD2vzrx8ZPYgpdX7s9PHzm6ZKVmzIQ==",
+          "signatures": [
+            {
+              "sig": "MEQCICev53ZGTPjglReW/lQdzCIheaeGa/kpXPWJ0kaNDCPVAiBotxLGDfYXIObyKZXnS6whVfmWLseKAxy8ukWzWaItig==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIECtm+ppNgEQvbz7p2O/DvYbzoWiXr/FA6OiWHfchWQEAiEAlr8bHpowIgvsrvcj01iJakDcuSeqsg4FfGgvR7/wo5s="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fauth-angular@0.12.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 428147
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/auth-declarations",
+      "sourceVersion": "0.12.0",
+      "sourceManifest": "libs/auth/declarations/package.json",
+      "registry": {
+        "version": "0.12.0",
+        "versions": [
+          "0.8.2",
+          "0.8.3",
+          "0.9.0",
+          "0.9.1",
+          "0.10.0",
+          "0.10.1",
+          "0.11.0",
+          "0.12.0"
+        ],
+        "dist-tags": {
+          "latest": "0.12.0"
+        },
+        "dist": {
+          "shasum": "694f14488f69bf43610fd6a049ab234d3beac43d",
+          "tarball": "https://registry.npmjs.org/@anarchitects/auth-declarations/-/auth-declarations-0.12.0.tgz",
+          "fileCount": 6,
+          "integrity": "sha512-M5ZnmDNHlwhG9+qOCnim1KL9VlZ29byScSyENwtK+VbVLXdgKGGpLfZaNKtRPfrJLHGmQEFKSvun5DRzkoGM+w==",
+          "signatures": [
+            {
+              "sig": "MEUCIEM4vZVvQ0Ci1v4o0pzXu/yrgKMmddin2tJuiEslRhS8AiEA9rJ7WCljQ+1Wz9k9222kQuu2x+h9azT1UQVAPdaCahg=",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIGcX0AAB1AZd98k3/H9BQOgmx717FRFNtjhpbgM2zne/AiEA6VjhPhfiVMUgycz9A4WLph5UJf4WlTEmnRyMPejcvn0="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fauth-declarations@0.12.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 8535
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/auth-nest",
+      "sourceVersion": "0.12.0",
+      "sourceManifest": "libs/auth/nest/package.json",
+      "registry": {
+        "version": "0.12.0",
+        "versions": [
+          "0.0.1",
+          "0.3.0",
+          "0.4.0",
+          "0.4.1",
+          "0.4.2",
+          "0.5.0",
+          "0.5.1",
+          "0.6.0",
+          "0.6.1",
+          "0.7.0",
+          "0.8.0",
+          "0.8.1",
+          "0.8.2",
+          "0.8.3",
+          "0.9.0",
+          "0.9.1",
+          "0.10.0",
+          "0.10.1",
+          "0.10.2",
+          "0.11.0",
+          "0.12.0",
+          "1.0.0",
+          "2.0.0",
+          "3.0.0",
+          "3.0.1"
+        ],
+        "dist-tags": {
+          "latest": "0.12.0"
+        },
+        "dist": {
+          "shasum": "9d5489718e2e713d6f44e1b48122fe938dadae50",
+          "tarball": "https://registry.npmjs.org/@anarchitects/auth-nest/-/auth-nest-0.12.0.tgz",
+          "fileCount": 236,
+          "integrity": "sha512-EJ4Ie/+zgRC7fKh0KF5SNe3vQ+KxYjRs0n6uL74RNLSCXv50ULFRw5mVJHHqYjpYatYsonAYE5UhTEDUjq6Mog==",
+          "signatures": [
+            {
+              "sig": "MEYCIQDLhNtOxsFOTwtSyxBzqv/wfmCgoeFNX+bHkvLjA3fodwIhAJMpZKeo6eWsXWCq5XSG6GSs9iKabYjJ88V/ounA2Hm5",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCICeUVm4zPWGIhNMudkKG0AzFlciGiOB/w6p04QjrT8vtAiEA0YOT+33ns43Zf+WHx5oYJBxuKpH0qMYdadhn2LeMKSo="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fauth-nest@0.12.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 420595
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/auth-ts",
+      "sourceVersion": "0.12.0",
+      "sourceManifest": "libs/auth/ts/package.json",
+      "registry": {
+        "version": "0.12.0",
+        "versions": [
+          "0.0.1",
+          "0.1.0",
+          "0.1.3",
+          "0.1.4",
+          "0.3.0",
+          "0.4.0",
+          "0.5.0",
+          "0.5.1",
+          "0.6.0",
+          "0.7.0",
+          "0.8.0",
+          "0.8.1",
+          "0.8.2",
+          "0.8.3",
+          "0.9.0",
+          "0.9.1",
+          "0.10.0",
+          "0.10.1",
+          "0.11.0",
+          "0.12.0",
+          "1.0.0",
+          "1.0.1",
+          "2.0.0",
+          "2.0.1"
+        ],
+        "dist-tags": {
+          "latest": "0.12.0"
+        },
+        "dist": {
+          "shasum": "d26aba12929433ad10e0c0d6dd80e96286094361",
+          "tarball": "https://registry.npmjs.org/@anarchitects/auth-ts/-/auth-ts-0.12.0.tgz",
+          "fileCount": 69,
+          "integrity": "sha512-Ed5F6DDN7sWewIq+AligA3cn2kIULTKYmwF1t9gYjaaKZVe3dgG2z3vsGQWhk3nNnxl/SY0WcrtFXfa6xwG5qg==",
+          "signatures": [
+            {
+              "sig": "MEYCIQDcjg5OJ53EcDlPzfzPyCGG62fetqGrj4qH1rcD/emhbAIhAJRwgyfVaW2FtRxSkPJUZubmOAZhlFfnk4mbtNahnbb7",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIF2I8Si6BCWkX70SKGwzz4cJ0M+FQd7jnqvPQS8XSgsLAiEA/oRap37wAOgXyaL0+o6od2ZbsMv0bV2aln3X715NC5Q="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fauth-ts@0.12.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 169022
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/forms-angular",
+      "sourceVersion": "0.11.0",
+      "sourceManifest": "libs/forms/angular/package.json",
+      "registry": {
+        "version": "0.11.0",
+        "versions": [
+          "0.0.1",
+          "0.0.2",
+          "0.0.3",
+          "0.0.5",
+          "0.0.6",
+          "0.0.7",
+          "0.0.9",
+          "0.0.11",
+          "0.0.12",
+          "0.0.13",
+          "0.1.0",
+          "0.3.0",
+          "0.4.0",
+          "0.5.0",
+          "0.5.1",
+          "0.5.2",
+          "0.5.3",
+          "0.6.0",
+          "0.6.1",
+          "0.7.0",
+          "0.7.1",
+          "0.8.0",
+          "0.9.0",
+          "0.10.0",
+          "0.11.0",
+          "1.0.0",
+          "1.0.1",
+          "2.0.0",
+          "2.0.1",
+          "2.1.0",
+          "2.2.0"
+        ],
+        "dist-tags": {
+          "latest": "0.11.0"
+        },
+        "dist": {
+          "shasum": "8018c9962e5388d32df97f3d7b1e61cc9a24b0ea",
+          "tarball": "https://registry.npmjs.org/@anarchitects/forms-angular/-/forms-angular-0.11.0.tgz",
+          "fileCount": 25,
+          "integrity": "sha512-kGnn30irjN1c8rdbnxfkbhW+6DFps2uRwI6NlDlvzcgr1KSrvjAHRFsycnnk5StQdtTWLYd1YSvqLGfPn3Eyeg==",
+          "signatures": [
+            {
+              "sig": "MEQCIG5r0ZJHBMNNNuDPxUy0spU0bXe6DRpqg6TkQZB5SaxSAiBDcqQ/yxHQS+682Nj1BS6Q3wjQtWUWXTppFKdO+y4OEA==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIDQ6NOLg6gOnIX3+TPeM+227yz4E/tu0njzVHEfUOOGZAiEA3EwN+wzN8VHSbb0zonYIwetQ1TqDBLUkgBGVwZO4amI="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fforms-angular@0.11.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 240458
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/forms-nest",
+      "sourceVersion": "0.11.0",
+      "sourceManifest": "libs/forms/nest/package.json",
+      "registry": {
+        "version": "0.11.0",
+        "versions": [
+          "0.0.1",
+          "0.0.2",
+          "0.0.3",
+          "0.1.0",
+          "0.1.1",
+          "0.1.2",
+          "0.1.3",
+          "0.1.5",
+          "0.1.6",
+          "0.1.7",
+          "0.1.8",
+          "0.1.9",
+          "0.1.10",
+          "0.3.0",
+          "0.4.0",
+          "0.5.0",
+          "0.5.1",
+          "0.5.2",
+          "0.5.3",
+          "0.5.4",
+          "0.6.0",
+          "0.7.0",
+          "0.7.1",
+          "0.8.0",
+          "0.8.1",
+          "0.9.0",
+          "0.10.0",
+          "0.11.0",
+          "1.0.0",
+          "1.1.0",
+          "2.0.0",
+          "2.0.1"
+        ],
+        "dist-tags": {
+          "latest": "0.11.0"
+        },
+        "dist": {
+          "shasum": "23e81e1efa6e854052598c8b4ca1862c0e3cd734",
+          "tarball": "https://registry.npmjs.org/@anarchitects/forms-nest/-/forms-nest-0.11.0.tgz",
+          "fileCount": 86,
+          "integrity": "sha512-Z6YTYd2rS6ydxnrYIDxKufvGPUgX3kf4ReH3fc67QFFIj7vepjjgDO4Lt+apJC1oFbs3O56W4vh/dXJO4Zht7g==",
+          "signatures": [
+            {
+              "sig": "MEQCICXpKdWC+nKF00rJWCJ7Jm5IOJ/Nk8pNADh7035XErJBAiAKyXgsckcDqkfce9ibtAQ/bWJlcuhHG2aLgXbD8TnysA==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIBfVIzspsG55UxFn3Jh7GZ4CZrhaFxYyDseC9blQmhd4AiEA4VQjcfuxcsIcUQDiatTluuiSoQavk7UaHQKjSShD6X8="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fforms-nest@0.11.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 95472
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/forms-ts",
+      "sourceVersion": "0.11.0",
+      "sourceManifest": "libs/forms/ts/package.json",
+      "registry": {
+        "version": "0.11.0",
+        "versions": [
+          "0.0.1",
+          "0.0.2",
+          "0.0.4",
+          "0.0.5",
+          "0.0.6",
+          "0.0.7",
+          "0.0.8",
+          "0.0.9",
+          "0.1.0",
+          "0.3.0",
+          "0.4.0",
+          "0.5.0",
+          "0.5.1",
+          "0.5.2",
+          "0.6.0",
+          "0.7.0",
+          "0.7.1",
+          "0.8.0",
+          "0.9.0",
+          "0.10.0",
+          "0.11.0",
+          "1.0.0",
+          "1.0.1",
+          "2.0.0",
+          "2.0.1"
+        ],
+        "dist-tags": {
+          "latest": "0.11.0"
+        },
+        "dist": {
+          "shasum": "29550c387402bfc5b62b37374fa6d055dd287acf",
+          "tarball": "https://registry.npmjs.org/@anarchitects/forms-ts/-/forms-ts-0.11.0.tgz",
+          "fileCount": 35,
+          "integrity": "sha512-iwVGxW1coZfb9G4VBstnoLGh2Ia0Hg8qfAyfeKONxFjmd68EA2d64vmNFNyA86THnqr8UoR4lt8ClVY2U7fcRQ==",
+          "signatures": [
+            {
+              "sig": "MEUCIQCWbP6H7fX7cONOz1T5XsGRcSq/JsPKUGdlwJTnIyNidgIgGw6YG8UlYIOQbV3+K84pAjtHL3TFwITWg/2Wfjn5uuM=",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEYCIQD6olsZa4n3XvsXy0LDwRKux2ABGqk4ryve4Qi3cjKnzwIhAKfRFCLxrv4TfQc3yrChDEqYKooVGAO5wfG7nsjXoVuX"
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fforms-ts@0.11.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 38010
+        },
+        "gitHead": "6759c4b9bfe7a4b9d1572b62e318fd92b829e361"
+      }
+    },
+    {
+      "name": "@anarchitects/identity-angular",
+      "sourceVersion": "0.2.0",
+      "sourceManifest": "libs/identity/angular/package.json",
+      "registry": {
+        "version": "0.2.0",
+        "versions": [
+          "0.0.1",
+          "0.0.2",
+          "0.1.0",
+          "0.2.0"
+        ],
+        "dist-tags": {
+          "latest": "0.2.0"
+        },
+        "dist": {
+          "shasum": "19fee6098864f2401dd848a0517237feb3bb62d2",
+          "tarball": "https://registry.npmjs.org/@anarchitects/identity-angular/-/identity-angular-0.2.0.tgz",
+          "fileCount": 20,
+          "integrity": "sha512-3zOA1Js3GHQy5ZIx3zdEFtbosm4p0llW35qk7dov0/Rb9Q4QBTkoVN+Kg0tL7dxTisHbiVdeNImYsBZpCvT42w==",
+          "signatures": [
+            {
+              "sig": "MEQCICvk7mBH//WB7Xc7DMH5vYIyRKqPTL8FczaMiNFMxut2AiBlgL7yvJUQue+S5eCqG3e4C8jEdQui1mm54VaQ4AL7zw==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIHv6hjz59B5UW2Sp6oHAKM70Rq1hNlaEFaut28WLGur4AiEApO3rH6/Zp9X2YFKO80Obq1rqTSyvhBKg8a2yJoycSew="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fidentity-angular@0.2.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 55846
+        },
+        "gitHead": "af8c5891abbeff501920752891bd07641d8137e0"
+      }
+    },
+    {
+      "name": "@anarchitects/identity-nest",
+      "sourceVersion": "0.2.0",
+      "sourceManifest": "libs/identity/nest/package.json",
+      "registry": {
+        "version": "0.2.0",
+        "versions": [
+          "0.0.1",
+          "0.0.2",
+          "0.1.0",
+          "0.2.0"
+        ],
+        "dist-tags": {
+          "latest": "0.2.0"
+        },
+        "dist": {
+          "shasum": "5923e8e12ce86ceffe941b14876a8be4c64492d9",
+          "tarball": "https://registry.npmjs.org/@anarchitects/identity-nest/-/identity-nest-0.2.0.tgz",
+          "fileCount": 74,
+          "integrity": "sha512-ODe29vhjzICXT6274jEUr0DSMFUR052kJS2ES7VryUCeJYuxbZ24r4hw2eQ3wjTeWOHfqirgaycgjWsohTb78w==",
+          "signatures": [
+            {
+              "sig": "MEYCIQDqyBxd7Nzx8MWPixbU2mmR9u8XM60+JsOZHSjpWPui2wIhALsMuN8CzuY/QqIr5v9IWayoZEqiCn3VQdHrEOuu2LD5",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIQDYWdviSVS8xX1UsK6Oc5M3osRhVzc8TDWxM97Qo7kBoAIgO+GLV6I6SMhadXSmkvw08I1xYzQhpysGf6VeJouVnP0="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fidentity-nest@0.2.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 66928
+        },
+        "gitHead": "af8c5891abbeff501920752891bd07641d8137e0"
+      }
+    },
+    {
+      "name": "@anarchitects/identity-ts",
+      "sourceVersion": "0.2.0",
+      "sourceManifest": "libs/identity/ts/package.json",
+      "registry": {
+        "version": "0.2.0",
+        "versions": [
+          "0.0.1",
+          "0.0.2",
+          "0.1.0",
+          "0.2.0"
+        ],
+        "dist-tags": {
+          "latest": "0.2.0"
+        },
+        "dist": {
+          "shasum": "e07126ef281f4d1ccad52bd8f88c41faa8948177",
+          "tarball": "https://registry.npmjs.org/@anarchitects/identity-ts/-/identity-ts-0.2.0.tgz",
+          "fileCount": 19,
+          "integrity": "sha512-a4YfovooZXnunP8RMuoiK3Y1FscCjt56p4FgZGT4uBXkpp7HvJ7LaCHXkwpEO3mr2td4vcaNxA90e78M9GU8Xg==",
+          "signatures": [
+            {
+              "sig": "MEQCIAt8DCQ5EPPQjo2iqAuIlYxPyoA9emwFx9mVhElTFrEmAiBAf8y+CV3pZ/+426qKcOKJz4eiDGi+UspnQBZQXfMqeQ==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIHVvvas6jcEmx9VlIUh0w57N7QUBi8ZZiuu9/Nzh/UZwAiEAwwo7yJDnxhm3N8tPf5coJP+UmaIWpk69gB8MOH1Zl/w="
+            }
+          ],
+          "attestations": {
+            "url": "https://registry.npmjs.org/-/npm/v1/attestations/@anarchitects%2fidentity-ts@0.2.0",
+            "provenance": {
+              "predicateType": "https://slsa.dev/provenance/v1"
+            }
+          },
+          "unpackedSize": 13493
+        },
+        "gitHead": "af8c5891abbeff501920752891bd07641d8137e0"
+      }
+    },
+    {
+      "name": "@anarchitects/newsletter-angular",
+      "sourceVersion": "0.1.0",
+      "sourceManifest": "libs/newsletter/angular/package.json",
+      "registry": {
+        "version": "0.1.0",
+        "versions": [
+          "0.0.0-stage",
+          "0.0.1",
+          "0.1.0"
+        ],
+        "dist-tags": {
+          "latest": "0.1.0"
+        },
+        "dist": {
+          "shasum": "a8c7926844c409088387c4406f96c4ac1aab37c8",
+          "tarball": "https://registry.npmjs.org/@anarchitects/newsletter-angular/-/newsletter-angular-0.1.0.tgz",
+          "fileCount": 20,
+          "integrity": "sha512-l89u74NDClR5SeiRuooFPKLDwzMQXsgJU2iyCKREr/Zfgn9jt8ICnlVridTWMCWnD6ej/2gvNx8/axoZTPuS9A==",
+          "signatures": [
+            {
+              "sig": "MEQCIC7aiyN/5SmhRzgw5XwuOcr/NWBhfjmz/sCmD1B1M+DNAiBlxBpj18/fVSfrf71UyxffixHxyuBw3xqt9EVYZl3jlA==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEUCIQCHDTPqRe6Hx+bBijf/aEldwOnieOxkfeV74AAim4rx0wIgZvxONY5x6sFS/G4z3+ZXDXDdq6HxDLQYqswfdK7U5HU="
+            }
+          ],
+          "unpackedSize": 93555
+        },
+        "gitHead": "af8c5891abbeff501920752891bd07641d8137e0"
+      }
+    },
+    {
+      "name": "@anarchitects/newsletter-nest",
+      "sourceVersion": "0.1.0",
+      "sourceManifest": "libs/newsletter/nest/package.json",
+      "registry": {
+        "version": "0.1.0",
+        "versions": [
+          "0.0.1",
+          "0.1.0"
+        ],
+        "dist-tags": {
+          "latest": "0.1.0"
+        },
+        "dist": {
+          "shasum": "9957ae7b418d9109e0cd27bf006875640eba7702",
+          "tarball": "https://registry.npmjs.org/@anarchitects/newsletter-nest/-/newsletter-nest-0.1.0.tgz",
+          "fileCount": 143,
+          "integrity": "sha512-7Pe8DpLpeiaVpr2lxTL1AzSIpx7YPPp2YzU4IZ4FtbcnZvJ4is5CRnxxTCgTG22XMfn9tDQp3S4k/R58mM6xTw==",
+          "signatures": [
+            {
+              "sig": "MEQCIE/dMc3ETz6MEIrWSuAXqeIuE1TCi8FO06BtJkgPgu7QAiA3k+u5kiavodADK8Q5/JNP4VnIMt+5g2qwfxMD2R2Aqg==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEYCIQDQipdgptCc1nOMjP8/dT1fZ0Xah6s/sLxRYNL22AitFAIhAPZZa9fc3EXutWHmQKL9eTd3IzGWAOcIKnL+8Z9Yvb08"
+            }
+          ],
+          "unpackedSize": 275889
+        },
+        "gitHead": "af8c5891abbeff501920752891bd07641d8137e0"
+      }
+    },
+    {
+      "name": "@anarchitects/newsletter-ts",
+      "sourceVersion": "0.1.0",
+      "sourceManifest": "libs/newsletter/ts/package.json",
+      "registry": {
+        "version": "0.1.0",
+        "versions": [
+          "0.0.0-stage",
+          "0.0.1",
+          "0.1.0"
+        ],
+        "dist-tags": {
+          "latest": "0.1.0"
+        },
+        "dist": {
+          "shasum": "e389ee91ae95bdc87b203ebb4e42746f1d048823",
+          "tarball": "https://registry.npmjs.org/@anarchitects/newsletter-ts/-/newsletter-ts-0.1.0.tgz",
+          "fileCount": 32,
+          "integrity": "sha512-Wh1vGs3Dl2r4DFzvFVCW6ymbCqAU9ffjM4nB4o2cwaQAF8qEqwWtO6lHmqkne+zZ3Z+zYEueW1Wa3qsuvzNsow==",
+          "signatures": [
+            {
+              "sig": "MEQCIHfzOnCvDlcqL5EwXVve6PMyx/UI14m01CZQSyedvz+2AiBMNdLUK/WShSou9/CDVzKEoiAA899Va248TUxsGrBk6Q==",
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+            },
+            {
+              "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+              "sig": "MEYCIQCMhvb3jYHMjLjlInNWJWiFU7fycSd7ouQRRxN/lebMggIhAJ9ZhGiZld2vZwQxSXENFwm8ZBpU1m3xZdPpyFq2/jKh"
+            }
+          ],
+          "unpackedSize": 31375
+        },
+        "gitHead": "af8c5891abbeff501920752891bd07641d8137e0"
+      }
+    }
+  ]
+}

@@ -36,6 +36,10 @@ tracks adoption: #486 establishes these rules; #487 audits the baseline; later
 children consume and verify available artifacts. Do not claim publication or
 adoption from governance acceptance, or invent canonical package imports.
 
+The [frozen #487 legacy API audit](/guides/public-api-legacy-baseline.html) records
+immutable source evidence, real runtime checks and semantic discrepancies for
+Contracts extraction. It is baseline evidence, not a second contract authority.
+
 ## Domain Contract Matrix
 
 | Domain     | Current local TS package      | Angular consumer                   | Nest consumer                   |

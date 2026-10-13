@@ -1,0 +1,481 @@
+{
+  "evidenceKind": "isolated-validator-serializer-probes-not-full-http-conformance",
+  "revision": "ecda1b6e0d9bc39c66373452a92dce91e06abee0",
+  "versions": {
+    "node": "v24.21.0",
+    "nest": "11.1.6",
+    "fastify": "5.4.0",
+    "typebox": "0.34.41"
+  },
+  "note": "Real Fastify injection using frozen imported schemas. Newsletter strict compiler matches Value.Check from its presentation module. These synthetic routes omit Nest exception wrapping, authentication, application services, persistence, rate limits and honeypot hooks. Full packed-host evidence is separate.",
+  "observations": [
+    {
+      "profile": "auth-login",
+      "mode": "default-ajv",
+      "input": {
+        "credential": "a@example.test",
+        "password": "Password123!"
+      },
+      "status": 200,
+      "body": {
+        "credential": "a@example.test",
+        "password": "Password123!"
+      }
+    },
+    {
+      "profile": "auth-login",
+      "mode": "default-ajv",
+      "input": {
+        "credential": "a@example.test",
+        "password": 12345678
+      },
+      "status": 200,
+      "body": {
+        "credential": "a@example.test",
+        "password": "12345678"
+      }
+    },
+    {
+      "profile": "auth-login",
+      "mode": "default-ajv",
+      "input": {
+        "credential": "a@example.test",
+        "password": "Password123!",
+        "extra": true
+      },
+      "status": 200,
+      "body": {
+        "credential": "a@example.test",
+        "password": "Password123!",
+        "extra": true
+      }
+    },
+    {
+      "profile": "auth-login",
+      "mode": "default-ajv",
+      "input": {
+        "credential": "a@example.test",
+        "password": ""
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body/password must NOT have fewer than 6 characters"
+      }
+    },
+    {
+      "profile": "auth-register",
+      "mode": "default-ajv",
+      "input": {
+        "email": "a@example.test",
+        "password": "Password123!",
+        "confirmPassword": "different"
+      },
+      "status": 200,
+      "body": {
+        "email": "a@example.test",
+        "password": "Password123!",
+        "confirmPassword": "different"
+      }
+    },
+    {
+      "profile": "auth-register",
+      "mode": "default-ajv",
+      "input": {
+        "email": "bad",
+        "password": "Password123!",
+        "confirmPassword": "Password123!"
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body/email must match format \"email\""
+      }
+    },
+    {
+      "profile": "forms-submit",
+      "mode": "default-ajv",
+      "input": {
+        "formId": "contact",
+        "formVersion": "1",
+        "payload": {
+          "unknown": "preserved"
+        },
+        "extra": true
+      },
+      "status": 200,
+      "body": {
+        "formId": "contact",
+        "formVersion": 1,
+        "payload": {
+          "unknown": "preserved"
+        },
+        "extra": true
+      }
+    },
+    {
+      "profile": "forms-submit",
+      "mode": "default-ajv",
+      "input": {
+        "formId": "contact",
+        "formVersion": 0,
+        "payload": {}
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body/formVersion must be >= 1"
+      }
+    },
+    {
+      "profile": "forms-submit",
+      "mode": "default-ajv",
+      "input": {
+        "formId": "contact",
+        "formVersion": 1,
+        "payload": null
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body/payload must be object"
+      }
+    },
+    {
+      "profile": "identity-update",
+      "mode": "default-ajv",
+      "input": {
+        "displayName": null
+      },
+      "status": 200,
+      "body": {
+        "displayName": ""
+      }
+    },
+    {
+      "profile": "identity-update",
+      "mode": "default-ajv",
+      "input": {
+        "displayName": 42
+      },
+      "status": 200,
+      "body": {
+        "displayName": "42"
+      }
+    },
+    {
+      "profile": "identity-update",
+      "mode": "default-ajv",
+      "input": {
+        "displayName": {}
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body/displayName must be string, body/displayName must be null, body/displayName must match a schema in anyOf"
+      }
+    },
+    {
+      "profile": "identity-update",
+      "mode": "default-ajv",
+      "input": {
+        "unknown": "preserved"
+      },
+      "status": 200,
+      "body": {
+        "unknown": "preserved"
+      }
+    },
+    {
+      "profile": "identity-update",
+      "mode": "default-ajv",
+      "input": {},
+      "status": 200,
+      "body": {}
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "default-ajv",
+      "input": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1"
+      },
+      "status": 200,
+      "body": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1"
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "newsletter-typebox",
+      "input": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1"
+      },
+      "status": 200,
+      "body": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1"
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "default-ajv",
+      "input": {
+        "email": "a@example.test",
+        "consent": "true",
+        "consentVersion": "v1"
+      },
+      "status": 200,
+      "body": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1"
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "newsletter-typebox",
+      "input": {
+        "email": "a@example.test",
+        "consent": "true",
+        "consentVersion": "v1"
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "Invalid newsletter request."
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "default-ajv",
+      "input": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1",
+        "extra": true
+      },
+      "status": 200,
+      "body": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1"
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "newsletter-typebox",
+      "input": {
+        "email": "a@example.test",
+        "consent": true,
+        "consentVersion": "v1",
+        "extra": true
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "Invalid newsletter request."
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "default-ajv",
+      "input": {
+        "email": "bad",
+        "website": "bot"
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body must have required property 'consent'"
+      }
+    },
+    {
+      "profile": "newsletter-subscribe",
+      "mode": "newsletter-typebox",
+      "input": {
+        "email": "bad",
+        "website": "bot"
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "Invalid newsletter request."
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "default-ajv",
+      "input": {
+        "token": ""
+      },
+      "status": 200,
+      "body": {
+        "token": ""
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "newsletter-typebox",
+      "input": {
+        "token": ""
+      },
+      "status": 200,
+      "body": {
+        "token": ""
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "default-ajv",
+      "input": {
+        "token": 123
+      },
+      "status": 200,
+      "body": {
+        "token": "123"
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "newsletter-typebox",
+      "input": {
+        "token": 123
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "Invalid newsletter request."
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "default-ajv",
+      "input": {
+        "token": "x",
+        "extra": true
+      },
+      "status": 200,
+      "body": {
+        "token": "x"
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "newsletter-typebox",
+      "input": {
+        "token": "x",
+        "extra": true
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "Invalid newsletter request."
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "default-ajv",
+      "input": {
+        "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "body/token must NOT have more than 128 characters"
+      }
+    },
+    {
+      "profile": "newsletter-native",
+      "mode": "newsletter-typebox",
+      "input": {
+        "token": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      },
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "Invalid newsletter request."
+      }
+    },
+    {
+      "profile": "/forms-query",
+      "mode": "default-ajv",
+      "status": 200,
+      "body": {}
+    },
+    {
+      "profile": "/forms-query?formVersion=2",
+      "mode": "default-ajv",
+      "status": 200,
+      "body": {
+        "formVersion": 2
+      }
+    },
+    {
+      "profile": "/forms-query?formVersion=bad",
+      "mode": "default-ajv",
+      "status": 400,
+      "body": {
+        "statusCode": 400,
+        "code": "FST_ERR_VALIDATION",
+        "error": "Bad Request",
+        "message": "querystring/formVersion must be integer"
+      }
+    },
+    {
+      "profile": "/forms-query?unknown=kept",
+      "mode": "default-ajv",
+      "status": 200,
+      "body": {
+        "unknown": "kept"
+      }
+    },
+    {
+      "profile": "/forms-response",
+      "mode": "default-ajv",
+      "status": 200,
+      "body": {
+        "id": "fixture-id",
+        "formId": "contact",
+        "formVersion": 1,
+        "payload": {
+          "message": "retained"
+        },
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "updatedAt": "2026-01-01T00:00:00.000Z"
+      }
+    }
+  ]
+}

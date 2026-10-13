@@ -82,6 +82,35 @@
       "options": {
         "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/verify.ts"
       }
+    },
+    "audit-legacy": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node tools/api-specs/audit-legacy.mjs"
+      }
+    },
+    "audit-legacy-validation": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json tools/api-specs/probe-legacy-validation.ts"
+      }
+    },
+    "audit-legacy-verify": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["audit-legacy", "audit-legacy-validation"],
+      "options": {
+        "command": "node tools/api-specs/verify-legacy-audit.mjs"
+      }
+    },
+    "audit-legacy-lint": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "yarn exec eslint tools/api-specs/audit-legacy.mjs tools/api-specs/probe-legacy-validation.ts tools/api-specs/verify-legacy-audit.mjs"
+      }
     }
   }
 }
