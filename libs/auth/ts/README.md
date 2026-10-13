@@ -1,5 +1,12 @@
 # @anarchitects/auth-ts
 
+Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
+under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
+This package retains its domain models and current TypeBox DTOs/exports as the
+transitional implementation baseline. Canonical Zod schemas and operations are
+adopted through immutable versions and verified compatibility; this README does
+not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+
 TypeScript DTOs and domain models for the Anarchitecture authentication stack. The package bundles:
 
 - Implementation-driven request/response schemas authored with [TypeBox](https://github.com/sinclairzx81/typebox)
@@ -21,7 +28,7 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 ## Developer + AI Agent Start Here
 
 - Read this README before generating DTO/model code that depends on `@anarchitects/auth-ts`.
-- Treat this package as the source of truth for auth DTO and model contracts.
+- Keep auth domain models and policy semantics here; public HTTP DTO authority belongs to Contracts, with existing exports retained during transition.
 - Prefer public exports (`@anarchitects/auth-ts`, `/dtos`, `/models`) and avoid internal path imports.
 - Keep framework-specific behavior in Angular/Nest packages, not in this TS contract package.
 
@@ -34,7 +41,7 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 
 ## Authorization Contract
 
-`@anarchitects/auth-ts` is the source of truth for serialized auth rule shape, but it does not enforce frontend or backend authorization by itself.
+`@anarchitects/auth-ts` owns transport-neutral policy semantics and evaluation conformance, but does not enforce frontend or backend authorization by itself. Contracts owns the HTTP representation; mappings must preserve these semantics without loss.
 
 ### `PolicyRule`
 
@@ -140,13 +147,13 @@ challenge, origin, RP ID, credential ownership, signature, user verification, an
 counter policy, including consistency between `id` and `rawId`. These schemas do
 not perform cryptographic verification or enforce decoded binary lengths.
 
-Passkey contracts follow the package's versioning and normal CI release workflow.
+Existing passkey DTO exports follow this package's versioning and CI release workflow. Canonical HTTP contract versions are independent and require coordinated adoption under ADR-0016.
 There is no separate runtime contract-version constant or ceremony-body version.
 Tightening constraints or changing required fields is a breaking contract change.
 
 ## Contract Profiles
 
-`@anarchitects/auth-ts` is the source of truth for contract-driven auth behavior across Nest and Angular.
+`@anarchitects/auth-ts` owns the existing local auth-profile configuration/factory seam used by Nest and Angular. It remains part of the transitional baseline; profile customization must be audited against the applicable canonical HTTP contract before claiming conformance.
 
 - `AuthContractConfig` defines the profile shape for register, login, forgot-password, reset-password, verify-email, change-password, and logout.
 - `DefaultAuthContractConfig` is the published default profile.
@@ -264,7 +271,7 @@ The models include timestamps (`createdAt`, `updatedAt`) and bidirectional relat
 
 ## Development notes
 
-- Treat this package as the source of truth for auth DTO and model contracts.
+- Keep auth domain models and policy semantics here; public HTTP DTO authority belongs to Contracts, with existing exports retained during transition.
 - Keep the root DTO surface session-first. JWT token DTOs belong under `@anarchitects/auth-ts/dtos/jwt`, not `@anarchitects/auth-ts/dtos`.
 - Use `parsePolicyRuleDTO(...)` / `parsePolicyRuleArrayDTO(...)` when authorization rules cross trust boundaries and need runtime validation.
 - When changing DTO schemas, regenerate OpenAPI in the workspace (`nx run api-specs:generate`).

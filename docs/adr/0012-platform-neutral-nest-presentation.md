@@ -5,6 +5,16 @@
 - Owners: Architecture maintainers
 - Scope: 3-tier Nest Bricks and their HTTP/published-contract generation
 
+## Public HTTP contract ownership update (2026-10-13)
+
+[ADR-0016](0016-consume-canonical-public-api-contracts.md) applies Accepted Meta
+ADR-0012: `anarchitecture-contracts` owns shared public wire schemas and operations.
+Local DTOs, route bindings and implementation OpenAPI remain the transitional
+baseline. References below to local schema/metadata ownership describe that
+implementation, not canonical cross-repository HTTP authority. Domain ownership
+and existing behavior remain unchanged; adoption requires immutable artifacts and
+verified conformance.
+
 ## Context
 
 The Nest 11/12 compatibility effort in [ADR-0011](0011-verify-nest-runtime-support-independently-of-tooling.md) concerns framework majors, not HTTP-platform compatibility. The current presentation controllers use Fastify `@RouteSchema` and some `@RouteConfig`, while Auth rewrites `FASTIFY_ROUTE_SCHEMA_METADATA` directly. Newsletter explicitly uses `FastifyRequest` / `FastifyReply`, `validationError`, reply headers and raw-body webhooks. OpenAPI is generated from Fastify route metadata and domain TS TypeBox schemas. A change of Nest adapter could leave routes operational but silently drop runtime validation/serialization or security.
@@ -13,7 +23,7 @@ The [ecosystem HTTP-independence ADR](https://github.com/anarchitects/anarchitec
 
 ## Decision
 
-1. During the transition, retain `libs/*/ts` as the existing local source of DTOs and TypeBox schemas; do not duplicate shapes in HTTP adapters, Nest decorators or OpenAPI generation. **Do not designate 3-tier as the canonical cross-repository owner** of public API schemas or operations. Contract ownership and migration to a shared source will be decided separately in Meta.
+1. During the transition, retain `libs/*/ts` as the existing local source of DTOs and TypeBox schemas; do not duplicate shapes in HTTP adapters, Nest decorators or OpenAPI generation. **Do not designate 3-tier as the canonical cross-repository owner** of public API schemas or operations. That ownership deferral is resolved by Accepted Meta ADR-0012 and local ADR-0016; consumer migration remains separately gated.
 2. Keep `presentation -> application <- infrastructure` and the public facade/advanced entry point model. Framework-specific request/reply and lifecycle operations belong in explicit Nest presentation/integration seams, never application services or domain contracts.
 3. Treat existing Fastify `@RouteSchema`, `@RouteConfig`, direct metadata reflection and request/reply types as **Fastify-specific compatibility mechanisms**, not adapter-neutral public contracts. Preserve Fastify behavior during refactoring; do not delete schema metadata until equivalent validation, serialization and OpenAPI have been demonstrated.
 4. Investigate Nest 12 Standard Schema validation/serialization and the agreed Zod-first migration, with TypeBox compatibility during the Nest 11 patch line. A migration must preserve validation semantics, status codes, response serialization and path/query/header semantics. Implementation-derived OpenAPI is used for conformance evidence, **not as the master contract for DDD**; avoid separate independently maintained DTO truth.

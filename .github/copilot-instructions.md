@@ -1,17 +1,39 @@
 ## Mandatory architecture reading
 
-Before generating or changing any code, follow [anarchitecture-bricks-3tier agent instructions](../AGENTS.md): enumerate and read **ALL repository ADRs**, then **all relevant engineering guides**, including the [Modern Angular guide](../docs/guides/modern-angular/README.md) and its repository application for Angular work. This includes generated output, examples, tests and migrations. Respect decision status, flag conflicts and re-check when scope changes.
+Before generating or changing any code, follow [anarchitecture-bricks-3tier agent instructions](../AGENTS.md): enumerate and read **ALL Meta and repository ADRs**, then **all relevant engineering guides**, including the [Modern Angular guide](../docs/guides/modern-angular/README.md) and its repository application for Angular work. This includes generated output, examples, tests and migrations. Respect decision status, flag conflicts and re-check when scope changes.
 
 # Copilot Instructions - Anarchitecture Bricks 3-Tier
 
-This repository is implementation-first, library-focused, and Nx-driven.
+This repository is a library-focused, Nx-driven implementation of independently owned public HTTP contracts.
+
+## Public HTTP contract authority
+
+Follow [local ADR-0016](../docs/adr/0016-consume-canonical-public-api-contracts.md) and [Accepted Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md).
+[`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts) owns shared public HTTP contracts:
+Zod-first wire schemas plus first-class operation definitions, with deterministic
+OpenAPI 3.1 as a published artifact. Consume versioned published or pinned immutable
+artifacts; neither Bricks implementation nor its generated OpenAPI is authoritative.
+
+Before public API work, read the applicable canonical contract version and its
+compatibility rules. Current TypeBox DTOs, Fastify metadata, `tools/api-specs` and
+`docs/openapi` remain the transitional implementation baseline until audited adoption
+and conformance are proven. Preserve them; do not claim package availability or adoption
+from ADR acceptance. Do not author independent Zod/TypeBox copies or authorize a wire
+change through a local snapshot. Domain models, invariants and internal ports remain
+local; `auth-ts` retains policy semantics/evaluation, while Contracts owns HTTP representation.
+
+[Contracts epic #1](https://github.com/anarchitects/anarchitecture-contracts/issues/1) supplies the canonical artifacts;
+[3-tier epic #485](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/485)
+tracks adoption. Contracts and verified adoption precede separate Nest 12-native
+modernization. Nest 11 stays patch-only. Preserve existing runtime support and Fastify
+behavior until separately reviewed migration and release gates pass.
 
 ## Global Rules
 
 - Prefer reusable packages in `libs/`.
 - Example applications are allowed only under `examples/`.
-- Shared DTOs/models live in `libs/*/ts`.
-- HTTP documentation is generated from Nest implementation (`@RouteSchema`) into `docs/openapi`.
+- Domain models and transitional DTOs live in `libs/*/ts`; canonical public HTTP definitions belong to `anarchitecture-contracts`.
+- Local HTTP documentation is generated from Nest implementation (`@RouteSchema`) into `docs/openapi` as baseline/conformance evidence.
 - Do not hand-edit generated OpenAPI artifacts.
 - Use Nx targets for build/test/lint/docs workflows.
 
@@ -155,17 +177,17 @@ State must be registered explicitly:
 
 ### Shared TS
 
-- `dtos/`: TypeBox DTO contracts
+- `dtos/`: transitional TypeBox DTO schemas; future HTTP compatibility mappings consume canonical Contracts artifacts
 - `models/`: domain models
 - `builders/validators/util/`: schema tooling and helpers
 
 ## API and Docs Workflow
 
-- Route metadata comes from Nest controllers and `@RouteSchema`.
+- The current implementation baseline reads Nest controllers and `@RouteSchema`; it does not define canonical contract authority.
 - Nest controllers must keep `@RouteSchema` pure Fastify schema fields only (`body`, `params`, `querystring`, `headers`, `response`).
-- Do not place `operationId` or `tags` in controllers. OpenAPI metadata is owned by `tools/api-specs/route-metadata.ts`.
+- Do not place `operationId` or `tags` in controllers. The transitional implementation mapping remains in `tools/api-specs/route-metadata.ts`; canonical metadata belongs to Contracts.
 - Nest controllers must not define inline TypeBox route schemas. Define schemas in domain TS DTO libraries (`libs/<domain>/ts/src/dtos`) and import them into controllers.
-- When adding or changing a route, update `tools/api-specs/route-metadata.ts` with the `METHOD + path` operationId mapping.
+- Coordinate shared API changes in Contracts first. While the baseline generator remains, align its `METHOD + path` mapping in `tools/api-specs/route-metadata.ts` with the approved contract; a local edit does not authorize the API change.
 - Generate and validate OpenAPI with:
   - `nx run api-specs:generate`
   - `nx run api-specs:lint`

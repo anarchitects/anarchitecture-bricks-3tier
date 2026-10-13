@@ -704,12 +704,12 @@ When the JWT plugin is enabled, these plugin-owned routes are also mounted:
 
 ## Development notes
 
-- DTO shapes live in `@anarchitects/auth-ts`; update the contract and regenerate DTOs before extending this library.
+- Canonical public HTTP schemas/operations belong to `anarchitecture-contracts` under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md). Current `@anarchitects/auth-ts` DTOs remain transitional imports; coordinate upstream contract versions before consumer changes.
 - Default persistence is TypeORM with schema-qualified tables (see `libs/auth/nest/src/infrastructure-persistence`).
 - Invalidated tokens use an unlogged cache table for quick revocation lookups.
 - Route schemas are defined in `@anarchitects/auth-ts/dtos` and imported into controller `@RouteSchema` decorators — do not define inline schemas.
 - Keep `@Policies()` guidance coarse in docs and examples; use `@AuthorizeResource(...)` for instance-sensitive authorization.
-- OpenAPI metadata (`operationId`, `tags`) is assigned in `tools/api-specs/route-metadata.ts`, not in controllers.
+- Preserve the transitional `operationId`/`tags` mapping in `tools/api-specs/route-metadata.ts`; local generated OpenAPI is baseline/conformance evidence, not canonical authority.
 
 ## License
 

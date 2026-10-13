@@ -2,7 +2,7 @@
 
 ## Intent
 
-This is the Nest implementation cookbook for Anarchitecture Bricks. It focuses on backend module composition and entry-point usage, while shared cross-stack contracts stay canonical in:
+This is the Nest implementation cookbook for Anarchitecture Bricks. It focuses on backend module composition and entry-point usage, with public HTTP ownership and local integration guidance defined in:
 
 - [TS Contracts Guide](/guides/ts-contracts.html)
 - [Design/UI Systems Guide](/guides/design-ui-systems.html)
@@ -89,11 +89,11 @@ For CommonJS, put the asynchronous bootstrap inside a function instead of using 
 ## Architecture
 
 - Nest libraries follow: `presentation -> application <- infrastructure`.
-- Shared contracts (DTOs/models/schemas) are consumed from TS packages (`@anarchitects/forms-ts`, `@anarchitects/auth-ts`).
+- Public HTTP schemas/operations belong to `anarchitecture-contracts`. Current TS DTOs/models remain the transitional implementation imports; domain semantics stay local.
 - Lightweight auth controller declarations live in `@anarchitects/auth-declarations`.
 - Domain libraries expose both facade composition modules and layer-specific secondary entry points.
 - Controllers keep `@RouteSchema` pure and imported from TS contract libraries.
-- OpenAPI metadata is assigned centrally in specs tooling.
+- The transitional operation ID/tag mapping remains central in specs tooling; generated output is baseline/conformance evidence, not canonical authority.
 
 ## Easy Mode with Composition Modules
 
@@ -135,18 +135,21 @@ Advanced mode is for replacing adapters, customizing policy wiring, or composing
 
 ## TS Contract Integration
 
-Contract ownership is TS-first:
-
-- Forms contracts in `@anarchitects/forms-ts`
-- Auth contracts in `@anarchitects/auth-ts`
-
-Nest libraries (`@anarchitects/forms-nest`, `@anarchitects/auth-nest`) map these contracts in presentation/application layers and keep schemas synchronized for OpenAPI generation. Ownership and compatibility policy are defined in [TS Contracts Guide](/guides/ts-contracts.html).
+Shared public HTTP contracts are authored Zod-first with operation definitions in
+`anarchitecture-contracts`; deterministic OpenAPI 3.1 is their published artifact.
+Nest presentation consumes immutable contract versions through verified bindings.
+Current imports from `@anarchitects/forms-ts`, `@anarchitects/auth-ts`, Identity and
+Newsletter TS packages remain the transitional baseline. Preserve Fastify schema
+validation/serialization until equivalent bindings and real HTTP conformance pass.
+Domain models, internal ports and `auth-ts` policy semantics remain implementation-owned.
+The [TS Contracts Guide](/guides/ts-contracts.html) defines adoption gates and compatibility policy;
+this documentation does not claim canonical packages are already consumed.
 
 ## Auth CASL Guidance
 
 For `@anarchitects/auth-nest`, document and preserve the two-layer authorization model:
 
-- `@anarchitects/auth-ts` owns the serialized `PolicyRule` and `RoutePolicy` contracts
+- `@anarchitects/auth-ts` owns `PolicyRule`/`RoutePolicy` semantics; Contracts owns their public HTTP representation, with lossless mapping required
 - `@anarchitects/auth-declarations` owns controller-facing decorators such as `@Public()`, `@Policies(...)`, and `@AuthorizeResource(...)`
 - `@Policies()` is a coarse route-level pre-check over `{ action, subject }`
 - `@AuthorizeResource(...)` is the resource-aware declaration that points runtime enforcement at the correct loader and route param
@@ -193,7 +196,7 @@ Malformed persisted permission payloads are treated as trust-boundary failures a
 
 ## Schema Evolution and Compatibility
 
-- Introduce additive fields before removals.
+- Review/version shared HTTP changes in Contracts first; even additive changes require semantic compatibility review.
 - Keep backward-compatible schema keys during migration windows.
 - Coordinate TS + Nest + Angular updates in one change when compatibility risk exists.
 - Preserve stable contracts required by frontend composition and runtime layout behavior.
@@ -201,14 +204,14 @@ Malformed persisted permission payloads are treated as trust-boundary failures a
 ## Contract Verification Workflow
 
 - Validate that controller schemas import TS contracts (no inline drift).
-- Run OpenAPI generation and inspect diffs for compatibility impact.
+- Preserve local OpenAPI checks; adoption additionally compares against pinned canonical OpenAPI and tests positive/negative/security behavior over real HTTP.
 - Verify Angular consumers (`@anarchitects/forms-angular`, `@anarchitects/auth-angular`) against updated contracts.
 - Run docs quality checks:
   `yarn nx run docs-hub:validate-content`, `yarn nx run docs-hub:build`, `yarn nx run docs-hub:verify`.
 
 ## Common Pitfalls
 
-- Treating Nest libraries as contract owners instead of TS consumers.
+- Treating local TS DTOs, Nest controllers or generated OpenAPI as canonical public HTTP authority.
 - Skipping facade modules and jumping to layer entry points for simple use cases.
 - Defining inline route schemas instead of importing TS DTO schemas.
 - Mixing persistence internals across domain boundaries.

@@ -297,7 +297,7 @@ ESM bundles so only the layers you import are included in your application bundl
 
 - Keep HTTP integration inside `data-access`; avoid direct endpoint calls in components.
 - Keep orchestration in `feature/state`, and keep `ui` components presentational.
-- Keep route and form contract alignment by regenerating OpenAPI when DTO/controller schemas evolve.
+- Follow [canonical HTTP ownership](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md): coordinate approved immutable contract versions and Angular/backend conformance. Preserve local OpenAPI regeneration as a transitional baseline check; it does not authorize wire changes.
 
 ## License
 

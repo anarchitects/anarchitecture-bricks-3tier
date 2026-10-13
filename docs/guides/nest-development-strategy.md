@@ -4,6 +4,14 @@
 
 This is the implementation strategy for [#463](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/463), following the [#462 audit](nest-11-12-compatibility-audit.md) and [ADR-0011](../adr/0011-verify-nest-runtime-support-independently-of-tooling.md). Decision date: 2026-10-09.
 
+## Contracts-first sequencing
+
+[ADR-0016](../adr/0016-consume-canonical-public-api-contracts.md) requires canonical
+contract extraction, publication and verified 3-tier/claimed-capability DDD adoption
+before separate Nest 12-native modernization. The tooling/compatibility evidence
+below remains valid for its recorded scope; it does not prove canonical contract
+conformance or authorize changing HTTP ownership through local controller metadata.
+
 ## Workspace decision
 
 Keep the root workspace on its locked **Nest 11.1.6**, Nx **23.2.1**, TypeScript **6.0.3** and Yarn **4.18.0** while the individual package issues are implemented. Develop against Nest 12 using the isolated, locked host below. This permits each package change to remain a separate reviewable PR; upgrading the root does not substitute for a package's own compatibility checks.
@@ -12,10 +20,10 @@ The intended Nest 12 development track uses **Nest 12.1.2** and `@anarchitects/n
 
 ## Separate release tracks are allowed
 
-The maintainer confirmed that a breaking Nest 12 change may ship on a **new minor line for the current pre-1.0 packages**. Existing Nest 11 minor lines may continue receiving features and fixes. A single package release is not required to advertise both Nest majors. A dual-major peer range remains an option only where the same artifact is verified on both.
+The maintainer confirmed that a breaking Nest 12 change may ship on a **new minor line for the current pre-1.0 packages**. Under the subsequent accepted ADR-0013–0016, Nest 11 lines receive security and bug-fix patches only; new Nest features target Nest 12. A single package release is not required to advertise both Nest majors. A dual-major peer range remains an option only where the same artifact is verified on both.
 
 - Before switching the main development line to Nest 12, preserve a Nest 11 maintenance branch from the last accepted Nest 11 commit. A proposed name is `maint/nest-11`; branch creation and its release routing are follow-up work, not done by this issue.
-- Apply portable fixes/features to both tracks with separate review and validation. Backport behavior, not necessarily identical dependency/configuration changes. Each track must pass its own host and package checks.
+- Apply portable security/bug fixes to both tracks with separate review and validation; do not backport new features to Nest 11. Backport behavior, not necessarily identical dependency/configuration changes. Each track must pass its own host and package checks.
 - Keep supported package/dependency versions explicit for each line. Do not widen the old Nest 11 artifacts' support claims retrospectively.
 - Repository release groups synchronize domain major/minor lines. The human/CI release decision must account for sibling TS/Angular packages and exact internal dependency ranges; do not independently assign an arbitrary Nest-package minor here.
 - Under [current release conventions](../../CONTRIBUTING.md#release-workflow-domain-groups), the pre-1.0 adjustment uses a breaking/major bump to advance to the next minor line. Publication remains CI-owned. The #469 review confirms `release.yml` accepts only `main`. Maintenance publication requires a reviewed ref/dist-tag routing change, tag ancestry and dependent-version validation before use; simply having a branch does not establish a working release path.

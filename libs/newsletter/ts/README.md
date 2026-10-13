@@ -1,5 +1,12 @@
 # @anarchitects/newsletter-ts
 
+Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
+under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
+This package retains its domain models and current TypeBox DTOs/exports as the
+transitional implementation baseline. Canonical Zod schemas and operations are
+adopted through immutable versions and verified compatibility; this README does
+not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+
 Framework-neutral subscription schemas and consent evidence contracts for Newsletter.
 This package follows [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md)
 and is implemented under [epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428).

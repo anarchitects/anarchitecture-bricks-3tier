@@ -30,6 +30,28 @@ Then read **all relevant engineering guides** for the affected packages and topi
 
 # Agents Instructions - Anarchitecture Bricks 3-Tier
 
+## Public HTTP contract authority
+
+Follow [local ADR-0016](docs/adr/0016-consume-canonical-public-api-contracts.md) and [Accepted Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md).
+[`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts) owns shared public HTTP contracts:
+Zod-first wire schemas plus first-class operation definitions, with deterministic
+OpenAPI 3.1 as a published artifact. Consume versioned published or pinned immutable
+artifacts; neither Bricks implementation nor its generated OpenAPI is authoritative.
+
+Before public API work, read the applicable canonical contract version and its
+compatibility rules. Current TypeBox DTOs, Fastify metadata, `tools/api-specs` and
+`docs/openapi` remain the transitional implementation baseline until audited adoption
+and conformance are proven. Preserve them; do not claim package availability or adoption
+from ADR acceptance. Do not author independent Zod/TypeBox copies or authorize a wire
+change through a local snapshot. Domain models, invariants and internal ports remain
+local; `auth-ts` retains policy semantics/evaluation, while Contracts owns HTTP representation.
+
+[Contracts epic #1](https://github.com/anarchitects/anarchitecture-contracts/issues/1) supplies the canonical artifacts;
+[3-tier epic #485](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/485)
+tracks adoption. Contracts and verified adoption precede separate Nest 12-native
+modernization. Nest 11 stays patch-only. Preserve existing runtime support and Fastify
+behavior until separately reviewed migration and release gates pass.
+
 ## Role
 
 You are an engineering assistant for an Nx monorepo containing reusable libraries and example applications.
@@ -56,11 +78,11 @@ You are an engineering assistant for an Nx monorepo containing reusable librarie
 
 ## Architectural Principles
 
-1. Shared schemas and domain models live in `libs/*/ts`.
-2. API documentation is derived from Nest controllers and `@RouteSchema`.
+1. Domain models and transitional implementation DTOs live in `libs/*/ts`; canonical shared public HTTP schemas and operations belong to `anarchitecture-contracts` under ADR-0016.
+2. Local API documentation is derived from Nest controllers and `@RouteSchema` as implementation baseline/conformance evidence, not canonical contract authority.
 3. Nest controllers must keep `@RouteSchema` pure Fastify schema fields only (`body`, `params`, `querystring`, `headers`, `response`).
-4. OpenAPI metadata (`operationId`, `tags`) is assigned centrally in `tools/api-specs/route-metadata.ts` during spec generation.
-5. Nest controllers must not define inline TypeBox route schemas; route schemas must be imported from domain TS DTO libraries (`libs/<domain>/ts/src/dtos`).
+4. Preserve the transitional `operationId`/`tags` mapping in `tools/api-specs/route-metadata.ts`; canonical operation definitions belong to Contracts. Retire duplicate authoring only after verified adoption.
+5. During transition, import existing TypeBox route schemas from domain TS DTO libraries (`libs/<domain>/ts/src/dtos`); no inline schemas. Future compatibility adapters must derive from canonical contracts, not become another authored source.
 6. Storybook is the default UI docs experience; Compodoc enriches technical API docs.
 7. Keep typed configuration centralized (`registerAs`, injection tokens, provider functions).
 8. Keep environment access out of domain logic.

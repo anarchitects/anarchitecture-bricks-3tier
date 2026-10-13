@@ -130,9 +130,11 @@ consumes challenges, including failed verification attempts; retry starts a new
 begin request. User verification follows the current `preferred` policy, so the
 capability does not promise a mandatory biometric/PIN step.
 
-The generated [OpenAPI specification](../openapi/openapi.yaml) is the structural
-contract; cryptographic checks and browser lifecycle behavior are exercised by
-the tests below.
+The local generated [OpenAPI specification](../openapi/openapi.yaml) records the
+transitional structural baseline; canonical public HTTP authority belongs to
+`anarchitecture-contracts` under the [TS Contracts Guide](/guides/ts-contracts.html).
+Cryptographic checks and browser lifecycle behavior are exercised by the tests below;
+canonical adoption additionally requires conformance to the pinned contract version.
 
 ## Angular host composition
 

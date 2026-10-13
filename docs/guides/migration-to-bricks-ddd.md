@@ -4,6 +4,20 @@
 - Audience: Maintainers planning or executing migration from `anarchitecture-bricks-3tier` to `anarchitecture-bricks-ddd`
 - Scope: Domain-by-domain and layer-by-layer migration from 3-tier structure to DDD structure
 
+## Shared public HTTP ownership
+
+[ADR-0016](../adr/0016-consume-canonical-public-api-contracts.md) applies Meta ADR-0012:
+`anarchitecture-contracts` owns Zod-first public wire schemas, operation definitions
+and their deterministic OpenAPI 3.1 artifacts. Both Bricks styles consume immutable
+versions and independently prove conformance for claimed capabilities. Neither
+implementation's generated OpenAPI is the other's master specification.
+
+The structural mappings below describe local implementation responsibilities.
+Local `ts/contracts` or `libs/*/ts` packages retain transitional DTOs and may provide
+compatibility mappings; they do not independently author canonical HTTP schemas.
+Domain meaning and internal ports remain implementation-owned. Track missing DDD
+capabilities explicitly as unsupported; no full DDD feature parity is implied.
+
 ## Purpose
 
 This guide describes how to migrate capabilities from the 3-tier repo to the DDD repo.
@@ -98,7 +112,7 @@ If not, decide whether:
 Start by separating:
 
 - domain meaning
-- public transport/contracts
+- local transport bindings consuming immutable canonical contracts from `anarchitecture-contracts`
 
 This is usually the most important structural change because the DDD repo treats those as separate first-class packages.
 
@@ -150,7 +164,7 @@ For each migrating domain, answer:
 
 1. What is the target bounded-context name in the DDD repo?
 2. What in `libs/<domain>/ts` becomes `ts/domain`?
-3. What in `libs/<domain>/ts` becomes `ts/contracts`?
+3. Which canonical contract versions are consumed, and which local compatibility bindings belong in `ts/contracts`?
 4. Which Nest code becomes `application`?
 5. Which Nest code becomes `presentation`?
 6. Which Nest code becomes `infrastructure-*`?

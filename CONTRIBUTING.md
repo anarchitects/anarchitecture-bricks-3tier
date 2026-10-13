@@ -2,17 +2,18 @@
 
 ## Core Rules
 
-1. Implementation-first HTTP docs
+1. Canonical public HTTP contracts and implementation evidence
 
-- Define API behavior in Nest controllers with pure `@RouteSchema` schema fields only (`body`, `params`, `querystring`, `headers`, `response`).
-- Do not set `operationId` or `tags` in controllers; maintain them in `tools/api-specs/route-metadata.ts`.
-- Generate OpenAPI via `nx run api-specs:generate`.
-- Never hand-edit `docs/openapi/openapi.json` or `docs/openapi/openapi.yaml`.
+- Follow [ADR-0016](docs/adr/0016-consume-canonical-public-api-contracts.md) and [Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md). Shared public wire schemas and operation definitions are authored Zod-first in [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts); deterministic OpenAPI 3.1 is a published artifact.
+- Read the applicable immutable contract version and compatibility rules before API work. Contract changes require upstream review/versioning and coordinated consumer migration, not only a local controller or snapshot edit.
+- Preserve current Fastify `@RouteSchema` fields (`body`, `params`, `querystring`, `headers`, `response`) and `operationId`/`tags` mappings in `tools/api-specs/route-metadata.ts` as the transitional implementation baseline.
+- Generate local evidence via `yarn nx run api-specs:generate`; never hand-edit `docs/openapi/openapi.json` or `docs/openapi/openapi.yaml`.
+- Contracts extraction and verified 3-tier/DDD adoption precede separate Nest 12-native modernization. Nest 11 remains patch-only; governance acceptance does not mean packages are available or adopted.
 
-2. Shared schemas in TypeScript libraries
+2. Domain models and transitional schemas in TypeScript libraries
 
-- Define DTOs and models under `libs/*/ts`.
-- Angular and Nest libraries consume these shared types.
+- Keep domain models, invariants and internal ports in their implementation domains; `auth-ts` retains policy semantics/evaluation. Contracts owns public HTTP representations.
+- Existing TypeBox DTOs under `libs/*/ts` remain compatibility material for Angular/Nest consumers. Future bridges must derive from canonical artifacts, without independent Zod/TypeBox authorship.
 - When contract-driven behavior changes, update the affected package READMEs and any relevant migration guide under `docs/guides/`.
 
 3. Library-first architecture
@@ -45,15 +46,15 @@ For Nest package changes and release preparation, follow the [packed Nest releas
 ```bash
 yarn install
 
-# API docs pipeline
+# Transitional implementation evidence pipeline
 nx run api-specs:generate
 nx run api-specs:lint
 nx run api-specs:diff
 nx run api-specs:verify
 
-# If you add/change a route, update:
-# tools/api-specs/route-metadata.ts (OPERATION_ID_MAP)
-# and run nx run api-specs:snapshot for intentional contract changes
+# After canonical review, align the transitional route metadata and inspect diffs.
+# Run yarn nx run api-specs:snapshot only for reviewed baseline changes;
+# a snapshot update does not authorize a public contract change.
 
 # Library quality checks
 nx affected -t lint test build
@@ -77,7 +78,7 @@ nx run release-tools:validate-non-bumping-commits
 
 - Use Conventional Commits (`feat`, `fix`, `refactor`, `chore`, `docs`, etc.).
 - For a new publishable project's implementation PR, use `init(<project-or-domain>): <description>` as the final or squash commit subject. The `init` type is configured with `semverBump: none`, so creating the package does not infer an additional release bump before its explicitly selected first release.
-- Document API-impacting changes with generated OpenAPI diff output.
+- Document API-impacting changes with the approved canonical contract version/migration, implementation OpenAPI diffs and real HTTP conformance evidence. Follow the [contract workflow](docs/guides/ts-contracts.md).
 - Include contract-test updates when endpoints or response schemas change.
 - A docs-surface PR changes only files in `docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root `README.md`/`CONTRIBUTING.md`, or `.github/workflows/docs-pages.yml`. For these PRs, use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
 - Mixed code/documentation PRs use the commit type and breaking-change markers appropriate to the code changes; updating a README does not make a feature or fix non-bumping.
@@ -141,9 +142,8 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 - Unit tests in each library.
 - OpenAPI verification and lint checks (`api-specs:*`).
-- Contract tests:
-  - Nest runtime responses validated against generated OpenAPI.
-  - Angular data-access validated against Prism mock built from generated OpenAPI.
+- Transitional checks retain Nest runtime validation against local generated OpenAPI and Angular data-access against its Prism mock. These do not establish canonical adoption.
+- Adoption additionally requires comparison to the same pinned canonical OpenAPI version, real positive/negative/security HTTP tests and packed-consumer/client verification; track capability/version support explicitly.
 - E2E checks run from Nx example applications.
 
 ### Passkey browser contracts

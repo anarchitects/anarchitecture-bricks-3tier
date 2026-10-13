@@ -1,5 +1,12 @@
 # @anarchitects/forms-ts
 
+Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
+under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
+This package retains its domain models and current TypeBox DTOs/exports as the
+transitional implementation baseline. Canonical Zod schemas and operations are
+adopted through immutable versions and verified compatibility; this README does
+not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+
 The next minor includes explicit `.js` relative declaration specifiers for strict NodeNext consumers. Existing public exports and ESM/CJS bundles are preserved. Packed Nest 11/12 consumers verify this contract through `release-tools:test-forms-identity-nest-compatibility` (#466). The declaration correction can also be backported to the previous maintenance minor.
 
 Schema-first form configuration and validation library built with TypeBox. Define forms declaratively
@@ -8,7 +15,7 @@ and generate runtime validation schemas automatically.
 ## Developer + AI Agent Start Here
 
 - Read this README before generating DTO/model code that depends on `@anarchitects/forms-ts`.
-- Treat this package as the contract source of truth for forms models/DTOs used by Angular and Nest packages.
+- Keep Forms models/renderer semantics here; existing DTOs remain transitional consumers of the canonical public HTTP ownership rules above.
 - Prefer public exports (`@anarchitects/forms-ts`, `/builders`, `/dtos`, `/models`) and avoid internal path imports.
 - Keep framework-specific behavior outside this package.
 
@@ -271,7 +278,7 @@ import { schemaFromConfig } from '@anarchitects/forms-ts/builders';
 
 ## Development notes
 
-- Treat this package as the source of truth for form DTO/model contracts.
+- Preserve local Forms models and transitional DTO exports; coordinate public HTTP changes in Contracts first.
 - Keep builder behavior deterministic and framework-agnostic.
 - Regenerate API artifacts and verify contract tests when DTO schemas change.
 

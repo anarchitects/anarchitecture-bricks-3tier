@@ -1,12 +1,19 @@
 # @anarchitects/identity-ts
 
+Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
+under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
+This package retains its domain models and current TypeBox DTOs/exports as the
+transitional implementation baseline. Canonical Zod schemas and operations are
+adopted through immutable versions and verified compatibility; this README does
+not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+
 The next minor includes explicit `.js` relative declaration specifiers for strict NodeNext consumers. Existing public exports and ESM/CJS bundles are preserved. Packed Nest 11/12 consumers verify this contract through `release-tools:test-forms-identity-nest-compatibility` (#466). The declaration correction can also be backported to the previous maintenance minor.
 
 Shared TypeScript models and TypeBox DTO schemas for the Anarchitecture identity domain.
 
 ## Developer + AI Agent Start Here
 
-- Treat this package as the canonical home for shared identity contracts and models.
+- Keep identity domain models here and preserve transitional DTO exports; Contracts owns canonical public HTTP definitions.
 - Prefer public imports from `@anarchitects/identity-ts`, `@anarchitects/identity-ts/models`, or `@anarchitects/identity-ts/dtos`.
 - Keep framework-specific behavior in `@anarchitects/identity-angular` and `@anarchitects/identity-nest`.
 
@@ -66,12 +73,12 @@ const profile: UserProfile = {
 
 ## Development notes
 
-- This package is the canonical source for shared identity profile contracts.
+- This package owns local profile models and transitional DTOs; canonical HTTP definitions belong to Contracts.
 - Persistence behavior, repositories, services, and HTTP endpoints belong to follow-up identity issues.
 
 ## Contributing
 
-Add new identity DTOs and models here first, then wire Angular and Nest consumers against the published entry points.
+Coordinate public HTTP changes in Contracts first, then adapt local DTO bindings and Angular/Nest consumers through published entry points. Domain model changes remain local.
 
 ## License
 
