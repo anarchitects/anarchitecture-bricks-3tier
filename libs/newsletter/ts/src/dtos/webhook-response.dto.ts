@@ -1,13 +1,10 @@
-import { Type, type Static } from '@sinclair/typebox';
+import type { Static } from '@sinclair/typebox';
+import { NewsletterWebhookResponseSchema as CanonicalSchema } from '@anarchitects/newsletter-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
 
 /** Aggregate acknowledgement; never returns addresses or provider subscriber state. */
-export const NewsletterWebhookResponseSchema = Type.Object(
-  {
-    recorded: Type.Integer({ minimum: 0 }),
-    duplicates: Type.Integer({ minimum: 0 }),
-  },
-  { additionalProperties: false },
-);
+export const NewsletterWebhookResponseSchema =
+  canonicalTypeBox(CanonicalSchema);
 export type NewsletterWebhookResponseDTO = Static<
   typeof NewsletterWebhookResponseSchema
 >;

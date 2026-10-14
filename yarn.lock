@@ -55,12 +55,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anarchitects/forms-contracts@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@anarchitects/forms-contracts@npm:0.1.0"
+  dependencies:
+    zod: "npm:4.5.0"
+  checksum: 10c0/c5928d970f5255c0bf2969165e6ecf0b8aaa9e05a8799ab5632fcfd950b8ad1a7e8548db6ef5f7876a964ed13ef7829b6dafadc969649a2b4b3f86eafa02f5e1
+  languageName: node
+  linkType: hard
+
 "@anarchitects/identity-contracts@npm:0.0.1":
   version: 0.0.1
   resolution: "@anarchitects/identity-contracts@npm:0.0.1"
   dependencies:
     zod: "npm:4.5.0"
   checksum: 10c0/b969d44d3cde6b689514ed6bfef48586ea1a24b51a91b8e4a35ce3c0ea68ad05168261adbef605dd4abfe47eda74c62408ced7dade25e88dc58d62ad7450fd09
+  languageName: node
+  linkType: hard
+
+"@anarchitects/newsletter-contracts@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@anarchitects/newsletter-contracts@npm:0.1.0"
+  dependencies:
+    zod: "npm:4.5.0"
+  checksum: 10c0/a7602997c130baafb4930e3372f5deb5118e9ceaca6a639ffcc8026f9107756554528e02f514eae3e825afd01479f8a9c1eae83db1f20443a5504169a327738d
   languageName: node
   linkType: hard
 
@@ -90,7 +108,9 @@ __metadata:
   dependencies:
     "@anarchitects/auth-contracts": "npm:0.1.0"
     "@anarchitects/better-auth-typeorm-adapter": "npm:0.2.0"
+    "@anarchitects/forms-contracts": "npm:0.1.0"
     "@anarchitects/identity-contracts": "npm:0.0.1"
+    "@anarchitects/newsletter-contracts": "npm:0.1.0"
     "@anarchitects/nx-js": "npm:^0.0.2"
     "@anarchitects/tailwind": "portal:./libs/common/tailwind"
     "@angular-devkit/architect": "npm:0.2201.9"

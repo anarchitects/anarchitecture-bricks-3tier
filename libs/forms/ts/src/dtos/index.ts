@@ -8,3 +8,4 @@ export * from './form-definition-query.dto.js';
 export * from './form-definition-request.dto.js';
 export * from './form-definition-response.dto.js';
 export * from './form-definition-envelope-response.dto.js';
+export * from './public-form-definition-response.dto.js';

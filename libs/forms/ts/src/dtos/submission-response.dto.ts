@@ -1,12 +1,6 @@
-import { Static, Type } from '@sinclair/typebox';
+import { SubmissionResponseSchema as CanonicalSchema } from '@anarchitects/forms-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
+import type { Static } from '@sinclair/typebox';
 
-export const SubmissionResponseSchema = Type.Object({
-  id: Type.String(),
-  formId: Type.String(),
-  formVersion: Type.Integer({ minimum: 1 }),
-  payload: Type.Record(Type.String(), Type.Unknown()),
-  createdAt: Type.String({ format: 'date-time' }),
-  updatedAt: Type.String({ format: 'date-time' }),
-});
-
+export const SubmissionResponseSchema = canonicalTypeBox(CanonicalSchema);
 export type SubmissionResponseDTO = Static<typeof SubmissionResponseSchema>;

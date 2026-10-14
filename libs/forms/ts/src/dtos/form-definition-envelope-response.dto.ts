@@ -1,11 +1,9 @@
-import { Static, Type } from '@sinclair/typebox';
-import { FormDefinitionResponseSchema } from './form-definition-response.dto.js';
+import { FormDefinitionEnvelopeResponseSchema as CanonicalSchema } from '@anarchitects/forms-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
+import type { Static } from '@sinclair/typebox';
 
-export const FormDefinitionEnvelopeResponseSchema = Type.Object({
-  config: FormDefinitionResponseSchema,
-  schema: Type.Unknown(),
-});
-
+export const FormDefinitionEnvelopeResponseSchema =
+  canonicalTypeBox(CanonicalSchema);
 export type FormDefinitionEnvelopeResponseDTO = Static<
   typeof FormDefinitionEnvelopeResponseSchema
 >;

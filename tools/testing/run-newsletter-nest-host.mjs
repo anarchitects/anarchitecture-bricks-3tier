@@ -133,6 +133,12 @@ try {
     nestHostCache(host),
   ];
   if (refresh) {
+    const previous = readJson(
+      join(fixtures, configuration, 'package-lock.json.template'),
+    );
+    for (const name of contracts.keys())
+      delete previous.packages[`node_modules/${name}`];
+    writeFileSync(join(host, 'package-lock.json'), JSON.stringify(previous));
     run('npm', ['install', '--package-lock-only', ...npmFlags]);
     const lock = readJson(join(host, 'package-lock.json'));
     for (const name of contracts.keys())

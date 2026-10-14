@@ -70,7 +70,7 @@ export class NewsletterModule {
             useFactory: async (dataSource: unknown) => {
               // Keep TypeORM optional for hosts supplying their own durable repository.
               const { TypeOrmConsentRepository } = await import(
-                './infrastructure-persistence'
+                './infrastructure-persistence/index.js'
               );
               return new TypeOrmConsentRepository(
                 dataSource as ConstructorParameters<
@@ -161,7 +161,7 @@ export class NewsletterModule {
           inject: [persistence.dataSourceToken],
           useFactory: async (dataSource: unknown) => {
             const { TypeOrmNativeSubscriberRepository } = await import(
-              './infrastructure-persistence'
+              './infrastructure-persistence/index.js'
             );
             return new NewsletterNativeLifecycleService(
               new TypeOrmNativeSubscriberRepository(

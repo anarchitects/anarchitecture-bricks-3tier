@@ -1,7 +1,6 @@
-import { Static, Type } from '@sinclair/typebox';
+import { SubmissionIdParamsSchema as CanonicalSchema } from '@anarchitects/forms-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
+import type { Static } from '@sinclair/typebox';
 
-export const SubmissionIdParamsSchema = Type.Object({
-  submissionId: Type.String({ format: 'uuid' }),
-});
-
+export const SubmissionIdParamsSchema = canonicalTypeBox(CanonicalSchema);
 export type SubmissionIdParamsDTO = Static<typeof SubmissionIdParamsSchema>;

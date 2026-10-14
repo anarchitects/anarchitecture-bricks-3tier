@@ -1,11 +1,11 @@
-import { Type, type Static } from '@sinclair/typebox';
-import { NewsletterSubscriptionResponseSchema } from './subscription-response.dto';
+import type { Static } from '@sinclair/typebox';
+import { NewsletterNativeActionRequestSchema as CanonicalSchema } from '@anarchitects/newsletter-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
+import { NewsletterSubscriptionResponseSchema } from './subscription-response.dto.js';
 
 /** Validate transport shape only; malformed/expired/replayed bearer secrets receive the same acknowledgement. */
-export const NewsletterNativeActionRequestSchema = Type.Object(
-  { token: Type.String({ maxLength: 128 }) },
-  { additionalProperties: false },
-);
+export const NewsletterNativeActionRequestSchema =
+  canonicalTypeBox(CanonicalSchema);
 export type NewsletterNativeActionRequestDTO = Static<
   typeof NewsletterNativeActionRequestSchema
 >;

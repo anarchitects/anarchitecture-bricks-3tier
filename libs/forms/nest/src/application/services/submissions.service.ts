@@ -1,4 +1,6 @@
+import { validateFormPayload } from '../validation/validate-form-payload';
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
@@ -37,7 +39,7 @@ export class SubmissionsService {
     return submission;
   }
 
-  async submit(input: Partial<Submission>) {
+  async submit(input: Partial<Submission>): Promise<Submission> {
     const { formId, formVersion = 1 } = input;
     if (!formId) {
       throw new Error('Form ID is required');
@@ -46,6 +48,9 @@ export class SubmissionsService {
       formId,
       formVersion,
     );
+    if (!validateFormPayload(config, input.payload)) {
+      throw new BadRequestException('Invalid form submission.');
+    }
     const rec = await this.repo.createSubmission(input);
     const mailer = this.mailer ?? NOOP_MAILER_PORT;
 

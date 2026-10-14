@@ -1,12 +1,9 @@
-import { Type, type Static } from '@sinclair/typebox';
+import { NewsletterAcceptedResponseSchema as CanonicalSchema } from '@anarchitects/newsletter-contracts';
+import type { Static } from '@sinclair/typebox';
+import { canonicalTypeBox } from './canonical-typebox.js';
 
-/** Same acknowledgement for new/existing addresses and discarded honeypot submissions. */
-export const NewsletterSubscriptionResponseSchema = Type.Object(
-  { accepted: Type.Literal(true) },
-  { additionalProperties: false },
-);
-
-/** Acceptance reveals neither subscriber existence nor double-opt-in/provider status. */
+export const NewsletterSubscriptionResponseSchema =
+  canonicalTypeBox(CanonicalSchema);
 export type NewsletterSubscriptionResponseDTO = Static<
   typeof NewsletterSubscriptionResponseSchema
 >;

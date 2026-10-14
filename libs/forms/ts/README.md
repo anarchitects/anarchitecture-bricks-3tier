@@ -2,10 +2,12 @@
 
 Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
 under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
-This package retains its domain models and current TypeBox DTOs/exports as the
-transitional implementation baseline. Canonical Zod schemas and operations are
-adopted through immutable versions and verified compatibility; this README does
-not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+This package consumes `@anarchitects/forms-contracts@0.1.0` and Zod `4.5.0`
+through derived TypeBox compatibility bindings. Domain models remain local.
+Use export-aware TypeScript resolution (`NodeNext`, supported `Node16`, or
+`bundler`); legacy `node10` resolution is no longer supported. Existing DTO names
+and ESM/CommonJS entry points remain. See the [adoption record](../../../docs/audits/489-canonical-adoption.md)
+for exact scope, migration requirements and remaining host-conformance gates.
 
 The next minor includes explicit `.js` relative declaration specifiers for strict NodeNext consumers. Existing public exports and ESM/CJS bundles are preserved. Packed Nest 11/12 consumers verify this contract through `release-tools:test-forms-identity-nest-compatibility` (#466). The declaration correction can also be backported to the previous maintenance minor.
 
@@ -289,3 +291,21 @@ This library is part of the [Anarchitecture Bricks](https://github.com/anarchite
 ## License
 
 Released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Canonical public definition migration
+
+Public HTTP reads use `PublicFormDefinitionResponseDTO` and
+`PublicFormDefinitionEnvelopeResponseDTO`, derived from the published canonical
+safe targets. Use `toPublicFormDefinitionEnvelopeResponseDTO` from `/mappers`;
+it selects public fields and regenerates the dynamic schema without delivery data.
+Legacy definition DTOs/mappers remain compatibility exports and must not be used
+to return delivery credentials, including in administrative read endpoints.
+`toFormDeliveryStatusDTO` provides only a configured indicator for restricted host
+management views. Internal `FormConfig.delivery` remains available to delivery code.
+
+The dynamic builder now correctly marks optional fields optional and constrains
+select values to configured options. Nest validates actual submitted values against
+the exact definition/version before side effects, including cross-field rules.
+This is the approved D05/D08 security migration, with consumer and release impact
+recorded in the adoption audit. Canonical Forms capability blockers are still
+subject to upstream review; package adoption is not a deployment certification.

@@ -16,6 +16,12 @@ function tFromField(f: FormField): TSchema {
     return Type.Boolean();
   }
 
+  if (f.kind === 'select' && f.options?.length) {
+    return Type.Union(
+      f.options.map((option) => Type.Literal(option.value, stringConstraints)),
+    );
+  }
+
   if (f.kind === 'file') {
     return Type.Object({
       fileId: Type.String(),
@@ -27,11 +33,10 @@ function tFromField(f: FormField): TSchema {
 }
 
 export function schemaFromConfig(cfg: FormConfig) {
-  const props: Record<string, TSchema> = {};
-  const required: string[] = [];
+  const props: Record<string, TSchema> = Object.create(null);
   for (const f of cfg.fields) {
-    props[f.name] = tFromField(f);
-    if (f.required) required.push(f.name);
+    const field = tFromField(f);
+    props[f.name] = f.required ? field : Type.Optional(field);
   }
-  return Type.Object(props, { additionalProperties: false, required });
+  return Type.Object(props, { additionalProperties: false });
 }

@@ -179,17 +179,20 @@ try {
     run('npm', ['ls', '--all'], true);
     run('npm', ['ls', '--depth=0']);
     run(hostNode, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json']);
-    for (const entry of Object.keys(
-      contracts.get('@anarchitects/identity-ts').exports,
-    )) {
-      if (entry.endsWith('.json')) continue;
-      const specifier = `@anarchitects/identity-ts${entry === '.' ? '' : entry.slice(1)}`;
-      run(hostNode, ['-e', `require(${JSON.stringify(specifier)})`]);
-      run(hostNode, [
-        '--input-type=module',
-        '-e',
-        `await import(${JSON.stringify(specifier)})`,
-      ]);
+    for (const name of [
+      '@anarchitects/forms-ts',
+      '@anarchitects/identity-ts',
+    ]) {
+      for (const entry of Object.keys(contracts.get(name).exports)) {
+        if (entry.endsWith('.json')) continue;
+        const specifier = `${name}${entry === '.' ? '' : entry.slice(1)}`;
+        run(hostNode, ['-e', `require(${JSON.stringify(specifier)})`]);
+        run(hostNode, [
+          '--input-type=module',
+          '-e',
+          `await import(${JSON.stringify(specifier)})`,
+        ]);
+      }
     }
     run(hostNode, ['out/consumer.mjs']);
     container = await new GenericContainer('postgres:16-alpine')

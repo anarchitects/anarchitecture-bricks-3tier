@@ -1,12 +1,12 @@
-export type { NewsletterConsentPolicy } from './consent-policy.model';
+export type { NewsletterConsentPolicy } from './consent-policy.model.js';
 export type {
   NewsletterConsentEvent,
   NewsletterConsentGrantedEvent,
   NewsletterConsentWithdrawnEvent,
   NewsletterWithdrawalEvent,
-} from './consent-event.model';
+} from './consent-event.model.js';
 
 export type {
   NewsletterNativeSubscriber,
   NewsletterNativeSubscriberStatus,
-} from './native-subscriber.model';
+} from './native-subscriber.model.js';

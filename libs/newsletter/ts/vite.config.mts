@@ -31,7 +31,7 @@ export default defineConfig(() => ({
                   content.replace(
                     /from (['"])(\.[^'"]+)\1/g,
                     (_match, quote, specifier) =>
-                      `from ${quote}${specifier}.${extension}${quote}`,
+                      `from ${quote}${specifier.replace(/\.js$/, '')}.${extension}${quote}`,
                   ),
                 ),
               ),
@@ -53,7 +53,15 @@ export default defineConfig(() => ({
       },
       formats: ['es' as const, 'cjs' as const],
     },
-    rolldownOptions: { external: ['@sinclair/typebox'] },
+    rolldownOptions: {
+      external: (id) =>
+        id === '@sinclair/typebox' ||
+        id.startsWith('@sinclair/typebox/') ||
+        id === '@anarchitects/newsletter-contracts' ||
+        id.startsWith('@anarchitects/newsletter-contracts/') ||
+        id === 'zod' ||
+        id.startsWith('zod/'),
+    },
   },
   test: {
     name: 'newsletter-ts',

@@ -44,7 +44,13 @@ export default defineConfig(() => ({
     },
     rolldownOptions: {
       // External packages that should not be bundled into your library.
-      external: ['@sinclair/typebox'],
+      external: (id) =>
+        id === '@sinclair/typebox' ||
+        id.startsWith('@sinclair/typebox/') ||
+        id === '@anarchitects/forms-contracts' ||
+        id.startsWith('@anarchitects/forms-contracts/') ||
+        id === 'zod' ||
+        id.startsWith('zod/'),
     },
   },
   test: {
