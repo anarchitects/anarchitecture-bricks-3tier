@@ -21,7 +21,9 @@
     "anarchitecture"
   ],
   "dependencies": {
-    "@sinclair/typebox": "0.34.41"
+    "@sinclair/typebox": "0.34.41",
+    "@anarchitects/identity-contracts": "0.0.1",
+    "zod": "4.5.0"
   },
   "exports": {
     ".": {

@@ -1,8 +1,7 @@
-import { Static, Type } from '@sinclair/typebox';
+import { JwtLogoutRequestSchema as canonical } from '@anarchitects/auth-contracts';
+import type { Static } from '@sinclair/typebox';
+import { canonicalTypeBox } from '../contracts/canonical-typebox.js';
 
-export const JwtLogoutRequestSchema = Type.Object({
-  refreshToken: Type.String({ minLength: 1 }),
-  accessToken: Type.Optional(Type.String({ minLength: 1 })),
-});
+export const JwtLogoutRequestSchema = canonicalTypeBox(canonical);
 
 export type JwtLogoutRequestDTO = Static<typeof JwtLogoutRequestSchema>;

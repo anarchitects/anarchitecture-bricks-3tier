@@ -60,6 +60,7 @@
     "@vitest/coverage-v8": "4.0.9",
     "@vitest/ui": "4.0.9",
     "ajv": "^8.0.0",
+    "ajv-formats": "3.0.1",
     "angular-eslint": "22.5.0",
     "autoprefixer": "^10.4.0",
     "css-loader": "7.1.5",
@@ -108,7 +109,9 @@
   },
   "packageManager": "yarn@4.18.0",
   "dependencies": {
+    "@anarchitects/auth-contracts": "0.1.0",
     "@anarchitects/better-auth-typeorm-adapter": "0.2.0",
+    "@anarchitects/identity-contracts": "0.0.1",
     "@angular/common": "22.1.8",
     "@angular/compiler": "22.1.8",
     "@angular/core": "22.1.8",
@@ -151,6 +154,7 @@
     "rxjs": "~7.8.0",
     "typeorm": "^1.1.1",
     "uuidv7": "^1.0.2",
+    "zod": "4.5.0",
     "zone.js": "0.16.3"
   },
   "nx": {

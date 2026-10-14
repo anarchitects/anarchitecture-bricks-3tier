@@ -47,8 +47,18 @@ export default defineConfig(() => ({
       formats: ['es' as const, 'cjs' as const],
     },
     rolldownOptions: {
+      // Keep dependency order across the root and optional passkey entry points.
+      // Shared chunk factoring otherwise introduces a CJS initialization cycle.
+      output: {
+        preserveModules: true,
+        preserveModulesRoot: path.join(__dirname, 'src'),
+      },
       // External packages that should not be bundled into your library.
-      external: ['@sinclair/typebox'],
+      external: [
+        /^@anarchitects\/auth-contracts(?:\/|$)/,
+        /^zod(?:\/|$)/,
+        /^@sinclair\/typebox(?:\/|$)/,
+      ],
     },
   },
   test: {

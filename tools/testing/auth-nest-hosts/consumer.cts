@@ -354,6 +354,28 @@ export async function runConsumer(
     }
     await expectRequest('/auth/logout', 200, {}, sessionCookie);
     await expectRequest('/security/me', 401, undefined, sessionCookie);
+    // Exercise configured canonical bindings through each packed Nest host.
+    // Only the application result is controlled; Fastify parsing remains real.
+    for (const minimum of [10, 3]) {
+      await app.close();
+      options.contracts = { login: { password: { minLength: minimum } } };
+      app = await createApp('explicit');
+      const received: unknown[] = [];
+      app.get(AuthService).login = async (dto) => {
+        received.push(dto);
+        return {
+          body: { user: { id: 'profile-probe' }, rbac: [] },
+          headers: new Headers(),
+        };
+      };
+      const payload = {
+        credential: 'consumer@example.test',
+        password: minimum === 10 ? '12345678' : '1234',
+      };
+      await expectRequest('/auth/login', minimum === 10 ? 400 : 200, payload);
+      assert.deepEqual(received, minimum === 10 ? [] : [payload]);
+    }
+    options.contracts = undefined;
     await app.close();
     app = await createApp('disabled');
     assert.throws(() => app.get(AuthPasskeyService));

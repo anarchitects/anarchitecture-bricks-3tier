@@ -1,36 +1,17 @@
-import { type Static, Type } from '@sinclair/typebox';
+import * as canonical from '@anarchitects/auth-contracts/passkeys';
+import type { Static } from '@sinclair/typebox';
+import { canonicalTypeBox } from '../../contracts/canonical-typebox.js';
 import { SuccessResponseSchema } from '../success-response.dto.js';
-import {
-  PasskeyAuthenticatorAttachmentSchema,
-  PasskeyRegistrationCredentialSchema,
-  PasskeyRegistrationOptionsSchema,
-} from './webauthn-json.schemas.js';
+import { PasskeyRegistrationOptionsSchema } from './webauthn-json.schemas.js';
 
-/** Register for the authenticated user; user identity and verification policy are server-owned. */
-export const PasskeyRegistrationBeginRequestSchema = Type.Object(
-  {
-    authenticatorAttachment: Type.Optional(
-      PasskeyAuthenticatorAttachmentSchema,
-    ),
-  },
-  { additionalProperties: false },
+export const PasskeyRegistrationBeginRequestSchema = canonicalTypeBox(
+  canonical.PasskeyRegistrationBeginRequestSchema,
 );
-
 export const PasskeyRegistrationBeginResponseSchema =
   PasskeyRegistrationOptionsSchema;
-
-/** Browser attestation plus an optional display label; never accepts a client-selected userId. */
-export const PasskeyRegistrationFinishRequestSchema = Type.Object(
-  {
-    response: PasskeyRegistrationCredentialSchema,
-    name: Type.Optional(
-      Type.String({ minLength: 1, maxLength: 255, pattern: '\\S' }),
-    ),
-  },
-  { additionalProperties: false },
+export const PasskeyRegistrationFinishRequestSchema = canonicalTypeBox(
+  canonical.PasskeyRegistrationFinishRequestSchema,
 );
-
-/** Registration adds a credential to the existing session; persistence details stay private. */
 export const PasskeyRegistrationFinishResponseSchema = SuccessResponseSchema;
 
 export type PasskeyRegistrationBeginRequestDTO = Static<

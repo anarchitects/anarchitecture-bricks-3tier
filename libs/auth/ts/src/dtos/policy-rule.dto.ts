@@ -1,22 +1,26 @@
-import { Static, Type } from '@sinclair/typebox';
+import type { z } from 'zod';
+import {
+  PolicyRuleSchema as canonicalRule,
+  PolicyRuleArraySchema as canonicalRules,
+} from '@anarchitects/auth-contracts/policy';
 import { Value } from '@sinclair/typebox/value';
+import {
+  canonicalTypeBox,
+  type CompatibilitySchema,
+} from '../contracts/canonical-typebox.js';
 
-export const PolicyRuleSchema = Type.Object(
-  {
-    action: Type.String({ minLength: 1 }),
-    subject: Type.String({ minLength: 1 }),
-    conditions: Type.Optional(Type.Record(Type.String(), Type.Unknown())),
-    fields: Type.Optional(Type.Array(Type.String({ minLength: 1 }))),
-    inverted: Type.Optional(Type.Boolean()),
-    reason: Type.Optional(Type.String({ minLength: 1 })),
-  },
-  { additionalProperties: false },
-);
+export const PolicyRuleSchema = canonicalTypeBox(
+  canonicalRule,
+) as CompatibilitySchema<PolicyRuleDTO>;
+export const PolicyRuleArraySchema = canonicalTypeBox(
+  canonicalRules,
+) as CompatibilitySchema<PolicyRuleArrayDTO>;
 
-export const PolicyRuleArraySchema = Type.Array(PolicyRuleSchema);
-
-export type PolicyRuleDTO = Static<typeof PolicyRuleSchema>;
-export type PolicyRuleArrayDTO = Static<typeof PolicyRuleArraySchema>;
+export type PolicyRuleDTO = Omit<
+  z.output<typeof canonicalRule>,
+  'conditions'
+> & { conditions?: Record<string, unknown> };
+export type PolicyRuleArrayDTO = PolicyRuleDTO[];
 
 const formatValidationError = (value: unknown, fieldName: string): string => {
   const [firstError] = [...Value.Errors(PolicyRuleSchema, value)];
