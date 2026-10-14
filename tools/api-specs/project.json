@@ -59,8 +59,9 @@
       "executor": "nx:run-commands",
       "dependsOn": ["generate"],
       "options": {
-        "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/diff.ts origin/main"
-      }
+        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json tools/api-specs/diff.ts"
+      },
+      "cache": false
     },
     "mock": {
       "executor": "nx:run-commands",
@@ -69,19 +70,13 @@
         "command": "yarn exec prism mock docs/openapi/openapi.yaml -p 4010"
       }
     },
-    "snapshot": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["generate"],
-      "options": {
-        "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/snapshot.ts"
-      }
-    },
     "verify": {
       "executor": "nx:run-commands",
       "dependsOn": ["generate"],
       "options": {
-        "command": "ts-node -r tsconfig-paths/register --project tools/api-specs/tsconfig.json tools/api-specs/verify.ts"
-      }
+        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json tools/api-specs/verify.ts"
+      },
+      "cache": false
     },
     "audit-legacy": {
       "executor": "nx:run-commands",
@@ -110,6 +105,48 @@
       "cache": false,
       "options": {
         "command": "yarn exec eslint tools/api-specs/audit-legacy.mjs tools/api-specs/probe-legacy-validation.ts tools/api-specs/verify-legacy-audit.mjs"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json --test tools/api-specs/conformance.spec.ts"
+      },
+      "dependsOn": ["generate"]
+    },
+    "conformance-http": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "parallelism": false,
+      "dependsOn": [
+        {
+          "projects": ["release-tools"],
+          "target": "validate-nest-package-compatibility"
+        }
+      ],
+      "options": {
+        "commands": [
+          "node tools/testing/run-auth-nest-host.mjs nest11",
+          "node tools/testing/run-forms-identity-nest-host.mjs nest11",
+          "node tools/testing/run-newsletter-nest-host.mjs nest11"
+        ],
+        "parallel": false
+      },
+      "configurations": {
+        "nest12": {
+          "commands": [
+            "node tools/testing/run-auth-nest-host.mjs nest12",
+            "node tools/testing/run-forms-identity-nest-host.mjs nest12",
+            "node tools/testing/run-newsletter-nest-host.mjs nest12"
+          ]
+        }
+      }
+    },
+    "lint-tools": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn exec eslint tools/api-specs/canonical-artifacts.mjs tools/api-specs/compatibility.mjs tools/api-specs/route-metadata.ts tools/api-specs/verify.ts tools/api-specs/diff.ts tools/api-specs/conformance.spec.ts tools/testing/canonical-http.cts"
       }
     }
   }

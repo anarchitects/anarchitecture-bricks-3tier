@@ -1,94 +1,14 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-type OpenApiDocument = {
-  paths?: Record<string, Record<string, { operationId?: string }>>;
-};
+import {
+  loadCanonicalArtifacts,
+  compareOperationInventory,
+  comparisonReport,
+} from './canonical-artifacts.mjs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 
-type SnapshotDocument = {
-  paths: Record<string, Record<string, string>>;
-};
-
-const OPENAPI_PATH = join(process.cwd(), 'docs/openapi/openapi.json');
-const SNAPSHOT_PATH = join(
-  process.cwd(),
-  'tools/api-specs/openapi.snapshot.json',
-);
 const WORKSPACE_ROOT = process.cwd();
-
-const REQUIRED_PATHS: Array<{ path: string; methods: string[] }> = [
-  { path: '/newsletter/webhook', methods: ['post'] },
-  { path: '/newsletter/subscribe', methods: ['post'] },
-  { path: '/newsletter/confirm', methods: ['post'] },
-  { path: '/newsletter/unsubscribe', methods: ['post'] },
-  { path: '/auth/register', methods: ['post'] },
-  { path: '/auth/login', methods: ['post'] },
-  { path: '/auth/me', methods: ['get'] },
-  { path: '/forms/{formId}', methods: ['get'] },
-  { path: '/forms/submit', methods: ['post'] },
-  { path: '/forms/submissions', methods: ['get'] },
-  { path: '/forms/submissions/{submissionId}', methods: ['get'] },
-  { path: '/identity/profiles', methods: ['post'] },
-  { path: '/identity/profiles/{profileId}', methods: ['get', 'patch'] },
-  {
-    path: '/identity/profiles/by-auth-user/{authUserId}',
-    methods: ['get'],
-  },
-];
-
-function readOpenApi(): OpenApiDocument {
-  return JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as OpenApiDocument;
-}
-
-function readSnapshot(): SnapshotDocument {
-  return JSON.parse(readFileSync(SNAPSHOT_PATH, 'utf8')) as SnapshotDocument;
-}
-
-function summarizePaths(
-  document: OpenApiDocument,
-): Record<string, Record<string, string>> {
-  const output: Record<string, Record<string, string>> = {};
-  const paths = document.paths ?? {};
-
-  for (const [pathName, methods] of Object.entries(paths).sort((a, b) =>
-    a[0].localeCompare(b[0]),
-  )) {
-    output[pathName] = {};
-
-    for (const [method, operation] of Object.entries(methods).sort((a, b) =>
-      a[0].localeCompare(b[0]),
-    )) {
-      output[pathName][method] =
-        operation.operationId ?? 'missing-operation-id';
-    }
-  }
-
-  return output;
-}
-
-function assertRequiredPaths(document: OpenApiDocument) {
-  const paths = document.paths ?? {};
-  const errors: string[] = [];
-
-  for (const required of REQUIRED_PATHS) {
-    const methods = paths[required.path];
-
-    if (!methods) {
-      errors.push(`Missing required path: ${required.path}`);
-      continue;
-    }
-
-    for (const method of required.methods) {
-      if (!methods[method]) {
-        errors.push(
-          `Missing required method: ${method.toUpperCase()} ${required.path}`,
-        );
-      }
-    }
-  }
-
-  return errors;
-}
 
 function listFilesRecursive(rootPath: string): string[] {
   try {
@@ -186,20 +106,18 @@ function assertControllerSchemaPurity(controllerFiles: string[]) {
 }
 
 function run() {
-  const openApi = readOpenApi();
-  const snapshot = readSnapshot();
-  const currentSummary = summarizePaths(openApi);
-
+  const openApi = JSON.parse(readFileSync('docs/openapi/openapi.json', 'utf8'));
+  const artifacts = loadCanonicalArtifacts();
+  const report = comparisonReport(openApi, artifacts);
+  mkdirSync('dist/api-conformance', { recursive: true });
+  writeFileSync(
+    'dist/api-conformance/openapi-comparison.json',
+    `${JSON.stringify(report, null, 2)}\n`,
+  );
   const errors = [
-    ...assertRequiredPaths(openApi),
+    ...compareOperationInventory(openApi, artifacts),
     ...assertControllerSchemaPurity(findNestControllerFiles()),
   ];
-
-  if (JSON.stringify(snapshot.paths) !== JSON.stringify(currentSummary)) {
-    errors.push(
-      'OpenAPI snapshot mismatch. Run `nx run api-specs:snapshot` after intentional API changes.',
-    );
-  }
 
   if (errors.length > 0) {
     console.error('OpenAPI verification failed:');
@@ -209,7 +127,9 @@ function run() {
     process.exit(1);
   }
 
-  console.log('OpenAPI verification checks passed.');
+  console.log(
+    'Canonical route inventory and controller purity passed. Structural differences and unresolved host obligations: dist/api-conformance/openapi-comparison.json. This is not a full host-conformance claim.',
+  );
 }
 
 run();

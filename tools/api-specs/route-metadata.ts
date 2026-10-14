@@ -1,70 +1,52 @@
+import { authOperations } from '@anarchitects/auth-contracts';
 import { formsOperations } from '@anarchitects/forms-contracts';
+import { identityOperations } from '@anarchitects/identity-contracts';
 import { newsletterOperations } from '@anarchitects/newsletter-contracts';
 
-export const TAG_PREFIX_MAP: Array<{ prefix: string; tag: string }> = [
-  { prefix: '/auth', tag: 'Auth' },
-  { prefix: '/forms', tag: 'Forms' },
-  { prefix: '/identity', tag: 'Identity' },
-  { prefix: '/newsletter', tag: 'Newsletter' },
+export const canonicalOperations = [
+  ...authOperations,
+  ...formsOperations,
+  ...identityOperations,
+  ...newsletterOperations,
 ];
 
-export const OPERATION_ID_MAP: Record<string, string> = {
-  ...Object.fromEntries(
-    [...formsOperations, ...newsletterOperations].map((operation) => [
-      `${operation.method} ${operation.path}`,
-      operation.operationId,
-    ]),
-  ),
-  'PATCH /auth/activate': 'activateUser',
-  'PATCH /auth/change-password/{userId}': 'changePassword',
-  'POST /auth/forgot-password': 'forgotPassword',
-  'POST /auth/login': 'login',
-  'POST /auth/passkeys/registration/begin': 'beginRegistration',
-  'POST /auth/passkeys/registration/finish': 'finishRegistration',
-  'POST /auth/passkeys/authentication/begin': 'beginAuthentication',
-  'POST /auth/passkeys/authentication/finish': 'finishAuthentication',
-  'POST /auth/logout': 'logout',
-  'GET /auth/me': 'getLoggedInUserInfo',
-  'POST /auth/refresh-tokens/{userId}': 'refreshTokens',
-  'POST /auth/register': 'registerUser',
-  'POST /auth/reset-password': 'resetPassword',
-  'PATCH /auth/update-email/{userId}': 'updateEmail',
-  'POST /auth/verify-email': 'verifyEmail',
-  'POST /identity/profiles': 'createUserProfile',
-  'GET /identity/profiles/by-auth-user/{authUserId}':
-    'getUserProfileByAuthUserId',
-  'GET /identity/profiles/{profileId}': 'getUserProfileById',
-  'PATCH /identity/profiles/{profileId}': 'updateUserProfile',
-};
+const operationsByRoute = new Map(
+  canonicalOperations.map((operation) => [
+    `${operation.method} ${operation.path}`,
+    operation,
+  ]),
+);
+if (operationsByRoute.size !== canonicalOperations.length) {
+  throw new Error('Canonical contracts contain duplicate route keys');
+}
 
 export function normalizePath(url: string): string {
   return url.replace(/:([A-Za-z0-9_]+)/g, '{$1}');
 }
 
 export function toRouteKey(method: string, path: string): string {
-  return `${method.toUpperCase()} ${path}`;
+  return `${method.toUpperCase()} ${normalizePath(path)}`;
 }
 
 export function isManagedOpenApiPath(path: string): boolean {
-  return TAG_PREFIX_MAP.some(({ prefix }) => path.startsWith(prefix));
+  return canonicalOperations.some(
+    ({ domain }) => path === `/${domain}` || path.startsWith(`/${domain}/`),
+  );
+}
+
+function resolveOperation(method: string, path: string) {
+  const key = toRouteKey(method, path);
+  const operation = operationsByRoute.get(key);
+  if (!operation) {
+    throw new Error(`Route absent from pinned canonical contracts: ${key}`);
+  }
+  return operation;
 }
 
 export function resolveOperationId(method: string, path: string): string {
-  const key = toRouteKey(method, path);
-  const operationId = OPERATION_ID_MAP[key];
-
-  if (!operationId) {
-    throw new Error(`Missing operationId mapping for route key: ${key}`);
-  }
-
-  return operationId;
+  return resolveOperation(method, path).operationId;
 }
 
-export function resolveTags(path: string): string[] {
-  const canonical = [...formsOperations, ...newsletterOperations].find(
-    (operation) => operation.path === path,
-  );
-  if (canonical) return [...canonical.tags];
-  const match = TAG_PREFIX_MAP.find(({ prefix }) => path.startsWith(prefix));
-  return match ? [match.tag] : [];
+export function resolveTags(method: string, path: string): string[] {
+  return [...resolveOperation(method, path).tags];
 }

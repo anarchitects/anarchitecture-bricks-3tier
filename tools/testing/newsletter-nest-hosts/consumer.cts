@@ -1,3 +1,7 @@
+import {
+  canonicalRequest,
+  assertCanonicalCoverage,
+} from './canonical-http.cjs';
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { createHmac } from 'node:crypto';
@@ -67,11 +71,12 @@ async function post(
   status: number,
   headers: Record<string, string> = {},
 ) {
-  const response = await app.inject({
+  const response = await canonicalRequest(app, {
     method: 'POST',
     url: `/api/newsletter/${path}`,
     payload,
     headers: { 'content-type': 'application/json', ...headers },
+    expectAbsent: status === 404,
   });
   assert.equal(response.statusCode, status, `${path}: ${response.body}`);
   assert.equal(response.headers['cache-control'], 'no-store');
@@ -157,8 +162,9 @@ export async function runConsumer() {
     }
     assert.equal(
       (
-        await app.inject({
+        await canonicalRequest(app, {
           method: 'GET',
+          expectAbsent: true,
           url: `/api/newsletter/confirm?token=${tokens[0]}`,
         })
       ).statusCode,
@@ -360,9 +366,10 @@ export async function runConsumer() {
       { logger: false },
     );
     await app.init();
-    const response = await app.inject({
+    const response = await canonicalRequest(app, {
       method: 'POST',
       url: '/overridden/subscribe',
+      canonicalPath: '/newsletter/subscribe',
       payload: { ...request, consentVersion: 'configured/v1' },
     });
     assert.equal(response.statusCode, 202, response.body);
@@ -370,9 +377,10 @@ export async function runConsumer() {
     assert.match(JSON.stringify(grants), /Override wording/);
     assert.equal(
       (
-        await app.inject({
+        await canonicalRequest(app, {
           method: 'POST',
           url: '/overridden/webhook',
+          expectAbsent: true,
           payload: {},
         })
       ).statusCode,
@@ -386,6 +394,7 @@ export async function runConsumer() {
         groupId: '123',
       }),
     );
+    assertCanonicalCoverage(['newsletter']);
     console.log(
       'Config namespace, explicit overrides, provider binding and disabled routes passed.',
     );

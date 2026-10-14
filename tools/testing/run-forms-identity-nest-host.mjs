@@ -170,6 +170,10 @@ try {
     const tsconfig = readJson(
       join(import.meta.dirname, 'nest-hosts/tsconfig.json'),
     );
+    copyFileSync(
+      join(root, 'tools/testing/canonical-http.cts'),
+      join(host, 'canonical-http.cts'),
+    );
     tsconfig.files = ['consumer.cts', 'consumer.mts'];
     writeFileSync(join(host, 'tsconfig.json'), JSON.stringify(tsconfig));
     console.log(

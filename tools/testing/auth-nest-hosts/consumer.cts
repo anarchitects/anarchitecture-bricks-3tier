@@ -1,3 +1,7 @@
+import {
+  canonicalRequest,
+  assertCanonicalCoverage,
+} from './canonical-http.cjs';
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import {
@@ -235,11 +239,12 @@ export async function runConsumer(
       payload?: Record<string, unknown>,
       cookie?: string,
     ) => {
-      const response = await app.inject({
+      const response = await canonicalRequest(app, {
         method: payload ? 'POST' : 'GET',
         url,
         payload,
         headers: cookie ? { cookie } : {},
+        expectAbsent: status === 404,
       });
       assert.equal(response.statusCode, status, `${url}: ${response.body}`);
       return response;
@@ -377,12 +382,136 @@ export async function runConsumer(
     }
     options.contracts = undefined;
     await app.close();
+    app = await createApp('explicit');
+    const probeLogin = await expectRequest('/auth/login', 200, {
+      credential: 'consumer@example.test',
+      password: 'Password123!',
+    });
+    const probeCookie = [probeLogin.headers['set-cookie']]
+      .flat()
+      .map((value) => String(value).split(';')[0])
+      .join('; ');
+    // Adapter-only transport probes for outcomes not reachable through the noop
+    // recovery mailer. Real authentication, guards and the verifier/persistence
+    // suite above remain separate evidence; these doubles prove no ceremony.
+    const success = async () => ({ success: true });
+    Object.assign(app.get(AuthService), {
+      activateUser: success,
+      changePassword: success,
+      forgotPassword: success,
+      resetPassword: success,
+      verifyEmail: success,
+      updateEmail: success,
+    });
+    const headers = new Headers();
+    headers.append('set-cookie', 'fixture-a=1; Path=/; HttpOnly');
+    headers.append('set-cookie', 'fixture-b=2; Path=/; HttpOnly');
+    Object.assign(app.get(AuthPasskeyService), {
+      beginRegistration: async () => ({
+        headers,
+        body: {
+          challenge: 'YQ',
+          rp: { name: 'Fixture' },
+          user: { id: 'YQ', name: 'fixture', displayName: 'Fixture' },
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+        },
+      }),
+      finishRegistration: async () => ({ headers, body: { success: true } }),
+      beginAuthentication: async () => ({ headers, body: { challenge: 'YQ' } }),
+      finishAuthentication: async () => ({
+        headers,
+        body: { user: { id: userId }, rbac: [] },
+      }),
+    });
+    const credential = {
+      id: 'YQ',
+      rawId: 'YQ',
+      type: 'public-key',
+      clientExtensionResults: {},
+      response: {
+        clientDataJSON: 'YQ',
+        attestationObject: 'YQ',
+        authenticatorData: 'YQ',
+        signature: 'YQ',
+      },
+    };
+    const probes: { method: string; url: string; payload: object }[] = [
+      { method: 'PATCH', url: '/auth/activate', payload: { token: 'fixture' } },
+      {
+        method: 'PATCH',
+        url: `/auth/change-password/${userId}`,
+        payload: {
+          currentPassword: 'Password123!',
+          newPassword: 'Changed123!',
+          confirmPassword: 'Changed123!',
+        },
+      },
+      {
+        method: 'POST',
+        url: '/auth/forgot-password',
+        payload: { email: 'consumer@example.test' },
+      },
+      {
+        method: 'POST',
+        url: '/auth/reset-password',
+        payload: {
+          token: 'fixture',
+          password: 'Changed123!',
+          confirmPassword: 'Changed123!',
+        },
+      },
+      {
+        method: 'POST',
+        url: '/auth/verify-email',
+        payload: { token: 'fixture' },
+      },
+      {
+        method: 'PATCH',
+        url: `/auth/update-email/${userId}`,
+        payload: { newEmail: 'updated@example.test', password: 'Password123!' },
+      },
+      { method: 'POST', url: '/auth/passkeys/registration/begin', payload: {} },
+      {
+        method: 'POST',
+        url: '/auth/passkeys/registration/finish',
+        payload: { response: credential },
+      },
+      {
+        method: 'POST',
+        url: '/auth/passkeys/authentication/begin',
+        payload: {},
+      },
+      {
+        method: 'POST',
+        url: '/auth/passkeys/authentication/finish',
+        payload: { response: credential },
+      },
+    ];
+    for (const probe of probes) {
+      const response = await canonicalRequest(app, {
+        ...probe,
+        headers: { cookie: probeCookie },
+        evidence: 'adapter-only',
+      });
+      assert.equal(response.statusCode, 200, `${probe.url}: ${response.body}`);
+      if (probe.url.includes('/passkeys/'))
+        assert.equal(response.headers['set-cookie']?.length, 2);
+      const rejected = await canonicalRequest(app, {
+        ...probe,
+        payload: [],
+        headers: { cookie: probeCookie },
+        evidence: 'adapter-only',
+      });
+      assert.equal(rejected.statusCode, 400, `${probe.url}: ${rejected.body}`);
+    }
+    await app.close();
     app = await createApp('disabled');
     assert.throws(() => app.get(AuthPasskeyService));
     await expectRequest('/auth/jwt/login', 404, {
       credential: 'consumer@example.test',
       password: 'Password123!',
     });
+    assertCanonicalCoverage(['auth']);
     console.log(
       'Auth host passed: facade/config/advanced DI, metadata, global guards, Fastify validation, sessions, CASL, JWT, PostgreSQL migrations/persistence and restart.',
     );
