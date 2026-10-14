@@ -819,3 +819,11 @@ implementation responsibilities. No provider or HTTP adapter is replaced.
 TypeScript consumers must use `NodeNext`, supported `Node16`, or `bundler` resolution.
 CommonJS runtime consumption remains supported. The [adoption record](../../../docs/audits/489-canonical-adoption.md)
 distinguishes package and fixture evidence from approved deployed-host conformance.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/newsletter-contracts@0.1.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

@@ -709,8 +709,16 @@ When the JWT plugin is enabled, these plugin-owned routes are also mounted:
 - Invalidated tokens use an unlogged cache table for quick revocation lookups.
 - Route schemas are defined in `@anarchitects/auth-ts/dtos` and imported into controller `@RouteSchema` decorators — do not define inline schemas.
 - Keep `@Policies()` guidance coarse in docs and examples; use `@AuthorizeResource(...)` for instance-sensitive authorization.
-- Preserve the transitional `operationId`/`tags` mapping in `tools/api-specs/route-metadata.ts`; local generated OpenAPI is baseline/conformance evidence, not canonical authority.
+- Derive `operationId`/`tags` in `tools/api-specs/route-metadata.ts` from published canonical operations; local generated OpenAPI is implementation evidence, not canonical authority.
 
 ## License
 
 Licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0). Unless required by applicable law or agreed to in writing, software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/auth-contracts@0.1.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

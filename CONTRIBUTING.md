@@ -6,7 +6,7 @@
 
 - Follow [ADR-0016](docs/adr/0016-consume-canonical-public-api-contracts.md) and [Meta ADR-0012](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0012-canonical-public-api-contract-ownership.md). Shared public wire schemas and operation definitions are authored Zod-first in [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts); deterministic OpenAPI 3.1 is a published artifact.
 - Read the applicable immutable contract version and compatibility rules before API work. Contract changes require upstream review/versioning and coordinated consumer migration, not only a local controller or snapshot edit.
-- Preserve current Fastify `@RouteSchema` fields (`body`, `params`, `querystring`, `headers`, `response`) and `operationId`/`tags` mappings in `tools/api-specs/route-metadata.ts` as the transitional implementation baseline.
+- Preserve current Fastify `@RouteSchema` fields (`body`, `params`, `querystring`, `headers`, `response`) and derive `operationId`/`tags` in `tools/api-specs/route-metadata.ts` from the pinned canonical operation definitions.
 - Generate local evidence via `yarn nx run api-specs:generate`; never hand-edit `docs/openapi/openapi.json` or `docs/openapi/openapi.yaml`.
 - Contracts extraction and verified 3-tier/DDD adoption precede separate Nest 12-native modernization. Nest 11 remains patch-only; governance acceptance does not mean packages are available or adopted.
 
@@ -52,9 +52,9 @@ nx run api-specs:lint
 nx run api-specs:diff
 nx run api-specs:verify
 
-# After canonical review, align the transitional route metadata and inspect diffs.
-# Run yarn nx run api-specs:snapshot only for reviewed baseline changes;
-# a snapshot update does not authorize a public contract change.
+# IDs/tags derive from immutable canonical operation definitions.
+# Compare schema/security differences and run real packed-host HTTP checks.
+yarn nx run api-specs:conformance-http
 
 # Library quality checks
 nx affected -t lint test build
@@ -76,8 +76,8 @@ nx run release-tools:validate-non-bumping-commits
 
 ## Pull Requests
 
-- Use Conventional Commits (`feat`, `fix`, `refactor`, `chore`, `docs`, etc.).
-- For a new publishable project's implementation PR, use `init(<project-or-domain>): <description>` as the final or squash commit subject. The `init` type is configured with `semverBump: none`, so creating the package does not infer an additional release bump before its explicitly selected first release.
+- Use configured Conventional Commit types and exact Nx project scopes, for example `ci(api-specs)` or `fix(release-tools)`. Domain/release-group names are not scopes. CI checks commits and the PR squash title. Unscoped subjects are reserved for repository-wide work.
+- For a new publishable project's implementation PR, use `init(<nx-project-name>): <description>` as the final or squash commit subject. The `init` type is configured with `semverBump: none`, so creating the package does not infer an additional release bump before its explicitly selected first release.
 - Document API-impacting changes with the approved canonical contract version/migration, implementation OpenAPI diffs and real HTTP conformance evidence. Follow the [contract workflow](docs/guides/ts-contracts.md).
 - Include contract-test updates when endpoints or response schemas change.
 - A docs-surface PR changes only files in `docs/**`, `tools/angular-docs/**`, `tools/docs-hub/**`, `libs/**/README.md`, root `README.md`/`CONTRIBUTING.md`, or `.github/workflows/docs-pages.yml`. For these PRs, use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
@@ -85,7 +85,7 @@ nx run release-tools:validate-non-bumping-commits
 - Docs-surface PR commits must not contain `!` or `BREAKING CHANGE`.
 - CI enforces docs commit policy via `nx run release-tools:validate-non-bumping-commits`.
 - CI also enforces docs completeness via `nx run docs-hub:validate-content` (required headings for publishable package READMEs and Angular/Nest markdown guides).
-- Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, `style:`, or `init(<project-or-domain>):` when introducing a new publishable project.
+- Squash-merge subject for docs-surface PRs must use `docs:`, `chore:`, `ci:`, `style:`, or `init(<nx-project-name>):` when introducing a new publishable project.
 
 ## Human-In-The-Loop Shortlist
 
@@ -105,7 +105,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Newsletter 0.0.1 shipped after #428 acceptance. Preserve coordinated domain publication for its next 0.1 release; follow the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md).
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
-- A first release is prepared from an `init(<project-or-domain>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.
+- A first release is prepared from an `init(<nx-project-name>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.
 - The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
 - Use the optional `common_group` selector when a common release must target only one subgroup. The initial Tailwind release uses `common-tailwind`; leaving it at `all` preserves full-domain behavior.
 - Automatic downstream release cascades include only groups whose packages all have matching release tags. Untagged or partially released groups are skipped as a whole, even if `first_release` is enabled for another group. Their dependency ranges remain unchanged until their own release preparation.
@@ -159,3 +159,6 @@ coverage, the default port, and related verifier/persistence tests.
 See [CI and Nx execution policy](docs/ci-strategy.md) for check placement,
 remote caching and distribution boundaries, and optional pre-commit/pre-push
 feedback. CI remains authoritative; no hooks are installed automatically.
+
+Canonical artifacts, compatibility reviews and actual Nx version floors follow
+[the conformance/release guide](docs/guides/canonical-conformance.md).

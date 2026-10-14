@@ -171,3 +171,11 @@ be treated as contract changes and validated against both frontend and backend u
 ## Integration examples and migration
 
 See the [Newsletter integration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-integration.html) for native/MailerLite host setup, the Forms-backed Angular example, contracts, and the coordinated release gate. Use the [app-local migration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-migration.html) to plan adoption while retaining host policy and historical evidence.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/newsletter-contracts@0.1.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

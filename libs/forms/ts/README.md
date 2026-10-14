@@ -2,7 +2,7 @@
 
 Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
 under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
-This package consumes `@anarchitects/forms-contracts@0.1.0` and Zod `4.5.0`
+This package consumes `@anarchitects/forms-contracts@0.2.0` and Zod `4.5.0`
 through derived TypeBox compatibility bindings. Domain models remain local.
 Use export-aware TypeScript resolution (`NodeNext`, supported `Node16`, or
 `bundler`); legacy `node10` resolution is no longer supported. Existing DTO names
@@ -309,3 +309,11 @@ the exact definition/version before side effects, including cross-field rules.
 This is the approved D05/D08 security migration, with consumer and release impact
 recorded in the adoption audit. Canonical Forms capability blockers are still
 subject to upstream review; package adoption is not a deployment certification.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/forms-contracts@0.2.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.
