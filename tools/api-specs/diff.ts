@@ -53,6 +53,12 @@ async function run() {
   }
 
   const destination = loadCurrentSpec();
+  // Byte-identical documents cannot contain a contract delta. In particular,
+  // do not feed unchanged 3.1 nullable schemas to the legacy 3.0 comparator.
+  if (source === destination) {
+    console.log(`OpenAPI is byte-identical to ${baseRef}; no changes.`);
+    return;
+  }
   const normalizedSource = normalizeSpecForDiff(source, `${baseRef} spec`);
   const normalizedDestination = normalizeSpecForDiff(
     destination,

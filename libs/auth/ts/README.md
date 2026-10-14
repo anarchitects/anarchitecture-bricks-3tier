@@ -2,14 +2,20 @@
 
 Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
 under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
-This package retains its domain models and current TypeBox DTOs/exports as the
-transitional implementation baseline. Canonical Zod schemas and operations are
-adopted through immutable versions and verified compatibility; this README does
-not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+This implementation pins `@anarchitects/auth-contracts@0.1.0` and derives
+its transitional TypeBox DTO exports from that published canonical graph. Domain
+models remain local. Nest keeps its Fastify validation and serialization adapter;
+Angular keeps the existing DTO imports. See the [adoption evidence](../../../docs/audits/488-canonical-adoption.md)
+and [TS Contracts Guide](../../../docs/guides/ts-contracts.md) for scope and limits.
+
+TypeScript consumers must use package-export-aware resolution (`NodeNext`,
+`Node16` where supported by their module graph, or `bundler`). Legacy `node10`
+resolution cannot resolve the canonical packages. Runtime ESM and CommonJS entry
+points remain available.
 
 TypeScript DTOs and domain models for the Anarchitecture authentication stack. The package bundles:
 
-- Implementation-driven request/response schemas authored with [TypeBox](https://github.com/sinclairzx81/typebox)
+- TypeBox compatibility bindings derived from canonical Zod request/response schemas
 - Type-safe DTO aliases consumed by Angular and Nest libraries and reflected in generated OpenAPI docs
 - Domain models (`AuthUser`, `Role`, `Permission`) for composing dynamic RBAC logic across services
 - Contract-driven auth profile factories that generate backend request schemas and frontend form metadata from one config
@@ -34,7 +40,7 @@ Migration guidance for the contract-driven auth profile model lives in the [auth
 
 ## Features
 
-- Centralized TypeBox DTO schemas shared by Angular and Nest stacks
+- Canonical Auth schemas exposed through TypeBox bindings shared by Angular and Nest
 - Domain model contracts for users, roles, and permissions
 - Reusable validation + type-inference building blocks for auth flows
 - Contract profile config, compatibility checks, and schema factories for runtime/frontend alignment

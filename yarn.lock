@@ -36,6 +36,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anarchitects/auth-contracts@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@anarchitects/auth-contracts@npm:0.1.0"
+  dependencies:
+    zod: "npm:4.5.0"
+  checksum: 10c0/3bbd3a54e0a0f87593bda618380dc498d19e2cf491f8713a3ed0d9a966ef2f0d1fbd41c8f9bff05bd3e15f89d0079de86996cb659856576cff0f251d98e0cad7
+  languageName: node
+  linkType: hard
+
 "@anarchitects/better-auth-typeorm-adapter@npm:0.2.0":
   version: 0.2.0
   resolution: "@anarchitects/better-auth-typeorm-adapter@npm:0.2.0"
@@ -43,6 +52,15 @@ __metadata:
     better-auth: ^1.7.0
     typeorm: ^1.0.0
   checksum: 10c0/f6546124654b789e1058ce0fa974138d1cbcee631b9bbda8e9f026ec519f580984964980b3d8f74a1a8a9e38d5b7d14dacc8700bcb4f62055b513bd497d27d08
+  languageName: node
+  linkType: hard
+
+"@anarchitects/identity-contracts@npm:0.0.1":
+  version: 0.0.1
+  resolution: "@anarchitects/identity-contracts@npm:0.0.1"
+  dependencies:
+    zod: "npm:4.5.0"
+  checksum: 10c0/b969d44d3cde6b689514ed6bfef48586ea1a24b51a91b8e4a35ce3c0ea68ad05168261adbef605dd4abfe47eda74c62408ced7dade25e88dc58d62ad7450fd09
   languageName: node
   linkType: hard
 
@@ -70,7 +88,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@anarchitecture-bricks-3tier/source@workspace:."
   dependencies:
+    "@anarchitects/auth-contracts": "npm:0.1.0"
     "@anarchitects/better-auth-typeorm-adapter": "npm:0.2.0"
+    "@anarchitects/identity-contracts": "npm:0.0.1"
     "@anarchitects/nx-js": "npm:^0.0.2"
     "@anarchitects/tailwind": "portal:./libs/common/tailwind"
     "@angular-devkit/architect": "npm:0.2201.9"
@@ -152,6 +172,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:4.0.9"
     "@vitest/ui": "npm:4.0.9"
     ajv: "npm:^8.0.0"
+    ajv-formats: "npm:3.0.1"
     angular-eslint: "npm:22.5.0"
     autoprefixer: "npm:^10.4.0"
     axios: "npm:^1.6.0"
@@ -214,6 +235,7 @@ __metadata:
     webpack-cli: "npm:7.0.3"
     webpack-dev-server: "npm:5.2.5"
     yaml: "npm:^2.8.1"
+    zod: "npm:4.5.0"
     zone.js: "npm:0.16.3"
   languageName: unknown
   linkType: soft
@@ -35657,6 +35679,13 @@ __metadata:
   version: 4.4.3
   resolution: "zod@npm:4.4.3"
   checksum: 10c0/7ea31b558e88f9faf44f31dd185e2e1cbf51fed3081787fb96cc2534749b50c0acfc6da7f0922a7353ed092dd358c7d50c28ea96c94d04af64191bd33152eca3
+  languageName: node
+  linkType: hard
+
+"zod@npm:4.5.0":
+  version: 4.5.0
+  resolution: "zod@npm:4.5.0"
+  checksum: 10c0/f4833aed6545711aab8e04c914853a20583f2a753bae526f103971059210fe6811192fb2441be9a3dd1b918f11db0e89c64706d673150264c81dff5a936ef2a1
   languageName: node
   linkType: hard
 

@@ -1,5 +1,28 @@
 # Auth Contract Migration Guide
 
+## Canonical package adoption
+
+The implementation pins `@anarchitects/auth-contracts@0.1.0`. Contracts owns
+`AuthContractConfig`, its defaults and the configurable Zod factory. Bricks'
+`createAuthContracts(config)` preserves the existing TypeBox schema and form
+metadata surface by deriving bindings from that canonical factory. Existing
+Nest and Angular providers continue to select the host configuration.
+
+`emptyStringPolicy` remains frontend payload-shaping metadata. A value rejected
+by Angular shaping is not automatically rejected by the server schema. Required
+fields, lengths, email validation, unknown fields and coercion remain the
+canonical validation rules bound to the existing Fastify/AJV behavior.
+
+The package's default OpenAPI document describes the default configuration.
+A differently configured host must generate a configuration-bound variant with
+Contracts' generator and satisfy its profile/review gates. Bricks' generated
+OpenAPI remains implementation evidence; it does not approve a wire change or
+replace a configured canonical artifact.
+
+Use TypeScript `NodeNext`/supported `Node16` or `bundler` module resolution to
+resolve the canonical package exports. CJS and ESM runtime consumers remain
+supported. See [#488 evidence](../audits/488-canonical-adoption.md).
+
 ## Intent
 
 This guide covers the move from hard-coded auth DTO request schemas to the contract-driven auth profile model shared by `@anarchitects/auth-ts`, `@anarchitects/auth-nest`, and `@anarchitects/auth-angular`.

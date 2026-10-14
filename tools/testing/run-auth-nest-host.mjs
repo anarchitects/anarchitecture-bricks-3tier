@@ -122,6 +122,14 @@ try {
     nestHostCache(host),
   ];
   if (refresh) {
+    // Resolve changed local tarballs against the existing registry lock. A
+    // first-party dependency change must not upgrade unrelated host packages.
+    const previous = readJson(
+      join(fixtures, configuration, 'package-lock.json.template'),
+    );
+    for (const name of contracts.keys())
+      delete previous.packages[`node_modules/${name}`];
+    writeFileSync(join(host, 'package-lock.json'), JSON.stringify(previous));
     run('npm', ['install', '--package-lock-only', ...npmFlags]);
     const lock = readJson(join(host, 'package-lock.json'));
     for (const name of contracts.keys())
@@ -172,6 +180,20 @@ try {
     run('npm', ['ls', '--all'], true);
     run('npm', ['ls', '--depth=0']);
     run(hostNode, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json']);
+    // Cold-load every TS entry point independently: importing the root first
+    // can hide shared-chunk initialization cycles in optional subpaths.
+    for (const entry of Object.keys(
+      contracts.get('@anarchitects/auth-ts').exports,
+    )) {
+      if (entry.endsWith('.json')) continue;
+      const specifier = `@anarchitects/auth-ts${entry === '.' ? '' : entry.slice(1)}`;
+      run(hostNode, ['-e', `require(${JSON.stringify(specifier)})`]);
+      run(hostNode, [
+        '--input-type=module',
+        '-e',
+        `await import(${JSON.stringify(specifier)})`,
+      ]);
+    }
     run(hostNode, ['out/consumer.mjs']);
     container = await new GenericContainer('postgres:16-alpine')
       .withEnvironment({

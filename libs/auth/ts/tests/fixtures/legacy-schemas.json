@@ -1,0 +1,1820 @@
+{
+  "revision": "879eec0e83f7a7125641c0ae44598be0dffa6bd1",
+  "purpose": "Frozen legacy oracle, never contract authority",
+  "schemas": {
+    "ActivateUserRequestSchema": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["token"]
+    },
+    "ChangePasswordRequestSchema": {
+      "type": "object",
+      "properties": {
+        "currentPassword": {
+          "minLength": 6,
+          "type": "string"
+        },
+        "newPassword": {
+          "minLength": 6,
+          "type": "string"
+        },
+        "confirmPassword": {
+          "minLength": 6,
+          "type": "string"
+        }
+      },
+      "required": ["currentPassword", "newPassword", "confirmPassword"]
+    },
+    "ForgotPasswordRequestSchema": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "format": "email",
+          "type": "string"
+        }
+      },
+      "required": ["email"]
+    },
+    "LoggedInUserInfoResponseSchema": {
+      "type": "object",
+      "properties": {
+        "user": {},
+        "rbac": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "action": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "subject": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "conditions": {
+                "type": "object",
+                "patternProperties": {
+                  "^(.*)$": {}
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "inverted": {
+                "type": "boolean"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": ["action", "subject"]
+          }
+        }
+      },
+      "required": ["user", "rbac"]
+    },
+    "LoginRequestSchema": {
+      "type": "object",
+      "properties": {
+        "credential": {
+          "minLength": 2,
+          "maxLength": 100,
+          "type": "string"
+        },
+        "password": {
+          "minLength": 6,
+          "type": "string"
+        }
+      },
+      "required": ["credential", "password"]
+    },
+    "LogoutRequestSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {}
+    },
+    "PolicyRuleArraySchema": {
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "type": "object",
+        "properties": {
+          "action": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "subject": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "conditions": {
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {}
+            }
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "inverted": {
+            "type": "boolean"
+          },
+          "reason": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": ["action", "subject"]
+      }
+    },
+    "PolicyRuleSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "action": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "subject": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "conditions": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "inverted": {
+          "type": "boolean"
+        },
+        "reason": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["action", "subject"]
+    },
+    "RegisterRequestSchema": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "format": "email",
+          "type": "string"
+        },
+        "password": {
+          "minLength": 6,
+          "type": "string"
+        },
+        "confirmPassword": {
+          "minLength": 6,
+          "type": "string"
+        },
+        "name": {
+          "minLength": 2,
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "required": ["email", "password", "confirmPassword"]
+    },
+    "RegisterResponseSchema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      },
+      "required": ["success"]
+    },
+    "ResetPasswordRequestSchema": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "password": {
+          "minLength": 6,
+          "type": "string"
+        },
+        "confirmPassword": {
+          "minLength": 6,
+          "type": "string"
+        }
+      },
+      "required": ["token", "password", "confirmPassword"]
+    },
+    "SuccessResponseSchema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      },
+      "required": ["success"]
+    },
+    "UpdateEmailRequestSchema": {
+      "type": "object",
+      "properties": {
+        "newEmail": {
+          "format": "email",
+          "type": "string"
+        },
+        "password": {
+          "minLength": 6,
+          "type": "string"
+        }
+      },
+      "required": ["newEmail"]
+    },
+    "UserIdParamsSchema": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        }
+      },
+      "required": ["userId"]
+    },
+    "VerifyEmailRequestSchema": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": ["token"]
+    },
+    "PasskeyAuthenticationBeginRequestSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {}
+    },
+    "PasskeyAuthenticationBeginResponseSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "rpId": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "timeout": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "allowCredentials": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "type": {
+                "const": "public-key",
+                "type": "string"
+              },
+              "transports": {
+                "type": "array",
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["id", "type"]
+          }
+        },
+        "userVerification": {
+          "anyOf": [
+            {
+              "const": "required",
+              "type": "string"
+            },
+            {
+              "const": "preferred",
+              "type": "string"
+            },
+            {
+              "const": "discouraged",
+              "type": "string"
+            }
+          ]
+        },
+        "hints": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        }
+      },
+      "required": ["challenge"]
+    },
+    "PasskeyAuthenticationCredentialSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "rawId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "type": {
+          "const": "public-key",
+          "type": "string"
+        },
+        "authenticatorAttachment": {
+          "anyOf": [
+            {
+              "const": "platform",
+              "type": "string"
+            },
+            {
+              "const": "cross-platform",
+              "type": "string"
+            }
+          ]
+        },
+        "clientExtensionResults": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        },
+        "response": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "clientDataJSON": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "authenticatorData": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "signature": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "userHandle": {
+              "anyOf": [
+                {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": ["clientDataJSON", "authenticatorData", "signature"]
+        }
+      },
+      "required": ["id", "rawId", "type", "clientExtensionResults", "response"]
+    },
+    "PasskeyAuthenticationFinishRequestSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "response": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "rawId": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "type": {
+              "const": "public-key",
+              "type": "string"
+            },
+            "authenticatorAttachment": {
+              "anyOf": [
+                {
+                  "const": "platform",
+                  "type": "string"
+                },
+                {
+                  "const": "cross-platform",
+                  "type": "string"
+                }
+              ]
+            },
+            "clientExtensionResults": {
+              "type": "object",
+              "patternProperties": {
+                "^(.*)$": {}
+              }
+            },
+            "response": {
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "clientDataJSON": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                "authenticatorData": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                "signature": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                "userHandle": {
+                  "anyOf": [
+                    {
+                      "minLength": 1,
+                      "pattern": "^[A-Za-z0-9_-]+$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": ["clientDataJSON", "authenticatorData", "signature"]
+            }
+          },
+          "required": [
+            "id",
+            "rawId",
+            "type",
+            "clientExtensionResults",
+            "response"
+          ]
+        }
+      },
+      "required": ["response"]
+    },
+    "PasskeyAuthenticationFinishResponseSchema": {
+      "type": "object",
+      "properties": {
+        "user": {},
+        "rbac": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "action": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "subject": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "conditions": {
+                "type": "object",
+                "patternProperties": {
+                  "^(.*)$": {}
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "inverted": {
+                "type": "boolean"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": ["action", "subject"]
+          }
+        }
+      },
+      "required": ["user", "rbac"]
+    },
+    "PasskeyAuthenticationOptionsSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "rpId": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "timeout": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "allowCredentials": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "type": {
+                "const": "public-key",
+                "type": "string"
+              },
+              "transports": {
+                "type": "array",
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["id", "type"]
+          }
+        },
+        "userVerification": {
+          "anyOf": [
+            {
+              "const": "required",
+              "type": "string"
+            },
+            {
+              "const": "preferred",
+              "type": "string"
+            },
+            {
+              "const": "discouraged",
+              "type": "string"
+            }
+          ]
+        },
+        "hints": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        }
+      },
+      "required": ["challenge"]
+    },
+    "PasskeyAuthenticatorAttachmentSchema": {
+      "anyOf": [
+        {
+          "const": "platform",
+          "type": "string"
+        },
+        {
+          "const": "cross-platform",
+          "type": "string"
+        }
+      ]
+    },
+    "PasskeyBase64UrlSchema": {
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "type": "string"
+    },
+    "PasskeyCredentialDescriptorSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "type": {
+          "const": "public-key",
+          "type": "string"
+        },
+        "transports": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "required": ["id", "type"]
+    },
+    "PasskeyExtensionsSchema": {
+      "type": "object",
+      "patternProperties": {
+        "^(.*)$": {}
+      }
+    },
+    "PasskeyRegistrationBeginRequestSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "authenticatorAttachment": {
+          "anyOf": [
+            {
+              "const": "platform",
+              "type": "string"
+            },
+            {
+              "const": "cross-platform",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "PasskeyRegistrationBeginResponseSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "rp": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "name": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["name"]
+        },
+        "user": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string",
+              "maxLength": 86
+            },
+            "name": {
+              "type": "string"
+            },
+            "displayName": {
+              "type": "string"
+            }
+          },
+          "required": ["id", "name", "displayName"]
+        },
+        "challenge": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "pubKeyCredParams": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "public-key",
+                "type": "string"
+              },
+              "alg": {
+                "type": "integer"
+              }
+            },
+            "required": ["type", "alg"]
+          }
+        },
+        "timeout": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "excludeCredentials": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "type": {
+                "const": "public-key",
+                "type": "string"
+              },
+              "transports": {
+                "type": "array",
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["id", "type"]
+          }
+        },
+        "authenticatorSelection": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "authenticatorAttachment": {
+              "anyOf": [
+                {
+                  "const": "platform",
+                  "type": "string"
+                },
+                {
+                  "const": "cross-platform",
+                  "type": "string"
+                }
+              ]
+            },
+            "residentKey": {
+              "anyOf": [
+                {
+                  "const": "required",
+                  "type": "string"
+                },
+                {
+                  "const": "preferred",
+                  "type": "string"
+                },
+                {
+                  "const": "discouraged",
+                  "type": "string"
+                }
+              ]
+            },
+            "requireResidentKey": {
+              "type": "boolean"
+            },
+            "userVerification": {
+              "anyOf": [
+                {
+                  "const": "required",
+                  "type": "string"
+                },
+                {
+                  "const": "preferred",
+                  "type": "string"
+                },
+                {
+                  "const": "discouraged",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        "attestation": {
+          "anyOf": [
+            {
+              "const": "none",
+              "type": "string"
+            },
+            {
+              "const": "indirect",
+              "type": "string"
+            },
+            {
+              "const": "direct",
+              "type": "string"
+            },
+            {
+              "const": "enterprise",
+              "type": "string"
+            }
+          ]
+        },
+        "hints": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "attestationFormats": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        }
+      },
+      "required": ["rp", "user", "challenge", "pubKeyCredParams"]
+    },
+    "PasskeyRegistrationCredentialSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "rawId": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "type": {
+          "const": "public-key",
+          "type": "string"
+        },
+        "authenticatorAttachment": {
+          "anyOf": [
+            {
+              "const": "platform",
+              "type": "string"
+            },
+            {
+              "const": "cross-platform",
+              "type": "string"
+            }
+          ]
+        },
+        "clientExtensionResults": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        },
+        "response": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "clientDataJSON": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "attestationObject": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "authenticatorData": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "transports": {
+              "type": "array",
+              "items": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "publicKeyAlgorithm": {
+              "type": "integer"
+            },
+            "publicKey": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            }
+          },
+          "required": ["clientDataJSON", "attestationObject"]
+        }
+      },
+      "required": ["id", "rawId", "type", "clientExtensionResults", "response"]
+    },
+    "PasskeyRegistrationFinishRequestSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "response": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "rawId": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            "type": {
+              "const": "public-key",
+              "type": "string"
+            },
+            "authenticatorAttachment": {
+              "anyOf": [
+                {
+                  "const": "platform",
+                  "type": "string"
+                },
+                {
+                  "const": "cross-platform",
+                  "type": "string"
+                }
+              ]
+            },
+            "clientExtensionResults": {
+              "type": "object",
+              "patternProperties": {
+                "^(.*)$": {}
+              }
+            },
+            "response": {
+              "additionalProperties": false,
+              "type": "object",
+              "properties": {
+                "clientDataJSON": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                "attestationObject": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                "authenticatorData": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                },
+                "transports": {
+                  "type": "array",
+                  "items": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "publicKeyAlgorithm": {
+                  "type": "integer"
+                },
+                "publicKey": {
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z0-9_-]+$",
+                  "type": "string"
+                }
+              },
+              "required": ["clientDataJSON", "attestationObject"]
+            }
+          },
+          "required": [
+            "id",
+            "rawId",
+            "type",
+            "clientExtensionResults",
+            "response"
+          ]
+        },
+        "name": {
+          "minLength": 1,
+          "maxLength": 255,
+          "pattern": "\\S",
+          "type": "string"
+        }
+      },
+      "required": ["response"]
+    },
+    "PasskeyRegistrationFinishResponseSchema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        }
+      },
+      "required": ["success"]
+    },
+    "PasskeyRegistrationOptionsSchema": {
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "rp": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "name": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["name"]
+        },
+        "user": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "id": {
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string",
+              "maxLength": 86
+            },
+            "name": {
+              "type": "string"
+            },
+            "displayName": {
+              "type": "string"
+            }
+          },
+          "required": ["id", "name", "displayName"]
+        },
+        "challenge": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "type": "string"
+        },
+        "pubKeyCredParams": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "type": {
+                "const": "public-key",
+                "type": "string"
+              },
+              "alg": {
+                "type": "integer"
+              }
+            },
+            "required": ["type", "alg"]
+          }
+        },
+        "timeout": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "excludeCredentials": {
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "properties": {
+              "id": {
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "type": {
+                "const": "public-key",
+                "type": "string"
+              },
+              "transports": {
+                "type": "array",
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["id", "type"]
+          }
+        },
+        "authenticatorSelection": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "authenticatorAttachment": {
+              "anyOf": [
+                {
+                  "const": "platform",
+                  "type": "string"
+                },
+                {
+                  "const": "cross-platform",
+                  "type": "string"
+                }
+              ]
+            },
+            "residentKey": {
+              "anyOf": [
+                {
+                  "const": "required",
+                  "type": "string"
+                },
+                {
+                  "const": "preferred",
+                  "type": "string"
+                },
+                {
+                  "const": "discouraged",
+                  "type": "string"
+                }
+              ]
+            },
+            "requireResidentKey": {
+              "type": "boolean"
+            },
+            "userVerification": {
+              "anyOf": [
+                {
+                  "const": "required",
+                  "type": "string"
+                },
+                {
+                  "const": "preferred",
+                  "type": "string"
+                },
+                {
+                  "const": "discouraged",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        "attestation": {
+          "anyOf": [
+            {
+              "const": "none",
+              "type": "string"
+            },
+            {
+              "const": "indirect",
+              "type": "string"
+            },
+            {
+              "const": "direct",
+              "type": "string"
+            },
+            {
+              "const": "enterprise",
+              "type": "string"
+            }
+          ]
+        },
+        "hints": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "attestationFormats": {
+          "type": "array",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        }
+      },
+      "required": ["rp", "user", "challenge", "pubKeyCredParams"]
+    }
+  },
+  "profiles": [
+    {
+      "config": {
+        "version": "1.0.0",
+        "register": {
+          "email": {
+            "required": true,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 3,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "name": {
+            "required": false,
+            "minLength": 2,
+            "maxLength": 100,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "login": {
+          "credential": {
+            "required": true,
+            "minLength": 2,
+            "maxLength": 100,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 3,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "forgotPassword": {
+          "email": {
+            "required": true,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "resetPassword": {
+          "token": {
+            "required": true,
+            "minLength": 1,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "verifyEmail": {
+          "token": {
+            "required": true,
+            "minLength": 1,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "changePassword": {
+          "currentPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "newPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "logout": {}
+      },
+      "schemas": {
+        "registerRequestSchema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "format": "email",
+              "type": "string"
+            },
+            "password": {
+              "minLength": 3,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "name": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          "required": ["email", "password", "confirmPassword"]
+        },
+        "loginRequestSchema": {
+          "type": "object",
+          "properties": {
+            "credential": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            },
+            "password": {
+              "minLength": 3,
+              "type": "string"
+            }
+          },
+          "required": ["credential", "password"]
+        },
+        "forgotPasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "format": "email",
+              "type": "string"
+            }
+          },
+          "required": ["email"]
+        },
+        "resetPasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "password": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["token", "password", "confirmPassword"]
+        },
+        "verifyEmailRequestSchema": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["token"]
+        },
+        "changePasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "currentPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "newPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["currentPassword", "newPassword", "confirmPassword"]
+        },
+        "logoutRequestSchema": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "version": "1.0.0",
+        "register": {
+          "email": {
+            "required": true,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "name": {
+            "required": false,
+            "minLength": 2,
+            "maxLength": 100,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "login": {
+          "credential": {
+            "required": true,
+            "minLength": 2,
+            "maxLength": 100,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "forgotPassword": {
+          "email": {
+            "required": true,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "resetPassword": {
+          "token": {
+            "required": true,
+            "minLength": 1,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "verifyEmail": {
+          "token": {
+            "required": true,
+            "minLength": 1,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "changePassword": {
+          "currentPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "newPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "logout": {}
+      },
+      "schemas": {
+        "registerRequestSchema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "format": "email",
+              "type": "string"
+            },
+            "password": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "name": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          "required": ["email", "password", "confirmPassword"]
+        },
+        "loginRequestSchema": {
+          "type": "object",
+          "properties": {
+            "credential": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            },
+            "password": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["credential", "password"]
+        },
+        "forgotPasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "format": "email",
+              "type": "string"
+            }
+          },
+          "required": ["email"]
+        },
+        "resetPasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "password": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["token", "password", "confirmPassword"]
+        },
+        "verifyEmailRequestSchema": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["token"]
+        },
+        "changePasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "currentPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "newPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["currentPassword", "newPassword", "confirmPassword"]
+        },
+        "logoutRequestSchema": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {}
+        }
+      }
+    },
+    {
+      "config": {
+        "version": "1.0.0",
+        "register": {
+          "email": {
+            "required": true,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 10,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "name": {
+            "required": true,
+            "minLength": 2,
+            "maxLength": 100,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "login": {
+          "credential": {
+            "required": true,
+            "minLength": 2,
+            "maxLength": 100,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 10,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "forgotPassword": {
+          "email": {
+            "required": true,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "resetPassword": {
+          "token": {
+            "required": true,
+            "minLength": 1,
+            "emptyStringPolicy": "reject"
+          },
+          "password": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "verifyEmail": {
+          "token": {
+            "required": true,
+            "minLength": 1,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "changePassword": {
+          "currentPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "newPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          },
+          "confirmPassword": {
+            "required": true,
+            "minLength": 6,
+            "emptyStringPolicy": "reject"
+          }
+        },
+        "logout": {}
+      },
+      "schemas": {
+        "registerRequestSchema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "format": "email",
+              "type": "string"
+            },
+            "password": {
+              "minLength": 10,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "name": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            }
+          },
+          "required": ["email", "password", "confirmPassword", "name"]
+        },
+        "loginRequestSchema": {
+          "type": "object",
+          "properties": {
+            "credential": {
+              "minLength": 2,
+              "maxLength": 100,
+              "type": "string"
+            },
+            "password": {
+              "minLength": 10,
+              "type": "string"
+            }
+          },
+          "required": ["credential", "password"]
+        },
+        "forgotPasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "format": "email",
+              "type": "string"
+            }
+          },
+          "required": ["email"]
+        },
+        "resetPasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "password": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["token", "password", "confirmPassword"]
+        },
+        "verifyEmailRequestSchema": {
+          "type": "object",
+          "properties": {
+            "token": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": ["token"]
+        },
+        "changePasswordRequestSchema": {
+          "type": "object",
+          "properties": {
+            "currentPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "newPassword": {
+              "minLength": 6,
+              "type": "string"
+            },
+            "confirmPassword": {
+              "minLength": 6,
+              "type": "string"
+            }
+          },
+          "required": ["currentPassword", "newPassword", "confirmPassword"]
+        },
+        "logoutRequestSchema": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  ]
+}

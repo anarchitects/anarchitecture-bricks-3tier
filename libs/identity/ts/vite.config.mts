@@ -41,7 +41,11 @@ export default defineConfig(() => ({
     },
     rolldownOptions: {
       // External packages that should not be bundled into your library.
-      external: ['@sinclair/typebox'],
+      external: [
+        /^@anarchitects\/identity-contracts(?:\/|$)/,
+        /^zod(?:\/|$)/,
+        /^@sinclair\/typebox(?:\/|$)/,
+      ],
     },
   },
   test: {

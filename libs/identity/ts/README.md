@@ -2,10 +2,16 @@
 
 Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
 under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
-This package retains its domain models and current TypeBox DTOs/exports as the
-transitional implementation baseline. Canonical Zod schemas and operations are
-adopted through immutable versions and verified compatibility; this README does
-not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+This implementation pins `@anarchitects/identity-contracts@0.0.1` and derives
+its transitional TypeBox DTO exports from that published canonical graph. Domain
+models remain local. Nest keeps its Fastify validation and serialization adapter;
+Angular keeps the existing DTO imports. See the [adoption evidence](../../../docs/audits/488-canonical-adoption.md)
+and [TS Contracts Guide](../../../docs/guides/ts-contracts.md) for scope and limits.
+
+TypeScript consumers must use package-export-aware resolution (`NodeNext`,
+`Node16` where supported by their module graph, or `bundler`). Legacy `node10`
+resolution cannot resolve the canonical packages. Runtime ESM and CommonJS entry
+points remain available.
 
 The next minor includes explicit `.js` relative declaration specifiers for strict NodeNext consumers. Existing public exports and ESM/CJS bundles are preserved. Packed Nest 11/12 consumers verify this contract through `release-tools:test-forms-identity-nest-compatibility` (#466). The declaration correction can also be backported to the previous maintenance minor.
 

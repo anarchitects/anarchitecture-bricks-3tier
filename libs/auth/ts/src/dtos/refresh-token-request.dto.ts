@@ -1,7 +1,7 @@
-import { Static, Type } from '@sinclair/typebox';
+import { JwtRefreshRequestSchema as canonical } from '@anarchitects/auth-contracts';
+import type { Static } from '@sinclair/typebox';
+import { canonicalTypeBox } from '../contracts/canonical-typebox.js';
 
-export const RefreshTokenRequestSchema = Type.Object({
-  refreshToken: Type.String({ minLength: 1 }),
-});
+export const RefreshTokenRequestSchema = canonicalTypeBox(canonical);
 
 export type RefreshTokenRequestDTO = Static<typeof RefreshTokenRequestSchema>;

@@ -7,12 +7,16 @@ import { applyResponseHeaders } from '../auth-response-headers';
 import {
   PasskeyRegistrationBeginRouteSchema,
   type PasskeyRegistrationBeginRequestDTO,
+  type PasskeyRegistrationBeginResponseDTO,
   PasskeyRegistrationFinishRouteSchema,
   type PasskeyRegistrationFinishRequestDTO,
+  type PasskeyRegistrationFinishResponseDTO,
   PasskeyAuthenticationBeginRouteSchema,
   type PasskeyAuthenticationBeginRequestDTO,
+  type PasskeyAuthenticationBeginResponseDTO,
   PasskeyAuthenticationFinishRouteSchema,
   type PasskeyAuthenticationFinishRequestDTO,
+  type PasskeyAuthenticationFinishResponseDTO,
 } from '@anarchitects/auth-ts/dtos/passkeys';
 
 @Controller('auth/passkeys')
@@ -27,7 +31,7 @@ export class PasskeyAuthController {
     @Req() request: { headers: Record<string, string | string[] | undefined> },
     @Res({ passthrough: true })
     reply: { header(name: string, value: string | string[]): unknown },
-  ) {
+  ): Promise<PasskeyRegistrationBeginResponseDTO> {
     const result = await this.passkeys.beginRegistration(
       dto,
       toAuthHeaders(request.headers),
@@ -44,7 +48,7 @@ export class PasskeyAuthController {
     @Req() request: { headers: Record<string, string | string[] | undefined> },
     @Res({ passthrough: true })
     reply: { header(name: string, value: string | string[]): unknown },
-  ) {
+  ): Promise<PasskeyRegistrationFinishResponseDTO> {
     const result = await this.passkeys.finishRegistration(
       dto,
       toAuthHeaders(request.headers),
@@ -62,7 +66,7 @@ export class PasskeyAuthController {
     @Req() request: { headers: Record<string, string | string[] | undefined> },
     @Res({ passthrough: true })
     reply: { header(name: string, value: string | string[]): unknown },
-  ) {
+  ): Promise<PasskeyAuthenticationBeginResponseDTO> {
     const result = await this.passkeys.beginAuthentication(
       dto,
       toAuthHeaders(request.headers),
@@ -80,7 +84,7 @@ export class PasskeyAuthController {
     @Req() request: { headers: Record<string, string | string[] | undefined> },
     @Res({ passthrough: true })
     reply: { header(name: string, value: string | string[]): unknown },
-  ) {
+  ): Promise<PasskeyAuthenticationFinishResponseDTO> {
     const result = await this.passkeys.finishAuthentication(
       dto,
       toAuthHeaders(request.headers),

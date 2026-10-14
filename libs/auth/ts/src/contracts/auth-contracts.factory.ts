@@ -1,9 +1,6 @@
-import {
-  type TObject,
-  type TOptional,
-  type TString,
-  Type,
-} from '@sinclair/typebox';
+import { createAuthContracts as createCanonicalAuthContracts } from '@anarchitects/auth-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
+import { type TObject, type TOptional, type TString } from '@sinclair/typebox';
 
 import type {
   AuthContractConfig,
@@ -63,8 +60,6 @@ function toMeta(config: AuthFieldConfig): AuthFieldMeta {
   };
 }
 
-type StrOpts = { minLength?: number; maxLength?: number; format?: string };
-
 type FieldSchema<F extends AuthFieldConfig> = F['required'] extends true
   ? TString
   : TOptional<TString>;
@@ -119,105 +114,30 @@ export type AuthContracts<C extends AuthContractConfig = AuthContractConfig> = {
   logoutRequestSchema: TObject<EmptySchemaProperties>;
 };
 
-function strField<C extends AuthFieldConfig>(
-  config: C,
-  extra?: StrOpts,
-): FieldSchema<C>;
-function strField(
-  config: AuthFieldConfig,
-  extra: StrOpts = {},
-): TString | TOptional<TString> {
-  const opts: StrOpts = {};
-  if (config.minLength !== undefined) opts.minLength = config.minLength;
-  if (config.maxLength !== undefined) opts.maxLength = config.maxLength;
-  if (extra.format !== undefined) opts.format = extra.format;
-  const base = Type.String(opts);
-  return config.required ? base : Type.Optional(base);
-}
-
-// ---- Factory -----------------------------------------------------------------
-
+/** TypeBox and form bindings derived from the published canonical profile. */
 export function createAuthContracts<C extends AuthContractConfig>(config: C) {
-  // Register
-  const registerRequestSchema = Type.Object({
-    email: strField(config.register.email, { format: 'email' }),
-    password: strField(config.register.password),
-    confirmPassword: strField(config.register.confirmPassword),
-    name: strField(config.register.name),
-  });
-  const registerFormMeta: RegisterFormMeta = {
-    email: toMeta(config.register.email),
-    password: toMeta(config.register.password),
-    confirmPassword: toMeta(config.register.confirmPassword),
-    name: toMeta(config.register.name),
-  };
-
-  // Login
-  const loginRequestSchema = Type.Object({
-    credential: strField(config.login.credential),
-    password: strField(config.login.password),
-  });
-  const loginFormMeta: LoginFormMeta = {
-    credential: toMeta(config.login.credential),
-    password: toMeta(config.login.password),
-  };
-
-  // Forgot password
-  const forgotPasswordRequestSchema = Type.Object({
-    email: strField(config.forgotPassword.email, { format: 'email' }),
-  });
-  const forgotPasswordFormMeta: ForgotPasswordFormMeta = {
-    email: toMeta(config.forgotPassword.email),
-  };
-
-  // Reset password
-  const resetPasswordRequestSchema = Type.Object({
-    token: strField(config.resetPassword.token),
-    password: strField(config.resetPassword.password),
-    confirmPassword: strField(config.resetPassword.confirmPassword),
-  });
-  const resetPasswordFormMeta: ResetPasswordFormMeta = {
-    token: toMeta(config.resetPassword.token),
-    password: toMeta(config.resetPassword.password),
-    confirmPassword: toMeta(config.resetPassword.confirmPassword),
-  };
-
-  // Verify email
-  const verifyEmailRequestSchema = Type.Object({
-    token: strField(config.verifyEmail.token),
-  });
-  const verifyEmailFormMeta: VerifyEmailFormMeta = {
-    token: toMeta(config.verifyEmail.token),
-  };
-
-  // Change password
-  const changePasswordRequestSchema = Type.Object({
-    currentPassword: strField(config.changePassword.currentPassword),
-    newPassword: strField(config.changePassword.newPassword),
-    confirmPassword: strField(config.changePassword.confirmPassword),
-  });
-  const changePasswordFormMeta: ChangePasswordFormMeta = {
-    currentPassword: toMeta(config.changePassword.currentPassword),
-    newPassword: toMeta(config.changePassword.newPassword),
-    confirmPassword: toMeta(config.changePassword.confirmPassword),
-  };
-
-  // Logout (no configurable fields - fixed empty schema)
-  const logoutRequestSchema = Type.Object({}, { additionalProperties: false });
-
-  return {
-    registerRequestSchema,
-    registerFormMeta,
-    loginRequestSchema,
-    loginFormMeta,
-    forgotPasswordRequestSchema,
-    forgotPasswordFormMeta,
-    resetPasswordRequestSchema,
-    resetPasswordFormMeta,
-    verifyEmailRequestSchema,
-    verifyEmailFormMeta,
-    changePasswordRequestSchema,
-    changePasswordFormMeta,
-    logoutRequestSchema,
-  } as AuthContracts<C>;
+  const canonical = createCanonicalAuthContracts(config);
+  const result: Record<string, unknown> = {};
+  for (const operation of [
+    'register',
+    'login',
+    'forgotPassword',
+    'resetPassword',
+    'verifyEmail',
+    'changePassword',
+    'logout',
+  ] as const) {
+    result[`${operation}RequestSchema`] = canonicalTypeBox(
+      canonical[`${operation}RequestSchema`],
+    );
+    if (operation !== 'logout') {
+      result[`${operation}FormMeta`] = Object.fromEntries(
+        Object.entries(canonical.config[operation]).map(([key, field]) => [
+          key,
+          toMeta(field),
+        ]),
+      );
+    }
+  }
+  return result as AuthContracts<C>;
 }

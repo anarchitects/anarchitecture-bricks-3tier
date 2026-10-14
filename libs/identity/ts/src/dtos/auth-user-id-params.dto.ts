@@ -1,7 +1,7 @@
-import { Static, Type } from '@sinclair/typebox';
+import { AuthUserIdParamsSchema as canonical } from '@anarchitects/identity-contracts';
+import type { Static } from '@sinclair/typebox';
+import { profileSchema } from './canonical-typebox.js';
 
-export const AuthUserIdParamsSchema = Type.Object({
-  authUserId: Type.String({ minLength: 1, pattern: '^\\S+$' }),
-});
+export const AuthUserIdParamsSchema = profileSchema(canonical);
 
 export type AuthUserIdParamsDTO = Static<typeof AuthUserIdParamsSchema>;

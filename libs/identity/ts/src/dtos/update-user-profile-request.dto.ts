@@ -1,15 +1,8 @@
-import { Static, Type } from '@sinclair/typebox';
+import { UpdateUserProfileRequestSchema as canonical } from '@anarchitects/identity-contracts';
+import type { Static } from '@sinclair/typebox';
+import { profileRequest } from './canonical-typebox.js';
 
-const NullableStringSchema = Type.Union([Type.String(), Type.Null()]);
-
-export const UpdateUserProfileRequestSchema = Type.Object({
-  displayName: Type.Optional(NullableStringSchema),
-  givenName: Type.Optional(NullableStringSchema),
-  familyName: Type.Optional(NullableStringSchema),
-  avatarUrl: Type.Optional(NullableStringSchema),
-  locale: Type.Optional(NullableStringSchema),
-  timeZone: Type.Optional(NullableStringSchema),
-});
+export const UpdateUserProfileRequestSchema = profileRequest(canonical);
 
 export type UpdateUserProfileRequestDTO = Static<
   typeof UpdateUserProfileRequestSchema
