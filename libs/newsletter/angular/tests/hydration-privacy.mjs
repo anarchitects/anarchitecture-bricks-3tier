@@ -28,7 +28,16 @@ try {
         path.join(temp, 'node_modules/@anarchitects', `${domain}-${layer}`),
         { recursive: true },
       );
-  for (const name of ['@angular', '@ngrx', '@sinclair', 'rxjs', 'tslib'])
+  for (const name of [
+    '@anarchitects/forms-contracts',
+    '@anarchitects/newsletter-contracts',
+    '@angular',
+    '@ngrx',
+    '@sinclair',
+    'rxjs',
+    'tslib',
+    'zod',
+  ])
     symlinkSync(
       path.join(root, 'node_modules', name),
       path.join(temp, 'node_modules', name),
