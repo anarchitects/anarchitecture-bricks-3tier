@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PublicFormDefinitionEnvelopeResponseSchema } from '@anarchitects/forms-contracts';
+import { formsOperations } from '@anarchitects/forms-contracts';
 import {
   toFormDeliveryStatusDTO,
   toPublicFormDefinitionEnvelopeResponseDTO,
@@ -34,9 +34,20 @@ it('projects a canonical public DTO without unknown nested metadata or delivery'
     config: polluted,
   });
   const json = JSON.parse(JSON.stringify(result));
+  const operation = formsOperations.find(
+    ({ operationId }) => operationId === 'getFormDefinition',
+  );
+  const body = operation?.responses['200'].body;
+  expect(body?.kind).toBe('json');
+  if (body?.kind !== 'json') throw new Error('Missing canonical JSON response');
+  const schema = body.content['application/json'];
+  expect(schema.safeParse(json).success).toBe(true);
   expect(
-    PublicFormDefinitionEnvelopeResponseSchema.safeParse(json).success,
-  ).toBe(true);
+    schema.safeParse({
+      ...json,
+      config: { ...json.config, delivery: config.delivery },
+    }).success,
+  ).toBe(false);
   expect(JSON.stringify(json)).not.toMatch(
     /private-key|credential|admin@example|delivery/,
   );

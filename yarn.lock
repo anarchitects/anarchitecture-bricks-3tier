@@ -55,12 +55,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@anarchitects/forms-contracts@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@anarchitects/forms-contracts@npm:0.1.0"
+"@anarchitects/forms-contracts@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@anarchitects/forms-contracts@npm:0.2.0"
   dependencies:
     zod: "npm:4.5.0"
-  checksum: 10c0/c5928d970f5255c0bf2969165e6ecf0b8aaa9e05a8799ab5632fcfd950b8ad1a7e8548db6ef5f7876a964ed13ef7829b6dafadc969649a2b4b3f86eafa02f5e1
+  checksum: 10c0/c64014ed70b7840b9e9f91030fd57c69219bad4c59a46e7db2a2f653a32119e75b03d27d8f3ec83fc4ff02be3d397b0a1b878740b66aa2decd1a82808620c71c
   languageName: node
   linkType: hard
 
@@ -108,7 +108,7 @@ __metadata:
   dependencies:
     "@anarchitects/auth-contracts": "npm:0.1.0"
     "@anarchitects/better-auth-typeorm-adapter": "npm:0.2.0"
-    "@anarchitects/forms-contracts": "npm:0.1.0"
+    "@anarchitects/forms-contracts": "npm:0.2.0"
     "@anarchitects/identity-contracts": "npm:0.0.1"
     "@anarchitects/newsletter-contracts": "npm:0.1.0"
     "@anarchitects/nx-js": "npm:^0.0.2"
