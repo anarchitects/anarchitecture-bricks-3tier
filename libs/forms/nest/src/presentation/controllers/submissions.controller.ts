@@ -1,3 +1,4 @@
+import type { Submission } from '@anarchitects/forms-ts/models';
 import {
   SubmissionRequestDTO,
   SubmissionRequestSchema,
@@ -10,6 +11,9 @@ import {
 } from '@anarchitects/forms-ts/dtos';
 import { toSubmissionResponseDTO } from '@anarchitects/forms-ts/mappers';
 import {
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
   Body,
   Controller,
   Get,
@@ -55,7 +59,19 @@ export class SubmissionsController {
       200: SubmissionResponseSchema,
     },
   })
-  async submitForm(@Body() submissionData: SubmissionRequestDTO) {
-    return this.submissionsService.submit(submissionData);
+  async submitForm(
+    @Body() submissionData: SubmissionRequestDTO,
+  ): Promise<Submission> {
+    try {
+      return await this.submissionsService.submit(submissionData);
+    } catch (error) {
+      if (error instanceof BadRequestException)
+        throw new BadRequestException('Invalid form submission.');
+      if (error instanceof NotFoundException)
+        throw new NotFoundException('Form definition not found.');
+      throw new InternalServerErrorException(
+        'Unable to process form submission.',
+      );
+    }
   }
 }

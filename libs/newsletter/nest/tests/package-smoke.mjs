@@ -32,6 +32,7 @@ try {
     { recursive: true },
   );
   for (const dependency of [
+    '@anarchitects/newsletter-contracts',
     '@nestjs-modules',
     '@sinclair',
     '@types',
@@ -41,6 +42,7 @@ try {
     'reflect-metadata',
     'tslib',
     'typeorm',
+    'zod',
   ]) {
     symlinkSync(
       path.join(root, 'node_modules', dependency),

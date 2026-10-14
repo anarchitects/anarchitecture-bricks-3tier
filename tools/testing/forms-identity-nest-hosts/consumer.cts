@@ -234,10 +234,19 @@ export async function runConsumer() {
       const config: FormConfig = {
         id: 'contact',
         version: 1,
-        fields: [{ name: 'email', kind: 'email', required: true }],
+        fields: [
+          { name: 'email', kind: 'email', required: true },
+          { name: 'mode', kind: 'string' },
+        ],
         validationRules: [],
         delivery: {
           adminEmail: 'admin@example.test',
+          webhooks: [
+            {
+              url: 'https://credential@example.test/hook',
+              secret: 'packed-secret-rotation-fixture',
+            },
+          ],
           subject: 'Contact received',
           autoReply: {
             enabled: true,
@@ -258,6 +267,15 @@ export async function runConsumer() {
       );
       const definition = await expectStatus(app, 'GET', '/forms/contact', 200);
       assert.equal(definition.config.version, 1);
+      assert.equal('delivery' in definition.config, false);
+      assert.equal(
+        JSON.stringify(definition).includes('packed-secret-rotation-fixture'),
+        false,
+      );
+      assert.equal(
+        JSON.stringify(definition).includes('credential@example.test'),
+        false,
+      );
       assert.deepEqual(definition.config.fields, config.fields);
       assert.deepEqual(definition.config.validationRules, []);
       assert.deepEqual(
@@ -285,6 +303,34 @@ export async function runConsumer() {
         formVersion: 1,
         payload: {},
       });
+      const countBefore = await db.getRepository(SubmissionEntity).count();
+      for (const payload of [
+        {},
+        { email: 'bad' },
+        { email: 123 },
+        { email: 'valid@example.test', unexpected: true },
+      ]) {
+        const rejected = await expectStatus(app, 'POST', '/forms/submit', 400, {
+          formId: 'contact',
+          formVersion: 1,
+          payload,
+        });
+        assert.deepEqual(rejected, {
+          statusCode: 400,
+          message: 'Invalid form submission.',
+          error: 'Bad Request',
+        });
+      }
+      await expectStatus(app, 'POST', '/forms/submit', 400, {
+        formId: 'contact',
+        formVersion: 2,
+        payload: { email: 'valid@example.test' },
+      });
+      assert.equal(
+        await db.getRepository(SubmissionEntity).count(),
+        countBefore,
+      );
+      assert.equal(transport.messages.length, 0);
       const request: SubmissionRequestDTO = {
         formId: 'contact',
         formVersion: 1,

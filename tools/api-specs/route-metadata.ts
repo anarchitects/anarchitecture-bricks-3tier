@@ -1,3 +1,6 @@
+import { formsOperations } from '@anarchitects/forms-contracts';
+import { newsletterOperations } from '@anarchitects/newsletter-contracts';
+
 export const TAG_PREFIX_MAP: Array<{ prefix: string; tag: string }> = [
   { prefix: '/auth', tag: 'Auth' },
   { prefix: '/forms', tag: 'Forms' },
@@ -6,10 +9,12 @@ export const TAG_PREFIX_MAP: Array<{ prefix: string; tag: string }> = [
 ];
 
 export const OPERATION_ID_MAP: Record<string, string> = {
-  'POST /newsletter/webhook': 'receiveNewsletterWebhook',
-  'POST /newsletter/subscribe': 'subscribeToNewsletter',
-  'POST /newsletter/confirm': 'confirmNewsletterSubscription',
-  'POST /newsletter/unsubscribe': 'unsubscribeFromNewsletter',
+  ...Object.fromEntries(
+    [...formsOperations, ...newsletterOperations].map((operation) => [
+      `${operation.method} ${operation.path}`,
+      operation.operationId,
+    ]),
+  ),
   'PATCH /auth/activate': 'activateUser',
   'PATCH /auth/change-password/{userId}': 'changePassword',
   'POST /auth/forgot-password': 'forgotPassword',
@@ -25,10 +30,6 @@ export const OPERATION_ID_MAP: Record<string, string> = {
   'POST /auth/reset-password': 'resetPassword',
   'PATCH /auth/update-email/{userId}': 'updateEmail',
   'POST /auth/verify-email': 'verifyEmail',
-  'GET /forms/{formId}': 'getFormDefinition',
-  'POST /forms/submit': 'submitForm',
-  'GET /forms/submissions': 'getSubmissions',
-  'GET /forms/submissions/{submissionId}': 'getSubmission',
   'POST /identity/profiles': 'createUserProfile',
   'GET /identity/profiles/by-auth-user/{authUserId}':
     'getUserProfileByAuthUserId',
@@ -60,6 +61,10 @@ export function resolveOperationId(method: string, path: string): string {
 }
 
 export function resolveTags(path: string): string[] {
+  const canonical = [...formsOperations, ...newsletterOperations].find(
+    (operation) => operation.path === path,
+  );
+  if (canonical) return [...canonical.tags];
   const match = TAG_PREFIX_MAP.find(({ prefix }) => path.startsWith(prefix));
   return match ? [match.tag] : [];
 }

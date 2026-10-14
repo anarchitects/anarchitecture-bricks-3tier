@@ -1,3 +1,4 @@
 export * from './submission.mapper.js';
 export * from './form-config.mapper.js';
 export * from './form-definition-envelope.mapper.js';
+export * from './public-form-definition.mapper.js';

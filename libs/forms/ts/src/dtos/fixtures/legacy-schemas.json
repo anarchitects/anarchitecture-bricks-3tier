@@ -1,0 +1,557 @@
+{
+  "revision": "268f6d46730ae8fe16816abd61c4f789666cc227",
+  "purpose": "Frozen legacy test oracle, never contract authority",
+  "schemas": {
+    "FormDefinitionEnvelopeResponseSchema": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "anyOf": [
+                      {
+                        "const": "string",
+                        "type": "string"
+                      },
+                      {
+                        "const": "password",
+                        "type": "string"
+                      },
+                      {
+                        "const": "email",
+                        "type": "string"
+                      },
+                      {
+                        "const": "textarea",
+                        "type": "string"
+                      },
+                      {
+                        "const": "boolean",
+                        "type": "string"
+                      },
+                      {
+                        "const": "select",
+                        "type": "string"
+                      },
+                      {
+                        "const": "file",
+                        "type": "string"
+                      }
+                    ]
+                  },
+                  "required": {
+                    "type": "boolean"
+                  },
+                  "minLength": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "maxLength": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "pattern": {
+                    "type": "string"
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["value", "label"]
+                    }
+                  },
+                  "ui": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "placeholder": {
+                        "type": "string"
+                      },
+                      "rows": {
+                        "minimum": 1,
+                        "type": "integer"
+                      },
+                      "help": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": ["name", "kind"]
+              }
+            },
+            "validationRules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "const": "matchFields",
+                    "type": "string"
+                  },
+                  "sourceField": {
+                    "type": "string"
+                  },
+                  "targetField": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "required": ["kind", "sourceField", "targetField"]
+              }
+            },
+            "security": {
+              "type": "object",
+              "properties": {
+                "honeypot": {
+                  "type": "string"
+                },
+                "captcha": {
+                  "anyOf": [
+                    {
+                      "const": "turnstile",
+                      "type": "string"
+                    },
+                    {
+                      "const": "hcaptcha",
+                      "type": "string"
+                    },
+                    {
+                      "const": "none",
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "required": ["captcha"]
+            },
+            "delivery": {
+              "type": "object",
+              "properties": {
+                "adminEmail": {
+                  "format": "email",
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "string"
+                },
+                "autoReply": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "templateId": {
+                      "type": "string"
+                    },
+                    "subject": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["enabled", "templateId", "subject"]
+                },
+                "webhooks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "url": {
+                        "format": "uri",
+                        "type": "string"
+                      },
+                      "secret": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["url"]
+                  }
+                }
+              }
+            }
+          },
+          "required": ["id", "version", "fields"]
+        },
+        "schema": {}
+      },
+      "required": ["config", "schema"]
+    },
+    "FormDefinitionQuerySchema": {
+      "type": "object",
+      "properties": {
+        "formVersion": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      }
+    },
+    "FormDefinitionRequestSchema": {
+      "type": "object",
+      "properties": {
+        "formId": {
+          "type": "string"
+        },
+        "formVersion": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": ["formId", "formVersion"]
+    },
+    "FormDefinitionResponseSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "kind": {
+                "anyOf": [
+                  {
+                    "const": "string",
+                    "type": "string"
+                  },
+                  {
+                    "const": "password",
+                    "type": "string"
+                  },
+                  {
+                    "const": "email",
+                    "type": "string"
+                  },
+                  {
+                    "const": "textarea",
+                    "type": "string"
+                  },
+                  {
+                    "const": "boolean",
+                    "type": "string"
+                  },
+                  {
+                    "const": "select",
+                    "type": "string"
+                  },
+                  {
+                    "const": "file",
+                    "type": "string"
+                  }
+                ]
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "minLength": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxLength": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "pattern": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["value", "label"]
+                }
+              },
+              "ui": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "placeholder": {
+                    "type": "string"
+                  },
+                  "rows": {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  "help": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "required": ["name", "kind"]
+          }
+        },
+        "validationRules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "const": "matchFields",
+                "type": "string"
+              },
+              "sourceField": {
+                "type": "string"
+              },
+              "targetField": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": ["kind", "sourceField", "targetField"]
+          }
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "honeypot": {
+              "type": "string"
+            },
+            "captcha": {
+              "anyOf": [
+                {
+                  "const": "turnstile",
+                  "type": "string"
+                },
+                {
+                  "const": "hcaptcha",
+                  "type": "string"
+                },
+                {
+                  "const": "none",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "required": ["captcha"]
+        },
+        "delivery": {
+          "type": "object",
+          "properties": {
+            "adminEmail": {
+              "format": "email",
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "templateId": {
+              "type": "string"
+            },
+            "autoReply": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "templateId": {
+                  "type": "string"
+                },
+                "subject": {
+                  "type": "string"
+                }
+              },
+              "required": ["enabled", "templateId", "subject"]
+            },
+            "webhooks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "format": "uri",
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string"
+                  }
+                },
+                "required": ["url"]
+              }
+            }
+          }
+        }
+      },
+      "required": ["id", "version", "fields"]
+    },
+    "FormIdParamsSchema": {
+      "type": "object",
+      "properties": {
+        "formId": {
+          "type": "string"
+        }
+      },
+      "required": ["formId"]
+    },
+    "SubmissionIdParamsSchema": {
+      "type": "object",
+      "properties": {
+        "submissionId": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": ["submissionId"]
+    },
+    "SubmissionRequestSchema": {
+      "type": "object",
+      "properties": {
+        "formId": {
+          "type": "string"
+        },
+        "formVersion": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "payload": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        }
+      },
+      "required": ["formId", "formVersion", "payload"]
+    },
+    "SubmissionResponseSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "formId": {
+          "type": "string"
+        },
+        "formVersion": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "payload": {
+          "type": "object",
+          "patternProperties": {
+            "^(.*)$": {}
+          }
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "formId",
+        "formVersion",
+        "payload",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SubmissionsQuerySchema": {
+      "type": "object",
+      "properties": {
+        "formId": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "formVersion": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      }
+    },
+    "SubmissionsResponseSchema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "formId": {
+            "type": "string"
+          },
+          "formVersion": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "payload": {
+            "type": "object",
+            "patternProperties": {
+              "^(.*)$": {}
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "formId",
+          "formVersion",
+          "payload",
+          "createdAt",
+          "updatedAt"
+        ]
+      }
+    }
+  }
+}

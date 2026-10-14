@@ -37,7 +37,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@sinclair/typebox": "^0.34.41"
+    "@sinclair/typebox": "^0.34.41",
+    "@anarchitects/forms-contracts": "0.1.0",
+    "zod": "4.5.0"
   },
   "repository": {
     "type": "git",

@@ -55,7 +55,7 @@ yarn nx run newsletter-nest:test-nest-compatibility:nest12-optional
 
 The full hosts compile strict NodeNext CJS/ESM consumers and the actual Nest example source against packed packages, without workspace aliases or `skipLibCheck`. They run exported migrations, native signup/mail/confirmation/unsubscribe/replay/restart, MailerLite provider failures, rate limiting, exact raw-body signature verification, rejected signatures/accounts/oversized payloads and durable concurrent webhook deduplication. Config-driven composition checks explicit overrides and disabled routes. Optional-peer hosts use separate clean npm installs and verify runtime CJS/ESM loading, custom/noop providers, advanced presentation composition, custom limiting and fail-closed behavior when raw-body capture is missing. Declaration checks for optional integration types run in the full hosts, where those types are installed.
 
-`tools/testing/newsletter-nest-hosts/candidates.json` stages Newsletter Nest 0.1.0, Newsletter TS 0.1.0 (unchanged API, coordinated version line), and Common Mailer 0.5.0. Only candidate **versions** change during staging; dependencies, peer ranges, optional-peer metadata and exports must match the source/build/packed contracts. Frozen registry locks retain integrity hashes and use strict peer/engine checks without install scripts. To refresh a lock intentionally after building, run `node tools/testing/run-newsletter-nest-host.mjs <host> --refresh-lock`, then validate the normal target. Update candidate versions and locks together when the coordinated release selects final versions.
+`tools/testing/newsletter-nest-hosts/candidates.json` stages Newsletter Nest 0.1.0, Newsletter TS 0.1.0 (preserved DTO names, export-aware TypeScript resolution required), and Common Mailer 0.5.0. Only candidate **versions** change during staging; dependencies, peer ranges, optional-peer metadata and exports must match the source/build/packed contracts. Frozen registry locks retain integrity hashes and use strict peer/engine checks without install scripts. To refresh a lock intentionally after building, run `node tools/testing/run-newsletter-nest-host.mjs <host> --refresh-lock`, then validate the normal target. Update candidate versions and locks together when the coordinated release selects final versions.
 
 [Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 on Node 20.19.0, 22.13.0, 24.11.0 and 26.11.1, and Nest 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1, including optional-peer absence. TypeScript is 6.0.3. The locked Nest 12 graph excludes Node 20. That run used the earlier TS 0.0.1 staging version; #469 aligns staging with the coordinated TS 0.1.0 release, requiring fresh PR CI. Epic #428 is closed and its initial release shipped; the next minor retains coordinated release ownership. Source versions, tags and publication remain owned by the human-approved release workflow; Common Mailer 0.5 must be available before releasing this Common-backed contract.
 
@@ -804,3 +804,18 @@ applications own composition with Blog and other business capabilities.
 ## Integration examples and migration
 
 See the [Newsletter integration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-integration.html) for native/MailerLite host setup, the Forms-backed Angular example, contracts, and the coordinated release gate. Use the [app-local migration guide](https://bricks-3tier.anarchitects.dev/guides/newsletter-migration.html) to plan adoption while retaining host policy and historical evidence.
+
+## Canonical contract adoption (#489)
+
+Newsletter Contracts `0.1.0` owns the wire schemas and operation definitions.
+The existing TypeBox DTO exports remain available through derived bindings;
+presentation validates with the pinned canonical runtime parser, preserving
+strict, non-coercing input and UTF-16 limits. Honeypot handling still runs first.
+The MailerLite adapter checks the signature against the exact raw bytes before
+decoding and canonical payload validation. Provider limits/account matching,
+consent ordering, native double opt-in and durable withdrawal deduplication remain
+implementation responsibilities. No provider or HTTP adapter is replaced.
+
+TypeScript consumers must use `NodeNext`, supported `Node16`, or `bundler` resolution.
+CommonJS runtime consumption remains supported. The [adoption record](../../../docs/audits/489-canonical-adoption.md)
+distinguishes package and fixture evidence from approved deployed-host conformance.

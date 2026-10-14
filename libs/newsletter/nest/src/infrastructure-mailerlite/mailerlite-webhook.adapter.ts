@@ -1,7 +1,12 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { TextDecoder } from 'node:util';
-import { Value } from '@sinclair/typebox/value';
-import { NewsletterSubscriptionRequestSchema } from '@anarchitects/newsletter-ts/dtos';
+import {
+  NewsletterWebhookPayloadSchema,
+  NewsletterWebhookIdentifierSchema,
+  NewsletterWebhookTimestampSchema,
+  NewsletterSignatureHeaderSchema,
+  NewsletterEmailSchema,
+} from '@anarchitects/newsletter-contracts';
 import type { NewsletterWithdrawalEvent } from '@anarchitects/newsletter-ts/models';
 import type {
   NewsletterWithdrawalResult,
@@ -23,19 +28,11 @@ function object(value: unknown): value is Payload {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 function identifier(value: unknown): string | undefined {
-  if (typeof value === 'string' && /^\d+(?![\s\S])/.test(value)) return value;
-  if (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0)
-    return String(value);
-  return undefined;
+  const result = NewsletterWebhookIdentifierSchema.safeParse(value);
+  return result.success ? String(result.data) : undefined;
 }
 function timestamp(value: unknown): value is string {
-  return (
-    typeof value === 'string' &&
-    /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})?$/.test(
-      value,
-    ) &&
-    Number.isFinite(Date.parse(value))
-  );
+  return NewsletterWebhookTimestampSchema.safeParse(value).success;
 }
 
 /** Verifies and parses the same raw bytes before dispatching any withdrawal. */
@@ -83,8 +80,7 @@ export class MailerLiteWebhookAdapter {
       throw new MailerLiteWebhookError('payload_too_large');
     if (
       typeof signature !== 'string' ||
-      signature.length !== 64 ||
-      !/^[a-f\d]{64}$/i.test(signature)
+      !NewsletterSignatureHeaderSchema.safeParse(signature).success
     )
       throw new MailerLiteWebhookError('invalid_signature');
     const bytes = Buffer.from(rawBody);
@@ -101,6 +97,8 @@ export class MailerLiteWebhookAdapter {
     } catch {
       throw invalid();
     }
+    if (!NewsletterWebhookPayloadSchema.safeParse(payload).success)
+      throw invalid();
     const events = this.normalize(payload);
     // Normalize the entire signed batch before side effects. Persistence failures
     // propagate so ingress can request a retry instead of falsely acknowledging.
@@ -148,10 +146,8 @@ export class MailerLiteWebhookAdapter {
             subscriber['updated_at']);
       if (
         !id ||
-        !Value.Check(
-          NewsletterSubscriptionRequestSchema.properties.email,
-          email,
-        ) ||
+        typeof email !== 'string' ||
+        !NewsletterEmailSchema.safeParse(email).success ||
         !timestamp(changedAt)
       )
         throw invalid();

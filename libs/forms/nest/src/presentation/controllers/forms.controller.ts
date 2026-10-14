@@ -1,11 +1,18 @@
 import {
-  FormDefinitionEnvelopeResponseSchema,
+  PublicFormDefinitionEnvelopeResponseSchema,
   FormDefinitionQueryDTO,
   FormDefinitionQuerySchema,
   FormIdParamsSchema,
 } from '@anarchitects/forms-ts/dtos';
-import { toFormDefinitionEnvelopeResponseDTO } from '@anarchitects/forms-ts/mappers';
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { toPublicFormDefinitionEnvelopeResponseDTO } from '@anarchitects/forms-ts/mappers';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { RouteSchema } from '@nestjs/platform-fastify';
 import { FormsService } from '../../application/services/forms.service';
 
@@ -18,15 +25,24 @@ export class FormsController {
     params: FormIdParamsSchema,
     querystring: FormDefinitionQuerySchema,
     response: {
-      200: FormDefinitionEnvelopeResponseSchema,
+      200: PublicFormDefinitionEnvelopeResponseSchema,
     },
   })
-  getFormDefinition(
+  async getFormDefinition(
     @Param('formId') formId: string,
     @Query() query: FormDefinitionQueryDTO,
   ) {
-    return this.formsService
-      .getDefinition(formId, query?.formVersion ?? 1)
-      .then((definition) => toFormDefinitionEnvelopeResponseDTO(definition));
+    try {
+      const definition = await this.formsService.getDefinition(
+        formId,
+        query?.formVersion ?? 1,
+      );
+      return toPublicFormDefinitionEnvelopeResponseDTO(definition);
+    } catch (error) {
+      if (error instanceof NotFoundException)
+        throw new NotFoundException('Form definition not found.');
+      // Configuration/adapter failures must not echo delivery settings in errors or logs.
+      throw new InternalServerErrorException('Unable to read form definition.');
+    }
   }
 }

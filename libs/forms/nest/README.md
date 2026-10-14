@@ -217,3 +217,27 @@ Use layered composition when you need to swap or selectively compose infrastruct
 ## License
 
 Released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Forms contract/security migration (#489)
+
+The public boundary consumes Forms Contracts `0.1.0` through `forms-ts`.
+`GET /forms/:formId` returns the canonical public definition target without any
+delivery configuration. Keep delivery secrets write-only; restricted management
+can use a configured indicator. Host authentication and per-resource authorization
+remain mandatory, including for submission list/detail reads. Installing the facade
+does not choose those policies for a host.
+
+Before storing or delivering a submission, the service validates the exact fetched
+form/version: required/optional fields, types, formats, lengths, select options,
+unknown payload keys and cross-field equality. Invalid submissions return
+`400 { statusCode: 400, message: "Invalid form submission.", error: "Bad Request" }`.
+Missing definitions return 404; infrastructure failures remain sanitized 500 errors.
+Payload values are not coerced or silently stripped by the dynamic validator.
+
+These are breaking security changes: formerly invalid payloads may have reached
+storage/mail, and public definition consumers may have depended on delivery fields.
+Review historical data, update clients, rotate previously exposed credentials and
+coordinate the domain's pre-1.0 minor release. Use export-aware TypeScript resolution.
+See the [adoption and rollout record](../../../docs/audits/489-canonical-adoption.md).
+The canonical operation migration and actual deployed-host security evidence must
+be reviewed before clearing Forms' upstream capability blockers.

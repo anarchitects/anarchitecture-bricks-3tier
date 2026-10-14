@@ -58,7 +58,11 @@ describe('FormsController', () => {
       const result = await controller.getFormDefinition(formId, {
         formVersion: 2,
       });
-      expect(result).toEqual(mockFormDefinitionEnvelope);
+      expect(result.config).toEqual(mockFormConfig);
+      expect(result.schema).toMatchObject({
+        type: 'object',
+        additionalProperties: false,
+      });
       expect(mockFormService.getDefinition).toHaveBeenCalledWith(formId, 2);
     });
 

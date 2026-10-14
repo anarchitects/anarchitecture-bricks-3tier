@@ -7,8 +7,10 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import type { FastifyInstance } from 'fastify';
-import { Value } from '@sinclair/typebox/value';
-import type { TSchema } from '@sinclair/typebox';
+import {
+  NewsletterSubscriptionRequestSchema,
+  NewsletterNativeActionRequestSchema,
+} from '@anarchitects/newsletter-contracts';
 import {
   bindNewsletterProvider,
   requireNewsletterMethods,
@@ -51,12 +53,13 @@ export class NewsletterPresentationModule implements NestModule {
       )
         return;
       route.attachValidation = true;
-      route.validatorCompiler =
-        ({ schema }) =>
-        (data) =>
-          Value.Check(schema as TSchema, data)
-            ? { value: data }
-            : { error: new Error('Invalid newsletter request.') };
+      const canonical = config?.['newsletterSubscription']
+        ? NewsletterSubscriptionRequestSchema
+        : NewsletterNativeActionRequestSchema;
+      route.validatorCompiler = () => (data) =>
+        canonical.safeParse(data).success
+          ? { value: data }
+          : { error: new Error('Invalid newsletter request.') };
       if (!config?.['newsletterSubscription']) return;
       const previous = route.preValidation ? [route.preValidation].flat() : [];
       route.preValidation = [

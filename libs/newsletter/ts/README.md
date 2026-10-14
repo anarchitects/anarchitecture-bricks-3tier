@@ -2,10 +2,12 @@
 
 Public HTTP authority belongs to [`anarchitecture-contracts`](https://github.com/anarchitects/anarchitecture-contracts)
 under [ADR-0016](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/adr/0016-consume-canonical-public-api-contracts.md).
-This package retains its domain models and current TypeBox DTOs/exports as the
-transitional implementation baseline. Canonical Zod schemas and operations are
-adopted through immutable versions and verified compatibility; this README does
-not claim that adoption is complete. See the [TS Contracts Guide](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/ts-contracts.md).
+This package consumes `@anarchitects/newsletter-contracts@0.1.0` and Zod `4.5.0`
+through derived TypeBox compatibility bindings. Domain models remain local.
+Use export-aware TypeScript resolution (`NodeNext`, supported `Node16`, or
+`bundler`); legacy `node10` resolution is no longer supported. Existing DTO names
+and ESM/CommonJS entry points remain. See the [adoption record](../../../docs/audits/489-canonical-adoption.md)
+for exact scope, migration requirements and remaining host-conformance gates.
 
 Framework-neutral subscription schemas and consent evidence contracts for Newsletter.
 This package follows [ADR-0010](../../../docs/adr/0010-define-newsletter-domain-boundaries-and-ports.md)
@@ -21,8 +23,9 @@ and is implemented under [epic #428](https://github.com/anarchitects/anarchitect
   IDs, provider status or confirmation status.
 - ESM, CommonJS and TypeScript declarations at the root and secondary entry points.
 
-The only runtime dependency is TypeBox. There are no Angular, Nest, TypeORM,
-provider SDK, Blog or other business-domain dependencies.
+Runtime dependencies are TypeBox, the pinned canonical Newsletter contracts and
+Zod. There are no Angular, Nest, TypeORM, provider SDK, Blog or other business-domain
+dependencies.
 
 `NewsletterNativeSubscriber` and `NewsletterNativeSubscriberStatus` are exported
 from `models` and the root. They describe internal operational identity, scope,
@@ -33,7 +36,7 @@ of these models; backend token and repository contracts belong to Nest applicati
 
 ## Installation
 
-Newsletter 0.0.1 is published. The next coordinated 0.1 release accompanies the Nest 11/12 contract; TS has no public API break in that upgrade. See the [release plan](../../../docs/guides/nest-compatibility-release-plan.md). Workspace development uses the source aliases below.
+Newsletter 0.0.1 is published. The next coordinated 0.1 release accompanies the Nest 11/12 contract and canonical contract adoption. DTO names remain available; consumers must migrate legacy TypeScript module resolution as described above. See the [release plan](../../../docs/guides/nest-compatibility-release-plan.md). Workspace development uses the source aliases below.
 
 ## Usage
 

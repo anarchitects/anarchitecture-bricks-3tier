@@ -1,8 +1,6 @@
-import { Static, Type } from '@sinclair/typebox';
+import { SubmissionsQuerySchema as CanonicalSchema } from '@anarchitects/forms-contracts';
+import { canonicalTypeBox } from './canonical-typebox.js';
+import type { Static } from '@sinclair/typebox';
 
-export const SubmissionsQuerySchema = Type.Object({
-  formId: Type.Optional(Type.String({ minLength: 1 })),
-  formVersion: Type.Optional(Type.Integer({ minimum: 1 })),
-});
-
+export const SubmissionsQuerySchema = canonicalTypeBox(CanonicalSchema);
 export type SubmissionsQueryDTO = Static<typeof SubmissionsQuerySchema>;

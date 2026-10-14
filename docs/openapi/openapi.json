@@ -1161,57 +1161,14 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "additionalProperties": false,
                   "properties": {
                     "config": {
+                      "additionalProperties": false,
                       "properties": {
-                        "delivery": {
-                          "properties": {
-                            "adminEmail": {
-                              "format": "email",
-                              "type": "string"
-                            },
-                            "autoReply": {
-                              "properties": {
-                                "enabled": {
-                                  "type": "boolean"
-                                },
-                                "subject": {
-                                  "type": "string"
-                                },
-                                "templateId": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": ["enabled", "templateId", "subject"],
-                              "type": "object"
-                            },
-                            "subject": {
-                              "type": "string"
-                            },
-                            "templateId": {
-                              "type": "string"
-                            },
-                            "webhooks": {
-                              "items": {
-                                "properties": {
-                                  "secret": {
-                                    "type": "string"
-                                  },
-                                  "url": {
-                                    "format": "uri",
-                                    "type": "string"
-                                  }
-                                },
-                                "required": ["url"],
-                                "type": "object"
-                              },
-                              "type": "array"
-                            }
-                          },
-                          "type": "object"
-                        },
                         "fields": {
                           "items": {
+                            "additionalProperties": false,
                             "properties": {
                               "kind": {
                                 "anyOf": [
@@ -1258,6 +1215,7 @@
                               },
                               "options": {
                                 "items": {
+                                  "additionalProperties": false,
                                   "properties": {
                                     "label": {
                                       "type": "string"
@@ -1278,6 +1236,7 @@
                                 "type": "boolean"
                               },
                               "ui": {
+                                "additionalProperties": false,
                                 "properties": {
                                   "help": {
                                     "type": "string"
@@ -1305,6 +1264,7 @@
                           "type": "string"
                         },
                         "security": {
+                          "additionalProperties": false,
                           "properties": {
                             "captcha": {
                               "anyOf": [
@@ -1331,6 +1291,7 @@
                         },
                         "validationRules": {
                           "items": {
+                            "additionalProperties": false,
                             "properties": {
                               "kind": {
                                 "enum": ["matchFields"],
