@@ -154,6 +154,16 @@ Local evidence on macOS arm64, Node `24.21.0`, 2026-10-14:
 - Documentation content/build/verify, ESLint for changed harness/route tooling and
   `git diff --check` passed.
 
+PR #495 CI exposed a separate legacy fixture gap: `test-persistence` copied the
+built Newsletter packages into a temporary host without making the new canonical
+package or Zod available. The persistence and package-smoke fixture dependency
+lists now include both. The Node16 package-smoke check additionally exposed inline
+`import()` types retaining `.js` paths in CommonJS declarations; declaration
+emission now maps these references to `.cjs` as well as static imports. The reported
+missing-module failure was reproduced locally before the fix. All 13 applicable
+Newsletter build/lint/unit/typecheck/persistence/package-smoke tasks pass after it,
+including real PostgreSQL integration and Node16 CJS/ESM declaration checks.
+
 These are local results, not Linux CI results or certification of every supported
 runtime. Host policy, deployed secret rotation and versioned upstream operation
 migration remain review/release gates. No Bricks release, npm publication or

@@ -18,7 +18,8 @@ export default defineConfig(() => ({
       pathsToAliases: false,
       async afterBuild(files) {
         // Each runtime format needs matching declarations. Node16 consumers
-        // require explicit relative extensions and distinguish .d.ts/.d.cts.
+        // require explicit relative extensions and distinguish .d.ts/.d.cts,
+        // including inline import() types inferred for the compatibility bindings.
         await Promise.all(
           [...files]
             .filter(([file]) => file.endsWith('.d.ts'))
@@ -29,9 +30,9 @@ export default defineConfig(() => ({
                     ? file
                     : file.replace(/\.d\.ts$/, '.d.cts'),
                   content.replace(
-                    /from (['"])(\.[^'"]+)\1/g,
-                    (_match, quote, specifier) =>
-                      `from ${quote}${specifier.replace(/\.js$/, '')}.${extension}${quote}`,
+                    /(from\s+|import\(\s*)(['"])(\.[^'"]+)\2/g,
+                    (_match, prefix, quote, specifier) =>
+                      `${prefix}${quote}${specifier.replace(/\.js$/, '')}.${extension}${quote}`,
                   ),
                 ),
               ),

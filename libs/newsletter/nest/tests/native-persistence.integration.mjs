@@ -26,6 +26,7 @@ for (const layer of ['nest', 'ts'])
     { recursive: true },
   );
 for (const name of [
+  '@anarchitects/newsletter-contracts',
   '@sinclair',
   '@nestjs',
   'rxjs',
@@ -33,6 +34,7 @@ for (const name of [
   'fastify',
   'tslib',
   'typeorm',
+  'zod',
 ])
   symlinkSync(
     path.resolve('node_modules', name),
