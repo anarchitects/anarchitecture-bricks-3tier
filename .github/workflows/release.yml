@@ -84,6 +84,12 @@ jobs:
           git config user.name "anarchitects-bot[bot]"
           git config user.email "anarchitects-bot[bot]@users.noreply.github.com"
 
+      - name: Verify canonical artifacts and packed HTTP behavior
+        if: inputs.domain != 'common'
+        run: |
+          yarn nx run-many -p api-specs -t verify,test --parallel=1
+          yarn nx run api-specs:conformance-http
+
       - name: Run release for selected domain group
         run: |
           bump_args=""

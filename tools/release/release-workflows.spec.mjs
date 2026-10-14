@@ -106,7 +106,7 @@ test('first-release guidance uses the non-bumping init commit type', () => {
     nxConfig.release.conventionalCommits.types.init.semverBump,
     'none',
   );
-  assert.match(readme, /init\(<project-or-domain>\).*semverBump: none/s);
-  assert.match(contributing, /init\(<project-or-domain>\).*semverBump: none/s);
+  assert.match(readme, /init\(<nx-project-name>\).*semverBump: none/s);
+  assert.match(contributing, /init\(<nx-project-name>\).*semverBump: none/s);
   assert.match(commitValidator, /allowedTypes.*'init'/);
 });

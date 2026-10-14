@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { createProjectGraphAsync } from '@nx/devkit';
+import { validateCommitScope } from './commit-scope-lib.mjs';
 import { spawnSync } from 'node:child_process';
 import { isDocsOnlyChange } from './docs-surface-lib.mjs';
 
@@ -43,8 +46,8 @@ function resolveCommit(value) {
 
 function resolveBaseCommit() {
   const directCandidates = [
-    process.env.NX_BASE,
     process.env.GITHUB_BASE_SHA,
+    process.env.NX_BASE,
     process.env.BASE_SHA,
   ];
 
@@ -133,12 +136,39 @@ if (changedFiles.length === 0) {
   process.exit(0);
 }
 
+const graph = await createProjectGraphAsync();
+const nx = JSON.parse(readFileSync('nx.json', 'utf8'));
+const types = new Set(Object.keys(nx.release.conventionalCommits.types));
+const names = new Set(Object.keys(graph.nodes));
+const commitRange = `${baseCommit}..HEAD`;
+const scopeCommits = parseCommitBlocks(
+  runGit(['log', '--no-merges', '--format=%H%x1f%s%x1f%b%x1e', commitRange]),
+);
+const scopeErrors = scopeCommits.flatMap((commit) => {
+  const error = validateCommitScope(commit.subject, names, types);
+  return error ? [`${commit.hash.slice(0, 8)}: ${error}`] : [];
+});
+if (process.env.GITHUB_EVENT_PATH) {
+  const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+  if (event.pull_request?.title) {
+    const error = validateCommitScope(event.pull_request.title, names, types);
+    if (error) scopeErrors.push(`PR squash title: ${error}`);
+  }
+}
+if (scopeErrors.length) throw new Error(scopeErrors.join('\n'));
+console.log('Conventional Commit types and exact Nx scopes passed.');
+
 if (!isDocsOnlyChange(changedFiles)) {
   console.log('PR is not docs-only; skipping non-bumping commit validation.');
   process.exit(0);
 }
 
-const rawLog = runGit(['log', '--format=%H%x1f%s%x1f%b%x1e', range]);
+const rawLog = runGit([
+  'log',
+  '--no-merges',
+  '--format=%H%x1f%s%x1f%b%x1e',
+  commitRange,
+]);
 const commits = parseCommitBlocks(rawLog);
 
 if (commits.length === 0) {
