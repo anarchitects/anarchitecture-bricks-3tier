@@ -115,3 +115,11 @@ Preserve the `ui <- feature -> state -> data-access` layering and keep configura
 ## License
 
 Licensed under the Apache License, Version 2.0.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/identity-contracts@0.0.1` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

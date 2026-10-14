@@ -1,111 +1,67 @@
-import { readFileSync } from 'node:fs';
-import { execSync } from 'node:child_process';
-import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+  digest,
+  json,
+  loadCanonicalArtifacts,
+} from './canonical-artifacts.mjs';
+import {
+  gitJson,
+  implementationChanges,
+  wireOperations,
+  assertCompatibilityReview,
+} from './compatibility.mjs';
 
-import OpenApiDiff from 'openapi-diff';
-
-const SPEC_PATH = join(process.cwd(), 'docs/openapi/openapi.yaml');
-const OPENAPI_31_REGEX = /^openapi:\s*["']?3\.1\.\d+["']?\s*$/m;
-
-function normalizeSpecForDiff(content: string, label: string): string {
-  if (!OPENAPI_31_REGEX.test(content)) {
-    return content;
-  }
-
-  console.log(
-    `Normalizing ${label} OpenAPI version from 3.1.x to 3.0.3 for openapi-diff compatibility.`,
-  );
-
-  return content.replace(OPENAPI_31_REGEX, 'openapi: 3.0.3');
-}
-
-function loadCurrentSpec(): string {
-  return readFileSync(SPEC_PATH, 'utf8');
-}
-
-function loadSpecFromRef(ref: string): string | null {
+const baseRef =
+  process.env['GITHUB_BASE_SHA'] ??
+  process.env['NX_BASE'] ??
+  process.argv[2] ??
+  'origin/main';
+const base = execFileSync(
+  'git',
+  ['rev-parse', '--verify', `${baseRef}^{commit}`],
+  { encoding: 'utf8' },
+).trim();
+const artifacts = loadCanonicalArtifacts();
+const current = JSON.parse(readFileSync('docs/openapi/openapi.json', 'utf8'));
+const previous = gitJson(base, 'docs/openapi/openapi.json');
+const changes = implementationChanges(previous, current, artifacts);
+const report = {
+  base,
+  before: digest(json(wireOperations(previous))),
+  after: digest(json(wireOperations(current))),
+  canonical: artifacts.map(({ name, version, manifest }) => ({
+    name,
+    version,
+    artifacts: manifest.artifacts,
+  })),
+  changes,
+};
+mkdirSync('dist/api-conformance', { recursive: true });
+writeFileSync(
+  'dist/api-conformance/compatibility.json',
+  `${JSON.stringify(report, null, 2)}\n`,
+);
+const breaking = changes.filter(({ impact }) => impact === 'review-required');
+if (breaking.length) {
+  // A local snapshot or a bigger package version cannot approve wire changes.
+  // Approval records bind the exact candidate, upstream version and comparison.
+  const reviewPath = 'tools/api-specs/compatibility-review.json';
+  let review;
   try {
-    return execSync(`git show ${ref}:docs/openapi/openapi.yaml`, {
-      cwd: process.cwd(),
-      stdio: ['ignore', 'pipe', 'pipe'],
-    }).toString('utf8');
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-
-    if (message.includes('exists on disk, but not in')) {
-      return null;
-    }
-
+    review = JSON.parse(readFileSync(reviewPath, 'utf8'));
+  } catch {
+    /* No review is not approval. */
+  }
+  const fingerprint = digest(json(report));
+  try {
+    assertCompatibilityReview(review, fingerprint);
+  } catch {
     throw new Error(
-      `Failed to load docs/openapi/openapi.yaml from ref "${ref}".\n${message}`,
+      `Wire changes require human/upstream compatibility review (${fingerprint}). See dist/api-conformance/compatibility.json; record the exact approved comparison, decision, owner, migration and rollback in ${reviewPath}.`,
     );
   }
 }
-
-async function run() {
-  const baseRef = process.argv[2] ?? 'origin/main';
-  const source = loadSpecFromRef(baseRef);
-  if (!source) {
-    console.log(
-      `Skipped OpenAPI diff: docs/openapi/openapi.yaml not found at ${baseRef}.`,
-    );
-    return;
-  }
-
-  const destination = loadCurrentSpec();
-  // Byte-identical documents cannot contain a contract delta. In particular,
-  // do not feed unchanged 3.1 nullable schemas to the legacy 3.0 comparator.
-  if (source === destination) {
-    console.log(`OpenAPI is byte-identical to ${baseRef}; no changes.`);
-    return;
-  }
-  const normalizedSource = normalizeSpecForDiff(source, `${baseRef} spec`);
-  const normalizedDestination = normalizeSpecForDiff(
-    destination,
-    'workspace spec',
-  );
-
-  const result = await OpenApiDiff.diffSpecs({
-    sourceSpec: {
-      content: normalizedSource,
-      location: `${baseRef}:docs/openapi/openapi.yaml`,
-      format: 'openapi3',
-    },
-    destinationSpec: {
-      content: normalizedDestination,
-      location: 'workspace/docs/openapi/openapi.yaml',
-      format: 'openapi3',
-    },
-  });
-
-  const changedOperations = result.breakingDifferencesFound
-    ? result.breakingDifferences.length
-    : 0;
-
-  console.log(`Compared OpenAPI spec against ${baseRef}.`);
-  console.log(
-    `Breaking changes: ${result.breakingDifferencesFound ? 'YES' : 'NO'}${
-      result.breakingDifferencesFound
-        ? ` (${changedOperations} difference${
-            changedOperations === 1 ? '' : 's'
-          })`
-        : ''
-    }`,
-  );
-
-  if (result.breakingDifferencesFound) {
-    for (const difference of result.breakingDifferences) {
-      const [destinationDetail] = difference.destinationSpecEntityDetails ?? [];
-      console.log(
-        `- ${difference.action} @ ${destinationDetail?.location ?? 'unknown location'}`,
-      );
-    }
-    process.exitCode = 1;
-  }
-}
-
-run().catch((error) => {
-  console.error('OpenAPI diff failed.');
-  console.error(error);
-  process.exit(1);
-});
+console.log(
+  `OpenAPI 3.1 implementation comparison: ${changes.length} changes; ${breaking.length} reviewed wire changes. Canonical artifacts remain authoritative.`,
+);

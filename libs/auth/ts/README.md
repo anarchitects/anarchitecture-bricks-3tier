@@ -305,3 +305,11 @@ Auth DTOs are maintained in this package and consumed by Nest presentation route
 ## License
 
 Licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0) (the "License"); you may not use this package except in compliance with the License. You may obtain a copy of the License at the linked address or in the repository's `LICENSE` file. Unless required by applicable law or agreed to in writing, distributed code is provided on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/auth-contracts@0.1.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

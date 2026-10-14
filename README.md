@@ -98,9 +98,10 @@ nx run api-specs:generate
 nx run api-specs:lint
 nx run api-specs:verify
 
-# Coordinate public API changes in Contracts first. For approved baseline changes:
-# align tools/api-specs/route-metadata.ts and review the generated diff
-# then run yarn nx run api-specs:snapshot; snapshots do not authorize wire changes
+# Compare to immutable canonical artifacts and exercise packed HTTP hosts
+yarn nx run api-specs:diff
+yarn nx run api-specs:conformance-http
+# Public wire changes require upstream review and an exact compatibility record.
 
 # Angular technical docs
 nx run angular-docs:generate
@@ -120,29 +121,33 @@ yarn nx run release-tools:test-forms-identity-nest-compatibility:nest12
 nx run forms-angular-example:contract-test
 ```
 
+Canonical versions and remaining host/security gates are documented in the
+[conformance guide](docs/guides/canonical-conformance.md). A route-inventory pass
+does not establish full deployment conformance.
+
 ## Key Nx Targets
 
-| Command                                                                   | Description                                           |
-| ------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `nx run api-specs:generate`                                               | Generate OpenAPI JSON/YAML from Nest controllers      |
-| `nx run api-specs:lint`                                                   | Lint generated OpenAPI                                |
-| `nx run api-specs:diff`                                                   | Compare generated OpenAPI against `origin/main`       |
-| `nx run api-specs:mock`                                                   | Run Prism mock server from generated OpenAPI          |
-| `nx run api-specs:verify`                                                 | Validate required endpoints + snapshot stability      |
-| `nx run angular-docs:generate`                                            | Generate and merge Compodoc docs                      |
-| `nx run docs-hub:validate-content`                                        | Enforce required docs sections for guides and READMEs |
-| `nx run storybook-angular:build-storybook`                                | Build Storybook with technical docs metadata          |
-| `nx run docs-hub:build`                                                   | Build static docs hub pages                           |
-| `nx run docs-hub:verify`                                                  | Validate docs hub outputs and required links          |
-| `nx run release-tools:validate-non-bumping-commits`                       | Enforce non-bumping commit types for docs-surface PRs |
-| `nx run release-tools:validate-angular-package-compatibility`             | Validate Angular peers and release-group coverage     |
-| `nx run release-tools:domain-release -- --domain=forms -d`                | Dry-run the supported domain release workflow         |
-| `yarn nx run auth-nest:test-nest-compatibility:nest12`                    | Validate packed Auth on Nest 12                       |
-| `nx run auth-angular-example:contract-test`                               | Validate auth Angular data-access against Prism mock  |
-| `yarn nx run auth-angular-example-e2e:passkey-contract-test`              | Validate browser passkeys through Nest and PostgreSQL |
-| `yarn nx run release-tools:test-forms-identity-nest-compatibility:nest12` | Validate packed Forms/Identity on Nest 12             |
-| `nx run forms-angular-example:contract-test`                              | Validate Angular data-access calls against Prism mock |
-| `nx affected -t lint test build`                                          | Standard affected checks                              |
+| Command                                                                   | Description                                                  |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `nx run api-specs:generate`                                               | Generate OpenAPI JSON/YAML from Nest controllers             |
+| `nx run api-specs:lint`                                                   | Lint generated OpenAPI                                       |
+| `nx run api-specs:diff`                                                   | Compare generated OpenAPI against `origin/main`              |
+| `nx run api-specs:mock`                                                   | Run Prism mock server from generated OpenAPI                 |
+| `nx run api-specs:verify`                                                 | Verify canonical inventory, integrity and report differences |
+| `nx run angular-docs:generate`                                            | Generate and merge Compodoc docs                             |
+| `nx run docs-hub:validate-content`                                        | Enforce required docs sections for guides and READMEs        |
+| `nx run storybook-angular:build-storybook`                                | Build Storybook with technical docs metadata                 |
+| `nx run docs-hub:build`                                                   | Build static docs hub pages                                  |
+| `nx run docs-hub:verify`                                                  | Validate docs hub outputs and required links                 |
+| `nx run release-tools:validate-non-bumping-commits`                       | Validate exact Nx scopes/types and docs commit policy        |
+| `nx run release-tools:validate-angular-package-compatibility`             | Validate Angular peers and release-group coverage            |
+| `nx run release-tools:domain-release -- --domain=forms -d`                | Dry-run the supported domain release workflow                |
+| `yarn nx run auth-nest:test-nest-compatibility:nest12`                    | Validate packed Auth on Nest 12                              |
+| `nx run auth-angular-example:contract-test`                               | Validate auth Angular data-access against Prism mock         |
+| `yarn nx run auth-angular-example-e2e:passkey-contract-test`              | Validate browser passkeys through Nest and PostgreSQL        |
+| `yarn nx run release-tools:test-forms-identity-nest-compatibility:nest12` | Validate packed Forms/Identity on Nest 12                    |
+| `nx run forms-angular-example:contract-test`                              | Validate Angular data-access calls against Prism mock        |
+| `nx affected -t lint test build`                                          | Standard affected checks                                     |
 
 ## Release By Domain
 
@@ -152,7 +157,7 @@ Run releases via the **Release (Manual)** GitHub workflow:
 - Newsletter 0.0.1 shipped after #428 acceptance. Its next coordinated 0.1 release is part of the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md); publish the complete accepted domain, not intermediate implementation fragments.
 - Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
 - Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
-- Introduce a new publishable project with an `init(<project-or-domain>): <description>` implementation commit. `init` has `semverBump: none` in `nx.json`; the workflow's `first_release` and explicit `bump` inputs choose the initial published version without also inferring a feature bump.
+- Introduce a new publishable project with an `init(<nx-project-name>): <description>` implementation commit. `init` has `semverBump: none` in `nx.json`; the workflow's `first_release` and explicit `bump` inputs choose the initial published version without also inferring a feature bump.
 - The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
 - The optional `common_group` selector narrows a common release to `common-nest` or `common-tailwind`; its default `all` keeps full-domain behavior.
 - Automatic downstream release cascades include only groups whose packages all have matching release tags. Untagged or partially released groups are skipped as a whole, even if `first_release` is enabled for another group. Their dependency ranges remain unchanged until their own release preparation.
@@ -254,7 +259,7 @@ retain the commit types and breaking-change markers appropriate to their code ch
 - Docs-surface pull requests must use non-bumping commit types only: `docs`, `chore`, `ci`, `style`, or `init` when introducing a new publishable project.
 - Do not use `!` or `BREAKING CHANGE` markers in docs-surface commits.
 - CI enforces this via `nx run release-tools:validate-non-bumping-commits`.
-- For squash merges of docs-surface PRs, use a non-bumping squash subject (`docs:`, `chore:`, `ci:`, `style:`, or `init(<project-or-domain>):` for a new publishable project).
+- For squash merges of docs-surface PRs, use a non-bumping squash subject (`docs:`, `chore:`, `ci:`, `style:`, or `init(<nx-project-name>):` for a new publishable project).
 
 ## Human-In-The-Loop Shortlist
 

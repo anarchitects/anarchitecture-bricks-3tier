@@ -59,14 +59,15 @@ jobs:
       # Keep generated preview files on this runner; reuse remote task artifacts.
       - name: Generate and validate documentation
         env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
         run: |
-          yarn nx run api-specs:lint
+          yarn nx run-many -p api-specs -t lint,lint-tools,verify,diff,test --parallel=1
           yarn nx run angular-docs:generate
 
       - run: yarn nx affected -t lint --parallel=3
       # These tooling tests already ran unconditionally in the GitHub-only step.
-      - run: yarn nx affected -t test --exclude=guardrails,release-tools --parallel=1
+      - run: yarn nx affected -t test --exclude=guardrails,release-tools,api-specs --parallel=1
       # Keep the existing per-agent memory limit for builds and browser tests.
       - run: yarn nx affected -t build --parallel=1
 
@@ -102,6 +103,9 @@ jobs:
           yarn nx affected -t test-persistence --parallel=1
           yarn nx affected -t package-smoke --parallel=1
           yarn nx affected -t test-newsletter-integration --parallel=1
+          mkdir -p dist/api-conformance
+          set -o pipefail
+          yarn nx run api-specs:conformance-http 2>&1 | tee dist/api-conformance/http.log
 
       - uses: actions/upload-artifact@v6
         if: always()
@@ -110,6 +114,7 @@ jobs:
           retention-days: 7
           path: |
             docs/openapi
+            dist/api-conformance
             dist/docs/compodoc
 
       - name: Suggest fixes for failed cloud tasks

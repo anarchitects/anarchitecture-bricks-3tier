@@ -65,7 +65,7 @@ Hooks can be bypassed or absent, so none of the present validation checks should
 
 ## Follow-up work kept separate
 
-- Contract-test commands were commented out in both PR workflows. OpenAPI lint and browser E2E do not prove those consumer/server contracts. Validate and budget the existing contract targets in a focused follow-up before enabling them; removing stale comments does not mean they are covered elsewhere.
+- #490 adds canonical artifact/inventory verification, OpenAPI 3.1 compatibility review and uncached packed TCP response checks to both PR workflows. The checks validate all 29 operation IDs; adapter-only Auth probes and remaining host/profile obligations are explicitly distinguished. See [canonical conformance](guides/canonical-conformance.md). Legacy Prism tests remain additional client evidence rather than the API authority.
 - Review docs caching before expanding it: `docs-hub:build` consumes catalog/package README data beyond its explicit inputs, `docs-hub:verify` consumes build output, and Compodoc merge hashing references ignored `dist` files. Model producer/consumer dependencies and test cold-versus-restored output in a dedicated change. Do not further reduce docs coverage based on these existing cache declarations.
 - Pages path filters omit general library-source and dependency changes even though generated API/Storybook content depends on them. Revisit publishing triggers with the docs caching work.
 - Review coverage of inferred `typecheck` targets before adding them wholesale. Some are separate compiler checks; others overlap an existing package or application build. The PR preserves existing execution coverage.

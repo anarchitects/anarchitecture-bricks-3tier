@@ -302,3 +302,11 @@ ESM bundles so only the layers you import are included in your application bundl
 ## License
 
 Released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/forms-contracts@0.2.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

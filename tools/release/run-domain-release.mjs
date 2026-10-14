@@ -1,3 +1,4 @@
+import { validateCanonicalReleaseVersions } from './canonical-compatibility.mjs';
 import {
   existsSync,
   mkdirSync,
@@ -171,17 +172,33 @@ async function main() {
   let versionResult;
 
   try {
-    versionResult = await versionPlanClient.releaseVersion({
+    // Inspect Nx's actual proposed versions before version files or Git staging
+    // are mutated. A patch override cannot bypass a contract compatibility floor.
+    const preview = await versionPlanClient.releaseVersion({
       groups: internalGroups,
       specifier: isInitialVersionRelease ? '0.0.1' : undefined,
-      dryRun: options.dryRun,
+      dryRun: true,
       verbose: options.verbose,
       firstRelease: options.firstRelease,
       deleteVersionPlans: false,
       gitCommit: false,
       gitTag: false,
-      stageChanges: true,
+      stageChanges: false,
     });
+    validateCanonicalReleaseVersions(preview.projectsVersionData);
+    versionResult = options.dryRun
+      ? preview
+      : await versionPlanClient.releaseVersion({
+          groups: internalGroups,
+          specifier: isInitialVersionRelease ? '0.0.1' : undefined,
+          dryRun: options.dryRun,
+          verbose: options.verbose,
+          firstRelease: options.firstRelease,
+          deleteVersionPlans: false,
+          gitCommit: false,
+          gitTag: false,
+          stageChanges: true,
+        });
   } finally {
     cleanupTransientPlan(transientPlan);
   }
@@ -220,7 +237,7 @@ async function main() {
         selectedVersionGroups,
         versionResult.releaseGraph.releaseGroupToFilteredProjects,
         versionResult.projectsVersionData,
-        releaseGitConfig.commitMessage ?? 'chore(release): publish {version}',
+        releaseGitConfig.commitMessage ?? 'chore: publish {version}',
       );
 
       await gitCommit({

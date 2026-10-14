@@ -220,7 +220,7 @@ Released under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-
 
 ## Forms contract/security migration (#489)
 
-The public boundary consumes Forms Contracts `0.1.0` through `forms-ts`.
+The public boundary consumes Forms Contracts `0.2.0` through `forms-ts`.
 `GET /forms/:formId` returns the canonical public definition target without any
 delivery configuration. Keep delivery secrets write-only; restricted management
 can use a configured indicator. Host authentication and per-resource authorization
@@ -239,5 +239,14 @@ storage/mail, and public definition consumers may have depended on delivery fiel
 Review historical data, update clients, rotate previously exposed credentials and
 coordinate the domain's pre-1.0 minor release. Use export-aware TypeScript resolution.
 See the [adoption and rollout record](../../../docs/audits/489-canonical-adoption.md).
-The canonical operation migration and actual deployed-host security evidence must
-be reviewed before clearing Forms' upstream capability blockers.
+Contracts 0.2.0 makes this safe response normative for `getFormDefinition`.
+Actual deployed-host security evidence still requires review before clearing
+Forms' capability blockers.
+
+## Canonical version and verification
+
+This source line consumes `@anarchitects/forms-contracts@0.2.0` through
+the domain TS compatibility bindings. See the [canonical conformance guide](../../../docs/guides/canonical-conformance.md)
+for exact checks, configured-host obligations and remaining capability gates.
+Generated implementation OpenAPI and passing fixtures do not approve a deployed
+host's security profile. Existing runtime support and TypeBox exports remain.

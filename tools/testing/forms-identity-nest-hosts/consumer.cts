@@ -1,3 +1,7 @@
+import {
+  canonicalRequest,
+  assertCanonicalCoverage,
+} from './canonical-http.cjs';
 import 'reflect-metadata';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -206,7 +210,7 @@ async function expectStatus(
   status: number,
   payload?: object,
 ) {
-  const response = await app.inject({
+  const response = await canonicalRequest(app, {
     method,
     url,
     ...(payload ? { payload } : {}),
@@ -502,4 +506,5 @@ export async function runConsumer() {
     if (mode === 'explicit' || mode === 'advanced')
       assert.equal(transport.closed, true);
   }
+  assertCanonicalCoverage(['forms', 'identity']);
 }

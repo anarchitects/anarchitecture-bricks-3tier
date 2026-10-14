@@ -93,7 +93,7 @@ For CommonJS, put the asynchronous bootstrap inside a function instead of using 
 - Lightweight auth controller declarations live in `@anarchitects/auth-declarations`.
 - Domain libraries expose both facade composition modules and layer-specific secondary entry points.
 - Controllers keep `@RouteSchema` pure and imported from TS contract libraries.
-- The transitional operation ID/tag mapping remains central in specs tooling; generated output is baseline/conformance evidence, not canonical authority.
+- Specs tooling derives operation IDs/tags from pinned canonical operation definitions; generated output is implementation evidence, not canonical authority. See the [conformance guide](canonical-conformance.md).
 
 ## Easy Mode with Composition Modules
 
@@ -143,7 +143,7 @@ Newsletter TS packages remain the transitional baseline. Preserve Fastify schema
 validation/serialization until equivalent bindings and real HTTP conformance pass.
 Domain models, internal ports and `auth-ts` policy semantics remain implementation-owned.
 The [TS Contracts Guide](/guides/ts-contracts.html) defines adoption gates and compatibility policy;
-this documentation does not claim canonical packages are already consumed.
+see the [exact consumed versions and remaining host gates](canonical-conformance.md).
 
 ## Auth CASL Guidance
 

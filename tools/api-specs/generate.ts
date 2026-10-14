@@ -14,6 +14,7 @@ import {
 } from '@nestjs/platform-fastify';
 import { stringify } from 'yaml';
 import {
+  canonicalOperations,
   isManagedOpenApiPath,
   normalizePath,
   resolveOperationId,
@@ -25,6 +26,8 @@ import { AuthPasskeyService } from '../../libs/auth/nest/src/application/service
 import { AuthService } from '../../libs/auth/nest/src/application/services/auth.service';
 import { applyAuthControllerContractRouteSchemas } from '../../libs/auth/nest/src/presentation/auth-controller-route-schemas';
 import { createDefaultAuthContracts } from '../../libs/auth/nest/src/presentation/auth-contracts';
+import { JwtAuthPluginController } from '../../libs/auth/nest/src/infrastructure-engine/better-auth/plugins/jwt/jwt-auth-plugin.controller';
+import { BetterAuthJwtPluginService } from '../../libs/auth/nest/src/infrastructure-engine/better-auth/plugins/jwt/better-auth-jwt-plugin.service';
 import { AuthController } from '../../libs/auth/nest/src/presentation/controllers/auth.controller';
 import { FormsService } from '../../libs/forms/nest/src/application/services/forms.service';
 import { SubmissionsService } from '../../libs/forms/nest/src/application/services/submissions.service';
@@ -148,6 +151,7 @@ applyAuthControllerContractRouteSchemas(
 @Module({
   controllers: [
     AuthController,
+    JwtAuthPluginController,
     PasskeyAuthController,
     FormsController,
     SubmissionsController,
@@ -157,6 +161,7 @@ applyAuthControllerContractRouteSchemas(
     NewsletterWebhookController,
   ],
   providers: [
+    { provide: BetterAuthJwtPluginService, useValue: {} },
     {
       provide: NEWSLETTER_WEBHOOK_HANDLER,
       useValue: { receive: async () => ({ recorded: 0, duplicates: 0 }) },
@@ -256,11 +261,8 @@ async function run() {
         },
       ],
       tags: [
-        { name: 'Auth' },
-        { name: 'Forms' },
-        { name: 'Identity' },
-        { name: 'Newsletter' },
-      ],
+        ...new Set(canonicalOperations.flatMap(({ tags }) => [...tags])),
+      ].map((name) => ({ name })),
     },
     hideUntagged: false,
     transform: ({
@@ -292,14 +294,10 @@ async function run() {
         try {
           const operationId = resolveOperationId(method, normalizedUrl);
           transformedSchema['operationId'] = operationId;
+          transformedSchema['tags'] = resolveTags(method, normalizedUrl);
         } catch {
           missingOperationIdKeys.add(toRouteKey(method, normalizedUrl));
         }
-      }
-
-      const tags = resolveTags(normalizedUrl);
-      if (tags.length > 0) {
-        transformedSchema['tags'] = tags;
       }
 
       return { schema: transformedSchema, url: normalizedUrl };
@@ -326,7 +324,7 @@ async function run() {
   if (missingOperationIdKeys.size > 0) {
     const missingList = [...missingOperationIdKeys].sort().join('\n- ');
     throw new Error(
-      `Missing operationId mappings for managed routes:\n- ${missingList}\n\nAdd entries to tools/api-specs/route-metadata.ts (OPERATION_ID_MAP).`,
+      `Missing operationId mappings for managed routes:\n- ${missingList}\n\nReview the route upstream in anarchitecture-contracts and consume its published version; do not add local operation metadata.`,
     );
   }
 

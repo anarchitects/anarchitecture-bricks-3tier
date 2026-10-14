@@ -159,6 +159,148 @@
         "tags": ["Auth"]
       }
     },
+    "/auth/jwt/login": {
+      "post": {
+        "operationId": "loginWithJwt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "credential": {
+                    "maxLength": 100,
+                    "minLength": 2,
+                    "type": "string"
+                  },
+                  "password": {
+                    "minLength": 6,
+                    "type": "string"
+                  }
+                },
+                "required": ["credential", "password"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "accessToken": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": ["accessToken", "refreshToken"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/jwt/logout": {
+      "post": {
+        "operationId": "logoutWithJwt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "accessToken": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "refreshToken": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": ["refreshToken"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["success"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/jwt/refresh": {
+      "post": {
+        "operationId": "refreshJwtTokens",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "refreshToken": {
+                    "minLength": 1,
+                    "type": "string"
+                  }
+                },
+                "required": ["refreshToken"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "accessToken": {
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": ["accessToken", "refreshToken"],
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Default Response"
+          }
+        },
+        "tags": ["Auth"]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "login",
