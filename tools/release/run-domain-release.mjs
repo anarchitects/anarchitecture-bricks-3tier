@@ -1,5 +1,9 @@
 import { validateCanonicalReleaseVersions } from './canonical-compatibility.mjs';
 import {
+  planHostFixtureVersions,
+  readHostPackageManifests,
+} from './host-fixture-versions.mjs';
+import {
   existsSync,
   mkdirSync,
   readdirSync,
@@ -48,6 +52,7 @@ const {
 } = require('nx/src/command-line/release/utils/shared.js');
 const {
   getCommitHash,
+  gitAdd,
   gitCommit,
   gitPush,
   gitTag,
@@ -170,8 +175,16 @@ async function main() {
     buildVersionPlansOverride(internalGroups),
   );
   let versionResult;
+  let hostManifestsBefore;
 
   try {
+    hostManifestsBefore = readHostPackageManifests(workspaceRoot);
+    // Fail before versioning if a fixture needs a reviewed dependency refresh.
+    planHostFixtureVersions(
+      workspaceRoot,
+      hostManifestsBefore,
+      hostManifestsBefore,
+    );
     // Inspect Nx's actual proposed versions before version files or Git staging
     // are mutated. A patch override cannot bypass a contract compatibility floor.
     const preview = await versionPlanClient.releaseVersion({
@@ -201,6 +214,27 @@ async function main() {
         });
   } finally {
     cleanupTransientPlan(transientPlan);
+  }
+
+  if (!options.dryRun && !isInitialVersionRelease) {
+    const fixtureChanges = planHostFixtureVersions(
+      workspaceRoot,
+      hostManifestsBefore,
+      readHostPackageManifests(workspaceRoot),
+    );
+    for (const { path, content } of fixtureChanges)
+      writeFileSync(path, content);
+    if (fixtureChanges.length > 0) {
+      await gitAdd({
+        changedFiles: fixtureChanges.map(({ path }) => path),
+        deletedFiles: [],
+        dryRun: false,
+        verbose: options.verbose,
+      });
+      console.log(
+        `Aligned ${fixtureChanges.length} packed-host fixture files with Nx release versions; registry locks unchanged.`,
+      );
+    }
   }
 
   const changelogClient = new ReleaseClient(
