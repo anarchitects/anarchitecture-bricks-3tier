@@ -65,6 +65,23 @@ labelled adapter-only service doubles, alongside the real session/guard/verifier
 flows; they do not prove recovery-token or WebAuthn verification. Not every error
 outcome is exercised, and absent headers need host-specific security tests.
 
+The HTTP runner holds the same parent Ryuk session as the packed compatibility
+matrix across all three child processes. Each child still owns its PostgreSQL
+container and cleanup. This prevents the idle interval during the next host's
+install/compile from letting Ryuk shut down before that host reconnects. Failures
+remain fatal; there is no retry, disabled Reaper or skipped conformance assertion.
+Both Nest configurations retain the packed artifact prerequisite and run uncached.
+
+The target enables the `testcontainers` debug namespace (runtime discovery,
+Reaper IDs, connection endpoints and socket errors), excluding container/exec log
+namespaces. Structured diagnostics at host boundaries record localhost resolution,
+DNS order, explicit host override, and the Docker CLI's Ryuk status/port bindings.
+On failure they also collect bounded Ryuk logs. Docker probes are read-only,
+time-limited and best-effort; they do not replace the original failure. Application
+container environments and Docker credentials are not included in these probes.
+Keep the runner's host resolution default unless the recorded addresses and socket
+errors demonstrate a need for an environment-specific override.
+
 The PR workflows run these checks unconditionally and retain comparison/HTTP
 logs with the documentation preview. The separate packed runtime matrix reuses
 the same response assertions on its supported lanes. CI evidence is tied to the

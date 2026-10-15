@@ -111,7 +111,7 @@
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json --test tools/api-specs/conformance.spec.ts"
+        "command": "yarn exec tsx --no-cache --tsconfig tsconfig.base.json --test tools/api-specs/conformance.spec.ts tools/api-specs/conformance-runner.spec.mjs"
       },
       "dependsOn": ["generate"]
     },
@@ -126,27 +126,19 @@
         }
       ],
       "options": {
-        "commands": [
-          "node tools/testing/run-auth-nest-host.mjs nest11",
-          "node tools/testing/run-forms-identity-nest-host.mjs nest11",
-          "node tools/testing/run-newsletter-nest-host.mjs nest11"
-        ],
-        "parallel": false
+        "command": "node tools/api-specs/run-conformance-hosts.mjs nest11",
+        "env": { "DEBUG": "testcontainers" }
       },
       "configurations": {
         "nest12": {
-          "commands": [
-            "node tools/testing/run-auth-nest-host.mjs nest12",
-            "node tools/testing/run-forms-identity-nest-host.mjs nest12",
-            "node tools/testing/run-newsletter-nest-host.mjs nest12"
-          ]
+          "command": "node tools/api-specs/run-conformance-hosts.mjs nest12"
         }
       }
     },
     "lint-tools": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn exec eslint tools/api-specs/canonical-artifacts.mjs tools/api-specs/compatibility.mjs tools/api-specs/route-metadata.ts tools/api-specs/verify.ts tools/api-specs/diff.ts tools/api-specs/conformance.spec.ts tools/testing/canonical-http.cts"
+        "command": "yarn exec eslint tools/api-specs/canonical-artifacts.mjs tools/api-specs/compatibility.mjs tools/api-specs/route-metadata.ts tools/api-specs/verify.ts tools/api-specs/diff.ts tools/api-specs/conformance.spec.ts tools/api-specs/conformance-runner.spec.mjs tools/api-specs/run-conformance-hosts.mjs tools/api-specs/reaper-diagnostics.mjs tools/testing/canonical-http.cts"
       }
     }
   }
