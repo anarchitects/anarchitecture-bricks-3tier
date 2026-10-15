@@ -74,6 +74,8 @@ On 2026-10-10, #469's Auth engine and Newsletter TS staging changes passed all e
 
 ### Updating the gate
 
+- The CI domain-release runner keeps packed-host candidates and their first-party lock entries aligned in the same commit as Nx versioning. It checks the fixtures against the pre-release manifests, then copies only version changes and internal dependency/peer ranges from the versioned manifests. Registry entries, integrity hashes, external ranges, engines and optional-peer metadata remain unchanged; unexpected drift aborts before commit/tag/push. Reviewed future candidates remain in place until source versions catch up. Dry runs and normal host tests do not write fixtures. Common Mailer's standalone host already uses the verified current tarball version; its candidates in the combined hosts follow this same synchronization.
+- Auth's 0.13.0 release exposed stale 0.12.0 candidates in release run [38695700242](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38695700242). The following release stopped in the packed HTTP preflight before versioning. Its repair updates all three Auth hosts to 0.13.0 without changing registry entries or the published packages.
 - Review fixture manifests and lockfiles together when upgrading dependencies. Do not regenerate locks as part of a normal test run.
 - Update `tools/release/nest-package-contract.mjs` deliberately when changing supported peers, engines or public exports. Offline regression tests reject metadata drift, missing files and unsupported Node lanes.
 - Update `ciLanes` in `tools/testing/nest-compatibility-matrix.mjs` and the workflow matrix together; tests enforce agreement. Keep the tooling runtime separate from consumer floors.
