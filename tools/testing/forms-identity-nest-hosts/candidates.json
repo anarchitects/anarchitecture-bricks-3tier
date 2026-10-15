@@ -11,12 +11,12 @@
   },
   {
     "root": "libs/identity/ts",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "archive": "identity-ts.tgz"
   },
   {
     "root": "libs/identity/nest",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "archive": "identity-nest.tgz"
   },
   {
