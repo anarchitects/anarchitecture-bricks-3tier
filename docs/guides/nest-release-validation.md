@@ -62,6 +62,16 @@ The Node installation must include its matching npm executable in the same `bin`
 
 The matrix parent starts one temporary Testcontainers network to hold its own Ryuk connection for the entire suite. Hosts still create and stop separate PostgreSQL containers; they do not share the network or databases. Keeping the parent connected avoids a shutdown race when a later host tries to reuse the previous host's Reaper after npm installation or compilation. The parent removes its network in `finally`, including on host failure. Ryuk remains enabled for abnormal-exit cleanup; this does not retry failed tests or suppress container errors.
 
+The canonical HTTP gate now uses this same parent-session helper. Release run
+[38716607727](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38716607727/job/116360722314)
+ran separate Auth and Forms/Identity processes: Auth passed, then Forms failed in
+Testcontainers 10.28.0's `useExistingReaper` before PostgreSQL startup. The idle
+interval is consistent with Ryuk 0.11.0's ten-second reconnection timeout and
+shutdown-listener race. The original log contains no endpoint/socket diagnostics
+to conclusively distinguish that race from an address-family problem. The fix
+closes the known lifecycle gap and adds [targeted diagnostics](canonical-conformance.md);
+it does not impose `TESTCONTAINERS_HOST_OVERRIDE=127.0.0.1` without supporting evidence.
+
 Consumer fixtures for Auth, Forms/Identity and Newsletter rehearse the already-planned new minor versions in staging. They first compare source/build contracts, change only the staged package version, pack, and compare the full packed contract. Third-party versions and internal dependency ranges are never rewritten to force installation. The all-six artifact validator additionally packs the unmodified build versions. The #469 plan aligns Newsletter TS and Nest staging at 0.1.0, with an exact 0.1.0 internal dependency. Auth 0.12/Forms 0.11/Identity 0.2/Common Mailer 0.5 candidates remain unchanged. Only Auth engine metadata and Newsletter first-party candidate metadata change in the fixture locks; registry resolution/integrities remain frozen. Inspect actual coordinated versioning and rerun the matrix against the versioned release commit.
 
 ## Maintaining the gate
