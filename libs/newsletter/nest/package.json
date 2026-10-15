@@ -1,12 +1,12 @@
 {
   "name": "@anarchitects/newsletter-nest",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "commonjs",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
     "tslib": "^2.3.0",
-    "@anarchitects/newsletter-ts": "0.1.0",
+    "@anarchitects/newsletter-ts": "0.2.0",
     "@sinclair/typebox": "^0.34.41",
     "@anarchitects/newsletter-contracts": "0.1.0"
   },

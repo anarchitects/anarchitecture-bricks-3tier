@@ -1,12 +1,12 @@
 [
   {
     "root": "libs/newsletter/ts",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "archive": "newsletter-ts.tgz"
   },
   {
     "root": "libs/newsletter/nest",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "archive": "newsletter-nest.tgz"
   },
   {

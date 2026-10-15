@@ -1,10 +1,10 @@
 {
   "name": "@anarchitects/auth-angular",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "dependencies": {
     "@anarchitects/auth-ts": "^0.13.0",
-    "@anarchitects/forms-angular": "^0.11.0",
-    "@anarchitects/forms-ts": "^0.11.0",
+    "@anarchitects/forms-angular": "^0.12.0",
+    "@anarchitects/forms-ts": "^0.12.0",
     "@casl/ability": "^6.7.3",
     "jwt-decode": "^4.0.0"
   },

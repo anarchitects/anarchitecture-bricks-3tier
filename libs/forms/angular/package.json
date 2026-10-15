@@ -1,8 +1,8 @@
 {
   "name": "@anarchitects/forms-angular",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "dependencies": {
-    "@anarchitects/forms-ts": "^0.11.0"
+    "@anarchitects/forms-ts": "^0.12.0"
   },
   "peerDependencies": {
     "@anarchitects/tailwind": "^0.0.1",

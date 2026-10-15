@@ -1,12 +1,12 @@
 [
   {
     "root": "libs/forms/ts",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "archive": "forms-ts.tgz"
   },
   {
     "root": "libs/forms/nest",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "archive": "forms-nest.tgz"
   },
   {
