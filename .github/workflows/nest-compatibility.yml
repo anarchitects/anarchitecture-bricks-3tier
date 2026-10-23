@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   packed-hosts:
-    name: ${{ matrix.suite }} / Node ${{ matrix.node }}
+    name: ${{ matrix.suite }} / Node ${{ matrix.node }} / PostgreSQL ${{ matrix.postgres }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -36,14 +36,20 @@ jobs:
       matrix:
         include:
           # Node 20 omits Auth (Kysely >=22). Nest 12's file-type also needs >=22.
-          - { node: '20.19.0', suite: nest11 }
-          - { node: '22.13.0', suite: nest11 }
-          - { node: '22.13.0', suite: nest12 }
-          - { node: '24.11.0', suite: nest11 }
-          - { node: '24.11.0', suite: nest12 }
-          - { node: '26.11.1', suite: nest11 }
-          - { node: '26.11.1', suite: nest12 }
+          - { node: '20.19.0', suite: nest11, postgres: '16' }
+          - { node: '22.13.0', suite: nest11, postgres: '16' }
+          - { node: '22.13.0', suite: nest12, postgres: '16' }
+          - { node: '24.11.0', suite: nest11, postgres: '16' }
+          - { node: '24.11.0', suite: nest12, postgres: '16' }
+          - { node: '26.11.1', suite: nest11, postgres: '16' }
+          - { node: '26.11.1', suite: nest12, postgres: '16' }
+          # Exercise recent database majors on both Nest compatibility tracks.
+          - { node: '24.11.0', suite: nest11, postgres: '17' }
+          - { node: '24.11.0', suite: nest12, postgres: '17' }
+          - { node: '24.11.0', suite: nest11, postgres: '18' }
+          - { node: '24.11.0', suite: nest12, postgres: '18' }
     env:
+      POSTGRES_TEST_IMAGE: postgres:${{ matrix.postgres }}-alpine
       NX_NO_CLOUD: 'true'
       NX_CLOUD_DISTRIBUTED_EXECUTION: 'false'
       NX_DAEMON: 'false'
@@ -85,11 +91,11 @@ jobs:
           NEST_HOST_NPM_CACHE: ${{ runner.temp }}/nest-host-npm-cache
         run: |
           set -o pipefail
-          yarn nx run release-tools:test-nest-compatibility:${{ matrix.suite }} --output-style=static 2>&1 | tee "$RUNNER_TEMP/nest-hosts.log"
+          yarn nx run release-tools:test-nest-compatibility:${{ matrix.suite }} --skip-nx-cache --output-style=static 2>&1 | tee "$RUNNER_TEMP/nest-hosts.log"
       - name: Upload host evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: nest-hosts-${{ matrix.suite }}-node-${{ matrix.node }}
+          name: nest-hosts-${{ matrix.suite }}-node-${{ matrix.node }}-postgres-${{ matrix.postgres }}
           path: ${{ runner.temp }}/nest-hosts.log
           retention-days: 7

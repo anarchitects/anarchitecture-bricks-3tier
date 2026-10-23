@@ -204,7 +204,9 @@ try {
     } else {
       run(hostNode, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json']);
       run(hostNode, ['out/consumer.mjs']);
-      container = await new GenericContainer('postgres:16-alpine')
+      container = await new GenericContainer(
+        process.env.POSTGRES_TEST_IMAGE || 'postgres:16-alpine',
+      )
         .withEnvironment({
           POSTGRES_DB: 'newsletter_host',
           POSTGRES_USER: 'postgres',

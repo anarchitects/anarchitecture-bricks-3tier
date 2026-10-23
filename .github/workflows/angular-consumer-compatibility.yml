@@ -37,5 +37,14 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+      # Node 22 bundles npm 10, whose peer resolver can crash reading edgesOut.
+      # npm 11 includes the upstream fix: https://github.com/npm/cli/pull/8448
+      - name: Install packaged-consumer npm
+        run: npm install --global npm@11.19.1 --ignore-scripts --no-audit --no-fund
+      - name: Report consumer toolchain
+        run: |
+          node --version
+          npm --version
+          yarn --version
       - run: yarn install --immutable
       - run: yarn nx run angular-consumer-compatibility:test-${{ matrix.angular }} --skipNxCache

@@ -21,13 +21,17 @@ export async function runHostCasesWithReaper(
 }
 
 export const ciLanes = [
-  { node: '20.19.0', suite: 'nest11' },
-  { node: '22.13.0', suite: 'nest11' },
-  { node: '22.13.0', suite: 'nest12' },
-  { node: '24.11.0', suite: 'nest11' },
-  { node: '24.11.0', suite: 'nest12' },
-  { node: '26.11.1', suite: 'nest11' },
-  { node: '26.11.1', suite: 'nest12' },
+  { node: '20.19.0', suite: 'nest11', postgres: '16' },
+  { node: '22.13.0', suite: 'nest11', postgres: '16' },
+  { node: '22.13.0', suite: 'nest12', postgres: '16' },
+  { node: '24.11.0', suite: 'nest11', postgres: '16' },
+  { node: '24.11.0', suite: 'nest12', postgres: '16' },
+  { node: '26.11.1', suite: 'nest11', postgres: '16' },
+  { node: '26.11.1', suite: 'nest12', postgres: '16' },
+  { node: '24.11.0', suite: 'nest11', postgres: '17' },
+  { node: '24.11.0', suite: 'nest12', postgres: '17' },
+  { node: '24.11.0', suite: 'nest11', postgres: '18' },
+  { node: '24.11.0', suite: 'nest12', postgres: '18' },
 ];
 
 export function hostCases(suite, nodeVersion) {
