@@ -170,6 +170,19 @@ test('CI covers every matrix lane and executes the uncached Nx host target', () 
   const job = workflow.jobs['packed-hosts'];
   assert.deepEqual(job.strategy.matrix.include, ciLanes);
   assert.equal(job.strategy['fail-fast'], false);
+  assert.equal(
+    job.env.POSTGRES_TEST_IMAGE,
+    'postgres:${{ matrix.postgres }}-alpine',
+  );
+  for (const postgres of ['16', '17', '18']) {
+    for (const suite of ['nest11', 'nest12']) {
+      assert.ok(
+        ciLanes.some(
+          (lane) => lane.postgres === postgres && lane.suite === suite,
+        ),
+      );
+    }
+  }
   assert(
     job.steps.some((step) =>
       step.run?.includes('release-tools:test-nest-compatibility:'),
@@ -220,7 +233,7 @@ test('CI enables Corepack before any Yarn cache discovery or installation', () =
 });
 
 for (const lane of ciLanes) {
-  test(`${lane.suite} / Node ${lane.node}: all locked host dependencies admit the runtime`, () => {
+  test(`${lane.suite} / Node ${lane.node} / PostgreSQL ${lane.postgres}: all locked host dependencies admit the runtime`, () => {
     const { cases, exclusions } = hostCases(lane.suite, lane.node);
     assert.equal(
       cases.length,

@@ -199,7 +199,9 @@ try {
       }
     }
     run(hostNode, ['out/consumer.mjs']);
-    container = await new GenericContainer('postgres:16-alpine')
+    container = await new GenericContainer(
+      process.env.POSTGRES_TEST_IMAGE || 'postgres:16-alpine',
+    )
       .withEnvironment({
         POSTGRES_DB: 'forms_identity_host',
         POSTGRES_USER: 'postgres',
