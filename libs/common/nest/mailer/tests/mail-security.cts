@@ -125,16 +125,26 @@ export async function runMailSecurity() {
     assert.match(messages[0], /X-Test: captured/);
     assert.equal(senders[0], 'MAIL FROM:<sender@example.test>');
     await port.send('reader@example.test', 'Legacy HTML', '<p>Legacy</p>');
-    const hostile = `<script>alert(1)</script><link rel="stylesheet" href="${url}">`;
-    await port.sendTemplate('reader@example.test', 'Escaping', 'contact', {
-      name: hostile,
-    });
-    // Nodemailer's quoted-printable wrapping is removed for content assertions.
-    const templateMessage = messages.at(-1);
-    assert.ok(templateMessage);
-    const rendered = templateMessage.replace(/=\r\n/g, '').replace(/=3D/g, '=');
-    assert.match(rendered, /&lt;script&gt;/);
-    assert.doesNotMatch(rendered, /<script>|<link /);
+    // HTML tag names are case-insensitive; verify escaping for each spelling.
+    for (const [script, link] of [
+      ['script', 'link'],
+      ['SCRIPT', 'LINK'],
+      ['ScRiPt', 'LiNk'],
+    ]) {
+      const hostile = `<${script}>alert(1)</${script}><${link} rel="stylesheet" href="${url}">`;
+      await port.sendTemplate('reader@example.test', 'Escaping', 'contact', {
+        name: hostile,
+      });
+      // Nodemailer's quoted-printable wrapping is removed for content assertions.
+      const templateMessage = messages.at(-1);
+      assert.ok(templateMessage);
+      const rendered = templateMessage
+        .replace(/=\r\n/g, '')
+        .replace(/=3D/g, '=');
+      assert.match(rendered, /&lt;script&gt;/i);
+      assert.match(rendered, /&lt;link\b/i);
+      assert.doesNotMatch(rendered, /<\/?(?:script|link)\b/i);
+    }
     await assert.rejects(
       port.sendTemplate('reader@example.test', 'Missing', 'missing', {}),
       /ENOENT/,
