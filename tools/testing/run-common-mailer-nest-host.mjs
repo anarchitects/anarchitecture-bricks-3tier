@@ -14,11 +14,13 @@ import { join, resolve } from 'node:path';
 
 const configuration = process.argv[2];
 if (
-  !['nest11', 'nest11-config12', 'nest12'].includes(configuration) ||
+  !['nest11', 'nest11-config12', 'nest12', 'nest11-legacy'].includes(
+    configuration,
+  ) ||
   process.argv.length !== 3
 ) {
   throw new Error(
-    'Expected exactly one host: nest11, nest11-config12 or nest12',
+    'Expected exactly one host: nest11, nest11-config12, nest12 or nest11-legacy',
   );
 }
 
@@ -35,6 +37,8 @@ delete env.NODE_OPTIONS;
 for (const key of Object.keys(env)) {
   if (key.startsWith('MAILER_')) delete env[key];
 }
+env.MAILER_SECURITY_TESTS =
+  configuration === 'nest11-legacy' ? 'false' : 'true';
 const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
 const run = (command, args, capture = false) =>
   execFileSync(command, args, {
@@ -95,6 +99,7 @@ try {
   brick.version = source.version;
   writeFileSync(join(host, 'package-lock.json'), JSON.stringify(lock));
   for (const file of [
+    'mail-security.cts',
     'nest-consumer.cts',
     'nest-consumer.cjs',
     'nest-consumer.mts',
@@ -104,7 +109,11 @@ try {
   const tsconfig = readJson(
     join(root, 'tools/testing/nest-hosts/tsconfig.json'),
   );
-  tsconfig.files = ['nest-consumer.cts', 'nest-consumer.mts'];
+  tsconfig.files = [
+    'mail-security.cts',
+    'nest-consumer.cts',
+    'nest-consumer.mts',
+  ];
   writeFileSync(join(host, 'tsconfig.json'), JSON.stringify(tsconfig));
 
   console.log(

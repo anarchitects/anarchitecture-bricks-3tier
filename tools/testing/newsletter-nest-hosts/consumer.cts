@@ -57,7 +57,10 @@ class CaptureTransport implements Transport {
     done: (error: Error | null, info?: SentMessageInfo) => void,
   ) {
     this.messages.push(mail.data);
-    done(null, { messageId: `newsletter-${this.messages.length}` });
+    done(null, {
+      messageId: `newsletter-${this.messages.length}`,
+      envelope: mail.message.getEnvelope(),
+    });
   }
   close() {
     this.closed = true;

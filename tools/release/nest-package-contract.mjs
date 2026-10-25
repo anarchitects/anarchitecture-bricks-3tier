@@ -67,7 +67,7 @@ export const nestPackages = [
       '@nestjs/common': '^11.1.6 || ^12.1.2',
       '@nestjs/config': '^4.0.2 || ^12.0.1',
       '@nestjs-modules/mailer': '^3.0.2',
-      nodemailer: '^8.0.5',
+      nodemailer: '^8.0.5 || ^10.2.1',
     },
     requiredFiles: [],
   },

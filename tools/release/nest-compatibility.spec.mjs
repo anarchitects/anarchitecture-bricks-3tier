@@ -237,7 +237,7 @@ for (const lane of ciLanes) {
     const { cases, exclusions } = hostCases(lane.suite, lane.node);
     assert.equal(
       cases.length,
-      lane.node.startsWith('20.') ? 7 : lane.suite === 'nest11' ? 9 : 5,
+      lane.node.startsWith('20.') ? 8 : lane.suite === 'nest11' ? 10 : 5,
     );
     assert.equal(exclusions.length, lane.node.startsWith('20.') ? 1 : 0);
     for (const { family, configuration } of cases) {

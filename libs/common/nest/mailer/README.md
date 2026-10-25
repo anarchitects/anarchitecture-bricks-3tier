@@ -18,17 +18,14 @@ Shared typed mailer configuration, transport setup, and provider wiring for Nest
 
 ## Installation
 
-The commands below target the next minor **after coordinated publication**. See the [verified Nest 11/12 matrix and install recipes](../../../../../docs/guides/nest.md#verified-support) and [release plan](../../../../../docs/guides/nest-compatibility-release-plan.md) for current npm versions, migrations and maintenance routing. These runtime packages work in ordinary npm/Yarn/pnpm Nest applications without Nx, the Nest CLI or `@anarchitects/nest`.
+Common 0.5.0 is published. The security-maintenance candidate for [#512](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/512) adds support for Nodemailer 10.2.1 and updates Handlebars to 4.7.10. It is not yet a published patch. Follow the [security decision, upgrade/rollback guide and release gates](../../../../../docs/guides/nest11-mailer-security.md) before adopting it. Existing Nodemailer 8 installations remain vulnerable even though their peer compatibility is retained.
 
-The contract below is for the **unreleased next minor** prepared by #465.
-Published `0.4.x` remains the Nest 11 / Mailer 2 / Nodemailer 7 maintenance
-line. Wait for the new minor before using these instructions with npm; do not
-publish these dependency changes as a `0.4.x` patch.
+After the reviewed patch is published, install its exact version in place of `REVIEWED_PATCH` below:
 
 ```bash
-npm install @anarchitects/common-nest-mailer@^0.5.0 @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
+npm install @anarchitects/common-nest-mailer@REVIEWED_PATCH @nestjs/common@11.1.6 @nestjs/core@11.1.6 @nestjs/config@4.0.2 @nestjs-modules/mailer@^3.0.2 nodemailer@10.2.1
 # or
-yarn add @anarchitects/common-nest-mailer@^0.5.0 @nestjs/common@^12.1.2 @nestjs/core@^12.1.2 @nestjs/config@^12.0.1 @nestjs-modules/mailer@^3.0.2 nodemailer@^8.0.5
+yarn add @anarchitects/common-nest-mailer@REVIEWED_PATCH @nestjs/common@11.1.6 @nestjs/core@11.1.6 @nestjs/config@4.0.2 @nestjs-modules/mailer@^3.0.2 nodemailer@10.2.1
 ```
 
 Peer requirements:
@@ -36,29 +33,33 @@ Peer requirements:
 - `@nestjs/common`: `^11.1.6 || ^12.1.2`
 - `@nestjs/config`: `^4.0.2 || ^12.0.1` (Config 4 is Nest 11 only)
 - `@nestjs-modules/mailer`: `^3.0.2`
-- `nodemailer`: `^8.0.5`
+- `nodemailer`: `^8.0.5 || ^10.2.1` (use 10.2.1+ for remediation; 8.x is compatibility-only)
 
 Keep the host's Nest common/core/platform/testing packages on the same major.
-For Nest 11, use common/core `^11.1.6` and either supported Config line.
+The recipe above retains Nest 11. For Nest 12, use aligned common/core `^12.1.2` and Config `^12.0.1`.
 Config's own peers reject Nest 12 with Config 4. Handlebars and the Nodemailer
 declarations are direct package dependencies, so the built-in template adapter
 does not depend on optional packages being hoisted by the consuming workspace.
 
 ### Compatibility and migration
 
+For the current security candidate and separate old-line mitigation, see the [#512 record](../../../../../docs/guides/nest11-mailer-security.md). The following dependency table describes the candidate hosts, not a published security patch.
+
 The same CommonJS artifact supports these tested dependency combinations:
 
 | Nest common/core/testing | Config | Mailer | Nodemailer | Handlebars |
 | ------------------------ | ------ | ------ | ---------- | ---------- |
-| 11.1.6                   | 4.0.2  | 3.0.2  | 8.0.5      | 4.7.9      |
-| 11.1.6                   | 12.0.1 | 3.0.2  | 8.0.5      | 4.7.9      |
-| 12.1.2                   | 12.0.1 | 3.0.2  | 8.0.5      | 4.7.9      |
+| 11.1.6                   | 4.0.2  | 3.0.2  | 10.2.1     | 4.7.10     |
+| 11.1.6                   | 12.0.1 | 3.0.2  | 10.2.1     | 4.7.10     |
+| 12.1.2                   | 12.0.1 | 3.0.2  | 10.2.1     | 4.7.10     |
 
-**Breaking dependency change:** upgrading from `0.4.x` requires Mailer 3,
-Nodemailer 8, and at least the declared Nest patch floor. Update those host
+**Breaking dependency change from `0.4.x`:** the 0.5 line requires Mailer 3
+and at least the declared Nest patch floor; its security candidate admits
+Nodemailer 10.2.1. Update those host
 dependencies together. The facade methods, config namespace, injection tokens,
 node/noop selection and `MailerPort` API are unchanged by #465. Existing Nest 11
-hosts may stay on the `0.4.x` maintenance line or migrate to this new minor.
+hosts on `0.4.x` need the old-line containment/backport procedure in the security
+guide or an explicitly reviewed migration; the old line is not a secure fallback.
 Auth, Forms and Newsletter now declare Common 0.5 and have their own passing packed hosts. Their releases must be coordinated with Common 0.5 availability.
 
 Mailer 2.3.4 and 2.3.10 publish a declaration importing
@@ -69,7 +70,7 @@ It also stops automatically installing optional template engines. This package
 therefore declares Handlebars directly. No `skipLibCheck`, patched upstream
 declarations, ESM conversion or application API workaround is required.
 
-[Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 on Node 20.19.0, 22.13.0, 24.11.0 and 26.11.1, and Nest 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1, with TypeScript 6.0.3, strict NodeNext and `skipLibCheck: false`. No standalone engine is declared for this package; use the tested host/dependency combinations. Nest 12 on Node 20 is excluded by its locked dependencies. See the release plan before publishing 0.5.0.
+[Linux packed CI](https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/38073619350) passed Nest 11.1.6 on Node 20.19.0, 22.13.0, 24.11.0 and 26.11.1, and Nest 12.1.2 on Node 22.13.0, 24.11.0 and 26.11.1, with TypeScript 6.0.3, strict NodeNext and `skipLibCheck: false`. No standalone engine is declared for this package; use the tested host/dependency combinations. Nest 12 on Node 20 is excluded by its locked dependencies. That historical matrix used Nodemailer 8.0.5; fresh security-candidate CI is required under #512.
 
 ## Entry points and exports
 
@@ -325,6 +326,8 @@ Existing node/noop provider selection applies to this method. Node forwards the 
 yarn nx run common-nest-mailer:test-nest-compatibility:nest11
 yarn nx run common-nest-mailer:test-nest-compatibility:nest11-config12
 yarn nx run common-nest-mailer:test-nest-compatibility:nest12
+# Compatibility only; deliberately retains vulnerable Nodemailer 8:
+yarn nx run common-nest-mailer:test-nest-compatibility:nest11-legacy
 ```
 
 The uncached target builds and packs the actual library, checks source/build/pack

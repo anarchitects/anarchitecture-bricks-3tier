@@ -20,6 +20,7 @@ for (const [host, framework, config] of [
   ['nest11', '11.1.6', '4.0.2'],
   ['nest11-config12', '11.1.6', '12.0.1'],
   ['nest12', '12.1.2', '12.0.1'],
+  ['nest11-legacy', '11.1.6', '4.0.2'],
 ]) {
   test(`Common Mailer ${host} locks registry dependencies and the packed contract`, () => {
     const fixture = join(root, project, 'tests/hosts', host);
@@ -38,7 +39,11 @@ for (const [host, framework, config] of [
     }
     assert.equal(manifest.dependencies['@nestjs/config'], config);
     assert.equal(manifest.dependencies['@nestjs-modules/mailer'], '3.0.2');
-    assert.equal(manifest.dependencies.nodemailer, '8.0.5');
+    assert.equal(
+      manifest.dependencies.nodemailer,
+      host === 'nest11-legacy' ? '8.0.5' : '10.2.1',
+    );
+    assert.equal(manifest.dependencies.handlebars, '4.7.10');
     for (const [name, version] of Object.entries({
       ...manifest.dependencies,
       ...manifest.devDependencies,

@@ -21,7 +21,13 @@ describe('NodeMailerAdapter', () => {
   });
 
   it('sends HTML emails', async () => {
-    await adapter.send('test@example.com', 'Test Subject', '<p>Test HTML</p>');
+    expect(
+      await adapter.send(
+        'test@example.com',
+        'Test Subject',
+        '<p>Test HTML</p>',
+      ),
+    ).toEqual({});
 
     expect(mockMailerService.sendMail).toHaveBeenCalledWith({
       to: 'test@example.com',

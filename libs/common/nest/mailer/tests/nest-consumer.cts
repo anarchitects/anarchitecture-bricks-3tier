@@ -20,6 +20,7 @@ import {
 import type Mail from 'nodemailer/lib/mailer';
 import type MailMessage from 'nodemailer/lib/mailer/mail-message';
 import type { SentMessageInfo, Transport } from 'nodemailer';
+import { runMailSecurity } from './mail-security.cjs';
 
 @Injectable()
 class Consumer {
@@ -63,7 +64,10 @@ class CaptureTransport implements Transport {
       return;
     }
     this.messages.push(mail.data);
-    callback(null, { messageId: 'isolated-host-message' });
+    callback(null, {
+      messageId: 'isolated-host-message',
+      envelope: mail.message.getEnvelope(),
+    });
   }
 
   close() {
@@ -75,6 +79,13 @@ export const frameworkIdentity = { Module, Test };
 export const packageIdentity = { MailerPort, CommonMailerModule };
 
 export async function runConsumer() {
+  if (process.env['MAILER_SECURITY_TESTS'] === 'true') {
+    await runMailSecurity();
+  } else {
+    console.log(
+      'Legacy Nodemailer 8: compatibility only, NOT security certification',
+    );
+  }
   const base = resolve('host-artifact');
   const templateDir = resolve(base, 'templates');
   mkdirSync(templateDir, { recursive: true });

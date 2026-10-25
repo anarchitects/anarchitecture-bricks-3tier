@@ -64,6 +64,8 @@ export function hostCases(suite, nodeVersion) {
             family === 'common-mailer' ? 'nest11-config12' : 'nest11-modern',
           ];
     if (family === 'newsletter') configurations.push(`${suite}-optional`);
+    if (family === 'common-mailer' && suite === 'nest11')
+      configurations.push('nest11-legacy');
     for (const configuration of configurations)
       cases.push({ family, configuration });
   }

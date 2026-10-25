@@ -12,8 +12,8 @@
     "@nestjs/testing": "11.1.6",
     "@nestjs/config": "4.0.2",
     "@nestjs-modules/mailer": "3.0.2",
-    "nodemailer": "8.0.5",
-    "handlebars": "4.7.9",
+    "nodemailer": "10.2.1",
+    "handlebars": "4.7.10",
     "reflect-metadata": "0.1.14",
     "rxjs": "7.8.2"
   },

@@ -19,6 +19,7 @@ export default [
             // This standalone test consumer owns its Nest bootstrap dependencies.
             '{projectRoot}/tests/fixtures/**/*.cjs',
             '{projectRoot}/tests/nest-consumer.*',
+            '{projectRoot}/tests/mail-security.cts',
           ],
         },
       ],
