@@ -1,6 +1,6 @@
 {
   "name": "@anarchitects/newsletter-angular",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "peerDependencies": {
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",
@@ -23,8 +23,8 @@
     "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/issues"
   },
   "dependencies": {
-    "@anarchitects/newsletter-ts": "0.2.0",
-    "@anarchitects/forms-angular": "^0.12.0",
-    "@anarchitects/forms-ts": "^0.12.0"
+    "@anarchitects/newsletter-ts": "0.2.1",
+    "@anarchitects/forms-angular": "^0.12.1",
+    "@anarchitects/forms-ts": "^0.12.1"
   }
 }

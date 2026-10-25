@@ -1,12 +1,12 @@
 [
   {
     "root": "libs/forms/ts",
-    "version": "0.12.0",
+    "version": "0.12.1",
     "archive": "forms-ts.tgz"
   },
   {
     "root": "libs/forms/nest",
-    "version": "0.12.0",
+    "version": "0.12.1",
     "archive": "forms-nest.tgz"
   },
   {
@@ -21,7 +21,7 @@
   },
   {
     "root": "libs/common/nest/mailer",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "archive": "common-mailer.tgz"
   }
 ]
