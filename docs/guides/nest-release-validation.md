@@ -19,6 +19,13 @@ The matrix samples the declared minimums and Node 26.11.1. It does not certify e
 
 ## Locked host coverage
 
+The [#512 mailer security candidate](nest11-mailer-security.md) updates active
+mail hosts to Nodemailer 10.2.1 and Handlebars 4.7.10. Common's security suite uses
+loopback SMTP/HTTP to test real delivery and forbidden content access. Nest 11
+also runs `nest11-legacy` with Nodemailer 8.0.5 solely to retain compatibility
+evidence; its known vulnerable stack does not receive security certification.
+Earlier dated CI results below do not cover this candidate.
+
 The Nest 11 suite runs the baseline and modern integration configurations; the Nest 12 suite runs its matching modern integrations. Every included family has a fresh temporary host outside the workspace, a committed npm lock, strict peer/engine checks, `npm ls --all`, and CJS/ESM coverage. Installation never uses overrides, forced peers, workspace dependency symlinks or an inherited module loader. Only registry downloads may be cached; `node_modules` is always freshly installed. Exact versions are recorded in the fixture manifests and locks.
 
 | Family               | Configurations                                                            | Behavior                                                                                                                                                      |

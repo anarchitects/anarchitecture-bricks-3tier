@@ -19,7 +19,11 @@ export class NodeMailerAdapter implements MailerPort {
     });
   }
 
-  async send(to: string, subject: string, html: string) {
+  // Preserve the legacy adapter's Promise<any> declaration and provider result.
+  // Nodemailer 10 ships stricter types; changing this to void would discard an
+  // existing runtime result, while exposing its new type would break MailerPort.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async send(to: string, subject: string, html: string): Promise<any> {
     return await this.mailer.sendMail({ to, subject, html });
   }
 
@@ -28,7 +32,8 @@ export class NodeMailerAdapter implements MailerPort {
     subject: string,
     template: string,
     context?: Record<string, unknown>,
-  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): Promise<any> {
     return await this.mailer.sendMail({ to, subject, template, context });
   }
 }

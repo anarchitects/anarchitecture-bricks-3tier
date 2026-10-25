@@ -9,6 +9,12 @@ This is the Nest implementation cookbook for Anarchitecture Bricks. It focuses o
 
 ## Verified support
 
+**Mailer security update (2026-10-25):** the historical Nodemailer 8 recipes below
+are not a secure deployment recommendation. See the [#512 maintenance candidate
+and mitigation guide](nest11-mailer-security.md) for Nodemailer 10.2.1 / Handlebars
+4.7.10, exact release gates and old-line containment. Updating peer metadata alone
+does not remediate a host's existing lockfile.
+
 The following **upcoming minors** retain Nest 11 and add Nest 12; none drops Nest 11. They are not the currently published npm `latest` versions. The [release plan](https://github.com/anarchitects/anarchitecture-bricks-3tier/blob/main/docs/guides/nest-compatibility-release-plan.md) lists current versions, migrations, domain sibling bumps and publication gates. Use these recipes after the coordinated versions are available.
 
 | Package                            | New minor | Verified Nest     | Verified consumer Node                                                    |

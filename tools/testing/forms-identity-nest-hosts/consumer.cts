@@ -93,7 +93,10 @@ class CaptureTransport implements Transport {
     callback: (error: Error | null, info?: SentMessageInfo) => void,
   ) {
     this.messages.push(mail.data);
-    callback(null, { messageId: `host-${this.messages.length}` });
+    callback(null, {
+      messageId: `host-${this.messages.length}`,
+      envelope: mail.message.getEnvelope(),
+    });
   }
   close() {
     this.closed = true;

@@ -29,6 +29,9 @@
         },
         "nest12": {
           "command": "node tools/testing/run-common-mailer-nest-host.mjs nest12"
+        },
+        "nest11-legacy": {
+          "command": "node tools/testing/run-common-mailer-nest-host.mjs nest11-legacy"
         }
       }
     },
