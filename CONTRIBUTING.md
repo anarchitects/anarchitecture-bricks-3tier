@@ -118,13 +118,14 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Domain major and minor lines stay synchronized while patch versions may diverge. With Nx's pre-1.0 adjustment, use `bump=major` to advance a `0.x` domain to its next minor line.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final `{projectName}@{version}` release tags from a release-prep branch before merge.
-- If a release-prep PR is squash-merged after tags were created on the branch, retarget those tags to the merge commit on `main` before running release.
+- If a tag is outside the intended release branch history, stop and review the branch and fetched history. Never move or rewrite published release tags to bypass ancestry validation.
 - Before release PRs, normalize publishable package dependency ranges:
   - `nx run release-tools:normalize-internal-deps`
   - `nx run release-tools:normalize-external-peer-ranges`
   - `nx run release-tools:check-release-tag-ancestry`
   - external peer normalization derives ranges from root `package.json`; exact root versions become major-wide caret peers (for example `21.1.6` -> `^21.0.0`)
-- The release tag ancestry check fails when a `{projectName}@{version}` tag exists but points to a commit outside current branch history.
+- The release tag ancestry check requires full Git history, rejects unknown/non-publishable project selections and fails if an existing `{projectName}@{version}` tag cannot resolve to a reachable commit. Absent tags are reported separately; first-release authorization remains the release runner's responsibility. Use `yarn nx run release-tools:check-release-tag-ancestry -- --projects=forms-ts,forms-nest,forms-angular --require-tags` when every selected baseline tag must already exist. The target is uncached because Git refs/history can change independently of source files.
+- Nest 11 maintenance activation and its remaining review gates are tracked in the [maintenance preparation record](docs/audits/500-nest11-maintenance.md).
 - Group-scoped release preflight runs only the selected release group's ancestry check and builds.
 - `nx run release-tools:validate-angular-package-compatibility` ensures every public Angular package
   has dual-major peer coverage and belongs to a supported release group.
