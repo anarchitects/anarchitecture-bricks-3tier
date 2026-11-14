@@ -151,7 +151,7 @@ does not establish full deployment conformance.
 
 ## Release By Domain
 
-Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The branch is protected and its live maintenance checks are verified; the CI bootstrap PRs await human merge, and publication still requires separate proof and owner approval.
+Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The maintenance CI bootstrap is merged, and branch protection is active. The [candidate proof](docs/audits/520-nest11-maintenance-proof.md) separates fresh CI and patch rehearsal from owner-authorized publication.
 
 Run releases via the **Release (Manual)** GitHub workflow:
 
