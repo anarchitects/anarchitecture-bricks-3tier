@@ -15,6 +15,10 @@ implementation, not canonical cross-repository HTTP authority. Domain ownership
 and existing behavior remain unchanged; adoption requires immutable artifacts and
 verified conformance.
 
+## Amendment — 2026-11-15: native Node first for new HTTP presentation
+
+The original decision retained Fastify as the supported presentation baseline while platform-neutral boundaries were developed. Meta [ADR-0009](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0009-native-node-candidate-default.md) now proposes a native-first implementation priority for new Nest 12.3+ HTTP integrations, reflecting the released `@nestjs/platform-node` / `NodeAdapter` API and Nest's documented recommendation. This **prioritizes validation**, not automatic production support or migration. Existing Fastify consumers and their contract/security guarantees remain binding; Express remains a separate possible adapter and must be tested independently. This amendment is coordinated with [Meta PR #53](https://github.com/anarchitects/anarchitecture-meta/pull/53) and takes effect as ecosystem preference only once that PR is accepted.
+
 ## Context
 
 The Nest 11/12 compatibility effort in [ADR-0011](0011-verify-nest-runtime-support-independently-of-tooling.md) concerns framework majors, not HTTP-platform compatibility. The current presentation controllers use Fastify `@RouteSchema` and some `@RouteConfig`, while Auth rewrites `FASTIFY_ROUTE_SCHEMA_METADATA` directly. Newsletter explicitly uses `FastifyRequest` / `FastifyReply`, `validationError`, reply headers and raw-body webhooks. OpenAPI is generated from Fastify route metadata and domain TS TypeBox schemas. A change of Nest adapter could leave routes operational but silently drop runtime validation/serialization or security.
@@ -29,13 +33,14 @@ The [ecosystem HTTP-independence ADR](https://github.com/anarchitects/anarchitec
 4. Investigate Nest 12 Standard Schema validation/serialization and the agreed Zod-first migration, with TypeBox compatibility during the Nest 11 patch line. A migration must preserve validation semantics, status codes, response serialization and path/query/header semantics. Implementation-derived OpenAPI is used for conformance evidence, **not as the master contract for DDD**; avoid separate independently maintained DTO truth.
 5. Introduce targeted framework-neutral request/response ports where needed (e.g. client key extraction, rate-limit response headers, cookies, forwarded-header trust, raw signed body) and platform implementations. Preserve authentication, Better Auth/passkeys, CASL guards, newsletter rate limiting and webhook signature verification fail-closed.
 6. Keep the existing Fastify OpenAPI generator and testing as an **implementation-specific baseline only**. Its generated specification must not be imposed as the authoritative DDD contract. Once a shared authoritative contract exists, compare 3-tier output and real runtime responses against it. Prove any new adapter with packed consumer installs, HTTP requests and contract diffs; a booting backend is insufficient. Respect [ADR-0011](0011-verify-nest-runtime-support-independently-of-tooling.md) and versioned Nest 11/12 support lines.
-7. Do not change current defaults, peer dependencies, runtime behavior, or public support claims merely by accepting this proposal. Additional adapters and any breaking migration require separate implementation work, evidence and release decisions.
+7. **Native Node-first validation:** use explicit `NodeAdapter` as the first new presentation adapter target for Nest 12.3+ after the neutral contracts and necessary Fastify regression seams are proven. Prove each brick's actual runtime/schema/security behavior before claiming support. Native Node's Express-style helper APIs do not establish Express parity; keep Express an independent possible integration and preserve Fastify as the currently supported baseline.
+8. Do not change current defaults, peer dependencies, runtime behavior, or public support claims merely by accepting this amendment. Additional adapters and any breaking migration require separate implementation work, evidence, release decisions and reversible consumer adoption. Native-first does not imply Nest 11 feature backports or a mandatory platform peer.
 
 ## Validation gates
 
 - Tests per relevant brick: Forms/Identity body/path/query validation and serialization; Auth authentication/authorization, passkey cookies and headers; Newsletter subscription/native actions, webhook exact signed bytes, raw body, rate limiting/Retry-After and client key extraction; shared mailer host integration.
 - OpenAPI generation and verification against existing route-contract schemas; no lost `operationId`, tags or response definitions.
-- Explicit supported-adapter x Nest-major x runtime/ESM/CJS matrix and declaration checks with packed artifacts.
+- Explicit supported-adapter x Nest-major x runtime/ESM/CJS matrix and declaration checks with packed artifacts. The first new adapter validation must explicitly bootstrap `NodeAdapter` (not Nest's implicit Express default), use clean installed consumers without unnecessary Fastify/Express peers, and test routing, path/asset handling, proxy trust, cookies, multipart/raw-body where relevant and request lifecycle.
 - Representative negative/security cases: malformed requests, missing signatures, invalid forwarded headers, excessive bodies, and denied policies must remain rejected.
 - Fail fast or restrict compatibility whenever feature parity cannot be guaranteed.
 
@@ -43,10 +48,10 @@ The [ecosystem HTTP-independence ADR](https://github.com/anarchitects/anarchitec
 
 - Fastify-specific runtime coupling becomes visible instead of an implicit foundation.
 - Contract preservation may require phased dual-path support or versioned majors/minors.
-- Fastify remains the supported starting point until proven alternatives are released.
+- Fastify remains the **currently supported** starting point until proven alternatives are released. Native Node is the **first new implementation/validation target** for Nest 12.3+ rather than a presently supported runtime default.
 
 ## References
 
-- [Meta candidate Node default](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0009-native-node-candidate-default.md)
+- [Meta native Node preference and activation gates](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0009-native-node-candidate-default.md)
 - [Nest compatibility epic #461](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/461)
 - [Newsletter epic #428](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/428)
