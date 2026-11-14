@@ -1,6 +1,6 @@
 # Main-controlled release routing
 
-[Issue #518](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/518) provides routing for `main` and `maint/nest-11`. Deployment of this code does not activate maintenance releases. [#519](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/519) tracks the [protected maintenance branch and backport policy](nest11-maintenance.md), with live required-check evidence recorded and its implementation PRs awaiting human merge; [#520](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/520) supplies exact-candidate CI and clean-consumer proof. Release execution still requires human acceptance.
+[Issue #518](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/518) provides routing for `main` and `maint/nest-11`. Deployment of this code does not activate maintenance releases. [#519](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/519) tracks the [protected maintenance branch and backport policy](nest11-maintenance.md), with live required-check evidence recorded and both implementation PRs merged. [#520's candidate proof](../audits/520-nest11-maintenance-proof.md) records exact-candidate CI, patch-preview output and local versioned-consumer results, separately from publication. Release execution still requires human acceptance.
 
 ## Preview and versioning
 

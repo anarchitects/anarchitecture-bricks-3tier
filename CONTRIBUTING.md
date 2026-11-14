@@ -100,7 +100,7 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 ## Release Workflow (Domain Groups)
 
-Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The branch is protected and its live maintenance checks are verified; the CI bootstrap PRs await human merge, and publication still requires separate proof and owner approval.
+Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The maintenance CI bootstrap is merged, and branch protection is active. The [candidate proof](docs/audits/520-nest11-maintenance-proof.md) separates fresh CI and patch rehearsal from owner-authorized publication.
 
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`. Select `line=main` or `line=maint/nest-11`; the control workflow and routing policy always come from `main`.
 - Start with the default `dry_run=true`. Before a live run, review its exact candidate SHA and expanded release groups, then provide `candidate_sha` and `expected_groups` with `dry_run=false`. Maintenance publication remains gated by acceptance of #519 and #520; see the [routing guide](docs/guides/maintenance-release-routing.md).

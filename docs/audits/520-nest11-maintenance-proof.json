@@ -1,0 +1,846 @@
+{
+  "recordedDate": "2026-11-14",
+  "issue": 520,
+  "candidate": "6de3a4fc1e0d9b961da174605992598a539b73ff",
+  "packages": {
+    "@anarchitects/auth-angular": "0.13.2",
+    "@anarchitects/auth-declarations": "0.13.1",
+    "@anarchitects/auth-nest": "0.13.1",
+    "@anarchitects/auth-ts": "0.13.1",
+    "@anarchitects/forms-angular": "0.12.1",
+    "@anarchitects/forms-nest": "0.12.1",
+    "@anarchitects/forms-ts": "0.12.1",
+    "@anarchitects/identity-angular": "0.3.0",
+    "@anarchitects/identity-nest": "0.3.0",
+    "@anarchitects/identity-ts": "0.3.0",
+    "@anarchitects/newsletter-angular": "0.2.1",
+    "@anarchitects/newsletter-nest": "0.2.1",
+    "@anarchitects/newsletter-ts": "0.2.1",
+    "@anarchitects/common-nest-mailer": "0.5.1",
+    "@anarchitects/tailwind": "0.0.1"
+  },
+  "contracts": [
+    {
+      "name": "@anarchitects/auth-contracts",
+      "version": "0.1.0",
+      "hashes": {
+        "auth-canonical.json": "3c7f48d66c872500167a3fbc8672bbc425e4a2efcb0d385e226c7fec8e030923",
+        "auth-canonical.yaml": "8804c881a6c5b722e1bae7caf34d7aaf05a7e447bd48a2bb8e575a561ab77499",
+        "auth-review.json": "34ce7acd61447f07eefed9a7fc8606765c41d59c1c3bac4774919c7e5af146d6",
+        "auth-review.yaml": "1c6c192e167b480c48719be966cc3bfc4b5c9ba7edb422339151d58833a8fbc1",
+        "inventory.json": "c095b29d31a8b54e42b2cdc91ec8788718755fbd67e0c20bdce2e0be174ba961"
+      },
+      "operationCount": 17,
+      "excludedOperations": [
+        {
+          "binding": "auth.protected",
+          "operationId": "beginRegistration",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "auth.protected",
+          "operationId": "changePassword",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "auth.protected",
+          "operationId": "finishRegistration",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "auth.protected",
+          "operationId": "getLoggedInUserInfo",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "auth.protected",
+          "operationId": "logout",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "auth.protected",
+          "operationId": "updateEmail",
+          "reason": "unresolved-security"
+        }
+      ],
+      "unresolvedHostBindings": [
+        "auth.jwt-plugin:JWT verification and invalidation service",
+        "auth.session-passkeys:WebAuthn origin/RP and verifier",
+        "auth.session-passkeys:resource authorization policy",
+        "auth.session-passkeys:session cookie transport",
+        "auth.session:resource authorization policy",
+        "auth.session:session cookie transport"
+      ]
+    },
+    {
+      "name": "@anarchitects/forms-contracts",
+      "version": "0.2.0",
+      "hashes": {
+        "forms-canonical.json": "042bb8197d27514a4def0fcfc801234271961325d8e321f400b4a619d6a21fca",
+        "forms-canonical.yaml": "983a14a676ca00dc254b6b413dca87f8b874ee5fb96371c10f76727fef861002",
+        "forms-review.json": "ec806ce85334f8bf6d59bb5a5bf364ee4a96910bdc88ef62f1bd6fb84dac518e",
+        "forms-review.yaml": "72634198ea1d49a460ef90df6e03e459fa1286baf2993963a8f4f016dece68f5",
+        "inventory.json": "be5edb700186a4aaa91ed7e6b87b5b7640f2ca5b30e2f5d4ccc45741943f7997"
+      },
+      "operationCount": 4,
+      "excludedOperations": [
+        {
+          "binding": "forms.protected",
+          "operationId": "getFormDefinition",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "forms.protected",
+          "operationId": "getSubmission",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "forms.protected",
+          "operationId": "getSubmissions",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "forms.protected",
+          "operationId": "submitForm",
+          "reason": "unresolved-security"
+        }
+      ],
+      "unresolvedHostBindings": [
+        "forms.protected:authentication transport",
+        "forms.protected:public definition projection and secret-free serialization",
+        "forms.protected:resource authorization policy",
+        "forms.protected:restricted delivery configuration and historical secret rotation"
+      ]
+    },
+    {
+      "name": "@anarchitects/identity-contracts",
+      "version": "0.0.1",
+      "hashes": {
+        "identity-canonical.json": "de6a3735a490d34e369e5e372b6350c2e0051c20fd2da369a8a149990d6015fe",
+        "identity-canonical.yaml": "3042c3315cdabca24a34a8b9863a8a6a2bc3d255718d60ec397946f12ac277b8",
+        "identity-review.json": "ea70c1ecf2f668205bc984387b28e10db42d231c9832e92ba34c353cbf90e28f",
+        "identity-review.yaml": "e21e179bc35daf90732bcfe8e45605b286b526b9a0fc5e50fe484402a8f03d05",
+        "inventory.json": "4ddd30f3cb1198dff4df66c3012687cce51a5927f88269b6fab747bb9f016fb0"
+      },
+      "operationCount": 4,
+      "excludedOperations": [
+        {
+          "binding": "identity.protected",
+          "operationId": "createUserProfile",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "identity.protected",
+          "operationId": "getUserProfileByAuthUserId",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "identity.protected",
+          "operationId": "getUserProfileById",
+          "reason": "unresolved-security"
+        },
+        {
+          "binding": "identity.protected",
+          "operationId": "updateUserProfile",
+          "reason": "unresolved-security"
+        }
+      ],
+      "unresolvedHostBindings": [
+        "identity.protected:authentication transport",
+        "identity.protected:resource authorization policy"
+      ]
+    },
+    {
+      "name": "@anarchitects/newsletter-contracts",
+      "version": "0.1.0",
+      "hashes": {
+        "inventory.json": "11d95d56b2f55e2169c71cfe423726af0238e2351f4f1f9b86f536d8f0039825",
+        "newsletter-canonical.json": "6a90785dc66e45ae5dfad920363ab8dfe9ec29b387f33d17f815be5b9696934d",
+        "newsletter-canonical.yaml": "d13c2dfbc8cf8b7426dbeac22978b6bf927d9cbdd7e347c4bbcd88f9fc375177",
+        "newsletter-review.json": "f04bc2e38124fe01b10df102d5e1c0ffca7ff3a5a06cf9f0b604505f7a3d49a5",
+        "newsletter-review.yaml": "7bc937d981b281ddeb0d34d2df92286d23a95d622bc3e99a068f8234ed6951da"
+      },
+      "operationCount": 4,
+      "excludedOperations": [
+        {
+          "binding": "newsletter.webhook-signature",
+          "operationId": "receiveNewsletterWebhook",
+          "reason": "unresolved-security"
+        }
+      ],
+      "unresolvedHostBindings": [
+        "newsletter.native:consent version/text",
+        "newsletter.native:native action lifecycle",
+        "newsletter.native:rate-limit policy",
+        "newsletter.subscription-webhook:account id",
+        "newsletter.subscription-webhook:byte/event limits",
+        "newsletter.subscription-webhook:consent version/text",
+        "newsletter.subscription-webhook:rate-limit policy",
+        "newsletter.subscription-webhook:raw-body capture",
+        "newsletter.subscription-webhook:signature secret",
+        "newsletter.subscription-webhook:withdrawal persistence",
+        "newsletter.subscription:consent version/text",
+        "newsletter.subscription:rate-limit policy",
+        "newsletter.subscription:trusted request context"
+      ]
+    }
+  ],
+  "proposedTagAnnotations": [
+    "identity-ts@0.3.1\n\nanarchitecture-release-line: maint/nest-11",
+    "identity-nest@0.3.1\n\nanarchitecture-release-line: maint/nest-11",
+    "identity-angular@0.3.1\n\nanarchitecture-release-line: maint/nest-11"
+  ],
+  "ci": [
+    {
+      "id": 43636979644,
+      "name": "Packed Nest compatibility",
+      "head_sha": "6de3a4fc1e0d9b961da174605992598a539b73ff",
+      "head_branch": "maint/nest-11",
+      "conclusion": "success",
+      "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644",
+      "jobs": [
+        {
+          "id": 132575818314,
+          "name": "nest12 / Node 24.11.0 / PostgreSQL 17",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818314",
+          "host_summary": [
+            "2026-11-14T20:24:02.3006904Z Packed nest12 matrix passed: 5 hosts on v24.11.0."
+          ]
+        },
+        {
+          "id": 132575818511,
+          "name": "nest11 / Node 20.19.0 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818511",
+          "host_summary": [
+            "2026-11-14T20:23:39.6675096Z Packed nest11 matrix passed: 8 hosts on v20.19.0."
+          ]
+        },
+        {
+          "id": 132575818573,
+          "name": "nest12 / Node 24.11.0 / PostgreSQL 18",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818573",
+          "host_summary": [
+            "2026-11-14T20:23:40.7724110Z Packed nest12 matrix passed: 5 hosts on v24.11.0."
+          ]
+        },
+        {
+          "id": 132575818594,
+          "name": "nest11 / Node 22.13.0 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818594",
+          "host_summary": [
+            "2026-11-14T20:24:50.0956519Z Packed nest11 matrix passed: 10 hosts on v22.13.0."
+          ]
+        },
+        {
+          "id": 132575818614,
+          "name": "nest12 / Node 24.11.0 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818614",
+          "host_summary": [
+            "2026-11-14T20:23:09.7055044Z Packed nest12 matrix passed: 5 hosts on v24.11.0."
+          ]
+        },
+        {
+          "id": 132575818626,
+          "name": "nest11 / Node 24.11.0 / PostgreSQL 18",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818626",
+          "host_summary": [
+            "2026-11-14T20:24:40.4524712Z Packed nest11 matrix passed: 10 hosts on v24.11.0."
+          ]
+        },
+        {
+          "id": 132575818629,
+          "name": "nest12 / Node 26.11.1 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818629",
+          "host_summary": [
+            "2026-11-14T20:23:41.9857165Z Packed nest12 matrix passed: 5 hosts on v26.11.1."
+          ]
+        },
+        {
+          "id": 132575818642,
+          "name": "nest11 / Node 24.11.0 / PostgreSQL 17",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818642",
+          "host_summary": [
+            "2026-11-14T20:24:51.2826294Z Packed nest11 matrix passed: 10 hosts on v24.11.0."
+          ]
+        },
+        {
+          "id": 132575818647,
+          "name": "nest11 / Node 26.11.1 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818647",
+          "host_summary": [
+            "2026-11-14T20:24:02.7543477Z Packed nest11 matrix passed: 10 hosts on v26.11.1."
+          ]
+        },
+        {
+          "id": 132575818672,
+          "name": "nest12 / Node 22.13.0 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818672",
+          "host_summary": [
+            "2026-11-14T20:22:47.8116616Z Packed nest12 matrix passed: 5 hosts on v22.13.0."
+          ]
+        },
+        {
+          "id": 132575818692,
+          "name": "nest11 / Node 24.11.0 / PostgreSQL 16",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818692",
+          "host_summary": [
+            "2026-11-14T20:24:20.4395287Z Packed nest11 matrix passed: 10 hosts on v24.11.0."
+          ]
+        }
+      ]
+    },
+    {
+      "id": 43636982673,
+      "name": "Release (Manual)",
+      "head_sha": "6abe55d9ffbacb1ec0050fa2247c9799b3d89cea",
+      "head_branch": "main",
+      "conclusion": "success",
+      "url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636982673",
+      "jobs": [
+        {
+          "id": 132575826728,
+          "name": "release",
+          "conclusion": "success",
+          "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636982673/job/132575826728",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Ensure workflow runs from main",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout immutable workflow control code",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare control workspace",
+              "conclusion": "success"
+            },
+            {
+              "name": "Resolve allowlisted release candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout immutable release candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate candidate before executing target tooling",
+              "conclusion": "success"
+            },
+            {
+              "name": "Prepare candidate workspace using main action",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify canonical artifacts and packed HTTP behavior",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify packed Nest 11 consumers",
+              "conclusion": "success"
+            },
+            {
+              "name": "Preview selected release and dependent cascade",
+              "conclusion": "success"
+            },
+            {
+              "name": "Generate GitHub App token after validation",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Version and create GitHub releases",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Prepare candidate workspace using main action",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout immutable release candidate",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Prepare control workspace",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout immutable workflow control code",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "canonicalHttpRepresentativeJob": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43636979644/job/132575818692",
+  "canonicalHttp": [
+    {
+      "check": "canonical-http-coverage",
+      "domain": "auth",
+      "version": "0.1.0",
+      "canonicalSha256": "3c7f48d66c872500167a3fbc8672bbc425e4a2efcb0d385e226c7fec8e030923",
+      "operations": [
+        {
+          "operationId": "registerUser",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "activateUser",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "login",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "logout",
+          "statuses": [200]
+        },
+        {
+          "operationId": "forgotPassword",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "resetPassword",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "verifyEmail",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "getLoggedInUserInfo",
+          "statuses": [200]
+        },
+        {
+          "operationId": "loginWithJwt",
+          "statuses": [200]
+        },
+        {
+          "operationId": "logoutWithJwt",
+          "statuses": [200]
+        },
+        {
+          "operationId": "refreshJwtTokens",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "beginRegistration",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "finishRegistration",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "beginAuthentication",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "finishAuthentication",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "changePassword",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "updateEmail",
+          "statuses": [200, 400]
+        }
+      ]
+    },
+    {
+      "check": "canonical-http-coverage",
+      "domain": "forms",
+      "version": "0.2.0",
+      "canonicalSha256": "042bb8197d27514a4def0fcfc801234271961325d8e321f400b4a619d6a21fca",
+      "operations": [
+        {
+          "operationId": "getSubmissions",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "submitForm",
+          "statuses": [200, 400, 404]
+        },
+        {
+          "operationId": "getFormDefinition",
+          "statuses": [200, 400, 404]
+        },
+        {
+          "operationId": "getSubmission",
+          "statuses": [200, 404]
+        }
+      ]
+    },
+    {
+      "check": "canonical-http-coverage",
+      "domain": "identity",
+      "version": "0.0.1",
+      "canonicalSha256": "de6a3735a490d34e369e5e372b6350c2e0051c20fd2da369a8a149990d6015fe",
+      "operations": [
+        {
+          "operationId": "createUserProfile",
+          "statuses": [200, 400]
+        },
+        {
+          "operationId": "getUserProfileById",
+          "statuses": [200, 404]
+        },
+        {
+          "operationId": "getUserProfileByAuthUserId",
+          "statuses": [200, 404]
+        },
+        {
+          "operationId": "updateUserProfile",
+          "statuses": [200, 400, 404]
+        }
+      ]
+    },
+    {
+      "check": "canonical-http-coverage",
+      "domain": "newsletter",
+      "version": "0.1.0",
+      "canonicalSha256": "6a90785dc66e45ae5dfad920363ab8dfe9ec29b387f33d17f815be5b9696934d",
+      "operations": [
+        {
+          "operationId": "subscribeToNewsletter",
+          "statuses": [202, 400, 429, 503]
+        },
+        {
+          "operationId": "confirmNewsletterSubscription",
+          "statuses": [202, 400]
+        },
+        {
+          "operationId": "unsubscribeFromNewsletter",
+          "statuses": [202]
+        },
+        {
+          "operationId": "receiveNewsletterWebhook",
+          "statuses": [200, 400, 401, 413]
+        }
+      ]
+    }
+  ],
+  "currentControl": {
+    "id": 43638227996,
+    "head_sha": "736f1b719f9319b0af1c9c4b2a2997cf467673c7",
+    "head_branch": "main",
+    "conclusion": "success",
+    "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43638227996",
+    "updated_at": "2026-11-14T20:40:31Z",
+    "candidate": "6de3a4fc1e0d9b961da174605992598a539b73ff",
+    "dryRun": true,
+    "jobs": [
+      {
+        "id": 132579680036,
+        "name": "release",
+        "conclusion": "success",
+        "html_url": "https://github.com/anarchitects/anarchitecture-bricks-3tier/actions/runs/43638227996/job/132579680036",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Ensure workflow runs from main",
+            "conclusion": "success"
+          },
+          {
+            "name": "Checkout immutable workflow control code",
+            "conclusion": "success"
+          },
+          {
+            "name": "Prepare control workspace",
+            "conclusion": "success"
+          },
+          {
+            "name": "Resolve allowlisted release candidate",
+            "conclusion": "success"
+          },
+          {
+            "name": "Checkout immutable release candidate",
+            "conclusion": "success"
+          },
+          {
+            "name": "Validate candidate before executing target tooling",
+            "conclusion": "success"
+          },
+          {
+            "name": "Prepare candidate workspace using main action",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify canonical artifacts and packed HTTP behavior",
+            "conclusion": "success"
+          },
+          {
+            "name": "Verify packed Nest 11 consumers",
+            "conclusion": "success"
+          },
+          {
+            "name": "Preview selected release and dependent cascade",
+            "conclusion": "success"
+          },
+          {
+            "name": "Generate GitHub App token after validation",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Version and create GitHub releases",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Prepare candidate workspace using main action",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Checkout immutable release candidate",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Prepare control workspace",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Checkout immutable workflow control code",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "jobLogSha256": "dc7c853d8428409706d6e6623f195386fcf6aeaf7383fc8a61a5d0e1de8b8bad"
+  },
+  "localRehearsal": {
+    "platform": "macOS arm64",
+    "node": "24.22.3",
+    "yarn": "4.18.0",
+    "fixtureProof": {
+      "candidate": "6de3a4fc1e0d9b961da174605992598a539b73ff",
+      "nxVersion": "23.2.1",
+      "versions": {
+        "@anarchitects/identity-ts": "0.3.1",
+        "@anarchitects/identity-angular": "0.3.1",
+        "@anarchitects/identity-nest": "0.3.1"
+      },
+      "fixtureChanges": [
+        {
+          "path": "tools/testing/forms-identity-nest-hosts/candidates.json",
+          "sha256": "8a276a47f1167c1bdbf91037a77656e2d850a7306fd93fdb855b9839fd8b937f"
+        },
+        {
+          "path": "tools/testing/forms-identity-nest-hosts/nest11/package-lock.json.template",
+          "sha256": "31cc7fdbcfd90d324f2ffd875f15545bbc74a2353b7b4a36eedea9c0a23b10eb"
+        },
+        {
+          "path": "tools/testing/forms-identity-nest-hosts/nest11-modern/package-lock.json.template",
+          "sha256": "e04e045b9ef5a043e3bbf00f27e8821bd3eeb67b42ec9adad11bd4190bf4b6bc"
+        },
+        {
+          "path": "tools/testing/forms-identity-nest-hosts/nest12/package-lock.json.template",
+          "sha256": "c5402f869dd60498753f5e86f5c29c310f6b9553d2257b4f58c2e57b6e60f472"
+        }
+      ],
+      "registryEntriesUnchanged": true,
+      "plannerIdempotent": true,
+      "scope": "local disposable rehearsal; no release, commit, tag, push or registry mutation"
+    },
+    "consumerChecks": [
+      {
+        "configuration": "nest11",
+        "result": "passed",
+        "sha256": "b584b61c20e6cd7fe891bddffdc04f9cf02b3b5e385d1a259fd68c5a6c819043",
+        "identityVersion": "0.3.1",
+        "canonicalHttp": [
+          {
+            "check": "canonical-http-coverage",
+            "domain": "forms",
+            "version": "0.2.0",
+            "canonicalSha256": "042bb8197d27514a4def0fcfc801234271961325d8e321f400b4a619d6a21fca",
+            "operations": [
+              {
+                "operationId": "getSubmissions",
+                "statuses": [200, 400]
+              },
+              {
+                "operationId": "submitForm",
+                "statuses": [200, 400, 404]
+              },
+              {
+                "operationId": "getFormDefinition",
+                "statuses": [200, 400, 404]
+              },
+              {
+                "operationId": "getSubmission",
+                "statuses": [200, 404]
+              }
+            ]
+          },
+          {
+            "check": "canonical-http-coverage",
+            "domain": "identity",
+            "version": "0.0.1",
+            "canonicalSha256": "de6a3735a490d34e369e5e372b6350c2e0051c20fd2da369a8a149990d6015fe",
+            "operations": [
+              {
+                "operationId": "createUserProfile",
+                "statuses": [200, 400]
+              },
+              {
+                "operationId": "getUserProfileById",
+                "statuses": [200, 404]
+              },
+              {
+                "operationId": "getUserProfileByAuthUserId",
+                "statuses": [200, 404]
+              },
+              {
+                "operationId": "updateUserProfile",
+                "statuses": [200, 400, 404]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "configuration": "nest11-modern",
+        "result": "passed",
+        "sha256": "00102cfb0eefd7f4e0be4fb79d443ade014d1a5bdd4f1ab87dc54e67f7789641",
+        "identityVersion": "0.3.1",
+        "canonicalHttp": [
+          {
+            "check": "canonical-http-coverage",
+            "domain": "forms",
+            "version": "0.2.0",
+            "canonicalSha256": "042bb8197d27514a4def0fcfc801234271961325d8e321f400b4a619d6a21fca",
+            "operations": [
+              {
+                "operationId": "getSubmissions",
+                "statuses": [200, 400]
+              },
+              {
+                "operationId": "submitForm",
+                "statuses": [200, 400, 404]
+              },
+              {
+                "operationId": "getFormDefinition",
+                "statuses": [200, 400, 404]
+              },
+              {
+                "operationId": "getSubmission",
+                "statuses": [200, 404]
+              }
+            ]
+          },
+          {
+            "check": "canonical-http-coverage",
+            "domain": "identity",
+            "version": "0.0.1",
+            "canonicalSha256": "de6a3735a490d34e369e5e372b6350c2e0051c20fd2da369a8a149990d6015fe",
+            "operations": [
+              {
+                "operationId": "createUserProfile",
+                "statuses": [200, 400]
+              },
+              {
+                "operationId": "getUserProfileById",
+                "statuses": [200, 404]
+              },
+              {
+                "operationId": "getUserProfileByAuthUserId",
+                "statuses": [200, 404]
+              },
+              {
+                "operationId": "updateUserProfile",
+                "statuses": [200, 400, 404]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "artifactSha256": {
+      "dryRun": "a1e6305b74919fc414141098763cc3cd77e1750504ea5575bbbbb42d6afceb26",
+      "observationWrapper": "5e4806895869ddad49295399f489dca6fc1f53ca1c76ec0b9c89abcfe9405c73",
+      "fixtureRehearsal": "6fd900efac73a0b1e19856b6182d31d6741db5199c70a52f1ca50f5e59330e06",
+      "releaseTests": "6bb26dcc3fca5882c558b9f1cb2880883b10dc98779b76331a9568a7f42db63c"
+    }
+  },
+  "existingRegistryMetadata": {
+    "angular": {
+      "version": "0.3.0",
+      "dist.integrity": "sha512-6rPy/zhqPEpb8wIs/fg318TOsysQFhZ50pA3Q7zrVsRClYoCdVJk2Trtx6GfEzbLbqam19PjRsM9pkX0At7DOg==",
+      "dist.shasum": "0a3744756679adb1837fa6d76ec549973e93eade",
+      "gitHead": "4ca4d0e46f6741fcaf18ff9df38dee099ff65166",
+      "dist-tags": {
+        "latest": "0.3.0"
+      }
+    },
+    "nest": {
+      "version": "0.3.0",
+      "dist.integrity": "sha512-aoDoXybnfsqlRsexha5mCPg949TsbzMkhcwWtMb7mcmk1jigvz4OEZ4H+4ZLqGq9w5pNrgRl1/z9qJ694i5uqg==",
+      "dist.shasum": "2c91075ad60064adae02ed235913206b92f46ef3",
+      "gitHead": "4ca4d0e46f6741fcaf18ff9df38dee099ff65166",
+      "dist-tags": {
+        "latest": "0.3.0"
+      }
+    },
+    "ts": {
+      "version": "0.3.0",
+      "dist.integrity": "sha512-+wykkAZZK41qgfHfbeomAYYq9jRNph4uzUJBnp18WJt4mldvFBSZPY2JvVl1wgtELQqHjHSUEQJ9x7PkY9Zdxg==",
+      "dist.shasum": "614f0b618a7ae754cf70c0ca49ccb45324f0e7d5",
+      "gitHead": "4ca4d0e46f6741fcaf18ff9df38dee099ff65166",
+      "dist-tags": {
+        "latest": "0.3.0"
+      }
+    }
+  },
+  "publicationPerformed": false,
+  "postPublicationVerification": "not performed; no owner-selected maintenance release",
+  "distTagEvidence": "maintenance resolver regression tests passed; live maintenance publication not exercised",
+  "registryObservationDate": "2026-11-14",
+  "registryCurrentState": {
+    "angular": {
+      "versions": ["0.0.1", "0.0.2", "0.1.0", "0.2.0", "0.3.0"],
+      "dist-tags": {
+        "latest": "0.3.0"
+      }
+    },
+    "nest": {
+      "versions": ["0.0.1", "0.0.2", "0.1.0", "0.2.0", "0.3.0"],
+      "dist-tags": {
+        "latest": "0.3.0"
+      }
+    },
+    "ts": {
+      "versions": ["0.0.1", "0.0.2", "0.1.0", "0.2.0", "0.3.0"],
+      "dist-tags": {
+        "latest": "0.3.0"
+      }
+    }
+  }
+}
