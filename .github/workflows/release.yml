@@ -7,6 +7,27 @@ env:
 on:
   workflow_dispatch:
     inputs:
+      line:
+        description: Release branch (workflow itself must run from main)
+        required: true
+        default: main
+        type: choice
+        options:
+          - main
+          - maint/nest-11
+      dry_run:
+        description: Preview only; no Git, GitHub release or registry mutation
+        required: true
+        default: true
+        type: boolean
+      candidate_sha:
+        description: Exact SHA reviewed in the dry run; required for a live release
+        required: false
+        type: string
+      expected_groups:
+        description: Comma-separated groups including the reviewed dependent cascade; required for a live release
+        required: false
+        type: string
       domain:
         description: Domain release group to release
         required: true
@@ -29,8 +50,10 @@ on:
       bump:
         description: Optional semver override for the selected domain release
         required: false
+        default: auto
         type: choice
         options:
+          - auto
           - init
           - patch
           - minor
@@ -55,55 +78,115 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
     steps:
       - name: Ensure workflow runs from main
-        if: github.ref != 'refs/heads/main'
-        run: |
-          echo "This workflow must run from main. Current ref: ${{ github.ref }}"
-          exit 1
+        working-directory: .
+        env:
+          WORKFLOW_REF: ${{ github.ref }}
+        run: test "$WORKFLOW_REF" = refs/heads/main
 
-      - name: Generate GitHub App token
+      - name: Checkout immutable workflow control code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: control
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Prepare control workspace
+        uses: ./control/.github/actions/setup-release-env
+        with:
+          working-directory: control
+          node-version: '24'
+
+      - name: Resolve allowlisted release candidate
+        id: candidate
+        working-directory: control
+        run: node tools/release/release-route.mjs resolve
+        env:
+          RELEASE_LINE: ${{ inputs.line }}
+          RELEASE_DRY_RUN: ${{ inputs.dry_run }}
+          CANDIDATE_SHA: ${{ inputs.candidate_sha }}
+
+      - name: Checkout immutable release candidate
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.candidate.outputs.sha }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate candidate before executing target tooling
+        run: node ../control/tools/release/release-route.mjs checkout
+        env:
+          RELEASE_LINE: ${{ inputs.line }}
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+
+      - name: Prepare candidate workspace using main action
+        uses: ./control/.github/actions/setup-release-env
+        with:
+          working-directory: source
+          node-version: '24'
+
+      - name: Verify canonical artifacts and packed HTTP behavior
+        run: |
+          yarn nx run-many -p api-specs -t verify,test --parallel=1
+          yarn nx run api-specs:conformance-http
+
+      - name: Verify packed Nest 11 consumers
+        if: inputs.line == 'maint/nest-11'
+        run: yarn nx run release-tools:test-nest-compatibility --configuration=nest11 --skip-nx-cache
+
+      - name: Preview selected release and dependent cascade
+        run: |
+          args=("--domain=$DOMAIN" "--line=$RELEASE_LINE" "--expected-sha=$CANDIDATE_SHA" --skip-publish --yes --dry-run)
+          if [ "$COMMON_GROUP" != all ]; then args+=("--group=$COMMON_GROUP"); fi
+          if [ -n "$BUMP" ] && [ "$BUMP" != auto ]; then args+=("--bump=$BUMP"); fi
+          if [ "$FIRST_RELEASE" = true ]; then args+=(--first-release); fi
+          if [ -n "$EXPECTED_GROUPS" ]; then args+=("--expected-groups=$EXPECTED_GROUPS"); fi
+          node ../control/tools/release/run-domain-release.mjs "${args[@]}"
+        env:
+          DOMAIN: ${{ inputs.domain }}
+          RELEASE_LINE: ${{ inputs.line }}
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+          COMMON_GROUP: ${{ inputs.common_group }}
+          BUMP: ${{ inputs.bump }}
+          FIRST_RELEASE: ${{ inputs.first_release }}
+          EXPECTED_GROUPS: ${{ inputs.expected_groups }}
+
+      - name: Generate GitHub App token after validation
+        if: ${{ !inputs.dry_run }}
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.ANARCHITECTS_BOT_APP_ID }}
           private-key: ${{ secrets.ANARCHITECTS_BOT_PRIVATE_KEY }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          fetch-depth: 0
-          filter: tree:0
-
-      - name: Prepare release workspace
-        uses: ./.github/actions/setup-release-env
-
-      - name: Configure git author for release commits
+      - name: Version and create GitHub releases
+        if: ${{ !inputs.dry_run }}
         run: |
+          test -n "$EXPECTED_GROUPS"
           git config user.name "anarchitects-bot[bot]"
           git config user.email "anarchitects-bot[bot]@users.noreply.github.com"
-
-      - name: Verify canonical artifacts and packed HTTP behavior
-        if: inputs.domain != 'common'
-        run: |
-          yarn nx run-many -p api-specs -t verify,test --parallel=1
-          yarn nx run api-specs:conformance-http
-
-      - name: Run release for selected domain group
-        run: |
-          bump_args=""
-          group_args=""
-          first_release_args=""
-          if [ -n "${{ inputs.bump }}" ]; then
-            bump_args="--bump=${{ inputs.bump }}"
-          fi
-          if [ "${{ inputs.first_release }}" = "true" ]; then
-            first_release_args="--first-release"
-          fi
-          if [ "${{ inputs.common_group }}" != "all" ]; then
-            group_args="--group=${{ inputs.common_group }}"
-          fi
-          yarn nx run release-tools:domain-release -- --domain=${{ inputs.domain }} $group_args $bump_args $first_release_args --skip-publish --yes
+          # Credentials exist only after read-only validation and the preview.
+          gh auth setup-git
+          git fetch origin "refs/heads/$RELEASE_LINE:refs/remotes/origin/$RELEASE_LINE" --tags
+          args=("--domain=$DOMAIN" "--line=$RELEASE_LINE" "--expected-sha=$CANDIDATE_SHA" "--expected-groups=$EXPECTED_GROUPS" --skip-publish --yes)
+          if [ "$COMMON_GROUP" != all ]; then args+=("--group=$COMMON_GROUP"); fi
+          if [ -n "$BUMP" ] && [ "$BUMP" != auto ]; then args+=("--bump=$BUMP"); fi
+          if [ "$FIRST_RELEASE" = true ]; then args+=(--first-release); fi
+          node ../control/tools/release/run-domain-release.mjs "${args[@]}"
         env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          DOMAIN: ${{ inputs.domain }}
+          RELEASE_LINE: ${{ inputs.line }}
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+          COMMON_GROUP: ${{ inputs.common_group }}
+          BUMP: ${{ inputs.bump }}
+          FIRST_RELEASE: ${{ inputs.first_release }}
+          EXPECTED_GROUPS: ${{ inputs.expected_groups }}

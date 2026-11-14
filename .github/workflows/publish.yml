@@ -4,10 +4,13 @@ on:
   release:
     types:
       - published
+  repository_dispatch:
+    types:
+      - publish-package
   workflow_dispatch:
     inputs:
       tag:
-        description: Release tag to publish, for example auth-nest@0.9.0
+        description: Existing immutable project@version tag to publish or retry
         required: true
         type: string
 
@@ -17,75 +20,129 @@ env:
 
 permissions:
   contents: read
-  id-token: write
-
-concurrency:
-  group: publish-${{ inputs.tag || github.event.release.tag_name }}
-  cancel-in-progress: false
 
 jobs:
-  publish:
+  # Release events load workflow YAML from the tagged commit. Relay them to the
+  # default branch; only the main-controlled job below receives OIDC permission.
+  route-release:
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
-      - name: Resolve release ref
-        id: ref
-        shell: bash
+      - name: Generate release relay token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.ANARCHITECTS_BOT_APP_ID }}
+          private-key: ${{ secrets.ANARCHITECTS_BOT_PRIVATE_KEY }}
+      - name: Request publishing on main
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          REPOSITORY: ${{ github.repository }}
         run: |
-          ref_name='${{ inputs.tag || github.event.release.tag_name }}'
+          jq -n --arg tag "$RELEASE_TAG" '{event_type: "publish-package", client_payload: {tag: $tag}}' |
+            gh api --method POST "repos/$REPOSITORY/dispatches" --input -
 
-          if [ -z "$ref_name" ]; then
-            echo "Unable to resolve a release tag from the event payload"
-            exit 1
-          fi
-
-          echo "ref_name=$ref_name" >> "$GITHUB_OUTPUT"
-
-      - name: Derive project from tag
-        id: tag
-        shell: bash
+  select-package:
+    if: github.event_name != 'release'
+    runs-on: ubuntu-latest
+    outputs:
+      project: ${{ steps.project.outputs.project }}
+    steps:
+      - name: Select a safe concurrency key
+        id: project
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.event.client_payload.tag }}
+          WORKFLOW_REF: ${{ github.ref }}
         run: |
-          ref_name='${{ steps.ref.outputs.ref_name }}'
-          project="${ref_name%@*}"
-          version="${ref_name##*@}"
-
-          if [ -z "$project" ] || [ -z "$version" ] || [ "$project" = "$ref_name" ]; then
-            echo "Invalid release tag: $ref_name"
-            echo "Expected format: <nx-project-name>@<version>"
-            exit 1
-          fi
-
+          test "$WORKFLOW_REF" = refs/heads/main
+          project="${RELEASE_TAG%@*}"
+          [[ "$project" =~ ^[a-z][a-z0-9-]*$ ]] || exit 1
           echo "project=$project" >> "$GITHUB_OUTPUT"
-          echo "version=$version" >> "$GITHUB_OUTPUT"
 
-          echo "Publishing project: $project"
-          echo "Version: $version"
+  publish:
+    needs: select-package
+    if: github.event_name != 'release'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: publish-${{ needs.select-package.outputs.project }}
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.event.client_payload.tag }}
+    steps:
+      - name: Ensure publish workflow runs from main
+        working-directory: .
+        env:
+          WORKFLOW_REF: ${{ github.ref }}
+        run: test "$WORKFLOW_REF" = refs/heads/main
 
-      - name: Checkout repository
+      - name: Checkout immutable workflow control code
         uses: actions/checkout@v6
         with:
-          ref: refs/tags/${{ steps.ref.outputs.ref_name }}
+          ref: ${{ github.sha }}
+          path: control
           fetch-depth: 0
-          filter: tree:0
+          persist-credentials: false
 
-      - name: Prepare publish workspace
-        uses: ./.github/actions/setup-release-env
+      - name: Prepare control workspace
+        uses: ./control/.github/actions/setup-release-env
         with:
+          working-directory: control
           node-version: '24'
 
-      - name: Validate Nx project exists
-        shell: bash
-        run: yarn nx show project "${{ steps.tag.outputs.project }}" > /dev/null
+      - name: Validate tag, package and release line
+        id: tag
+        working-directory: control
+        run: node tools/release/release-route.mjs tag
 
-      - name: Build project
-        run: yarn nx build "${{ steps.tag.outputs.project }}" --skip-nx-cache
+      - name: Checkout immutable package source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.tag.outputs.sha }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Test project
-        run: yarn nx test "${{ steps.tag.outputs.project }}" --skip-nx-cache
+      - name: Prepare publish workspace using main action
+        uses: ./control/.github/actions/setup-release-env
+        with:
+          working-directory: source
+          node-version: '24'
 
-      - name: Publish project
-        run: yarn nx release publish --projects "${{ steps.tag.outputs.project }}" --yes
+      - name: Build and test project
+        env:
+          PROJECT: ${{ steps.tag.outputs.project }}
+        run: |
+          yarn nx build "$PROJECT" --skip-nx-cache
+          yarn nx test "$PROJECT" --skip-nx-cache
+
+      - name: Validate packed artifact and publish executor
+        run: node ../control/tools/release/release-route.mjs artifact
+        env:
+          CANDIDATE_SHA: ${{ steps.tag.outputs.sha }}
+          CANDIDATE_TAG_OBJECT: ${{ steps.tag.outputs.tagObject }}
+
+      - name: Check immutable registry version and prevent dist-tag rollback
+        id: registry
+        run: node ../control/tools/release/release-route.mjs registry
+        env:
+          CANDIDATE_SHA: ${{ steps.tag.outputs.sha }}
+          CANDIDATE_TAG_OBJECT: ${{ steps.tag.outputs.tagObject }}
+
+      - name: Publish project through npm Trusted Publisher
+        if: steps.registry.outputs.decision == 'publish'
         env:
           NPM_CONFIG_PROVENANCE: true
+          PROJECT: ${{ steps.tag.outputs.project }}
+          DIST_TAG: ${{ steps.tag.outputs.distTag }}
+        run: yarn nx release publish --projects "$PROJECT" --tag "$DIST_TAG" --yes
 
       - name: Validate Tailwind registry release
         if: steps.tag.outputs.project == 'tailwind'

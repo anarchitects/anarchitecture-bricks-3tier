@@ -13,6 +13,21 @@ import {
 } from 'node:fs';
 import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
+import assert from 'node:assert/strict';
+import {
+  assertCheckout,
+  assertLine,
+  assertMaintenanceOptions,
+  assertMaintenanceHistory,
+  assertProjectGraph,
+  assertPatchVersions,
+  assertUnusedReleaseTags,
+  maintenanceLine,
+  releaseGroups,
+  tagMessage,
+} from './release-line.mjs';
 
 import {
   createForcedReleasePlan,
@@ -73,10 +88,30 @@ const releaseGitConfig = rawNxJson.release?.git ?? {};
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
+  assertLine(options.line);
+  assert.ok(
+    options.skipPublish,
+    'Versioning requires --skip-publish; use the trusted Publish workflow',
+  );
+  if (
+    !options.dryRun ||
+    options.expectedSha ||
+    options.line === maintenanceLine
+  ) {
+    assertCheckout(workspaceRoot, options.line, options.expectedSha);
+  }
+  if (options.line === maintenanceLine) {
+    assertMaintenanceOptions(options);
+    assertMaintenanceHistory(workspaceRoot);
+  }
   const releaseContext = await createReleaseContext({
     firstRelease: options.firstRelease,
     verbose: options.verbose,
   });
+  assertProjectGraph(
+    releaseContext.releaseGraph.releaseGroups,
+    releaseContext.projectGraph.nodes,
+  );
   const domainGroups = resolveReleaseGroupsForDomain({
     domain: options.domain,
     releaseGroups: releaseContext.releaseGraph.releaseGroups,
@@ -100,6 +135,11 @@ async function main() {
     });
 
   if (skippedGroups.length > 0) {
+    assert.notEqual(
+      options.line,
+      maintenanceLine,
+      `Maintenance cannot skip dependent groups with incomplete tag history: ${skippedGroups.join(', ')}`,
+    );
     console.log(
       `Skipped automatic release of groups without complete release-tag history: ${skippedGroups.join(', ')}. Their first release must be selected explicitly after acceptance.`,
     );
@@ -119,11 +159,47 @@ async function main() {
 
   assertNoExistingVersionPlans();
 
-  const baseClient = new ReleaseClient({});
   const selectedReleaseGroups = filterReleaseGroups(
     releaseContext.releaseGraph,
     internalGroups,
   );
+  const allowedProjects = internalGroups.flatMap(
+    (group) => releaseGroups[group],
+  );
+  if (!options.dryRun || options.expectedGroups) {
+    assert.deepEqual(
+      options.expectedGroups?.split(',').sort(),
+      [...internalGroups].sort(),
+      `Review the dry-run cascade and supply --expected-groups=${internalGroups.join(',')}`,
+    );
+  }
+  // Run main's ancestry guard, including in dry runs and before Nx build hooks.
+  execFileSync(
+    process.execPath,
+    [
+      fileURLToPath(
+        new URL('./check-release-tag-ancestry.mjs', import.meta.url),
+      ),
+      `--projects=${allowedProjects.join(',')}`,
+      ...(options.line === maintenanceLine ? ['--require-tags'] : []),
+    ],
+    { cwd: workspaceRoot, stdio: 'inherit' },
+  );
+  if (options.line === maintenanceLine) {
+    const diskVersions = readCurrentProjectVersions({
+      releaseGroups: selectedReleaseGroups,
+      releaseGroupToFilteredProjects:
+        releaseContext.releaseGraph.releaseGroupToFilteredProjects,
+      projectNodes: releaseContext.projectGraph.nodes,
+    });
+    for (const project of allowedProjects) {
+      assert.equal(
+        releaseContext.releaseGraph.cachedCurrentVersions.get(project),
+        diskVersions[project],
+        `${project}: Nx resolved a version from a different release line`,
+      );
+    }
+  }
   const projectBumps = options.bump
     ? createForcedReleasePlan({
         releaseGroups: selectedReleaseGroups,
@@ -199,6 +275,10 @@ async function main() {
       stageChanges: false,
     });
     validateCanonicalReleaseVersions(preview.projectsVersionData);
+    assertUnusedReleaseTags(workspaceRoot, preview.projectsVersionData);
+    if (options.line === maintenanceLine) {
+      assertPatchVersions(preview.projectsVersionData, allowedProjects);
+    }
     versionResult = options.dryRun
       ? preview
       : await versionPlanClient.releaseVersion({
@@ -292,8 +372,8 @@ async function main() {
     for (const tag of gitTagValues) {
       await gitTag({
         tag,
-        message: releaseGitConfig.tagMessage ?? '',
-        additionalArgs: releaseGitConfig.tagArgs ?? '',
+        message: tagMessage(tag, options.line),
+        additionalArgs: '',
         dryRun: options.dryRun,
         verbose: options.verbose,
       });
@@ -306,8 +386,8 @@ async function main() {
 
     if (shouldPush) {
       await gitPush({
-        gitRemote: releaseGitConfig.remote ?? 'origin',
-        additionalArgs: releaseGitConfig.pushArgs ?? '',
+        gitRemote: 'origin',
+        additionalArgs: [`HEAD:refs/heads/${options.line}`],
         dryRun: options.dryRun,
         verbose: options.verbose,
       });
@@ -321,24 +401,9 @@ async function main() {
     }
   }
 
-  const shouldPublish = options.yes && !options.skipPublish && hasNewVersion;
-  if (shouldPublish) {
-    const publishResults = await baseClient.releasePublish({
-      groups: internalGroups,
-      dryRun: options.dryRun,
-      verbose: options.verbose,
-      firstRelease: options.firstRelease,
-      versionData: versionResult.projectsVersionData,
-    });
-    const allExitOk = Object.values(publishResults).every(
-      (result) => result.code === 0,
-    );
-    if (!allExitOk) {
-      process.exit(1);
-    }
-  } else {
-    console.log('Skipped publishing packages.');
-  }
+  console.log(
+    'Skipped publishing packages; use the main-controlled Publish workflow.',
+  );
 }
 
 function readCurrentProjectVersions({
@@ -482,10 +547,27 @@ function parseArgs(argv) {
     yes: false,
     skipPublish: false,
     firstRelease: false,
+    line: 'main',
+    expectedSha: null,
+    expectedGroups: null,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
+
+    if (arg.startsWith('--expected-groups=')) {
+      options.expectedGroups = arg.slice('--expected-groups='.length);
+      continue;
+    }
+
+    if (arg.startsWith('--line=')) {
+      options.line = arg.slice('--line='.length);
+      continue;
+    }
+    if (arg.startsWith('--expected-sha=')) {
+      options.expectedSha = arg.slice('--expected-sha='.length);
+      continue;
+    }
 
     if (arg === '--domain') {
       options.domain = argv[index + 1] ?? null;
