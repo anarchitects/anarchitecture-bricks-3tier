@@ -49,3 +49,15 @@ yarn nx run-many -p release-tools -t test,lint --parallel=2
 Local validation on macOS with Node 24.22.2: release-tools tests and lint pass, including 11 new tests for real lightweight/annotated tags, divergent maintenance history, project scoping, absent/corrupt/non-commit tags, invalid arguments and unavailable/shallow history. The strict guard passes for all 15 current package tags against fetched `fcf2f27b85f9e43dce988ea67150a5aacce934ac`. Tests use disposable repositories; published tags and workspace history are not changed. Fresh PR CI and maintenance packed-host/release proof remain separate gates.
 
 Release impact: stricter tooling now rejects previously silent invalid inputs and shallow histories. There is no published package API/runtime break, version change or npm deprecation proposal in #517.
+
+## #518 routing implementation
+
+Preflight refreshed on 2026-11-14 after #517 merged as `c4456dfdc0a014f3a5268d768cdadcf80ac8f712`. Both ADR inventories and the Meta tree above are unchanged. The applicable decisions and conflicts recorded above continue to apply; the release, packed-validation and development-strategy guides were revisited. The implementation preserves canonical gates, Nx Conventional Commit planning and human release ownership. It introduces no library or public HTTP change.
+
+The [routing guide](../guides/maintenance-release-routing.md) records the immutable control/candidate boundary, patch-only guards, reviewed cascade inputs, annotated tag markers, main-based publish relay and registry retry behavior. The baseline is a version-line floor; branch creation/protection and activation remain #519/#520 work. The `nest11` tag is implemented as the explicit maintenance route, without changing npm metadata during this work.
+
+Local validation on macOS with Node 24.22.3: all 121 release-tool tests pass, including real Git fixtures for line/ref/tag validation, intent checks, dependency boundaries, proposed-tag collisions and retry behavior. Release-tool lint passes with four pre-existing warnings in `host-fixture-versions.mjs`. Documentation content validation, formatting and actionlint 1.7.12 pass.
+
+The actual Nx runner completed an Identity patch preview on the working branch and a maintenance preview against `c4456dfdc0a014f3a5268d768cdadcf80ac8f712` in a disposable clone. The latter used a simulated remote-tracking ref only. Tracked files, index and Git refs remained unchanged, and transient plans were removed. A Tailwind patch preview correctly stopped on the existing preserved Forms peer range (`^0.0.1` does not permit `0.0.2`), also without tracked changes or ref mutation. That dependency policy was preserved.
+
+These local simulations do not establish the real maintenance branch, effective GitHub protection, OIDC permission or CI release readiness. No commit, tag, remote branch, GitHub release, npm package or dist-tag was created by the validation. Tooling behavior changes include required `--skip-publish`, exact candidate/cascade inputs for live releases, and rejection of new unmarked tags. There is no published package API/runtime break or npm deprecation proposal.

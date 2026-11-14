@@ -141,7 +141,7 @@ does not establish full deployment conformance.
 | `nx run docs-hub:verify`                                                  | Validate docs hub outputs and required links                 |
 | `nx run release-tools:validate-non-bumping-commits`                       | Validate exact Nx scopes/types and docs commit policy        |
 | `nx run release-tools:validate-angular-package-compatibility`             | Validate Angular peers and release-group coverage            |
-| `nx run release-tools:domain-release -- --domain=forms -d`                | Dry-run the supported domain release workflow                |
+| `nx run release-tools:domain-release -- --domain=forms --skip-publish -d` | Dry-run the supported domain release workflow                |
 | `yarn nx run auth-nest:test-nest-compatibility:nest12`                    | Validate packed Auth on Nest 12                              |
 | `nx run auth-angular-example:contract-test`                               | Validate auth Angular data-access against Prism mock         |
 | `yarn nx run auth-angular-example-e2e:passkey-contract-test`              | Validate browser passkeys through Nest and PostgreSQL        |
@@ -153,29 +153,30 @@ does not establish full deployment conformance.
 
 Run releases via the **Release (Manual)** GitHub workflow:
 
+- Run the workflow from `main` and select `line=main` or `line=maint/nest-11`. Keep `dry_run=true` first; a live run requires the reviewed `candidate_sha` and comma-separated `expected_groups`. See the [routing guide](docs/guides/maintenance-release-routing.md); maintenance activation remains gated by #519 and #520.
 - Workflow input `domain` must be one of: `forms`, `auth`, `identity`, `newsletter`, `common`.
 - Newsletter 0.0.1 shipped after #428 acceptance. Its next coordinated 0.1 release is part of the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md); publish the complete accepted domain, not intermediate implementation fragments.
-- Workflow input `bump` is optional and forces the selected semver bump when conventional-commit inference is not the right source of truth.
+- Workflow input `bump` defaults to `auto` for Conventional Commit inference. Maintenance permits only patch overrides and rejects feature/breaking intent, initial releases and non-patch versions.
 - Workflow input `first_release` is optional and should be used only when the selected release includes a project with no prior release tag.
 - Introduce a new publishable project with an `init(<nx-project-name>): <description>` implementation commit. `init` has `semverBump: none` in `nx.json`; the workflow's `first_release` and explicit `bump` inputs choose the initial published version without also inferring a feature bump.
 - The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
 - The optional `common_group` selector narrows a common release to `common-nest` or `common-tailwind`; its default `all` keeps full-domain behavior.
 - Automatic downstream release cascades include only groups whose packages all have matching release tags. Untagged or partially released groups are skipped as a whole, even if `first_release` is enabled for another group. Their dependency ranges remain unchanged until their own release preparation.
 - An explicitly selected group with missing tags requires `first_release`; first fetch all repository tags to distinguish missing history from an actual initial release. This flag does not authorize first releases of other dependent groups.
-- The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`, which handles versioning, changelog generation, git/tagging, and GitHub releases.
+- The workflow invokes the trusted runner from a separate `control` checkout against an immutable `source` checkout. It handles versioning, changelogs, annotated tags and GitHub releases, with `--skip-publish` enforced.
 - When conventional-commit inference needs a one-off override, the repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>`. The guarded `init` value only applies to first releases already declaring `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.
-- Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.
-- For a publish-only retry, manually run **Publish** with the existing package tag, for example `auth-nest@0.9.0`. Do not rerun versioning.
+- Each published GitHub release triggers a `publish.yml` relay to the default branch. The `main` job validates the immutable tag and built package before npm Trusted Publisher/OIDC publication. Maintenance uses `nest11`; main uses `latest`. Already-published versions are skipped without changing either dist-tag.
+- For a publish-only retry, manually run **Publish** from `main` with the existing package tag, for example `auth-nest@0.9.0`. Do not rerun versioning or recreate release events on historical tags.
 - Domain major and minor lines stay synchronized while patch versions may diverge. With Nx's pre-1.0 adjustment, use `bump=major` to advance a `0.x` domain to its next minor line.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final release tags from a release-prep branch before merge.
-- If a release-prep PR is squash-merged after tags were created on the branch, retarget those tags to the merge commit on `main` before running release.
+- If a tag is outside the intended release branch history, stop and review the branch and fetched history. Never move or rewrite published release tags to bypass ancestry validation.
 
 Avoid routine local `yarn nx release`; use the workflow or the repo runner for auditable, controlled domain releases.
-If local dry-runs are needed, use the repo runner, for example `yarn nx run release-tools:domain-release -- --domain=forms -d`.
-If you need to override bump inference for a one-time release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
-If the release also includes a package with no prior release tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=identity --bump=patch --first-release -d`.
-For the initial Tailwind release, use `yarn nx run release-tools:domain-release -- --domain=common --group=common-tailwind --bump=init --first-release -d`; the guarded `init` bump publishes the already-declared `tailwind@0.0.1` without selecting the other common groups or incrementing the version. Tailwind's implementation predates the documented `init` convention and was merged as `feat(tailwind)`; preserve shared history and use the explicit `init` bump for this first release.
+If local dry-runs are needed, use the repo runner, for example `yarn nx run release-tools:domain-release -- --domain=forms --skip-publish -d`.
+If you need to override bump inference for a one-time release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --skip-publish -d`.
+If the release also includes a package with no prior release tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=identity --bump=patch --first-release --skip-publish -d`.
+For the initial Tailwind release, use `yarn nx run release-tools:domain-release -- --domain=common --group=common-tailwind --bump=init --first-release --skip-publish -d`; the guarded `init` bump publishes the already-declared `tailwind@0.0.1` without selecting the other common groups or incrementing the version. Tailwind's implementation predates the documented `init` convention and was merged as `feat(tailwind)`; preserve shared history and use the explicit `init` bump for this first release.
 
 ## Layering Rules
 

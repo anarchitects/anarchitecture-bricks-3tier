@@ -100,21 +100,22 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 ## Release Workflow (Domain Groups)
 
-- Trigger the **Release (Manual)** GitHub Actions workflow from `main`.
+- Trigger the **Release (Manual)** GitHub Actions workflow from `main`. Select `line=main` or `line=maint/nest-11`; the control workflow and routing policy always come from `main`.
+- Start with the default `dry_run=true`. Before a live run, review its exact candidate SHA and expanded release groups, then provide `candidate_sha` and `expected_groups` with `dry_run=false`. Maintenance activation remains gated by #519 and #520; see the [routing guide](docs/guides/maintenance-release-routing.md).
 - Select exactly one domain group input: `forms`, `auth`, `identity`, `newsletter`, or `common`.
 - Newsletter 0.0.1 shipped after #428 acceptance. Preserve coordinated domain publication for its next 0.1 release; follow the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md).
-- Use the optional `bump` workflow input only when you need to override conventional-commit bump inference for that release.
+- Use the optional `bump` workflow input only when you need to override conventional-commit bump inference. Maintenance allows only `patch`, rejects feature/breaking intent even with an override, and forbids first releases.
 - Use the optional `first_release` workflow input only when the selected release includes a project with no prior release tag.
 - A first release is prepared from an `init(<nx-project-name>): <description>` implementation commit. Select `first_release` and an explicit `bump` in the release workflow to choose the initial published version; do not use `feat` merely to introduce the new package because `feat` participates in normal bump inference.
 - The `common` domain dynamically includes the `common-nest` and `common-tailwind` release groups.
 - Use the optional `common_group` selector when a common release must target only one subgroup. The initial Tailwind release uses `common-tailwind`; leaving it at `all` preserves full-domain behavior.
 - Automatic downstream release cascades include only groups whose packages all have matching release tags. Untagged or partially released groups are skipped as a whole, even if `first_release` is enabled for another group. Their dependency ranges remain unchanged until their own release preparation.
 - An explicitly selected group with missing tags requires `first_release`; first fetch all repository tags to distinguish missing history from an actual initial release. This flag does not authorize first releases of other dependent groups.
-- The workflow runs `nx run release-tools:domain-release -- --domain=<domain> --skip-publish --yes`.
+- The workflow invokes the trusted runner from its separate `control` checkout against the immutable `source` checkout, passing the selected line, candidate SHA, reviewed groups and `--skip-publish`.
 - The repo runner also supports `--bump=<init|patch|minor|major|prepatch|preminor|premajor|prerelease>` for one-off manual override of conventional-commit inference. `init` is restricted to a first release whose selected projects already declare `0.0.1`; it publishes that exact version without incrementing it or creating an empty release commit, and tags the accepted current commit instead.
 - Do not perform local releases. Only use the repo runner locally with `-d` for a dry run; actual versioning and publication remain CI-owned after human acceptance.
-- Each published GitHub release triggers `publish.yml` for that package tag. `publish.yml` is the npm Trusted Publisher workflow; GitHub OIDC supplies short-lived authentication and provenance without an npm token.
-- For a publish-only retry, manually run **Publish** with the existing package tag. Do not rerun versioning.
+- Each published GitHub release triggers a `publish.yml` relay to the default branch. The `main` job validates the immutable tag and built package before npm Trusted Publisher/OIDC publication. Maintenance uses `nest11`; main uses `latest`. Already-published versions are skipped without changing either dist-tag.
+- For a publish-only retry, manually run **Publish** from `main` with the existing package tag. Do not rerun versioning or recreate the release event on a historical tag.
 - Domain major and minor lines stay synchronized while patch versions may diverge. With Nx's pre-1.0 adjustment, use `bump=major` to advance a `0.x` domain to its next minor line.
 - Release tags must point to a commit reachable from the branch running `nx release`, normally `main`.
 - Do not create or push final `{projectName}@{version}` release tags from a release-prep branch before merge.
@@ -129,10 +130,10 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 - Group-scoped release preflight runs only the selected release group's ancestry check and builds.
 - `nx run release-tools:validate-angular-package-compatibility` ensures every public Angular package
   has dual-major peer coverage and belongs to a supported release group.
-- For local dry-run validation, use the repo runner (for example `yarn nx run release-tools:domain-release -- --domain=forms -d`).
-- If you need to override the inferred bump for a single release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch -d`.
-- If that release also introduces a package with no prior tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --first-release -d`.
-- To rehearse the initial Tailwind release without touching other common groups, run `yarn nx run release-tools:domain-release -- --domain=common --group=common-tailwind --bump=init --first-release -d`. The guarded `init` bump publishes Tailwind's already-declared `0.0.1` without incrementing it. Its already-merged implementation used `feat(tailwind)` before the `init` convention was documented; do not rewrite shared history to correct that historical exception.
+- For local dry-run validation, use the repo runner (for example `yarn nx run release-tools:domain-release -- --domain=forms --skip-publish -d`).
+- If you need to override the inferred bump for a single release, use the same runner, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --skip-publish -d`.
+- If that release also introduces a package with no prior tag, add `--first-release`, for example `yarn nx run release-tools:domain-release -- --domain=auth --bump=patch --first-release --skip-publish -d`.
+- To rehearse the initial Tailwind release without touching other common groups, run `yarn nx run release-tools:domain-release -- --domain=common --group=common-tailwind --bump=init --first-release --skip-publish -d`. The guarded `init` bump publishes Tailwind's already-declared `0.0.1` without incrementing it. Its already-merged implementation used `feat(tailwind)` before the `init` convention was documented; do not rewrite shared history to correct that historical exception.
 - Keep domain tags aligned with folder structure; CI validates:
   - `libs/forms/**` -> `domain:forms`
   - `libs/auth/**` -> `domain:auth`
