@@ -151,9 +151,11 @@ does not establish full deployment conformance.
 
 ## Release By Domain
 
+Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The branch is protected and its live maintenance checks are verified; the CI bootstrap PRs await human merge, and publication still requires separate proof and owner approval.
+
 Run releases via the **Release (Manual)** GitHub workflow:
 
-- Run the workflow from `main` and select `line=main` or `line=maint/nest-11`. Keep `dry_run=true` first; a live run requires the reviewed `candidate_sha` and comma-separated `expected_groups`. See the [routing guide](docs/guides/maintenance-release-routing.md); maintenance activation remains gated by #519 and #520.
+- Run the workflow from `main` and select `line=main` or `line=maint/nest-11`. Keep `dry_run=true` first; a live run requires the reviewed `candidate_sha` and comma-separated `expected_groups`. See the [routing guide](docs/guides/maintenance-release-routing.md); maintenance publication remains gated by acceptance of #519 and #520.
 - Workflow input `domain` must be one of: `forms`, `auth`, `identity`, `newsletter`, `common`.
 - Newsletter 0.0.1 shipped after #428 acceptance. Its next coordinated 0.1 release is part of the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md); publish the complete accepted domain, not intermediate implementation fragments.
 - Workflow input `bump` defaults to `auto` for Conventional Commit inference. Maintenance permits only patch overrides and rejects feature/breaking intent, initial releases and non-patch versions.

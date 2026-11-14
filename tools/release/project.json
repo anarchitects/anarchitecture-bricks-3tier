@@ -166,10 +166,14 @@
         "{workspaceRoot}/tools/testing/canonical-http.cts",
         "{workspaceRoot}/.github/workflows/release.yml",
         "{workspaceRoot}/.github/workflows/publish.yml",
-        "{workspaceRoot}/.github/actions/setup-release-env/action.yml"
+        "{workspaceRoot}/.github/actions/setup-release-env/action.yml",
+        "{workspaceRoot}/.github/workflows/maintenance-ci.yml",
+        "{workspaceRoot}/.github/workflows/main-ci.yml",
+        "{workspaceRoot}/.github/workflows/angular-consumer-compatibility.yml",
+        "{workspaceRoot}/.github/rulesets/*.json"
       ],
       "options": {
-        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/release-tag-ancestry.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs tools/release/newsletter-nest-host.spec.mjs tools/release/nest-compatibility.spec.mjs tools/release/canonical-compatibility.spec.mjs tools/release/host-fixture-versions.spec.mjs tools/release/release-line.spec.mjs"
+        "command": "node --test tools/release/domain-release-lib.spec.mjs tools/release/release-workflows.spec.mjs tools/release/release-tag-ancestry.spec.mjs tools/release/tailwind-registry-validation-lib.spec.mjs tools/release/newsletter-workspace.spec.mjs tools/release/nest-development-host.spec.mjs tools/release/common-mailer-nest-host.spec.mjs tools/release/auth-nest-host.spec.mjs tools/release/forms-identity-nest-host.spec.mjs tools/release/newsletter-nest-host.spec.mjs tools/release/nest-compatibility.spec.mjs tools/release/canonical-compatibility.spec.mjs tools/release/host-fixture-versions.spec.mjs tools/release/release-line.spec.mjs tools/release/maintenance-backport.spec.mjs"
       }
     },
     "test-forms-identity-nest-compatibility": {
@@ -234,6 +238,13 @@
         "nest12": {
           "command": "node tools/testing/run-nest-compatibility-matrix.mjs nest12"
         }
+      }
+    },
+    "check-maintenance-backport": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node tools/release/check-maintenance-backport.mjs"
       }
     }
   }

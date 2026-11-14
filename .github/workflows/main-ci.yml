@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - main
+      - maint/nest-11
 
 permissions:
   actions: read

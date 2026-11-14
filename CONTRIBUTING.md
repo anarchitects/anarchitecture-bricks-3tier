@@ -100,8 +100,10 @@ See the top-level policy summary in [README.md](README.md#human-in-the-loop-shor
 
 ## Release Workflow (Domain Groups)
 
+Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The branch is protected and its live maintenance checks are verified; the CI bootstrap PRs await human merge, and publication still requires separate proof and owner approval.
+
 - Trigger the **Release (Manual)** GitHub Actions workflow from `main`. Select `line=main` or `line=maint/nest-11`; the control workflow and routing policy always come from `main`.
-- Start with the default `dry_run=true`. Before a live run, review its exact candidate SHA and expanded release groups, then provide `candidate_sha` and `expected_groups` with `dry_run=false`. Maintenance activation remains gated by #519 and #520; see the [routing guide](docs/guides/maintenance-release-routing.md).
+- Start with the default `dry_run=true`. Before a live run, review its exact candidate SHA and expanded release groups, then provide `candidate_sha` and `expected_groups` with `dry_run=false`. Maintenance publication remains gated by acceptance of #519 and #520; see the [routing guide](docs/guides/maintenance-release-routing.md).
 - Select exactly one domain group input: `forms`, `auth`, `identity`, `newsletter`, or `common`.
 - Newsletter 0.0.1 shipped after #428 acceptance. Preserve coordinated domain publication for its next 0.1 release; follow the [Nest 11/12 release plan](docs/guides/nest-compatibility-release-plan.md).
 - Use the optional `bump` workflow input only when you need to override conventional-commit bump inference. Maintenance allows only `patch`, rejects feature/breaking intent even with an override, and forbids first releases.

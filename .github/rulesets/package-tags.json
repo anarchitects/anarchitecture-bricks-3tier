@@ -1,0 +1,36 @@
+{
+  "name": "Immutable package release tags",
+  "target": "tag",
+  "enforcement": "active",
+  "bypass_actors": [],
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/tags/auth-angular@*",
+        "refs/tags/auth-declarations@*",
+        "refs/tags/auth-nest@*",
+        "refs/tags/auth-ts@*",
+        "refs/tags/forms-angular@*",
+        "refs/tags/forms-nest@*",
+        "refs/tags/forms-ts@*",
+        "refs/tags/identity-angular@*",
+        "refs/tags/identity-nest@*",
+        "refs/tags/identity-ts@*",
+        "refs/tags/newsletter-angular@*",
+        "refs/tags/newsletter-nest@*",
+        "refs/tags/newsletter-ts@*",
+        "refs/tags/common-nest-mailer@*",
+        "refs/tags/tailwind@*"
+      ],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "update"
+    },
+    {
+      "type": "deletion"
+    }
+  ]
+}
