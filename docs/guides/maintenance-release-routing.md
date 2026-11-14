@@ -1,0 +1,31 @@
+# Main-controlled release routing
+
+[Issue #518](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/518) provides routing for `main` and `maint/nest-11`. Deployment of this code does not activate maintenance releases. [#519](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/519) must establish the branch, protection and backport policy; [#520](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/520) supplies exact-candidate CI and clean-consumer proof. Release execution still requires human acceptance.
+
+## Preview and versioning
+
+Run **Release (Manual)** from `main`, choose one domain and optionally a common subgroup, select the release `line`, and retain `dry_run=true`. The workflow resolves the allowlisted branch to an immutable SHA. It validates ancestry, runs canonical artifact and packed HTTP checks, and runs packed Nest 11 consumers for maintenance. Common releases also run canonical checks because their dependent cascade can include API domains.
+
+Review the candidate SHA, Conventional Commit plan, dependent groups and proposed versions. A live dispatch requires that exact `candidate_sha`, the comma-separated `expected_groups` printed by the preview, and `dry_run=false`. It repeats the preview before obtaining the release bot token. A moved branch or changed cascade fails; review a fresh preview instead. Git uses a non-force atomic push to the explicit selected branch. Existing and proposed release tags are checked before version mutation and are never rewritten.
+
+The control checkout is pinned to the dispatch's `github.sha`. Its action, routing policy and release runner operate against a separate candidate checkout. Candidate dependencies, build hooks and Nx configuration still execute as accepted source code; protected branches, reviewed workflow/backport changes and release-owner acceptance remain essential. This is a separation of routing authority, not a sandbox for arbitrary candidate code. New publishable projects, roots or groups require a reviewed update to `tools/release/release-line.mjs` as well as the normal Nx onboarding changes.
+
+Dry runs may install dependencies, build artifacts, populate caches and temporarily create a derived Nx version plan. The plan is removed afterward. They do not commit, stage tracked changes, tag, push, create GitHub releases or mutate npm. The bot token is not created in workflow dry runs, and the versioning runner has no npm publishing path. Local previews also require `--skip-publish`.
+
+## Maintenance eligibility
+
+The policy pins the accepted R1 revision `4ca4d0e46f6741fcaf18ff9df38dee099ff65166` and the later published baseline `fcf2f27b85f9e43dce988ea67150a5aacce934ac`. The latter includes the accepted mailer security fix. It supplies package identities and maintenance version lines, not an assertion that the maintenance branch or its protection already exists. #519 must choose and verify the final branch point as a descendant of this baseline.
+
+Maintenance requires full history, an exact fetched branch head and existing release tags. It rejects initial releases, skipped dependent groups with incomplete tags, non-patch overrides, prereleases, version-line changes and internal dependency ranges that cross those lines. Every commit after the baseline is inspected for `feat`, `!` or `BREAKING CHANGE`/`BREAKING-CHANGE` intent, including commits outside the selected domain. A feature that Nx would number as a zero-major patch is still rejected. Changing a commit label does not establish bugfix eligibility; backport review owns that semantic decision.
+
+Nx remains the version and changelog authority. Its preview must produce exactly one stable patch for every changed maintenance project and stay within the reviewed cascade. Existing canonical compatibility checks can reject even a numeric patch. Domain major/minor alignment, independent patches, preserved peer ranges and host-fixture synchronization remain in force. Main and maintenance cannot issue the same package version: a tag collision stops the plan. Advancing main's release lines belongs to the separately reviewed modernization work.
+
+## Publishing and retries
+
+New annotated release tags contain `anarchitecture-release-line: main` or `anarchitecture-release-line: maint/nest-11`. Publishing checks the tag object and commit, exact package/version, allowlisted project, branch ancestry, built manifest and resolved Nx publishing executor. Maintenance also requires its preceding patch tag in ancestry and rechecks maintenance history, manifests and dependency lines. The line marker survives merges into main and routes maintenance to `nest11`, never `latest`.
+
+GitHub [release events run against the tagged revision](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#release). The release-event job therefore only relays the tag through `repository_dispatch` to the default branch. Only the `main` publishing job receives `id-token: write`. The existing bot's repository contents permission supports this relay; npm Trusted Publisher remains configured for `publish.yml`. #519 must ensure maintenance contains the reviewed relay and that effective repository/tag controls protect it. Historical workflows cannot be retroactively changed: retry historical releases by manually dispatching **Publish** from `main`, not by recreating their release events.
+
+Publishing is serialized per package. npm metadata failures stop publication. An existing version is a no-op, even when a newer version owns the dist-tag; retries never retag it. An unpublished version older than the current selected dist-tag is rejected. Correcting registry metadata requires a separately reviewed owner action. GitHub may supersede older pending runs in a concurrency group; manually dispatch the exact existing tag from main if its publication was skipped or interrupted. Never rerun versioning for a publish retry.
+
+Legacy unmarked tags are accepted only within the immutable baseline's history and retain main routing. New unmarked or ambiguous tags fail closed. No dependency versions, public HTTP contracts, published runtime APIs or npm deprecations are changed by this routing work.
