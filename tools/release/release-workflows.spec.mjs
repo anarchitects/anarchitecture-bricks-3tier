@@ -124,6 +124,11 @@ test('manual releases separate immutable control and candidate checkouts and gat
   assert.equal(inputs.dry_run.default, true);
   assert.equal(inputs.bump.default, 'auto');
   const steps = workflow.jobs.release.steps;
+  assert.equal(workflow.jobs.release.environment, 'shared-bot-release');
+  assert.equal(
+    workflow.jobs.release.if,
+    "github.ref == 'refs/heads/main' && github.run_attempt == 1",
+  );
   const checkout = steps.filter((step) =>
     step.uses?.startsWith('actions/checkout@'),
   );
@@ -184,6 +189,19 @@ test('publishing relays tag events to main, validates artifacts and serializes e
     undefined,
   );
   assert.deepEqual(workflow.on.repository_dispatch.types, ['publish-package']);
+  const relay = workflow.jobs['route-release'];
+  assert.deepEqual(relay.permissions, { actions: 'write' });
+  assert.equal(relay.steps.length, 1);
+  assert.equal(relay.steps[0].env.GH_TOKEN, '${{ github.token }}');
+  assert.match(relay.steps[0].run, /ref: "main"/);
+  assert.match(
+    relay.steps[0].run,
+    /actions\/workflows\/publish\.yml\/dispatches/,
+  );
+  assert.doesNotMatch(
+    JSON.stringify(workflow),
+    /ANARCHITECTS_BOT|create-github-app-token/,
+  );
   const job = workflow.jobs.publish;
   assert.equal(job.if, "github.event_name != 'release'");
   assert.equal(job.permissions['id-token'], 'write');
