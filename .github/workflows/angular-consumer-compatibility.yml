@@ -2,7 +2,7 @@ name: Angular packaged consumer compatibility
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, maint/nest-11]
   workflow_dispatch:
 
 concurrency:

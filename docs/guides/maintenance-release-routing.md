@@ -1,6 +1,6 @@
 # Main-controlled release routing
 
-[Issue #518](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/518) provides routing for `main` and `maint/nest-11`. Deployment of this code does not activate maintenance releases. [#519](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/519) must establish the branch, protection and backport policy; [#520](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/520) supplies exact-candidate CI and clean-consumer proof. Release execution still requires human acceptance.
+[Issue #518](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/518) provides routing for `main` and `maint/nest-11`. Deployment of this code does not activate maintenance releases. [#519](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/519) tracks the [protected maintenance branch and backport policy](nest11-maintenance.md), with live required-check evidence recorded and its implementation PRs awaiting human merge; [#520](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/520) supplies exact-candidate CI and clean-consumer proof. Release execution still requires human acceptance.
 
 ## Preview and versioning
 
@@ -14,7 +14,7 @@ Dry runs may install dependencies, build artifacts, populate caches and temporar
 
 ## Maintenance eligibility
 
-The policy pins the accepted R1 revision `4ca4d0e46f6741fcaf18ff9df38dee099ff65166` and the later published baseline `fcf2f27b85f9e43dce988ea67150a5aacce934ac`. The latter includes the accepted mailer security fix. It supplies package identities and maintenance version lines, not an assertion that the maintenance branch or its protection already exists. #519 must choose and verify the final branch point as a descendant of this baseline.
+The policy pins the accepted R1 revision `4ca4d0e46f6741fcaf18ff9df38dee099ff65166` and the later published baseline `fcf2f27b85f9e43dce988ea67150a5aacce934ac`. The latter includes the accepted mailer security fix. It supplies package identities and maintenance version lines, not an assertion that the maintenance branch or its protection already exists. #519 selected `e8313e64b17fe98edd9470bd5169067e350d54c8`, a verified descendant containing the accepted routing implementation; see the [branch evidence](../audits/519-maintenance-branch.md).
 
 Maintenance requires full history, an exact fetched branch head and existing release tags. It rejects initial releases, skipped dependent groups with incomplete tags, non-patch overrides, prereleases, version-line changes and internal dependency ranges that cross those lines. Every commit after the baseline is inspected for `feat`, `!` or `BREAKING CHANGE`/`BREAKING-CHANGE` intent, including commits outside the selected domain. A feature that Nx would number as a zero-major patch is still rejected. Changing a commit label does not establish bugfix eligibility; backport review owns that semantic decision.
 
