@@ -79,3 +79,9 @@ Hooks can be bypassed or absent, so none of the present validation checks should
 - [Nx Cloud startup and lifecycle commands](https://nx.dev/docs/reference/nx-cloud-cli)
 
 `NX_NO_CLOUD` disables Cloud for an invocation; disabling distribution alone still permits remote caching. Local caching is a separate choice. Tasks involving external state need an explicit freshness policy in addition to an execution location.
+
+## Nest 11 maintenance CI (#519)
+
+The prepared #519 workflow changes add `maint/nest-11` to the existing full `main` PR job and Angular consumer workflow. The separate maintenance workflow has no path filter and reuses the complete packed Nest matrix, including retained Nest 12 compatibility. Its stable `maintenance` gate succeeds only when policy and all packed jobs succeed. The policy checks exact PR/merge ancestry, feature/breaking intent in commits and the squash title, maintenance dependency lines and unchanged publishable versions. It is uncached and runs on GitHub without Nx Cloud. PR title edits rerun this gate.
+
+The existing path-filtered packed workflow excludes maintenance PRs to avoid duplicate matrix execution; other branch behavior and manual dispatch remain. Main's existing ruleset is unchanged. Maintenance is currently update-locked; the prepared `main`/`maintenance` required checks are activated only after real maintenance PR evidence exists. See the [branch and protection record](audits/519-maintenance-branch.md) and [backport policy](guides/nest11-maintenance.md). A local green run does not establish that live gate.

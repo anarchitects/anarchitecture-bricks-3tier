@@ -1,8 +1,11 @@
 name: Packed Nest compatibility
 
 on:
+  workflow_call:
   workflow_dispatch:
   pull_request:
+    # Maintenance calls this matrix unconditionally from maintenance-ci.yml.
+    branches-ignore: [maint/nest-11]
     paths:
       - 'libs/auth/**'
       - 'libs/forms/**'

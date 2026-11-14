@@ -151,6 +151,8 @@ does not establish full deployment conformance.
 
 ## Release By Domain
 
+Nest 11 backports use the [maintenance policy](docs/guides/nest11-maintenance.md). The maintenance branch exists under a temporary update lock; CI activation and publication remain separate gates.
+
 Run releases via the **Release (Manual)** GitHub workflow:
 
 - Run the workflow from `main` and select `line=main` or `line=maint/nest-11`. Keep `dry_run=true` first; a live run requires the reviewed `candidate_sha` and comma-separated `expected_groups`. See the [routing guide](docs/guides/maintenance-release-routing.md); maintenance activation remains gated by #519 and #520.
