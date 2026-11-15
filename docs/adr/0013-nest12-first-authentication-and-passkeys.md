@@ -17,7 +17,7 @@
 4. Keep Angular `WebAuthnClient` using browser-native WebAuthn APIs; no additional browser dependency required by default.
 5. Inventory existing register/login/logout/session/email verification/password reset/social login/JWT/passkey flows, policies, cookies, migrations, security headers, password hash formats and JWT revocation. Preserve semantics or document breaking migrations explicitly. Avoid unverified claims that `@nestjs/authentication` natively supports WebAuthn.
 6. Better Auth and related transitive dependencies are removable **only after** complete security, data, credential, active-session/forced-reauth, clean-consumer and rollback evidence. Enforce no password downgrade and no mandatory re-enrolment unless the migration design explicitly documents a justified exception.
-7. Nest 11 is **patch-only**; no new authentication architecture is backported automatically. Respect [ADR-0011](0011-verify-nest-runtime-support-independently-of-tooling.md) and release-line separation.
+7. Nest 11 remains **patch-only** as a transitional line, now subject to the prospective **90-day previous-major window** in [Meta ADR-0022](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0022-core-framework-lifecycle-90-day-maintenance.md) once an independently verified, generally available Nest 12 release for this package triggers it. Security/critical fixes only; no new authentication architecture is backported automatically. Preserve existing commitments through a documented per-package EOM decision and respect [ADR-0011](0011-verify-nest-runtime-support-independently-of-tooling.md), identity/session safety and release-line separation.
 
 ## Required verification
 
