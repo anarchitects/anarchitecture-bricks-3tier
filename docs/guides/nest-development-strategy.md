@@ -1,5 +1,7 @@
 # Nest development and maintenance strategy
 
+**R2 readiness update (2026-11-15):** the [#534 workspace audit](../audits/534-nest12-workspace-readiness.md) records accepted maintenance #500 and Plugins #585, current Nest 12 candidates and the remaining adoption blocker: npm `@anarchitects/nest@0.1.0` still rejects dual-major library peers. #535–#537 separate root upgrade, existing application migration and final proof. The October strategy below remains dated evidence; no root migration is implied by prerequisite closure.
+
 **Status after #468/#469:** all six bricks have verified dual-major artifacts and seven green Linux CI lanes. The [release plan](nest-compatibility-release-plan.md) records the new minors, Auth's Node 20 removal, completed Newsletter initial release and main-only release workflow constraint. No Nest 11 support is dropped, and plugin adoption remains a separate tooling follow-up. The [packed Nest release validation guide](nest-release-validation.md) defines CI commands, runtime minimum lanes and explicit exclusions. The development hosts below remain an upstream tooling baseline; the packed hosts provide brick-specific evidence.
 
 This is the implementation strategy for [#463](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/463), following the [#462 audit](nest-11-12-compatibility-audit.md) and [ADR-0011](../adr/0011-verify-nest-runtime-support-independently-of-tooling.md). Decision date: 2026-10-09.
