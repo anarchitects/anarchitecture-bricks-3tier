@@ -7,6 +7,10 @@
 - Owners: Architecture maintainers
 - Scope: [epic #461](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/461), starting with [#462](https://github.com/anarchitects/anarchitecture-bricks-3tier/issues/462)
 
+## Core framework lifecycle amendment — 2026-11-15 (proposed)
+
+Subject to adoption of [Meta ADR-0022](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0022-core-framework-lifecycle-90-day-maintenance.md) in [Meta PR #54](https://github.com/anarchitects/anarchitecture-meta/pull/54), this ADR's original multi-major maintenance strategy is a **historical Nest 11 → 12 transition**, not a promise of indefinite dual-major support. The active Nest major receives new features; the immediately previous published supported major receives only security/critical fixes for **90 calendar days after each affected package's first generally available, verified successor-major release**. Dual-major peers and parallel feature lines are optional, not mandatory. Record a per-package release trigger, EOM date, existing customer obligations and any owner-approved dated extension; do not invent or backdate EOM dates. Nothing here drops an advertised release, changes peers or bypasses packed-consumer, SemVer, Nest 11 compatibility or owner approval gates.
+
 ## Maintenance policy update
 
 Meta ADR-0010 and local ADR-0013–0015 subsequently restrict Nest 11 to security

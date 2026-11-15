@@ -68,8 +68,9 @@ packages or verified consumer adoption. This local decision can precede package 
 8. **Sequence and releases:** establish the frozen baseline, canonical Zod schemas
    and operations, immutable releases and conformance tooling, then complete 3-tier
    and claimed-capability DDD adoption before separate Nest 12-native modernization.
-   Nest 11 remains patch-only for security/bug fixes; no feature backports follow
-   from extraction. Preserve existing compatibility commitments, SemVer review,
+   Nest 11 remains patch-only for security/critical fixes during the explicitly
+   documented, time-bounded transition under [Meta ADR-0022](https://github.com/anarchitects/anarchitecture-meta/blob/main/adr/0022-core-framework-lifecycle-90-day-maintenance.md);
+   no feature backports follow from extraction. Preserve existing compatibility commitments, SemVer review,
    human acceptance and CI-owned publication. Each #485 child has a separate reviewed PR.
 9. **Contributor preflight:** read all Meta/local ADRs and relevant guides, then the
    applicable canonical contract version and compatibility rules before public API
