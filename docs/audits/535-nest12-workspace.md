@@ -138,6 +138,24 @@ Validated locally on macOS, Node 24.22.3, Yarn 4.18.0, Nx 23.2.1:
 
 ## Review and remaining proof
 
+PR #539's first packed matrix exposed a declaration regression: all five Nest 11
+lanes containing Auth fail with TS2694 because inferred `AuthorizedResource`
+types refer to Nest 12-only `ParameterDecoratorOptions`. The Node 20 lane excludes
+Auth and passes, as do the five Nest 12 lanes. Rechecked this repair against the
+ADR inventory and ADR-0011/0014, Meta 0011, the Auth migration/contract guides and
+packed release validation. Preserve the existing decorator call signature and
+strict clean-consumer checks; no authorization semantics or HTTP contracts change.
+Native authorization migration remains separate. The regression affects artifacts
+built by this unmerged PR, with no evidence requiring published-version deprecation.
+
+The repair explicitly types `AuthorizedResource` using the shared Nest 11/12
+subject/pipe signature. Local validation on macOS and Node 24.22.3 passes the
+complete `release-tools:test-nest-compatibility:nest11` suite, the clean Auth
+`nest12` host, Auth unit tests and lint. All ten Nest 11 host configurations pass,
+including strict declarations, CJS/ESM, HTTP, persistence and optional-peer cases.
+The packed host checks remain uncached with `skipLibCheck: false`. Linux rerun
+results are not claimed, and no ongoing CI monitoring is started.
+
 This is #535's implementation for human review. Commit, push and PR creation are
 explicitly authorized; no release, deprecation or support withdrawal is performed.
 Existing Newsletter app CLI
