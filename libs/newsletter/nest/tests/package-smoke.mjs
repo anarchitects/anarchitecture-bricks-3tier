@@ -114,8 +114,10 @@ try {
     noEmit: true,
     strict: true,
     target: ts.ScriptTarget.ES2022,
-    module: ts.ModuleKind.Node16,
-    moduleResolution: ts.ModuleResolutionKind.Node16,
+    // Model the workspace's modern Node require(esm) support for Nest 12.
+    module: ts.ModuleKind.NodeNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    skipLibCheck: false,
     types: ['node'],
     typeRoots: [path.join(temp, 'node_modules/@types')],
   });
@@ -276,7 +278,7 @@ try {
   );
   assert.equal(schemas.NewsletterSubscriptionRequestSchema.type, 'object');
   console.log(
-    'Package smoke passed: CJS/ESM runtime, Node16 declarations and application services.',
+    'Package smoke passed: CJS/ESM runtime, NodeNext declarations and application services.',
   );
 } finally {
   rmSync(temp, { recursive: true, force: true });

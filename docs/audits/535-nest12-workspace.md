@@ -138,6 +138,19 @@ Validated locally on macOS, Node 24.22.3, Yarn 4.18.0, Nx 23.2.1:
 
 ## Review and remaining proof
 
+Newsletter's workspace-linked `package-smoke` still used Node16 module semantics,
+causing TS1479/TS1541/TS1542 against the upgraded ESM Nest dependencies. Reproduced
+the failure locally. Rechecked the existing ADR inventory, ADR-0010/0011,
+Newsletter's compatibility/development guidance and packed release validation:
+this repair changes only the test compiler model and documentation, preserving
+domain boundaries, runtime behavior, published peers and both CJS/ESM consumers.
+Align it with the already-reviewed Common Mailer test and packed hosts using
+NodeNext; retain strict checking and explicit `skipLibCheck: false`.
+After the correction, `newsletter-nest:package-smoke`, Newsletter lint and docs
+content validation pass locally on Node 24.22.3. The smoke check covers declaration
+compilation, CJS/ESM loading, application services, native composition and optional
+adapter absence; published runtime code and package metadata are unchanged.
+
 PR #539's first packed matrix exposed a declaration regression: all five Nest 11
 lanes containing Auth fail with TS2694 because inferred `AuthorizedResource`
 types refer to Nest 12-only `ParameterDecoratorOptions`. The Node 20 lane excludes
