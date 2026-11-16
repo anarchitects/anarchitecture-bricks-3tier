@@ -55,8 +55,9 @@ describe('built Common Mailer declarations', () => {
       const program = ts.createProgram([consumer], {
         strict: true,
         noEmit: true,
-        module: ts.ModuleKind.Node16,
-        moduleResolution: ts.ModuleResolutionKind.Node16,
+        // NodeNext models modern Node's require(esm), used by Nest 12.
+        module: ts.ModuleKind.NodeNext,
+        moduleResolution: ts.ModuleResolutionKind.NodeNext,
         target: ts.ScriptTarget.ES2022,
         types: ['node'],
         typeRoots: [join(temporary, 'node_modules/@types')],

@@ -2,6 +2,15 @@
 
 Audit baseline: `63630aa` on 5 October 2026 (Nx 23.2.1, Yarn 4.18.0).
 
+The [#535 Nest 12 adoption](audits/535-nest12-workspace.md) pins the development
+runtime in `.nvmrc` to Node 24.22.3. PR, docs, Angular-consumer and passkey jobs
+read that pin; the packed Nest matrix uses it only for workspace tooling and
+retains every consumer runtime lane. Custom Nx agent templates install the same
+pin before the immutable Yarn install, preserving the 3/3/5 fleet and resource
+classes. Jest targets track `.env.test` and `NODE_OPTIONS` as cache inputs.
+Live Linux agent execution still requires CI evidence; local validation does not
+establish a green distributed run.
+
 GitHub Actions owns merge checks, credentials, Docker/browser integration environments, artifacts, deployment and release. Nx decides affected projects and orders task dependencies. Nx Cloud accelerates repeatable source-based work through remote caching and agents. Local hooks provide optional early feedback; they never replace authoritative CI checks.
 
 ## Check placement

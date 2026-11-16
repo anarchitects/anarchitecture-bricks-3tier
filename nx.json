@@ -42,7 +42,15 @@
     },
     "@nx/jest:jest": {
       "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/jest.preset.js",
+        "{workspaceRoot}/.env.test",
+        {
+          "env": "NODE_OPTIONS"
+        }
+      ],
       "options": {
         "passWithNoTests": true
       },
@@ -149,6 +157,13 @@
         "watchDepsTargetName": "watch-deps",
         "serveStaticTargetName": "serve-static"
       }
+    },
+    {
+      "plugin": "@anarchitects/nest/plugin",
+      "options": {
+        "buildTargetName": "nest-build",
+        "startTargetName": "nest-start"
+      }
     }
   ],
   "generators": {
@@ -182,17 +197,6 @@
       "importPath": "@anarchitects/<domain>-ts",
       "name": "<domain>-ts",
       "tags": "domain:<domain>, tech:ts"
-    },
-    "@nx/nest:library": {
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "publishable": true,
-      "buildable": true,
-      "importPath": "@anarchitects/<domain>-nest",
-      "strict": true,
-      "directory": "libs/<domain>/nest",
-      "name": "<domain>-nest",
-      "tags": "domain:<domain>, tech:nest"
     },
     "@nx/angular:component": {
       "style": "css",

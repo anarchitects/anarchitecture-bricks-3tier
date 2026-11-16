@@ -29,7 +29,7 @@ After publication, follow the [Nest 11/12 install recipes](../../../docs/guides/
 
 ### Nest 11/12 compatibility (#467)
 
-The upcoming Newsletter Nest **0.1 minor** supports Nest common/core/platform-fastify `^11.1.6 || ^12.1.2`, Config `^4.0.2 || ^12.0.1`, and Fastify `^5.4.0`. Keep all Nest core packages on the same major. The root workspace remains on Nest 11; the isolated packed hosts verify Nest 12 independently of Nx tooling.
+The upcoming Newsletter Nest **0.1 minor** supports Nest common/core/platform-fastify `^11.1.6 || ^12.1.2`, Config `^4.0.2 || ^12.0.1`, and Fastify `^5.4.0`. Keep all Nest core packages on the same major. The [root workspace uses Nest 12](../../../docs/audits/535-nest12-workspace.md); isolated packed hosts verify both Nest majors independently of Nx tooling.
 
 | Host              | Nest   | Config | Fastify | Optional integrations   |
 | ----------------- | ------ | ------ | ------- | ----------------------- |
@@ -793,8 +793,11 @@ both initialization paths and explicit override precedence.
 MailerLite tests use mocked fetch responses and locally signed fixtures, including
 application-service integration. No live MailerLite network calls are needed.
 
-`package-smoke` checks built runtime exports and strict Node16 declaration
-resolution from isolated CommonJS and ESM consumers without workspace aliases.
+`package-smoke` checks built runtime exports and strict NodeNext declaration
+resolution from isolated CommonJS and ESM consumers without workspace aliases or
+`skipLibCheck`. It uses workspace dependencies and models modern Node's
+`require(esm)` support. The separately installed packed hosts above verify the
+advertised Nest 11/12 dependency combinations.
 
 The root carries `domain:newsletter`, `tech:nest` and `type:facade` tags. Layers
 inside this publishable project are enforced by path-aware ESLint rules. Newsletter

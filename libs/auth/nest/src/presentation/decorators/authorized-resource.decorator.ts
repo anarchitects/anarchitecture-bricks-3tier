@@ -2,6 +2,8 @@ import {
   InternalServerErrorException,
   createParamDecorator,
   ExecutionContext,
+  type PipeTransform,
+  type Type,
 } from '@nestjs/common';
 import {
   AUTHORIZE_RESOURCE_KEY,
@@ -39,7 +41,10 @@ const resolveAuthorizedResourceSubject = (
   );
 };
 
-export const AuthorizedResource = createParamDecorator(
+// Keep the published signature compatible with Nest 11 when built using Nest 12.
+export const AuthorizedResource: (
+  ...dataOrPipes: (Subject | undefined | PipeTransform | Type<PipeTransform>)[]
+) => ParameterDecorator = createParamDecorator(
   (subjectOverride: Subject | undefined, context: ExecutionContext) => {
     const request = context
       .switchToHttp()

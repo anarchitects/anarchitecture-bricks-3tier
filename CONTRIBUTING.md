@@ -41,10 +41,24 @@
 
 ## Local Workflow
 
+Use Node **24.22.3** (`nvm use`) and the repository's Corepack-managed Yarn
+**4.18.0**, then run `yarn install --immutable`. The main development host uses
+Nest **12.5.0** and `@anarchitects/nest` **0.1.1**; see the
+[#535 adoption record](docs/audits/535-nest12-workspace.md). This tooling baseline
+does not change published bricks' Nest 11/12 peer ranges or consumer Node floors.
+
+Run unit tests through `yarn nx run <project>:test`. Nx loads `.env.test` to enable
+Jest 30.5's native ESM dependency support. If you supply `NODE_OPTIONS` yourself,
+include `--experimental-vm-modules`; shell values override Nx dotenv files.
+Nest library builds retain their compiled artifacts and existing executors.
+The native plugin's source-only library generator is not a replacement for the
+repository's publishable-library packaging. Its inference uses `nest-build` and
+`nest-start`; migrating the existing Newsletter app remains #536.
+
 For Nest package changes and release preparation, follow the [packed Nest release validation matrix](docs/guides/nest-release-validation.md). It lists the Nx commands, locked Nest 11/12 consumers, Node minimums and explicit exclusions. The [release plan](docs/guides/nest-compatibility-release-plan.md) records per-package breaking requirements and candidate minors, Newsletter coordination, plugin timing and the current maintenance-branch publication prerequisite.
 
 ```bash
-yarn install
+yarn install --immutable
 
 # Transitional implementation evidence pipeline
 nx run api-specs:generate
