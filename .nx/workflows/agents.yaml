@@ -1,0 +1,37 @@
+# Match the GitHub runner's tooling runtime; preserve the existing fleet sizes.
+common-js-init-steps: &common-js-init-steps
+  - name: Checkout
+    uses: nrwl/nx-cloud-workflows/v5/workflow-steps/checkout/main.yaml
+  - name: Install workspace Node and enable Corepack
+    uses: nrwl/nx-cloud-workflows/v5/workflow-steps/install-node/main.yaml
+    # The official step reads .nvmrc and persists PATH for later tasks.
+  - name: Restore Node Modules Cache
+    uses: nrwl/nx-cloud-workflows/v5/workflow-steps/cache/main.yaml
+    inputs:
+      key: 'yarn.lock|.yarnrc.yml|.nvmrc'
+      paths: node_modules
+      base-branch: main
+  - name: Restore Browser Binary Cache
+    uses: nrwl/nx-cloud-workflows/v5/workflow-steps/cache/main.yaml
+    inputs:
+      key: 'yarn.lock|"browsers"'
+      paths: '../.cache/Cypress'
+      base-branch: main
+  - name: Install Node Modules
+    uses: nrwl/nx-cloud-workflows/v5/workflow-steps/install-node-modules/main.yaml
+  - name: Install Browsers (if needed)
+    uses: nrwl/nx-cloud-workflows/v5/workflow-steps/install-browsers/main.yaml
+
+launch-templates:
+  bricks-linux-medium-js:
+    resource-class: docker_linux_amd64/medium
+    image: ubuntu22.04-node20.11-v10
+    init-steps: *common-js-init-steps
+  bricks-linux-medium-plus-js:
+    resource-class: docker_linux_amd64/medium+
+    image: ubuntu22.04-node20.11-v10
+    init-steps: *common-js-init-steps
+  bricks-linux-large-js:
+    resource-class: docker_linux_amd64/large
+    image: ubuntu22.04-node20.11-v10
+    init-steps: *common-js-init-steps
